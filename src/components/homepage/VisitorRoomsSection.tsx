@@ -14,8 +14,8 @@ export function VisitorRoomsSection() {
       <div className="container-page">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <SectionLabel>Not here for a review?</SectionLabel>
-            <h2 className="mt-4 text-web-h2 text-indigo-950">Find the door that fits.</h2>
+            <SectionLabel>Not here for a review? Enter Your Prefered Room.</SectionLabel>
+            <h2 className="mt-4 text-web-h2 text-indigo-950">Find the door to the room that fits.</h2>
           </div>
           <Link href={routes.rooms} className="hidden sm:block">
             <Button variant="secondary" size="sm">All rooms</Button>
