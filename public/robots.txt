@@ -1,0 +1,9 @@
+# iTrix — Surface 1 (public site)
+User-agent: *
+Allow: /
+
+# Funnel + proxy routes are not for indexing
+Disallow: /review
+Disallow: /api
+
+Sitemap: https://itrix.ai/sitemap.xml
