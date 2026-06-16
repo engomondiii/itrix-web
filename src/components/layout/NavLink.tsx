@@ -11,10 +11,11 @@ export interface NavLinkProps {
   className?: string;
   exact?: boolean;
   onClick?: () => void;
+  onIndigo?: boolean;
 }
 
 /** Nav link with the Atelier Indigo gold active indicator. */
-export function NavLink({ href, children, className, exact, onClick }: NavLinkProps) {
+export function NavLink({ href, children, className, exact, onClick, onIndigo }: NavLinkProps) {
   const pathname = usePathname();
   const active = exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 
@@ -25,7 +26,13 @@ export function NavLink({ href, children, className, exact, onClick }: NavLinkPr
       aria-current={active ? 'page' : undefined}
       className={cn(
         'relative inline-flex items-center text-secondary font-medium transition-colors',
-        active ? 'text-ink-900' : 'text-ink-500 hover:text-ink-900',
+        onIndigo
+          ? active
+            ? 'text-oni'
+            : 'text-oni/80 hover:text-oni'
+          : active
+            ? 'text-ink-900'
+            : 'text-ink-500 hover:text-ink-900',
         className,
       )}
     >
