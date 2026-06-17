@@ -5,8 +5,7 @@ import { siteConfig } from '@/config/site.config';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { VisitorProvider } from '@/context/VisitorContext';
 import { ToastProvider } from '@/components/ui/ToastProvider';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { SiteChrome } from '@/components/layout/SiteChrome';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -52,24 +51,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <VisitorProvider>
             <ToastProvider>
-              {/* Skip link for keyboard users (quality floor). */}
-              <a
-                href="#content"
-                className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:bg-indigo-950 focus:px-4 focus:py-2 focus:text-oni"
-              >
-                Skip to content
-              </a>
-              <Header />
               {/*
-                Phase 1 shell: Header + Footer wrap every route so the app
-                "boots with a header and footer". In Phase 3 the Compute Bottleneck
-                Review should move into a (review) route group with its own layout
-                (ReviewLayout) so the marketing chrome is replaced, not duplicated.
+                Global marketing chrome (Header + Footer + #content main) is now
+                applied by SiteChrome, which renders it for marketing routes and
+                steps aside for self-chromed segments like /review (ReviewLayout).
+                This replaces the chrome for the funnel instead of duplicating it.
               */}
-              <main id="content" className="min-h-[60vh]">
-                {children}
-              </main>
-              <Footer />
+              <SiteChrome>{children}</SiteChrome>
             </ToastProvider>
           </VisitorProvider>
         </ThemeProvider>

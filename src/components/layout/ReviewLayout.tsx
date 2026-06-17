@@ -1,5 +1,8 @@
+'use client';
+
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { routes } from '@/constants/routes';
 import { REVIEW_STEPS } from '@/config/review.config';
 import type { ReviewStep } from '@/types/review.types';
@@ -12,10 +15,13 @@ export interface ReviewLayoutProps {
 
 /**
  * Minimal chrome for the Compute Bottleneck Review — wordmark + step progress,
- * no marketing nav. In Phase 3 the /review segment should become a (review)
- * route group whose layout renders this, replacing the global Header/Footer.
+ * no marketing nav. The intake step (/review) presents the prompt and the live
+ * read side by side, so it uses the full content width; the question / result /
+ * confirmation steps read best as a single narrow column.
  */
 export function ReviewLayout({ children, currentStep }: ReviewLayoutProps) {
+  const pathname = usePathname();
+  const isIntake = pathname === routes.review;
   const activeIndex = currentStep ? REVIEW_STEPS.indexOf(currentStep) : -1;
 
   return (
@@ -38,7 +44,7 @@ export function ReviewLayout({ children, currentStep }: ReviewLayoutProps) {
           </div>
         ) : null}
       </div>
-      <main className="container-page" style={{ maxWidth: 760 }}>
+      <main className="container-page" style={{ maxWidth: isIntake ? 1120 : 760 }}>
         <div className="py-10">{children}</div>
       </main>
     </div>
