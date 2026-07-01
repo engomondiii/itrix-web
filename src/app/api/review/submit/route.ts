@@ -17,8 +17,12 @@ interface SubmitBody {
   visitorType?: string | null;
 }
 
-/** Creates/continues a backend review session and records the prompt, then returns
- *  the session id + an on-message immediate acknowledgement. Degrades gracefully. */
+/**
+ * Creates/continues a backend review session and records the prompt, returning the
+ * session id (used by the Concierge conversation) + an on-message immediate
+ * acknowledgement. Degrades gracefully: if the backend is unreachable, the session
+ * id stays null and the client uses the local acknowledgement.
+ */
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as SubmitBody;
   const prompt = body.prompt ?? '';

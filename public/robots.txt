@@ -2,8 +2,13 @@
 User-agent: *
 Allow: /
 
-# Funnel + proxy routes are not for indexing
+# Funnel, private client pages, portal, and proxy routes are not for indexing
 Disallow: /review
+Disallow: /c/
+Disallow: /workspace
+Disallow: /sign-in
+Disallow: /set-password
+Disallow: /forgot-password
 Disallow: /api
 
 Sitemap: https://itrix.ai/sitemap.xml

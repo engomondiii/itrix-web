@@ -11,21 +11,14 @@ import { classifyTier } from '@/lib/scoring/tierClassifier';
 import { routeProduct } from '@/lib/routing/productRouter';
 import { routeLicense } from '@/lib/routing/licenseRouter';
 import { buildImmediateResponse } from '@/lib/content/immediateResponses';
-import { PRESSURE_BY_AREA } from '@/lib/content/pressureSignals';
-import { getProductRoute } from '@/lib/content/productRoutes';
-import { getEnvironment } from '@/lib/content/platformEnvironments';
-import { PRESSURE_ACK } from '@/lib/content/immediateResponses';
 import { validatePromptSubmission } from '@/lib/validation/reviewValidator';
 import { validateAnswers } from '@/lib/validation/qualificationValidator';
 import { trackReviewStart } from '@/lib/analytics/trackReviewStart';
 import { trackReviewComplete } from '@/lib/analytics/trackReviewComplete';
-import { APPROVED_CLAIM_FRAMING } from '@/constants/disclosure';
 import { routes } from '@/constants/routes';
-import type { PressureArea } from '@/types/review.types';
 import type { QualificationAnswers } from '@/types/qualification.types';
 import type { ScoreBreakdown, LeadTier } from '@/types/lead.types';
 import type { ProductRoute, LicensePathway } from '@/types/product.types';
-import type { ResultPage, DiagnosisRow } from '@/types/result.types';
 
 interface LocalScoring {
   breakdown: ScoreBreakdown;
@@ -41,72 +34,22 @@ function localScoring(answers: QualificationAnswers): LocalScoring {
   return { breakdown, total, tier, productRoute: routeProduct(answers), licensePathway: routeLicense(answers) };
 }
 
-/** Deterministic, on-message result built entirely client-side. Used as a fallback
- *  when the Django result endpoint is unavailable, so the funnel always resolves. */
-function buildLocalResult(args: {
-  leadId: string | null;
-  prompt: string;
-  pressures: PressureArea[];
-  environment: string | null;
-  scoring: LocalScoring;
-}): ResultPage {
-  const { leadId, prompt, pressures, environment, scoring } = args;
-  const info = getProductRoute(scoring.productRoute);
-  const env = getEnvironment(environment);
-  const topPressures = pressures.slice(0, 3);
-
-  const diagnosis: DiagnosisRow[] = topPressures.map((area) => ({
-    pressure: area,
-    observation: PRESSURE_BY_AREA[area]?.prompt ?? '',
-    itrixInterpretation: PRESSURE_ACK[area],
-    alphaRole:
-      scoring.productRoute === 'alpha_core'
-        ? 'ALPHA Core — validate the transformed form on real hardware'
-        : 'ALPHA Compute — diagnose the representation first',
-  }));
-
-  const problemMirror =
-    (prompt.trim()
-      ? `You described: “${prompt.trim().slice(0, 220)}”. `
-      : '') +
-    (topPressures.length
-      ? `We read pressure on ${topPressures.map((p) => PRESSURE_BY_AREA[p].label.toLowerCase()).join(', ')}`
-      : 'We’ll start from the workload') +
-    (env ? `, running on ${env.label}.` : '.');
-
-  return {
-    leadId: leadId ?? 'local',
-    tier: scoring.tier,
-    scoreBreakdown: scoring.breakdown,
-    productRoute: scoring.productRoute,
-    licensePathway: scoring.licensePathway,
-    primaryTechnologies: info.technologies,
-    problemMirror,
-    diagnosis,
-    alphaFitSummary: `${info.blurb} On eligible workloads this may deliver ${APPROVED_CLAIM_FRAMING.conservative}, ${APPROVED_CLAIM_FRAMING.validation}.`,
-    kpiPreview: [
-      { label: 'Arithmetic', metric: '~3–4× reduction (eligible workloads)' },
-      { label: 'Accuracy', metric: 'Preserved, PoC-validated' },
-      { label: 'Approach', metric: 'Representation-first' },
-    ],
-    proofPreview: [
-      { title: 'FQNM method paper', disclosure: 'public', reference: 'arXiv:2604.06947' },
-      { title: 'Workload benchmark figures', disclosure: 'nda_only' },
-    ],
-    recommendedNextStep:
-      scoring.tier <= 2
-        ? 'A member of the iTrix Assessment Team will review your inputs and reach out personally.'
-        : 'Explore the technology and the recommended product, then start a review when you’re ready.',
-  };
-}
-
+/**
+ * Drives the two-stage review conversation. v3.0 change: after qualification, the
+ * backend creates the lead, advances the journey to DIAGNOSED, and mints a
+ * client-page capability token. This hook stores that token + journey state and
+ * routes to the /review/preparing hand-off (which forwards to /c/[token]). The old
+ * standalone result page is gone; scoring stays backend-first with a local estimate
+ * fallback so the flow always resolves.
+ */
 export function useReviewFlow() {
   const router = useRouter();
   const { clientId, visitorType } = useVisitor();
 
   const review = useReviewStore();
   const setScoring = useLeadStore((s) => s.setScoring);
-  const setResult = useLeadStore((s) => s.setResult);
+  const setCapabilityToken = useLeadStore((s) => s.setCapabilityToken);
+  const setJourneyState = useLeadStore((s) => s.setJourneyState);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -135,11 +78,11 @@ export function useReviewFlow() {
         review.setSession(res.data.sessionId);
         review.setImmediateResponse(res.data.immediateResponse);
       } else {
-        // Backend unavailable — proceed with a local acknowledgement.
         review.setImmediateResponse(buildImmediateResponse(review.prompt, review.selectedPressures));
       }
       trackReviewStart({ pressures: review.selectedPressures, environment: review.environment });
       review.setStep('qualify');
+      review.setStage('stage_1');
       router.push(routes.reviewQualify);
       return true;
     } finally {
@@ -147,7 +90,8 @@ export function useReviewFlow() {
     }
   }
 
-  /** Step 2 → 3: submit answers, score (backend-first), generate the result, go to result. */
+  /** Step 2 → preparing: submit answers, score (backend-first), store the capability
+   *  token, and hand off to the preparing page (which forwards to /c/[token]). */
   async function submitQualification() {
     const check = validateAnswers(review.answers);
     if (!check.valid) {
@@ -159,6 +103,7 @@ export function useReviewFlow() {
     try {
       let scoring = localScoring(review.answers);
       let leadId: string | null = null;
+      let capabilityToken: string | null = null;
 
       const qualifyRes = await reviewApi.qualify({
         sessionId: review.sessionId,
@@ -175,6 +120,8 @@ export function useReviewFlow() {
           productRoute: d.productRoute,
           licensePathway: d.licensePathway,
         };
+        capabilityToken = d.capabilityToken ?? null;
+        if (d.journeyState) setJourneyState(d.journeyState);
       }
 
       setScoring({
@@ -185,23 +132,14 @@ export function useReviewFlow() {
         productRoute: scoring.productRoute,
         licensePathway: scoring.licensePathway,
       });
-
-      // Generate / fetch the personalized result (backend-first, local fallback).
-      const resultRes = await reviewApi.result({ leadId, sessionId: review.sessionId, answers: review.answers });
-      const result =
-        resultRes.data ??
-        buildLocalResult({
-          leadId,
-          prompt: review.prompt,
-          pressures: review.selectedPressures,
-          environment: review.environment,
-          scoring,
-        });
-      setResult(result);
+      if (capabilityToken) {
+        setCapabilityToken(capabilityToken);
+        review.setJourneyToken(capabilityToken);
+      }
 
       trackReviewComplete({ tier: scoring.tier, totalScore: scoring.total, productRoute: scoring.productRoute, leadId });
-      review.setStep('result');
-      router.push(routes.reviewResult);
+      review.setStep('preparing');
+      router.push(routes.reviewPreparing);
       return true;
     } finally {
       setSubmitting(false);

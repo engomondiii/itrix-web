@@ -1,17 +1,19 @@
 'use client';
 
-import { SectionLabel } from '@/components/ui/SectionLabel';
+import { ConciergePanel } from '@/components/review/ConciergePanel';
 import { QualificationFlow } from '@/components/review/QualificationFlow';
 
+/**
+ * Qualification — the two-stage adaptive pain-gain conversation, embedded in the same
+ * ConciergePanel so it reads as one continuous conversation. One question per screen;
+ * "Not sure" everywhere; no score or tier is ever shown.
+ */
 export default function QualifyPage() {
   return (
-    <div className="flex flex-col gap-8">
-      <header>
-        <SectionLabel>Step 2 · A few questions</SectionLabel>
-        <h1 className="mt-3 text-web-h1 text-indigo-950">Help us read the fit.</h1>
-        <p className="reading mt-3">Nine quick questions. They shape the diagnosis and route you to the right path.</p>
-      </header>
-      <QualificationFlow />
+    <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <ConciergePanel>
+        <QualificationFlow />
+      </ConciergePanel>
     </div>
   );
 }

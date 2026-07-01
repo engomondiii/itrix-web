@@ -13,6 +13,26 @@ export const PRESSURE_ACK: Record<PressureArea, string> = {
 };
 
 /**
+ * The conversation lines the review surface says (Playbook §24). Calm, short, and
+ * free of any promise. These are the exact, editable lines used by the Concierge
+ * conversation and the preparing hand-off.
+ */
+export const CONVERSATION_LINES = {
+  opening:
+    'Welcome to itriX. Tell us where computation is becoming too expensive, too slow, too unstable, or too energy-intensive. Based on your answer, we will map your bottleneck to ALPHA Compute, ALPHA Core, or both. Please avoid confidential technical details until an NDA is in place.',
+  acknowledge:
+    'We understand. This may involve a structural compute bottleneck. We are preparing a more relevant review.',
+  askToContinue:
+    'A few short questions will help us prepare something specific to your situation. This takes about a minute, and nothing here needs to be confidential.',
+  redirect:
+    'Please avoid sharing confidential technical information before an NDA. We can continue with a non-confidential description, and move into an NDA if a deeper review is appropriate.',
+  preparing:
+    'Thank you. We are preparing a short, case-specific review based on what you have described. This usually takes a few moments.',
+  ready:
+    'Your review is ready. It restates what we heard, the likely bottleneck, and a recommended next step.',
+} as const;
+
+/**
  * Phrases that indicate a visitor is fishing for mechanism detail or specific
  * benchmark numbers — we acknowledge, but flag NDA-sensitivity rather than answer.
  */
@@ -34,7 +54,7 @@ export function buildImmediateResponse(prompt: string, pressures: PressureArea[]
   const lead =
     recognized.length > 0
       ? `We read this as pressure on ${recognized.map((p) => PRESSURE_BY_AREA[p].label.toLowerCase()).join(', ')}.`
-      : 'Tell us where it’s getting expensive and we’ll read the structure behind it.';
+      : CONVERSATION_LINES.acknowledge;
   return {
     acknowledgement: lead,
     recognizedPressures: recognized,

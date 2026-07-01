@@ -3,6 +3,7 @@ import { persist } from 'zustand/middleware';
 import type { ScoreBreakdown, LeadTier } from '@/types/lead.types';
 import type { ProductRoute, LicensePathway } from '@/types/product.types';
 import type { ResultPage } from '@/types/result.types';
+import type { JourneyState } from '@/types/journey.types';
 
 export interface ScoringSnapshot {
   leadId: string | null;
@@ -22,11 +23,17 @@ interface LeadState {
   licensePathway: LicensePathway | null;
   result: ResultPage | null;
   emailCaptured: boolean;
+  /** v3.0 — the capability token for the customized client page (/c/[token]). */
+  capabilityToken: string | null;
+  /** v3.0 — the last-known journey state for this lead (mirrored from backend). */
+  journeyState: JourneyState | null;
 
   setScoring: (snapshot: ScoringSnapshot) => void;
   setLeadId: (leadId: string | null) => void;
   setResult: (result: ResultPage | null) => void;
   setEmailCaptured: (captured: boolean) => void;
+  setCapabilityToken: (token: string | null) => void;
+  setJourneyState: (state: JourneyState | null) => void;
   reset: () => void;
 }
 
@@ -39,6 +46,8 @@ const initial = {
   licensePathway: null,
   result: null,
   emailCaptured: false,
+  capabilityToken: null,
+  journeyState: null,
 } as const;
 
 export const useLeadStore = create<LeadState>()(
@@ -57,6 +66,8 @@ export const useLeadStore = create<LeadState>()(
       setLeadId: (leadId) => set({ leadId }),
       setResult: (result) => set({ result }),
       setEmailCaptured: (emailCaptured) => set({ emailCaptured }),
+      setCapabilityToken: (capabilityToken) => set({ capabilityToken }),
+      setJourneyState: (journeyState) => set({ journeyState }),
       reset: () => set({ ...initial }),
     }),
     { name: 'itrix-lead' },

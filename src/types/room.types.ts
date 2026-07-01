@@ -1,16 +1,19 @@
-/** Visitor Rooms — 10 entry points grouped by persona family (Surface 1). */
+/** Visitor Rooms — 13 entry points grouped by persona family (Surface 1, Playbook Part V). */
 
 export type RoomId =
   | 'bottleneck'
   | 'technical'
+  | 'technical-assessment'
   | 'research'
   | 'investor'
   | 'partner'
   | 'shareholder'
   | 'media'
-  | 'creator'
+  | 'story'
   | 'public-infrastructure'
-  | 'explore';
+  | 'sustainable-ai'
+  | 'architecture'
+  | 'orientation';
 
 export type RoomGroup = 'operator' | 'technical' | 'capital' | 'communications' | 'orientation';
 

@@ -1,17 +1,29 @@
 import type { ReviewStep, PressureSignal } from '@/types/review.types';
-import type { QualificationQuestion, PlatformEnvironment } from '@/types/qualification.types';
+import type { QualificationQuestion, PlatformEnvironment, QuestionId } from '@/types/qualification.types';
 
-export const REVIEW_STEPS: ReviewStep[] = ['prompt', 'qualify', 'result', 'confirmation'];
+/**
+ * Review flow config. v3.0: the funnel is a two-stage conversation ending in a
+ * "preparing" hand-off to the token-gated customized page (/c/[token]). The old
+ * 'result'/'confirmation' steps are retired; 'preparing' + 'diagnosed' are added.
+ * 'result' is kept in the union for backward-compat with persisted stores.
+ */
+export const REVIEW_STEPS: ReviewStep[] = ['prompt', 'qualify', 'preparing', 'diagnosed'];
+
+/** Two-stage grouping of the preserved Q1–Q9 (see lib/content/qualificationQuestions). */
+export const REVIEW_STAGE_QUESTION_IDS: Record<'stage_1' | 'stage_2', QuestionId[]> = {
+  stage_1: ['Q2', 'Q6', 'Q1', 'Q3', 'Q5'],
+  stage_2: ['Q7', 'Q4', 'Q8', 'Q9'],
+};
 
 /** Seven AI-aggravated pressure areas (Knowledge Core section 7). */
 export const PRESSURE_SIGNALS: PressureSignal[] = [
-  { area: 'cost', label: 'Cost', prompt: 'Compute spend is rising faster than output' },
-  { area: 'speed', label: 'Speed', prompt: 'Jobs take too long to return results' },
-  { area: 'energy', label: 'Energy', prompt: 'Power draw and cooling are becoming limits' },
-  { area: 'stability_accuracy', label: 'Stability & accuracy', prompt: 'Results drift or lose precision at scale' },
+  { area: 'cost', label: 'Cost', prompt: 'Computation is becoming too expensive' },
+  { area: 'speed', label: 'Speed', prompt: 'Our workload is too slow' },
+  { area: 'stability_accuracy', label: 'Stability & accuracy', prompt: 'Accuracy or stability is difficult to maintain' },
+  { area: 'energy', label: 'Energy', prompt: 'Energy consumption is becoming a constraint' },
+  { area: 'hardware_utilization', label: 'Hardware utilization', prompt: 'Hardware utilization is not good enough' },
+  { area: 'architecture', label: 'Architecture', prompt: 'We are exploring a new computational architecture' },
   { area: 'memory_data_movement', label: 'Memory & data movement', prompt: 'Moving data dominates the runtime' },
-  { area: 'hardware_utilization', label: 'Hardware utilization', prompt: 'Accelerators sit underused' },
-  { area: 'architecture', label: 'Architecture', prompt: 'The current architecture is hitting a wall' },
 ];
 
 export const PLATFORM_ENVIRONMENTS: PlatformEnvironment[] = [
@@ -26,7 +38,7 @@ export const PLATFORM_ENVIRONMENTS: PlatformEnvironment[] = [
   { value: 'other', label: 'Something else', family: 'other' },
 ];
 
-/** Q1–Q9 — feed routing and the five scoring categories. */
+/** Q1–Q9 — feed routing and the five scoring categories. Weights unchanged. */
 export const QUALIFICATION_QUESTIONS: QualificationQuestion[] = [
   {
     id: 'Q1',

@@ -17,7 +17,15 @@ export interface RoomContent {
   ctaHref: string;
 }
 
-/** The 10 visitor rooms — each routes a persona to the right material and classifies the session. */
+/**
+ * The 13 visitor rooms (Playbook Part V). Phase 3 finalizes the set:
+ *   preserved: bottleneck, technical, research, investor, partner, shareholder,
+ *              media, public-infrastructure
+ *   renamed:   creator → story, explore → orientation, + technical-assessment
+ *              (from the old bottleneck/technical split)
+ *   new:       sustainable-ai, architecture
+ * Each room routes a persona to the right material and classifies the session.
+ */
 export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
   bottleneck: {
     id: 'bottleneck',
@@ -36,6 +44,25 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
       'A conservative view of what may be possible on eligible workloads',
     ],
     ctaLabel: 'Begin the review',
+    ctaHref: routes.review,
+  },
+  'technical-assessment': {
+    id: 'technical-assessment',
+    slug: 'technical-assessment',
+    title: 'I want a technical assessment',
+    label: 'Technical assessment',
+    summary: 'Scope a focused, paid study of one real workload — the Boundary Waste Map.',
+    group: 'operator',
+    visitorType: 'technical',
+    audience: 'Teams ready to test the approach on a real workload',
+    intro:
+      'An Alpha Compute Assessment is a focused engineering study of one workload: where it crosses avoidable computational boundaries, a prioritised Boundary Waste Map, and a recommendation on whether a proof of concept is worth it. Arranged after an NDA; details discussed privately.',
+    offers: [
+      'A Boundary Waste Map of one workload',
+      'A prioritised view of where ALPHA Compute may help',
+      'A clear recommendation on a proof of concept',
+    ],
+    ctaLabel: 'Request an Alpha Compute Assessment',
     ctaHref: routes.review,
   },
   technical: {
@@ -72,6 +99,25 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     ctaLabel: 'Read the FQNM paper',
     ctaHref: routes.fqnmPaper,
   },
+  architecture: {
+    id: 'architecture',
+    slug: 'architecture',
+    title: 'I design chips or accelerators',
+    label: 'Architecture',
+    summary: 'How reconstructed computation maps to CPU, GPU, NPU, edge, or custom silicon.',
+    group: 'technical',
+    visitorType: 'partner',
+    audience: 'Semiconductor and accelerator architects',
+    intro:
+      'How a stronger, structure-preserving software layer could differentiate the hardware beneath it, and how reconstructed computation maps to your architecture. This usually begins with an architecture discussion and an ALPHA Core runtime-fit assessment.',
+    offers: [
+      'How representation maps to your architecture',
+      'Where ALPHA Core runtime-fit is assessed',
+      'The path from discussion to evaluation',
+    ],
+    ctaLabel: 'Request an architecture discussion',
+    ctaHref: routes.review,
+  },
   investor: {
     id: 'investor',
     slug: 'investor',
@@ -84,7 +130,7 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     intro:
       'The computational-infrastructure thesis, the IP-and-licensing model, and how iTrix participates in the value it creates. Figures and the data room are shared directly.',
     offers: ['The infrastructure thesis in brief', 'The asset-light, IP-led model', 'How to reach the team for the data room'],
-    ctaLabel: 'Request a briefing',
+    ctaLabel: 'Request an investor briefing',
     ctaHref: routes.review,
   },
   partner: {
@@ -116,35 +162,6 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     ctaLabel: 'Contact the team',
     ctaHref: routes.review,
   },
-  media: {
-    id: 'media',
-    slug: 'media',
-    title: 'I am from the media',
-    label: 'Media',
-    summary: 'Accurate framing, the thesis, and what can be said publicly.',
-    group: 'communications',
-    visitorType: 'media',
-    audience: 'Journalists and analysts',
-    intro:
-      'The accurate, public framing of what iTrix does — written carefully so the claims stay correct. Mechanism detail and numbers are not public.',
-    offers: ['Accurate one-line and paragraph framing', 'What is and is not public', 'Press contact'],
-    ctaLabel: 'See the media framing',
-    ctaHref: routes.room('media'),
-  },
-  creator: {
-    id: 'creator',
-    slug: 'creator',
-    title: 'I make things with this',
-    label: 'Creator',
-    summary: 'For builders and educators explaining the ideas.',
-    group: 'communications',
-    visitorType: 'creator',
-    audience: 'Creators, educators, and explainers',
-    intro: 'The public concepts, framed so they can be explained accurately without crossing the disclosure boundary.',
-    offers: ['Public-safe concept explanations', 'The metaphors that hold up', 'What to avoid claiming'],
-    ctaLabel: 'Explore the concepts',
-    ctaHref: routes.technology,
-  },
   'public-infrastructure': {
     id: 'public-infrastructure',
     slug: 'public-infrastructure',
@@ -160,11 +177,60 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     ctaLabel: 'Begin a review',
     ctaHref: routes.review,
   },
-  explore: {
-    id: 'explore',
-    slug: 'explore',
+  'sustainable-ai': {
+    id: 'sustainable-ai',
+    slug: 'sustainable-ai',
+    title: 'Energy is my real constraint',
+    label: 'Sustainable AI',
+    summary: 'Reducing the energy burden by reconstructing computation before scaling hardware.',
+    group: 'capital',
+    visitorType: 'public_infrastructure',
+    audience: 'Infrastructure and data-centre strategists',
+    intro:
+      'When the constraint is power, not silicon. itriX explores whether part of the energy burden can be reduced by reconstructing computation before infrastructure is scaled — the most direct expression of the mission: sustainable AI through better structure, not only more power.',
+    offers: [
+      'Where energy is spent on avoidable work',
+      'How representation-first lowers the ask on hardware',
+      'Where ALPHA Core fits when hardware is involved',
+    ],
+    ctaLabel: 'Explore sustainable AI infrastructure',
+    ctaHref: routes.review,
+  },
+  media: {
+    id: 'media',
+    slug: 'media',
+    title: 'I am from the media',
+    label: 'Media',
+    summary: 'Accurate framing, the thesis, and what can be said publicly.',
+    group: 'communications',
+    visitorType: 'media',
+    audience: 'Journalists and analysts',
+    intro:
+      'The accurate, public framing of what iTrix does — written carefully so the claims stay correct. Mechanism detail and numbers are not public.',
+    offers: ['Accurate one-line and paragraph framing', 'What is and is not public', 'Press contact'],
+    ctaLabel: 'Request a media / story kit',
+    ctaHref: routes.room('story'),
+  },
+  story: {
+    id: 'story',
+    slug: 'story',
+    title: 'I want to tell the story',
+    label: 'Story',
+    summary: 'A media / story kit: accurate framing, quotes, and what can be said publicly.',
+    group: 'communications',
+    visitorType: 'media',
+    audience: 'Journalists, storytellers, and explainers',
+    intro:
+      'A story kit for telling the itriX story accurately: the public thesis, the metaphors that hold up, approved framing, and the disclosure boundary — so the claims stay correct without crossing into mechanism detail.',
+    offers: ['Approved public framing and quotes', 'The metaphors that hold up', 'What to avoid claiming'],
+    ctaLabel: 'Request the story kit',
+    ctaHref: routes.review,
+  },
+  orientation: {
+    id: 'orientation',
+    slug: 'orientation',
     title: 'I am just exploring',
-    label: 'Explore',
+    label: 'Orientation',
     summary: 'No agenda — start with the idea and follow it where it goes.',
     group: 'orientation',
     visitorType: 'general',

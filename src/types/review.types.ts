@@ -16,7 +16,18 @@ export interface PressureSignal {
   prompt: string; // visitor-facing phrasing of the pressure
 }
 
-export type ReviewStep = 'prompt' | 'qualify' | 'result' | 'confirmation';
+/**
+ * Review steps. v3.0 adds 'preparing' (the hand-off page) and 'diagnosed' (state
+ * once the customized page exists). 'result'/'confirmation' are retained for
+ * backward-compat with any persisted store from the shipped build.
+ */
+export type ReviewStep =
+  | 'prompt'
+  | 'qualify'
+  | 'preparing'
+  | 'diagnosed'
+  | 'result'
+  | 'confirmation';
 
 export interface PromptSubmission {
   sessionId: string | null;

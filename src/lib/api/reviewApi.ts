@@ -4,7 +4,7 @@ import type { QualificationAnswers } from '@/types/qualification.types';
 import type { ScoreBreakdown, LeadTier } from '@/types/lead.types';
 import type { ProductRoute, LicensePathway } from '@/types/product.types';
 import type { VisitorType } from '@/types/visitor.types';
-import type { ResultPage } from '@/types/result.types';
+import type { JourneyState } from '@/types/journey.types';
 
 /** Same-origin POST helper. The Next route handlers under /api proxy to Django. */
 export async function postJson<T>(url: string, body: unknown): Promise<ApiResponse<T>> {
@@ -55,6 +55,13 @@ export interface QualifyRequest {
   clientId?: string | null;
   answers: QualificationAnswers;
 }
+
+/**
+ * v3.0: qualify now also returns the client-page capability token + journey state,
+ * because the backend advances the journey to DIAGNOSED and mints the token as part
+ * of qualification. The old ResultPage flow (/api/review/result) is removed — the
+ * personalized result is served through the token-gated /c/[token] page instead.
+ */
 export interface QualifyResponse {
   leadId: string | null;
   totalScore: number;
@@ -62,16 +69,11 @@ export interface QualifyResponse {
   tier: LeadTier;
   productRoute: ProductRoute;
   licensePathway: LicensePathway | null;
-}
-
-export interface ResultRequest {
-  leadId: string | null;
-  sessionId?: string | null;
-  answers?: QualificationAnswers;
+  capabilityToken: string | null;
+  journeyState: JourneyState | null;
 }
 
 export const reviewApi = {
   submit: (req: SubmitReviewRequest) => postJson<SubmitReviewResponse>('/api/review/submit', req),
   qualify: (req: QualifyRequest) => postJson<QualifyResponse>('/api/review/qualify', req),
-  result: (req: ResultRequest) => postJson<ResultPage>('/api/review/result', req),
 };

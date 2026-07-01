@@ -9,6 +9,11 @@ import { NavLink } from './NavLink';
 import { MobileMenu } from './MobileMenu';
 import { Button } from '@/components/ui/Button';
 
+/**
+ * Public header. v3.0: a single primary action — "Begin Compute Review" — and no
+ * Sign-in link on the public surface (the portal has its own entry). Product detail
+ * is pulled through the nav dropdowns and page drawers, not pushed.
+ */
 export function Header() {
   const toggleMenu = useUiStore((s) => s.toggleMobileMenu);
   const menuOpen = useUiStore((s) => s.mobileMenuOpen);

@@ -8,12 +8,18 @@ export interface OpenGraphInput {
   image?: string;
 }
 
-/** Builds the Open Graph + Twitter slice of a page's Metadata (Phase 2/3 pages spread this in). */
+/**
+ * Builds the Open Graph + Twitter slice of a page's Metadata. Finalized for
+ * production: the image is resolved to an absolute URL (crawlers require it) and the
+ * canonical URL is derived from the site origin.
+ */
 export function buildOpenGraph({ title, description, path = '/', image }: OpenGraphInput): Metadata {
   const url = new URL(path, siteConfig.url).toString();
   const desc = description ?? siteConfig.description;
-  const img = image ?? siteConfig.ogImage;
+  const rawImg = image ?? siteConfig.ogImage;
+  const img = rawImg.startsWith('http') ? rawImg : new URL(rawImg, siteConfig.url).toString();
   return {
+    metadataBase: new URL(siteConfig.url),
     openGraph: {
       type: 'website',
       siteName: siteConfig.name,

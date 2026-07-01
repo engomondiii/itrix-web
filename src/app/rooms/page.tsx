@@ -3,23 +3,25 @@ import { RoomEntryCard } from '@/components/rooms/RoomEntryCard';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { buildMetadata } from '@/components/seo/PageMeta';
 import { ROOM_LIST, ROOM_GROUP_LABEL } from '@/lib/content/visitorRooms';
-import type { RoomGroup } from '@/types/room.types';
+import { ROOM_GROUP_ORDER } from '@/constants/rooms';
 import { routes } from '@/constants/routes';
 
 export const metadata = buildMetadata({
   title: 'Find your room',
-  description: 'Ten ways into iTrix — choose the one that fits why you are here.',
+  description: 'Thirteen ways into iTrix — choose the one that fits why you are here.',
   path: routes.rooms,
 });
 
-const GROUP_ORDER: RoomGroup[] = ['operator', 'technical', 'capital', 'communications', 'orientation'];
-
 export default function RoomsPage() {
   return (
-    <PageWrapper eyebrow="Visitor rooms" title="Why are you here?" grid
-      lead="Pick the door that fits. Each room routes you to the right material — and the site quietly learns how to follow up well.">
+    <PageWrapper
+      eyebrow="Visitor rooms"
+      title="Why are you here?"
+      grid
+      lead="Pick the door that fits. Each room routes you to the right material — and the site quietly learns how to follow up well."
+    >
       <div className="flex flex-col gap-12">
-        {GROUP_ORDER.map((group) => {
+        {ROOM_GROUP_ORDER.map((group) => {
           const rooms = ROOM_LIST.filter((r) => r.group === group);
           if (rooms.length === 0) return null;
           return (

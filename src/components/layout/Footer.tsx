@@ -3,6 +3,11 @@ import { footerNav } from '@/config/navigation.config';
 import { brand } from '@/constants/brand';
 import { routes } from '@/constants/routes';
 
+/**
+ * Public footer (Playbook §07). A single calm one-line statement of what itriX does,
+ * the pulled-not-pushed link set, and legal. No aggressive CTAs; the review is the
+ * one action, offered contextually elsewhere.
+ */
 export function Footer() {
   const year = new Date().getFullYear();
   return (
@@ -12,7 +17,10 @@ export function Footer() {
           <Link href={routes.home} className="text-lg font-bold tracking-tight">
             iTri<span className="text-gold-400">X</span>
           </Link>
-          <p className="mt-3 text-secondary text-on-indigo-muted">{brand.positioning}</p>
+          <p className="mt-3 text-secondary text-on-indigo-muted">
+            itriX makes computation worth scaling — we change the form of a workload before it runs,
+            and validate any benefit through evaluation.
+          </p>
           <p className="mt-4 text-caption italic text-on-indigo-muted">“{brand.thesis}”</p>
         </div>
         {footerNav.map((col) => (

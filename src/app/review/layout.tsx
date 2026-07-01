@@ -7,10 +7,9 @@ import { routes } from '@/constants/routes';
 
 /**
  * Layout for the Compute Bottleneck Review segment. Provides the review + lead
- * contexts and the focused ReviewLayout chrome. Funnel pages are noindex.
- *
- * Production note: to drop the global Header/Footer for this flow entirely, move
- * the review pages into a (review) route group with this as its group layout.
+ * contexts and the focused ReviewLayout chrome. The segment now hosts an embedded
+ * conversation (intake → two-stage questions → preparing hand-off). Funnel pages
+ * are noindex.
  */
 export const metadata = buildMetadata({ title: 'Compute Bottleneck Review', path: routes.review, noIndex: true });
 

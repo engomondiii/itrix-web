@@ -1,33 +1,25 @@
 import { StructuredData } from '@/components/seo/StructuredData';
-import { HeroSection } from '@/components/homepage/HeroSection';
-import { BottleneckReviewSurface } from '@/components/homepage/BottleneckReviewSurface';
+import { PromptLanding } from '@/components/homepage/PromptLanding';
 import { ThinksDifferentlySection } from '@/components/homepage/ThinksDifferentlySection';
-import { ProblemMirrorSection } from '@/components/homepage/ProblemMirrorSection';
-import { PathRecommendationSection } from '@/components/homepage/PathRecommendationSection';
-import { BriefingPreviewSection } from '@/components/homepage/BriefingPreviewSection';
 import { TrustLayerSection } from '@/components/homepage/TrustLayerSection';
-import { VisitorRoomsSection } from '@/components/homepage/VisitorRoomsSection';
-import { EmailCaptureSection } from '@/components/homepage/EmailCaptureSection';
+import { InfoDrawerRow } from '@/components/homepage/InfoDrawerRow';
 import { HumanFollowUpSection } from '@/components/homepage/HumanFollowUpSection';
 
 /**
- * Homepage — fully assembled in Phase 3: the static narrative (Phase 2) interleaved
- * with the live funnel surface and dynamic sections. The review surface warms the
- * review store; visitors continue at /review.
+ * Homepage — prompt-first (Surface 1 v3.0). The prompt landing is the first screen;
+ * the calm static narrative and the pulled-not-pushed drawers sit below the fold.
+ * The dynamic funnel sections (bottleneck surface, problem mirror, path
+ * recommendation, briefing/email/rooms) are removed — their content now lives in the
+ * embedded review conversation and on the token-gated customized client page.
  */
 export default function HomePage() {
   return (
     <>
       <StructuredData />
-      <HeroSection />
-      <BottleneckReviewSurface />
+      <PromptLanding />
       <ThinksDifferentlySection />
-      <ProblemMirrorSection />
-      <PathRecommendationSection />
-      <BriefingPreviewSection />
       <TrustLayerSection />
-      <VisitorRoomsSection />
-      <EmailCaptureSection />
+      <InfoDrawerRow />
       <HumanFollowUpSection />
     </>
   );
