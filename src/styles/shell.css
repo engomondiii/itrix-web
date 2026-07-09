@@ -1,0 +1,22 @@
+/* Atelier Indigo · Shell (Surface 1 v3.1) — AI-app shell motion + helpers.
+   Keeps the rail/canvas transitions calm and honours prefers-reduced-motion. */
+
+@keyframes ai-slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ai-bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+@layer utilities {
+  .animate-slide-in-left { animation: ai-slide-in-left var(--duration-base, 200ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both; }
+  .animate-bounce-slow { animation: ai-bounce-slow 1.8s ease-in-out infinite; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-in-left,
+  .animate-bounce-slow { animation: none !important; }
+}
