@@ -1,31 +1,44 @@
-# itriX Web Fix — qualify proxy normalizes the backend response
+# itriX Web Fix v4.0.2 — the /c/[token] page "We hit an unexpected error" crash
 
-## What this fixes
-Even once the backend returns the token, the qualify proxy passed the backend body
-through verbatim. The backend sends **snake_case** with a nested `score` object
-(`lead_id`, `score.total`, `product_route`, …) while the browser reads **camelCase**
-(`leadId`, `totalScore`, `scoreBreakdown`, `capabilityToken`, `journeyState`). This
-mapping was missing, so scoring silently fell back to the local estimate and the token
-never reached the client.
+## Symptom
+After the hang was fixed, the review reached `/c/<token>` but the page threw:
+`TypeError: Cannot read properties of undefined (reading 'label')` and showed
+"We hit an unexpected error".
 
-## The change (1 file)
-`src/app/api/review/qualify/route.ts`
-- Normalizes the backend body → the exact camelCase contract `reviewApi.qualify`
-  expects. Accepts **both** casings and even extracts the token from a `reveal` /
-  `reveals` descriptor, so it is robust to future backend shape tweaks.
-- On backend 2xx-without-token it still returns the mapped scoring with
-  `capabilityToken: null`; `/review/preparing` then falls back to polling
-  `GET /journey/{token}` rather than dead-ending.
-- Pair with the backend fix (which supplies the token); together they resolve the
-  stuck `/review/preparing` state.
+## Root cause
+The backend `build_client_page` and the frontend `ClientPage` contract are different
+shapes, and the client-page proxy passed the backend body through unchanged:
+- Backend diagnosis rows: `{pressure, observation, itrixInterpretation, alphaRole}`
+- Frontend `ClientPageShell` reads: `row.label` and `row.relevance`
+So `page.diagnosis` was a non-empty array whose rows had **no `.label`** →
+`<li key={row.label}>` + `relevanceTone[row.relevance]` crashed the whole page.
+(The backend also nests the pitch under `pitch:{pitchType,headline,slides}` and omits
+`token`/`visitorPain`/`conversationId` that the components expect at top level.)
 
-## How to apply
-From the `itrix-web` root (the folder with `package.json`):
+## The fix (2 files)
+- `src/app/api/client-page/[token]/route.ts`
+  - Normalizes the backend payload into the exact `ClientPage` shape: maps diagnosis rows
+    to `{label, relevance}` (label from the pressure's human name / observation; relevance
+    from the visitor's own selected pressures first), flattens `pitch` → top-level
+    `pitchType`/`slides`, and fills `token`/`visitorPain`/`conversationId`. Tolerant of
+    both the old and new shapes so it can't drift again.
+- `src/components/client-page/ClientPageShell.tsx`
+  - Belt-and-braces: coerces each list to an array and filters malformed rows, and reads
+    `relevance` through a safe accessor, so no single missing field can ever white-screen
+    the page again.
+
+## Apply
+From the `itrix-web` root (folder with `package.json`):
 ```bash
 unzip -o itrix-web-fix.zip -d _fix
-bash _fix/APPLY_WEB_FIX.sh
+bash _fix/web_fix/APPLY_WEB_FIX.sh
 ```
-The script backs up each file it overwrites (`*.bak-<timestamp>`), then rebuild/redeploy.
+Backs up every file it touches (`*.bak-<timestamp>`). Then rebuild/redeploy (`next build`).
 
 ## Verified
-`tsc --noEmit` passes for the whole project with this file applied (0 errors).
+- `tsc --noEmit` passes for the whole project (0 errors).
+- The transform was run against the **real** backend `build_client_page` payload: the
+  `{pressure, observation, …}` rows become clean `{label, relevance}` rows
+  (e.g. "Compute cost growth"/high, "Stability or accuracy drift"/medium), and every field
+  `ClientPageShell` / `PersonalizedHero` / `PitchSlideDeck` reads is present and typed —
+  no undefined `.label` / `.relevance`.

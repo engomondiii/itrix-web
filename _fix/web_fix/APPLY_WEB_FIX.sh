@@ -1,18 +1,17 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# itriX web (Next.js) fix applier
+# itriX web (Next.js) fix applier  (v4.0.2 — client-page render crash)
 #
-# Run this FROM THE itrix-web ROOT (the directory that contains package.json):
+# Run FROM THE itrix-web ROOT (the directory that contains package.json):
 #
 #     cd /path/to/itrix-web
 #     unzip -o itrix-web-fix.zip -d _fix
-#     bash _fix/APPLY_WEB_FIX.sh
+#     bash _fix/web_fix/APPLY_WEB_FIX.sh
 #
 # Backs up each overwritten file (…​.bak-YYYYmmddHHMMSS) then copies the fixed files
 # into their exact locations. Idempotent + safe to re-run.
 # ─────────────────────────────────────────────────────────────────────────────
 set -euo pipefail
-
 SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST_ROOT="$(pwd)"
 if [[ ! -f "$DEST_ROOT/package.json" ]]; then
@@ -20,27 +19,18 @@ if [[ ! -f "$DEST_ROOT/package.json" ]]; then
   echo "       current dir: $DEST_ROOT" >&2
   exit 1
 fi
-
 STAMP="$(date +%Y%m%d%H%M%S)"
 FILES=(
-  "src/app/api/review/qualify/route.ts"
+  "src/app/api/client-page/[token]/route.ts"
+  "src/components/client-page/ClientPageShell.tsx"
 )
-
-echo "itriX web fix → applying ${#FILES[@]} file(s) into: $DEST_ROOT"
+echo "itriX web fix (v4.0.2) → applying ${#FILES[@]} file(s) into: $DEST_ROOT"
 for rel in "${FILES[@]}"; do
-  src="$SRC_DIR/$rel"
-  dest="$DEST_ROOT/$rel"
-  if [[ ! -f "$src" ]]; then
-    echo "  ! missing payload file: $rel (skipped)" >&2
-    continue
-  fi
+  src="$SRC_DIR/$rel"; dest="$DEST_ROOT/$rel"
+  if [[ ! -f "$src" ]]; then echo "  ! missing payload: $rel (skipped)" >&2; continue; fi
   mkdir -p "$(dirname "$dest")"
-  if [[ -f "$dest" ]]; then
-    cp -p "$dest" "$dest.bak-$STAMP"
-    echo "  • backed up  $rel  →  $rel.bak-$STAMP"
-  fi
-  cp -f "$src" "$dest"
-  echo "  ✓ applied    $rel"
+  if [[ -f "$dest" ]]; then cp -p "$dest" "$dest.bak-$STAMP"; echo "  • backed up  $rel"; fi
+  cp -f "$src" "$dest"; echo "  ✓ applied    $rel"
 done
-
-echo "Done. Rebuild/redeploy the web app (e.g. next build) to pick up the change."
+echo
+echo "Done. Rebuild/redeploy the web app (next build) to pick up the change."
