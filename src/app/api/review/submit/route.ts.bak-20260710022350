@@ -58,12 +58,7 @@ export async function POST(req: Request) {
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         cache: 'no-store',
         redirect: 'follow',
-        // Backend CharFields reject null — only include these when we actually have a
-        // value, so the serializer's defaults ("" / "unknown") apply otherwise.
-        body: JSON.stringify({
-          ...(body.clientId ? { client_id: body.clientId } : {}),
-          ...(body.visitorType ? { visitor_type: body.visitorType } : {}),
-        }),
+        body: JSON.stringify({ client_id: body.clientId ?? null, visitor_type: body.visitorType ?? null }),
       });
       debug.sessionStatus = created.status;
 
