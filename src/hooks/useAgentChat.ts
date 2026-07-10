@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useChatStore } from '@/store/chatStore';
 import { clientPageApi, reviewChatApi } from '@/lib/api/clientPageApi';
 import { useSocket } from '@/lib/realtime/useSocket';
@@ -12,6 +12,9 @@ import type { MessageDeltaPayload, MessageFinalPayload, MessageUnderReviewPayloa
 function localId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
+
+/** If the socket sends nothing back this fast, we fall back to the REST POST. */
+const STREAM_FIRST_TOKEN_TIMEOUT_MS = 4000;
 
 /** Guarantee a fully-formed ChatMessage — never let `citations` be undefined. */
 function normalizeMessage(m: Partial<ChatMessage> & { id: string; conversationId: string }): ChatMessage {
@@ -42,11 +45,13 @@ interface UseAgentChatArgs {
  * Embedded governed chat for a single conversation.
  *
  * Realtime ON: the agent reply streams over the socket (message.delta → message.final);
- * a held reply arrives as message.under_review. Realtime OFF (or socket not open): the
- * Phase 1 request/response POST is used — identical surface, same "under review" state.
+ * a held reply arrives as message.under_review.
  *
- * v4.0.3: every message that enters the store is passed through ``normalizeMessage`` so a
- * missing ``citations`` (from any transport) can never crash ``ChatThread``.
+ * v4.0.7 — NEVER-HANG GUARANTEE: after emitting over the socket we arm a watchdog. If no
+ * token/final arrives within STREAM_FIRST_TOKEN_TIMEOUT_MS (socket dropped, server stream
+ * yielded nothing, frame-shape drift, whatever), we transparently fall back to the REST
+ * POST so the user always gets a reply instead of staring at "preparing a response". The
+ * first streamed token cancels the watchdog and the reply streams normally.
  */
 export function useAgentChat({ context, conversationId, token, sessionId }: UseAgentChatArgs) {
   const ensureThread = useChatStore((s) => s.ensureThread);
@@ -58,6 +63,19 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
   const thread = useChatStore((s) => s.threads[conversationId]);
 
   ensureThread(conversationId, context);
+
+  // Tracks the in-flight turn so the watchdog knows whether streaming actually started.
+  const inflightRef = useRef<{ gotToken: boolean; timer: ReturnType<typeof setTimeout> | null }>({
+    gotToken: false,
+    timer: null,
+  });
+
+  const clearWatchdog = () => {
+    if (inflightRef.current.timer) {
+      clearTimeout(inflightRef.current.timer);
+      inflightRef.current.timer = null;
+    }
+  };
 
   const realtime = siteConfig.featureFlags.realtime && (context === 'client_page' || context === 'review');
   const socketUrl =
@@ -73,6 +91,8 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
     enabled: realtime && Boolean(socketUrl),
     handlers: {
       'message.delta': (p: MessageDeltaPayload) => {
+        inflightRef.current.gotToken = true;
+        clearWatchdog();
         const cid = p.conversationId || conversationId;
         const existing = useChatStore
           .getState()
@@ -93,12 +113,16 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
         setPending(cid, true);
       },
       'message.final': (p: MessageFinalPayload) => {
+        inflightRef.current.gotToken = true;
+        clearWatchdog();
         const cid = p.conversationId || conversationId;
         upsertStreaming(cid, normalizeMessage({ ...p.message, conversationId: cid, streaming: false }));
         setPending(cid, false);
         setUnderReview(cid, false);
       },
       'message.under_review': (p: MessageUnderReviewPayload) => {
+        inflightRef.current.gotToken = true;
+        clearWatchdog();
         const cid = p.conversationId || conversationId;
         setUnderReview(cid, true);
         setPending(cid, false);
@@ -106,28 +130,9 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
     },
   });
 
-  const send = useCallback(
-    async (body: string) => {
-      const text = body.trim();
-      if (!text) return;
-
-      const clientMsg = normalizeMessage({
-        id: localId('c'),
-        conversationId,
-        senderKind: 'client',
-        body: text,
-      });
-      appendMessage(conversationId, clientMsg);
-      setPending(conversationId, true);
-      setUnderReview(conversationId, false);
-
-      // Live path: emit over the socket; deltas/final arrive via handlers above.
-      if (realtime && connected) {
-        socketSend({ type: 'chat.send', payload: { conversationId, body: text } });
-        return;
-      }
-
-      // Fallback path: request/response POST.
+  // The REST fallback (also used directly when realtime is off / socket not open).
+  const sendViaRest = useCallback(
+    async (text: string) => {
       const res =
         context === 'client_page' && token
           ? await clientPageApi.sendChat(token, text, conversationId)
@@ -146,7 +151,43 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
       }
       setPending(conversationId, false);
     },
-    [context, conversationId, token, sessionId, realtime, connected, socketSend, appendMessage, setPending, setUnderReview, setError],
+    [context, conversationId, token, sessionId, appendMessage, setPending, setUnderReview, setError],
+  );
+
+  const send = useCallback(
+    async (body: string) => {
+      const text = body.trim();
+      if (!text) return;
+
+      const clientMsg = normalizeMessage({
+        id: localId('c'),
+        conversationId,
+        senderKind: 'client',
+        body: text,
+      });
+      appendMessage(conversationId, clientMsg);
+      setPending(conversationId, true);
+      setUnderReview(conversationId, false);
+
+      // Live path: emit over the socket; deltas/final arrive via handlers above.
+      // Arm a watchdog so we never hang if the stream produces nothing.
+      if (realtime && connected) {
+        inflightRef.current.gotToken = false;
+        clearWatchdog();
+        socketSend({ type: 'chat.send', payload: { conversationId, body: text } });
+        inflightRef.current.timer = setTimeout(() => {
+          if (!inflightRef.current.gotToken) {
+            // Streaming never started — fall back to the REST reply so the user is not stuck.
+            void sendViaRest(text);
+          }
+        }, STREAM_FIRST_TOKEN_TIMEOUT_MS);
+        return;
+      }
+
+      // Realtime off or socket not open → straight to REST.
+      await sendViaRest(text);
+    },
+    [conversationId, realtime, connected, socketSend, appendMessage, setPending, setUnderReview, sendViaRest],
   );
 
   return {

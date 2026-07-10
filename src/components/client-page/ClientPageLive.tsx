@@ -11,27 +11,31 @@ import type { ClientPageDeltaPayload, ClientPageFinalPayload } from '@/lib/realt
 /**
  * Live-updating wrapper around ClientPageShell.
  *
- * The /c/[token] page renders INSTANTLY from the server-fetched payload. Then:
+ * The /c/[token] page renders INSTANTLY from the server-fetched payload, then upgrades to
+ * the AI version WITHOUT a manual reload:
  *
- *  • Realtime ON (default in production): it opens the client-page WebSocket and watches
- *    the page GENERATE in real time — `clientpage.delta` streams the "what we heard"
- *    narrative token-by-token (so the visitor sees it being written, like Claude), and
- *    `clientpage.final` swaps in the fully-assembled AI page the moment it's ready. No
- *    reload, no waiting on a blank swap.
+ *  • Realtime ON: it opens the client-page WebSocket. `clientpage.delta` streams the
+ *    "what we heard" narrative token-by-token (visible generation, like Claude), and
+ *    `clientpage.final` swaps in the fully-assembled AI page.
  *
- *  • Realtime OFF / socket unavailable: it silently polls /api/client-page/{token} until
- *    the AI-enriched version lands (the previous behavior), then stops. If nothing richer
- *    ever arrives, the deterministic page remains (fully valid, claim-safe).
+ *  • NEVER-HANG GUARANTEE (v4.0.7): if the socket doesn't deliver a delta/final within
+ *    STREAM_TIMEOUT_MS (dropped, no data, frame drift), we start polling the REST endpoint
+ *    until the AI-enriched page lands — so the visitor ALWAYS ends up on the AI version on
+ *    first visit, reload-free, whether or not streaming works. If realtime is off we poll
+ *    from the start.
  */
-const POLL_MS = 3000;
+const POLL_MS = 2500;
 const MAX_WAIT_MS = 90000;
+const STREAM_TIMEOUT_MS = 5000;
 
 export function ClientPageLive({ token, initialPage }: { token: string; initialPage: ClientPage }) {
   const [page, setPage] = useState<ClientPage>(initialPage);
-  // A live-streaming narrative buffer; while non-null it overrides page.problemMirror.
   const [streamingMirror, setStreamingMirror] = useState<string | null>(null);
   const doneRef = useRef<boolean>(initialPage.usedAi === true);
   const startedAt = useRef<number>(Date.now());
+  const gotStreamRef = useRef<boolean>(false);
+  // Toggles the polling effect on when streaming didn't start in time.
+  const [pollFallback, setPollFallback] = useState<boolean>(false);
 
   const realtime = siteConfig.featureFlags.realtime;
 
@@ -42,11 +46,13 @@ export function ClientPageLive({ token, initialPage }: { token: string; initialP
     enabled: realtime && !doneRef.current,
     handlers: {
       'clientpage.delta': (p: ClientPageDeltaPayload) => {
+        gotStreamRef.current = true;
         if (p.field === 'problemMirror') {
           setStreamingMirror((prev) => (prev ?? '') + p.delta);
         }
       },
       'clientpage.final': (p: ClientPageFinalPayload) => {
+        gotStreamRef.current = true;
         if (p.page) {
           doneRef.current = true;
           setStreamingMirror(null);
@@ -56,18 +62,27 @@ export function ClientPageLive({ token, initialPage }: { token: string; initialP
     },
   });
 
-  // Ask the server to stream this page exactly once, when the socket opens.
+  // Ask the server to stream this page once, when the socket opens; arm a fallback timer.
   const subscribedRef = useRef(false);
   useEffect(() => {
-    if (connected && !subscribedRef.current && !doneRef.current) {
+    if (!realtime || doneRef.current) return;
+    if (connected && !subscribedRef.current) {
       subscribedRef.current = true;
       send({ type: 'subscribe', payload: { channel: 'clientpage' } });
     }
-  }, [connected, send]);
+    // If nothing streams back in time, switch to polling so the AI page still lands.
+    const t = setTimeout(() => {
+      if (!gotStreamRef.current && !doneRef.current) {
+        setPollFallback(true);
+      }
+    }, STREAM_TIMEOUT_MS);
+    return () => clearTimeout(t);
+  }, [connected, send, realtime]);
 
-  // ── Fallback path: poll only when realtime is off ────────────────────────
+  // ── Fallback path: poll when realtime is off OR the stream didn't start ───
   useEffect(() => {
-    if (doneRef.current || realtime) return; // realtime path handles it otherwise
+    const shouldPoll = !realtime || pollFallback;
+    if (!shouldPoll || doneRef.current) return;
 
     let cancelled = false;
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -96,6 +111,7 @@ export function ClientPageLive({ token, initialPage }: { token: string; initialP
         if (cancelled) return;
         if (next && next.usedAi === true) {
           doneRef.current = true;
+          setStreamingMirror(null);
           setPage(next);
           stop();
         }
@@ -110,9 +126,8 @@ export function ClientPageLive({ token, initialPage }: { token: string; initialP
       cancelled = true;
       stop();
     };
-  }, [token, realtime]);
+  }, [token, realtime, pollFallback]);
 
-  // While the narrative is streaming, show it live in place of the static mirror.
   const displayPage: ClientPage =
     streamingMirror != null ? { ...page, problemMirror: streamingMirror } : page;
 
