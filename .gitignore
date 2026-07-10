@@ -141,3 +141,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# patch scratch
+_fix/
+web_fix/
+backend_fix/
+*.bak-*
+itrix-*-fix.zip
