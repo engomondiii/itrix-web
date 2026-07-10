@@ -54,8 +54,6 @@ export interface ClientPage {
   slides: PitchSlide[];
   /** The id of the conversation embedded on this page. */
   conversationId: string | null;
-  /** True once the AI-enriched narrative has been generated (drives auto-refresh). */
-  usedAi?: boolean;
 }
 
 /** A minimal Client (portal account) reference. */

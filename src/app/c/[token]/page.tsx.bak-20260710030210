@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { buildMetadata } from '@/components/seo/PageMeta';
 import { JourneyProvider } from '@/context/JourneyContext';
-import { ClientPageLive } from '@/components/client-page/ClientPageLive';
+import { ClientPageShell } from '@/components/client-page/ClientPageShell';
 import type { ClientPage } from '@/types/client.types';
 import type { Metadata } from 'next';
 
@@ -35,12 +35,9 @@ export default async function ClientPageRoute({ params }: { params: Promise<{ to
   const page = await fetchClientPage(token);
   if (!page) notFound();
 
-  // Instant render from the (possibly deterministic) server payload; ClientPageLive then
-  // polls in the background and swaps in the AI-enriched version when it's ready — no
-  // manual reload needed.
   return (
     <JourneyProvider token={token}>
-      <ClientPageLive token={token} initialPage={page} />
+      <ClientPageShell page={page} />
     </JourneyProvider>
   );
 }

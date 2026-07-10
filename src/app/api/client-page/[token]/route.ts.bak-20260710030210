@@ -183,6 +183,5 @@ function normalizeClientPage(raw: AnyRec, token: string): ClientPage {
     recommendedNextStep: str(raw.recommendedNextStep),
     slides,
     conversationId: str(raw.conversationId) || (pitch.conversationId ? str(pitch.conversationId) : null),
-    usedAi: raw.usedAi === true || raw.used_ai === true,
   };
 }
