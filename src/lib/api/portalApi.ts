@@ -47,7 +47,16 @@ async function sendJson<T>(url: string, body: unknown, method: 'POST' | 'PATCH' 
 
 export const portalApi = {
   // --- auth ---
-  claimInvite: (token: string, payload: { email?: string; password?: string }) =>
+  claimInvite: (
+    token: string,
+    payload: {
+      email?: string;
+      password?: string;
+      full_name?: string;
+      organization?: string;
+      role?: string;
+    },
+  ) =>
     sendJson<InviteClaimResult>(`/api/accounts/invite/${encodeURIComponent(token)}/claim`, payload),
   login: (email: string, password: string) =>
     sendJson<{ client: ClientIdentity }>(`/api/portal/auth/login`, { email, password }),

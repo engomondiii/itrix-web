@@ -10,6 +10,9 @@ export const dynamic = 'force-dynamic';
 interface ClaimBody {
   email?: string;
   password?: string;
+  full_name?: string;
+  organization?: string;
+  role?: string;
 }
 
 /**
@@ -32,7 +35,13 @@ export async function POST(req: Request, ctx: { params: Promise<{ token: string 
   }>(apiRoutes.accountInviteClaim(token), {
     method: 'POST',
     authed: false,
-    body: { email: body.email ?? null, password: body.password ?? null },
+    body: {
+      email: body.email ?? null,
+      password: body.password ?? null,
+      full_name: body.full_name ?? '',
+      organization: body.organization ?? '',
+      role: body.role ?? '',
+    },
   });
 
   if (res.status === 404 || res.status === 403 || res.status === 410) {
