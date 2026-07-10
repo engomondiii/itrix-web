@@ -5,10 +5,14 @@
  * client page, portal). Server → client events carry a `type` discriminator and a
  * `payload`; client → server events are the small set the UI can emit. Keeping the
  * map here means every socket consumer shares one contract.
+ *
+ * v4.0.3: adds `clientpage.delta` / `clientpage.final` so the customized client page can
+ * render its generation live (token-by-token) instead of polling for a background swap.
  */
 
 import type { ChatMessage, Citation, GovernanceStatus } from '@/types/chat.types';
 import type { JourneyState, RevealSurface, JourneyReveal } from '@/types/journey.types';
+import type { ClientPage } from '@/types/client.types';
 
 /** ---- Server → client payloads ---- */
 
@@ -44,6 +48,18 @@ export interface JourneyRevealPayload {
   accountInviteAvailable: boolean;
 }
 
+/** A streamed chunk of the client-page narrative as it generates (live). */
+export interface ClientPageDeltaPayload {
+  /** Which page field is streaming (currently "problemMirror"). */
+  field: string;
+  delta: string;
+}
+
+/** The fully-assembled client page, sent once generation completes. */
+export interface ClientPageFinalPayload {
+  page: ClientPage;
+}
+
 /** Presence in a portal conversation (who from the team is here). */
 export interface PresenceUpdatePayload {
   conversationId: string;
@@ -63,6 +79,8 @@ export type ServerEvent =
   | { type: 'message.final'; payload: MessageFinalPayload }
   | { type: 'message.under_review'; payload: MessageUnderReviewPayload }
   | { type: 'journey.reveal'; payload: JourneyRevealPayload }
+  | { type: 'clientpage.delta'; payload: ClientPageDeltaPayload }
+  | { type: 'clientpage.final'; payload: ClientPageFinalPayload }
   | { type: 'presence.update'; payload: PresenceUpdatePayload }
   | { type: 'team.typing'; payload: TeamTypingPayload }
   | { type: 'pong'; payload: Record<string, never> };

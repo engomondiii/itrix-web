@@ -148,3 +148,6 @@ web_fix/
 backend_fix/
 *.bak-*
 itrix-*-fix.zip
+
+# itriX patch safety backups
+.patch-backup-*/
