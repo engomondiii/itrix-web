@@ -7,7 +7,7 @@ export function StatusLine({ stage }: { stage: PortalStage }) {
   return (
     <div className="flex flex-col gap-1 rounded-md border border-line-subtle bg-surface-warm px-4 py-3">
       <SectionLabel withRule={false}>Where things stand</SectionLabel>
-      <p className="text-body text-ink-900">{PORTAL_STAGE_LINE[stage]}</p>
+      <p className="text-body text-ink-900">{PORTAL_STAGE_LINE[stage] ?? PORTAL_STAGE_LINE.review_ready}</p>
     </div>
   );
 }
