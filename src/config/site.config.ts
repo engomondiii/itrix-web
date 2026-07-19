@@ -10,15 +10,22 @@ function flag(value: string | undefined): boolean {
 }
 
 /**
- * Feature flags. Phase 3 finalizes the realtime reads: with realtime + agentChat ON,
- * journey + chat run over live WebSockets (GET/poll stays as the fallback); with them
- * OFF, everything degrades to the Phase 1/2 polling behavior. clientPortal gates the
- * (portal) route group. All default OFF so a fresh deploy is safe.
- *   realtime      → live WebSockets for journey + chat + presence (ws/*)
- *   clientPortal  → the (portal) route group
- *   agentChat     → embedded governed agent chat (live streaming when realtime on)
+ * Feature flags. All default OFF so a fresh deploy is safe.
+ *
+ *   customerSuccess   — Phase 3. The State 10 zone and the overlay that begins
+ *                       at the first payment. With it off the success routes
+ *                       render their unavailable state and fetch nothing.
+ *   relationshipShell — Phase 2. Drives the shell from the backend journey
+ *                       payload: real rail contracts, state-aware growth, and
+ *                       centre morphing. With it OFF the rails stay ambient and
+ *                       every route behaves exactly as it did in Phase 1.
+ *   realtime          — live WebSockets for journey + rails + chat + presence
+ *   clientPortal      — the (portal) route group
+ *   agentChat         — embedded governed agent chat
  */
 export const featureFlags = {
+  relationshipShell: flag(process.env.NEXT_PUBLIC_ENABLE_RELATIONSHIP_SHELL),
+  customerSuccess: flag(process.env.NEXT_PUBLIC_ENABLE_CUSTOMER_SUCCESS),
   realtime: flag(process.env.NEXT_PUBLIC_ENABLE_REALTIME),
   clientPortal: flag(process.env.NEXT_PUBLIC_ENABLE_CLIENT_PORTAL),
   agentChat: flag(process.env.NEXT_PUBLIC_ENABLE_AGENT_CHAT),
@@ -30,19 +37,13 @@ export const siteConfig = {
   description:
     'iTrix builds computational AI infrastructure for sustainable AI. ALPHA Compute diagnoses how a workload is represented; ALPHA Core validates whether the transformed representation can run.',
   keywords: [
-    'computational AI infrastructure',
-    'sustainable AI',
-    'ALPHA Compute',
-    'ALPHA Core',
-    'AXIOM',
-    'CRE',
-    'FQNM',
-    'compute bottleneck',
+    'computational AI infrastructure', 'sustainable AI', 'ALPHA Compute',
+    'ALPHA Core', 'AXIOM', 'CRE', 'FQNM', 'compute bottleneck',
   ],
   url: siteUrl,
   apiUrl,
   wsUrl,
-  /** The portal lives inside this same site (Playbook §03); base kept for absolute links. */
+  /** The portal lives inside this same site; base kept for absolute links. */
   portalUrl: `${siteUrl}/workspace/overview`,
   ogImage: '/og-image.png',
   thesis: brand.thesis,

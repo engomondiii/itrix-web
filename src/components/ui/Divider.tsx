@@ -9,7 +9,7 @@ export interface DividerProps {
 
 export function Divider({ orientation = 'horizontal', accent, className }: DividerProps) {
   if (orientation === 'vertical') {
-    return <span role="separator" aria-orientation="vertical" className={cn('inline-block w-px self-stretch bg-line', accent && 'bg-gold-500', className)} />;
+    return <span role="separator" aria-orientation="vertical" className={cn('inline-block w-px self-stretch bg-border-medium', accent && 'bg-accent', className)} />;
   }
-  return <hr className={cn('border-0 border-t', accent ? 'border-gold-500' : 'border-line', className)} />;
+  return <hr className={cn('border-0 border-t', accent ? 'border-accent' : 'border-border-medium', className)} />;
 }

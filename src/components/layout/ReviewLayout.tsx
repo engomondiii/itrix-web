@@ -26,19 +26,19 @@ export function ReviewLayout({ children, currentStep }: ReviewLayoutProps) {
 
   return (
     <div className="min-h-dvh bg-canvas">
-      <div className="border-b border-line bg-surface">
+      <div className="border-b border-border-medium bg-surface">
         <div className="container-page flex h-14 items-center justify-between">
-          <Link href={routes.home} className="text-base font-bold tracking-tight text-indigo-950">
-            iTri<span className="text-gold-500">X</span>
+          <Link href={routes.home} className="text-base font-bold tracking-tight text-structure-900">
+            iTri<span className="text-accent">X</span>
           </Link>
-          <span className="text-micro font-semibold uppercase tracking-[0.1em] text-ink-400">Compute Bottleneck Review</span>
+          <span className="text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">Compute Bottleneck Review</span>
         </div>
         {currentStep ? (
           <div className="container-page flex gap-1.5 pb-3" aria-label="Review progress">
             {REVIEW_STEPS.map((step, i) => (
               <span
                 key={step}
-                className={cn('h-1 flex-1 rounded-pill transition-colors', i <= activeIndex ? 'bg-sapphire-600' : 'bg-surface-sunken')}
+                className={cn('h-1 flex-1 rounded-pill transition-colors', i <= activeIndex ? 'bg-ink-primary' : 'bg-soft')}
               />
             ))}
           </div>

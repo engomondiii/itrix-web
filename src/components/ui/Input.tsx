@@ -13,8 +13,8 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const fieldBase =
-  'w-full rounded-sm border bg-surface-sunken px-3 text-body text-ink-900 transition-colors ' +
-  'placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-sapphire-600 focus:ring-offset-0 disabled:opacity-50';
+  'w-full rounded-sm border bg-soft px-3 text-body text-ink-primary transition-colors ' +
+  'placeholder:text-ink-secondary focus:outline-none focus:ring-2 focus:ring-ink-primary focus:ring-offset-0 disabled:opacity-50';
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { label, hint, error, leadingIcon, className, id, ...rest },
@@ -27,22 +27,22 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   return (
     <div className="flex flex-col gap-1.5">
       {label ? (
-        <label htmlFor={inputId} className="text-secondary font-medium text-ink-700">
+        <label htmlFor={inputId} className="text-secondary font-medium text-ink-secondary">
           {label}
         </label>
       ) : null}
       <div className="relative">
-        {leadingIcon ? <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400">{leadingIcon}</span> : null}
+        {leadingIcon ? <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-secondary">{leadingIcon}</span> : null}
         <input
           ref={ref}
           id={inputId}
           aria-invalid={!!error}
           aria-describedby={describedBy}
-          className={cn(fieldBase, 'h-10', leadingIcon ? 'pl-9' : '', error ? 'border-error' : 'border-line', className)}
+          className={cn(fieldBase, 'h-10', leadingIcon ? 'pl-9' : '', error ? 'border-error' : 'border-border-medium', className)}
           {...rest}
         />
       </div>
-      {hint && !error ? <p id={`${inputId}-hint`} className="text-caption text-ink-400">{hint}</p> : null}
+      {hint && !error ? <p id={`${inputId}-hint`} className="text-caption text-ink-secondary">{hint}</p> : null}
       <ErrorMessage id={`${inputId}-error`}>{error}</ErrorMessage>
     </div>
   );

@@ -29,15 +29,15 @@ export function ClientPagePreparing() {
 
   return (
     <div className="container-page py-12">
-      <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 rounded-lg border border-line bg-surface-warm px-6 py-16 text-center shadow-1 md:py-20">
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 rounded-lg border border-border-medium bg-surface px-6 py-16 text-center shadow-1 md:py-20">
         <SectionLabel>Your review</SectionLabel>
-        <h1 className="text-web-h2 text-indigo-950">Preparing your review</h1>
-        <p className="reading max-w-md text-ink-700">
+        <h1 className="text-web-h2 text-structure-900">Preparing your review</h1>
+        <p className="reading max-w-md text-ink-secondary">
           We&rsquo;re putting together a personalized read of the bottleneck you described.
           This takes a few moments — the page will appear here automatically when it&rsquo;s
           ready. No need to reload.
         </p>
-        <div className="mt-2 flex items-center gap-3 text-secondary text-ink-500">
+        <div className="mt-2 flex items-center gap-3 text-secondary text-ink-secondary">
           <Spinner size="sm" />
           <span aria-live="polite">{STATUS_LINES[i]}</span>
         </div>

@@ -24,11 +24,11 @@ export default function ResourcesPage() {
           <Link key={r.title} href={r.href} className="block h-full">
             <Card variant="default" interactive className="flex h-full flex-col gap-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-card-title text-indigo-950">{r.title}</h3>
+                <h3 className="text-card-title text-structure-900">{r.title}</h3>
                 <Badge tone={r.tone}>{r.badge}</Badge>
               </div>
-              <p className="text-secondary text-ink-500">{r.desc}</p>
-              <span className="mt-auto pt-2 text-secondary text-sapphire-600">Open →</span>
+              <p className="text-secondary text-ink-secondary">{r.desc}</p>
+              <span className="mt-auto pt-2 text-secondary text-ink-primary">Open →</span>
             </Card>
           </Link>
         ))}

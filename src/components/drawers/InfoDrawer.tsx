@@ -14,18 +14,18 @@ export function InfoDrawer({ drawer, defaultOpen = false }: { drawer: InfoDrawer
   const regionId = `drawer-${drawer.id}`;
 
   return (
-    <div className="border-b border-line-subtle">
+    <div className="border-b border-border-soft">
       <button
         type="button"
         onClick={toggle}
         aria-expanded={open}
         aria-controls={regionId}
-        className="flex w-full items-center justify-between gap-4 py-4 text-left transition-colors hover:text-sapphire-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+        className="flex w-full items-center justify-between gap-4 py-4 text-left transition-colors hover:text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
       >
-        <span className="text-body font-medium text-ink-900">{drawer.title}</span>
+        <span className="text-body font-medium text-ink-primary">{drawer.title}</span>
         <span
           aria-hidden
-          className={cn('text-lg leading-none text-ink-400 transition-transform duration-base', open && 'rotate-45')}
+          className={cn('text-lg leading-none text-ink-secondary transition-transform duration-base', open && 'rotate-45')}
         >
           +
         </span>
@@ -36,7 +36,7 @@ export function InfoDrawer({ drawer, defaultOpen = false }: { drawer: InfoDrawer
         hidden={!open}
         className={cn('overflow-hidden pb-4', open ? 'block' : 'hidden')}
       >
-        <p className="reading text-ink-700">{drawer.body}</p>
+        <p className="reading text-ink-secondary">{drawer.body}</p>
       </div>
     </div>
   );

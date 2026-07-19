@@ -27,7 +27,7 @@ export default function SettingsPage() {
             <TeamAccessForm team={data.team} saving={saving} onInvite={(e) => void inviteTeammate(e)} />
             <NotificationPrefsForm prefs={data.notifications} saving={saving} onSave={(p) => void saveNotifications(p)} />
 
-            <div className="border-t border-line-subtle pt-5">
+            <div className="border-t border-border-soft pt-5">
               <Button variant="secondary" size="md" onClick={() => void signOut()}>
                 {PORTAL_COPY.settings.signOut}
               </Button>

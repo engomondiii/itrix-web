@@ -10,10 +10,10 @@ const ROWS: { dim: string; compute: string; core: string }[] = [
 /** The Compute/Core boundary — identical framing across every surface. */
 export function ProductBoundaryTable() {
   return (
-    <div className="overflow-x-auto rounded-lg border border-line">
+    <div className="overflow-x-auto rounded-lg border border-border-medium">
       <table className="w-full min-w-[600px] border-collapse bg-surface text-left">
         <thead>
-          <tr className="bg-surface-sunken text-caption text-ink-700">
+          <tr className="bg-soft text-caption text-ink-secondary">
             <th className="px-4 py-3 font-semibold"> </th>
             <th className="px-4 py-3 font-semibold">ALPHA Compute</th>
             <th className="px-4 py-3 font-semibold">ALPHA Core</th>
@@ -21,10 +21,10 @@ export function ProductBoundaryTable() {
         </thead>
         <tbody>
           {ROWS.map((r) => (
-            <tr key={r.dim} className="border-t border-line-subtle align-top">
-              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-400">{r.dim}</td>
-              <td className="px-4 py-4 text-secondary text-ink-700">{r.compute}</td>
-              <td className="px-4 py-4 text-secondary text-ink-700">{r.core}</td>
+            <tr key={r.dim} className="border-t border-border-soft align-top">
+              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td>
+              <td className="px-4 py-4 text-secondary text-ink-secondary">{r.compute}</td>
+              <td className="px-4 py-4 text-secondary text-ink-secondary">{r.core}</td>
             </tr>
           ))}
         </tbody>

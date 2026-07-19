@@ -9,8 +9,8 @@ import type { ChatMessage } from '@/types/chat.types';
 
 /**
  * Renders a governed thread. Sender kinds are legible at a glance (Theme §21):
- *   client → white surface card; agent → sapphire-50 wash + sapphire left rule;
- *   team   → gold-50 wash + gold left rule. No chatbot bubbles, no avatars.
+ *   client → white surface card; agent → soft wash + sapphire left rule;
+ *   team   → soft wash + gold left rule. No chatbot bubbles, no avatars.
  *
  * v4.0.3: ``citations`` is read defensively (``?? []``) so a message from any transport
  * that lacks the field can never crash the page (this was the "Cannot read properties of
@@ -38,13 +38,13 @@ export function ChatThread({
             key={m.id}
             className={cn(
               'rounded-md px-4 py-3',
-              m.senderKind === 'client' && 'border border-line bg-surface',
-              m.senderKind === 'agent' && 'border-l-[3px] border-sapphire-600 bg-sapphire-50',
-              m.senderKind === 'team' && 'border-l-[3px] border-gold-500 bg-gold-50',
+              m.senderKind === 'client' && 'border border-border-medium bg-surface',
+              m.senderKind === 'agent' && 'border-l-[3px] border-ink-primary bg-soft',
+              m.senderKind === 'team' && 'border-l-[3px] border-accent bg-soft',
             )}
           >
             <SenderLabel kind={m.senderKind} />
-            <p className="mt-1 whitespace-pre-wrap text-body text-ink-900">
+            <p className="mt-1 whitespace-pre-wrap text-body text-ink-primary">
               {m.body}
               {m.streaming ? <StreamingCursor /> : null}
             </p>
@@ -60,9 +60,9 @@ export function ChatThread({
       })}
 
       {pending && !underReview && !anyStreaming ? (
-        <div className="rounded-md border-l-[3px] border-sapphire-600 bg-sapphire-50 px-4 py-3">
+        <div className="rounded-md border-l-[3px] border-ink-primary bg-soft px-4 py-3">
           <SenderLabel kind="agent" />
-          <p className="mt-1 text-body text-ink-500">
+          <p className="mt-1 text-body text-ink-secondary">
             itriX assessment is preparing a response
             <StreamingCursor />
           </p>

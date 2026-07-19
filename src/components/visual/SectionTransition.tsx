@@ -7,12 +7,12 @@ export interface SectionTransitionProps {
 }
 
 export function SectionTransition({ className, tone = 'sapphire' }: SectionTransitionProps) {
-  const color = tone === 'gold' ? 'var(--gold-500)' : 'var(--sapphire-600)';
+  const color = tone === 'gold' ? 'var(--accent)' : 'var(--ink-primary)';
   return (
     <div className={cn('container-page flex items-center gap-4 py-2', className)} aria-hidden>
-      <span className="h-px flex-1 bg-line" />
+      <span className="h-px flex-1 bg-border-medium" />
       <span className="inline-flex h-1.5 w-1.5 rounded-pill" style={{ backgroundColor: color }} />
-      <span className="h-px flex-1 bg-line" />
+      <span className="h-px flex-1 bg-border-medium" />
     </div>
   );
 }

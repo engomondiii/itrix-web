@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/Card';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { MessageBubble } from './MessageBubble';
-import { ConfidentialityNote } from '@/components/homepage/ConfidentialityNote';
+import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
 import { CONVERSATION_LINES } from '@/lib/content/immediateResponses';
 import { useReview } from '@/context/ReviewContext';
 import type { ChatMessage } from '@/types/chat.types';
@@ -77,7 +77,7 @@ export function ConciergePanel({ children }: { children?: React.ReactNode }) {
       ) : null}
 
       {/* The active step (prompt entry or two-stage questions) is rendered here. */}
-      <div className="border-t border-line-subtle pt-5">{children}</div>
+      <div className="border-t border-border-soft pt-5">{children}</div>
 
       <ConfidentialityNote />
     </Card>

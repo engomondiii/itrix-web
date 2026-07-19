@@ -26,13 +26,13 @@ export default function AlphaComputePage() {
         statement="Compute defines the representation hypothesis."
         body="Before any hardware question, ALPHA Compute asks what form the computation should take. It reads the algebraic and structural shape of a workload and proposes a transformation — a hypothesis about a representation that does less work for the same answer."
       />
-      <section className="section border-b border-line bg-canvas">
+      <section className="section border-b border-border-medium bg-canvas">
         <div className="container-page">
           <SectionLabel>The boundary</SectionLabel>
           <div className="mt-6"><ProductBoundaryTable /></div>
         </div>
       </section>
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page">
           <SectionLabel>Technology routes</SectionLabel>
           <div className="mt-6 grid gap-4 md:grid-cols-3">

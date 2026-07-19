@@ -2,60 +2,64 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 /**
- * Shell UI state (Surface 1 v3.1 — the AI-app shell).
+ * Rail presentation state (Surface 1 v4.0 §3.2).
  *
- * The public surface is presented as a modern AI-application shell rather than a
- * traditional website: a collapsible left rail (which carries what used to be the
- * top header) and a wide content canvas whose gravitational centre is a large
- * prompt composer. This store owns the rail's presentation state so any component
- * — the rail itself, the canvas, the mobile trigger — can read and drive it.
+ * The v3.1 store owned a collapsible NAVIGATION sidebar. v4.0 replaces that with
+ * two relationship rails whose CONTENT is decided by the backend, so this store
+ * shrinks to what it should always have been: local UI preference, and nothing
+ * that could change what a visitor is allowed to see.
  *
- *   collapsed : the rail is reduced to a thin icon rail (desktop).
- *   hidden    : the rail is fully off-canvas so the canvas is full-bleed
- *               (used on the landing "focus mode" and on mobile by default).
- *   mobileOpen: the rail is shown as an overlay on small screens.
+ *   leftCollapsed / rightCollapsed — desktop: collapse a rail to its edge.
+ *   mobileRail                     — which rail is showing as a sheet on small
+ *                                    screens: 'context' (left), 'next' (right),
+ *                                    or null (the centre, the default).
  *
- * `collapsed` is persisted so a returning visitor keeps their chosen width;
- * `mobileOpen` is intentionally NOT persisted (it is a transient overlay).
+ * The collapse preference is persisted so a returning visitor keeps their chosen
+ * layout. The mobile sheet is deliberately NOT persisted — it is transient, and
+ * a customer should land on their work, not on a panel they left open.
+ *
+ * IMPORTANT: nothing here may ever gate content. Collapsing a rail hides it
+ * visually; it never removes a section from the authorized list, and a collapsed
+ * rail stays reachable by keyboard (Surface 1 v4.0 §7.4).
  */
+export type MobileRail = 'context' | 'next' | null;
+
 interface ShellState {
-  collapsed: boolean;
-  hidden: boolean;
-  mobileOpen: boolean;
+  leftCollapsed: boolean;
+  rightCollapsed: boolean;
+  mobileRail: MobileRail;
 
-  toggleCollapsed: () => void;
-  setCollapsed: (v: boolean) => void;
+  toggleLeft: () => void;
+  toggleRight: () => void;
+  setLeftCollapsed: (v: boolean) => void;
+  setRightCollapsed: (v: boolean) => void;
 
-  toggleHidden: () => void;
-  setHidden: (v: boolean) => void;
-
-  openMobile: () => void;
-  closeMobile: () => void;
-  toggleMobile: () => void;
+  openMobileRail: (rail: Exclude<MobileRail, null>) => void;
+  closeMobileRail: () => void;
 }
 
 export const useShellStore = create<ShellState>()(
   persist(
     (set) => ({
-      collapsed: false,
-      hidden: false,
-      mobileOpen: false,
+      leftCollapsed: false,
+      rightCollapsed: false,
+      mobileRail: null,
 
-      toggleCollapsed: () => set((s) => ({ collapsed: !s.collapsed })),
-      setCollapsed: (v) => set({ collapsed: v }),
+      toggleLeft: () => set((s) => ({ leftCollapsed: !s.leftCollapsed })),
+      toggleRight: () => set((s) => ({ rightCollapsed: !s.rightCollapsed })),
+      setLeftCollapsed: (v) => set({ leftCollapsed: v }),
+      setRightCollapsed: (v) => set({ rightCollapsed: v }),
 
-      toggleHidden: () => set((s) => ({ hidden: !s.hidden })),
-      setHidden: (v) => set({ hidden: v }),
-
-      openMobile: () => set({ mobileOpen: true }),
-      closeMobile: () => set({ mobileOpen: false }),
-      toggleMobile: () => set((s) => ({ mobileOpen: !s.mobileOpen })),
+      openMobileRail: (rail) => set({ mobileRail: rail }),
+      closeMobileRail: () => set({ mobileRail: null }),
     }),
     {
       name: 'itrix.shell',
       storage: createJSONStorage(() => localStorage),
-      // Only the durable width preference is persisted.
-      partialize: (s) => ({ collapsed: s.collapsed }),
+      partialize: (s) => ({ leftCollapsed: s.leftCollapsed, rightCollapsed: s.rightCollapsed }),
+      // v3.1 persisted { collapsed, hidden, mobileOpen } under this key. Drop it.
+      version: 2,
+      migrate: () => ({ leftCollapsed: false, rightCollapsed: false }),
     },
   ),
 );

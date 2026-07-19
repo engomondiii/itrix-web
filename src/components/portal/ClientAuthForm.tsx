@@ -28,21 +28,21 @@ export function ClientAuthForm({ next }: { next?: string }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-web-h2 text-indigo-950">{PORTAL_COPY.signIn.title}</h1>
+        <h1 className="text-web-h2 text-structure-900">{PORTAL_COPY.signIn.title}</h1>
       </div>
       <div className="flex flex-col gap-3">
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{PORTAL_COPY.signIn.emailLabel}</span>
+          <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.signIn.emailLabel}</span>
           <input
             type="email"
             value={email}
             autoComplete="email"
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:border-sapphire-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+            className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{PORTAL_COPY.signIn.passwordLabel}</span>
+          <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.signIn.passwordLabel}</span>
           <input
             type="password"
             value={password}
@@ -51,7 +51,7 @@ export function ClientAuthForm({ next }: { next?: string }) {
             onKeyDown={(e) => {
               if (e.key === 'Enter') void submit();
             }}
-            className="h-11 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:border-sapphire-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+            className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
         </label>
       </div>
@@ -62,11 +62,11 @@ export function ClientAuthForm({ next }: { next?: string }) {
         {loading ? 'Signing in…' : PORTAL_COPY.signIn.button}
       </Button>
 
-      <div className="flex flex-col gap-1 text-secondary text-ink-500">
-        <Link href={routes.portalForgotPassword} className="hover:text-sapphire-700">
+      <div className="flex flex-col gap-1 text-secondary text-ink-secondary">
+        <Link href={routes.portalForgotPassword} className="hover:text-ink-primary">
           {PORTAL_COPY.signIn.forgot}
         </Link>
-        <Link href={routes.review} className="hover:text-sapphire-700">
+        <Link href={routes.review} className="hover:text-ink-primary">
           {PORTAL_COPY.signIn.needAccess}
         </Link>
       </div>

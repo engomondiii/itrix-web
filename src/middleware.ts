@@ -5,16 +5,34 @@ import { CLIENT_COOKIE_NAMES } from '@/lib/server/session';
 /**
  * Route-scoped client-JWT guard.
  *
- * Protects the authenticated portal workspace (/workspace/*). If no client session
- * cookie is present, the visitor is redirected to the portal sign-in with a `next`
- * param so they return to where they were headed. The token is only PRESENCE-checked
- * here (cheap, edge-safe); Django re-verifies the JWT signature + audience + NDA
- * ceiling on every API call, so the middleware is a UX guard, not the security
- * boundary.
+ * Protects the authenticated portal workspace (/workspace/*). If no client
+ * session cookie is present the visitor is redirected to sign-in with a `next`
+ * param. The token is only PRESENCE-checked here (cheap, edge-safe); Django
+ * re-verifies signature, audience and NDA ceiling on every API call, so this is
+ * a UX guard, not the security boundary.
  *
- * The customized page /c/[token] is intentionally NOT guarded here — it is gated by
+ * The customized page /c/[token] is intentionally NOT guarded — it is gated by
  * its own capability token, which Django validates on fetch.
+ *
+ * PHASE 2 adds one thing: a bare /workspace lands on the state-appropriate
+ * sub-route. It is a CONVENIENCE redirect and deliberately not an authorization
+ * decision — the state hint is read from a non-sensitive cookie the backend sets
+ * alongside the session, and if it is missing, malformed, or names a route the
+ * visitor cannot reach, we fall through to /workspace/overview and let the
+ * backend decide what they see. A visitor cannot reach a surface by editing that
+ * cookie, because the destination re-authorizes on every fetch.
  */
+const STATE_HINT_COOKIE = 'itrix_state_key';
+
+/** state_key → the sub-route that state most likely wants. */
+const STATE_ROUTE: Record<string, string> = {
+  nda: '/workspace/overview',
+  assessment: '/workspace/overview',
+  poc: '/workspace/poc',
+  integration: '/workspace/overview',
+  'customer-success': '/workspace/overview',
+};
+
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
@@ -26,6 +44,14 @@ export function middleware(req: NextRequest) {
       const url = req.nextUrl.clone();
       url.pathname = '/sign-in';
       url.search = `?next=${encodeURIComponent(pathname + search)}`;
+      return NextResponse.redirect(url);
+    }
+
+    // Bare /workspace → the state-appropriate sub-route.
+    if (pathname === '/workspace' || pathname === '/workspace/') {
+      const hint = req.cookies.get(STATE_HINT_COOKIE)?.value ?? '';
+      const url = req.nextUrl.clone();
+      url.pathname = STATE_ROUTE[hint] ?? '/workspace/overview';
       return NextResponse.redirect(url);
     }
   }
@@ -42,5 +68,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/workspace/:path*', '/sign-in', '/set-password'],
+  matcher: ['/workspace', '/workspace/:path*', '/sign-in', '/set-password'],
 };

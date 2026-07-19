@@ -7,12 +7,12 @@ import { CTA } from '@/lib/content/ctaCopy';
 
 export function HumanFollowUpSection() {
   return (
-    <section data-surface="indigo" className="on-indigo section bg-indigo-950 text-oni">
+    <section data-surface="indigo" className="ink-inverse section bg-structure-900 text-ink-inverse">
       <div className="container-page max-w-3xl text-center">
         <div className="mb-8"><BoundaryLine label="The human gate" /></div>
-        <SectionLabel withRule={false} className="text-oni/80">No bots at the decision</SectionLabel>
-        <h2 className="mt-4 text-web-h2 text-oni">A review is read by a person, not closed by a chatbot.</h2>
-        <p className="reading mx-auto mt-4 text-center text-oni/80">
+        <SectionLabel withRule={false} className="text-ink-inverse/80">No bots at the decision</SectionLabel>
+        <h2 className="mt-4 text-web-h2 text-ink-inverse">A review is read by a person, not closed by a chatbot.</h2>
+        <p className="reading mx-auto mt-4 text-center text-ink-inverse/80">
           The site can give you an immediate structural read, but every qualified conversation is picked
           up by the {brand.assessmentTeam}. Strategic and qualified leads hear back within a day or two —
           from a human who has read what you wrote.

@@ -1,7 +1,7 @@
 /* Atelier Indigo v2.0 · Square-based grid utilities (the "structure is information" motif). */
 @layer components {
   .container-page { width: 100%; max-width: var(--container-max); margin-inline: auto; padding-inline: var(--container-gutter); }
-  .reading { max-width: var(--reading-max); font-size: var(--web-body); line-height: var(--leading-relaxed); color: var(--ink-700); }
+  .reading { max-width: var(--reading-max); font-size: var(--web-body); line-height: var(--leading-relaxed); color: var(--ink-secondary); }
   .section { padding-block: var(--section-y); }
 
   /* Faint square coordinate grid used behind heroes / structural sections. */

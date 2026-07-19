@@ -7,7 +7,7 @@ const colorVar: Record<Status, string> = {
   success: 'var(--success-600)',
   warning: 'var(--warning-600)',
   error: 'var(--error-600)',
-  idle: 'var(--ink-300)',
+  idle: 'var(--ink-muted)',
 };
 
 export interface StatusDotProps {
@@ -26,7 +26,7 @@ export function StatusDot({ status, label, pulse, className }: StatusDotProps) {
         ) : null}
         <span className="relative inline-flex h-2 w-2 rounded-pill" style={{ backgroundColor: colorVar[status] }} />
       </span>
-      {label ? <span className="text-caption text-ink-500">{label}</span> : null}
+      {label ? <span className="text-caption text-ink-secondary">{label}</span> : null}
     </span>
   );
 }

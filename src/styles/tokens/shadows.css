@@ -3,7 +3,7 @@
 
    Warm-umber shadows (Atelier) become cool ink-tinted glass shadows keyed to
    #1F2937 (rgba 31,41,55). The signature "gold" shadow becomes a soft-blue
-   holographic ring so any component using shadow-gold lights up in-brand.
+   holographic ring so any component using shadow-signature lights up in-brand.
    ============================================================================ */
 :root {
   /* Mapped to existing shadow-1/2/3 names (Brand Bible §8.1 glass shadows) */
@@ -12,7 +12,7 @@
   --shadow-3: var(--shadow-card-hover);
 
   /* Signature accent shadow — soft-blue holographic ring (was gold) */
-  --shadow-gold: 0 0 0 1px rgba(143, 168, 234, 0.35), 0 2px 12px rgba(143, 168, 234, 0.18);
+  --shadow-signature: 0 0 0 1px rgba(143, 168, 234, 0.35), 0 2px 12px rgba(143, 168, 234, 0.18);
 
   /* v1.2 raw glass shadows (§8.1) */
   --shadow-glass-soft:   0 18px 48px rgba(31, 41, 55, 0.08);

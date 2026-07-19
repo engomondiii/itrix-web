@@ -10,10 +10,10 @@ const ROWS: { dim: string; values: Record<(typeof ORDER)[number], string> }[] = 
 
 export function PathwayComparisonTable() {
   return (
-    <div className="overflow-x-auto rounded-lg border border-line">
+    <div className="overflow-x-auto rounded-lg border border-border-medium">
       <table className="w-full min-w-[680px] border-collapse bg-surface text-left">
         <thead>
-          <tr className="bg-surface-sunken text-caption text-ink-700">
+          <tr className="bg-soft text-caption text-ink-secondary">
             <th className="px-4 py-3 font-semibold"> </th>
             {ORDER.map((k) => (
               <th key={k} className="px-4 py-3 font-semibold">
@@ -27,10 +27,10 @@ export function PathwayComparisonTable() {
         </thead>
         <tbody>
           {ROWS.map((r) => (
-            <tr key={r.dim} className="border-t border-line-subtle align-top">
-              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-400">{r.dim}</td>
+            <tr key={r.dim} className="border-t border-border-soft align-top">
+              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td>
               {ORDER.map((k) => (
-                <td key={k} className="px-4 py-4 text-secondary text-ink-700">{r.values[k]}</td>
+                <td key={k} className="px-4 py-4 text-secondary text-ink-secondary">{r.values[k]}</td>
               ))}
             </tr>
           ))}

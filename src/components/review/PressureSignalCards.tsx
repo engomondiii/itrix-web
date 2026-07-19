@@ -26,11 +26,11 @@ export function PressureSignalCards() {
               className={cn(
                 'rounded-md border px-4 py-3 text-left transition-colors',
                 selected
-                  ? 'border-sapphire-300 bg-sapphire-50'
-                  : 'border-line bg-surface hover:border-line-strong hover:bg-surface-warm',
+                  ? 'border-accent-soft bg-soft'
+                  : 'border-border-medium bg-surface hover:border-border-strong hover:bg-surface',
               )}
             >
-              <span className={cn('block text-secondary font-medium', selected ? 'text-sapphire-700' : 'text-ink-900')}>
+              <span className={cn('block text-secondary font-medium', selected ? 'text-ink-primary' : 'text-ink-primary')}>
                 {s.prompt}
               </span>
             </button>

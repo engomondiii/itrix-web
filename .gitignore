@@ -151,3 +151,8 @@ itrix-*-fix.zip
 
 # itriX patch safety backups
 .patch-backup-*/
+
+# itriX Surface 1 v4.0 phase installers — backups, packages and extracted folders
+.phase*-backup-*/
+itrix-web-surface1-phase*.zip
+itrix-web-surface1-phase*/

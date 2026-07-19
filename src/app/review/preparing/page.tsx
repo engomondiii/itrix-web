@@ -79,7 +79,7 @@ export default function PreparingPage() {
       <Card variant="default" className="flex max-w-md flex-col items-center gap-4 text-center">
         <SectionLabel>Preparing your review</SectionLabel>
         {!slow ? <Spinner size="lg" /> : null}
-        <p className="reading text-ink-700">
+        <p className="reading text-ink-secondary">
           {ready ? CONVERSATION_LINES.ready : CONVERSATION_LINES.preparing}
         </p>
 
@@ -93,7 +93,7 @@ export default function PreparingPage() {
 
         {slow ? (
           <div className="flex flex-col items-center gap-3">
-            <p className="text-secondary text-ink-500">
+            <p className="text-secondary text-ink-secondary">
               This is taking longer than usual. You can return to your review and try again.
             </p>
             <Link href={routes.review}>

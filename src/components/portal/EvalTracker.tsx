@@ -14,8 +14,8 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="text-web-h2 text-indigo-950">{PORTAL_COPY.evaluation.header}</h2>
-        <p className="reading text-ink-700">{PORTAL_COPY.evaluation.intro}</p>
+        <h2 className="text-web-h2 text-structure-900">{PORTAL_COPY.evaluation.header}</h2>
+        <p className="reading text-ink-secondary">{PORTAL_COPY.evaluation.intro}</p>
       </header>
 
       <Card variant="default" className="flex flex-col gap-4">
@@ -30,7 +30,7 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
         </ul>
 
         {evaluation.stage === 'report_ready' && evaluation.reportHref ? (
-          <div className="border-t border-line-subtle pt-4">
+          <div className="border-t border-border-soft pt-4">
             <Link href={evaluation.reportHref}>
               <Button variant="primary" size="md">
                 {PORTAL_COPY.evaluation.reportButton}
@@ -40,9 +40,9 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
         ) : null}
       </Card>
 
-      <div className="rounded-md border border-line-subtle bg-surface-warm px-4 py-3">
+      <div className="rounded-md border border-border-soft bg-surface px-4 py-3">
         <SectionLabel withRule={false}>What an evaluation measures</SectionLabel>
-        <p className="mt-1 text-secondary text-ink-700">{PORTAL_COPY.evaluation.measuresReminder}</p>
+        <p className="mt-1 text-secondary text-ink-secondary">{PORTAL_COPY.evaluation.measuresReminder}</p>
       </div>
     </div>
   );

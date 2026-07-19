@@ -81,7 +81,7 @@ export function QualificationFlow() {
       {touched && !canAdvance ? <ErrorMessage>Select an option, or choose “Not sure,” to continue.</ErrorMessage> : null}
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
-      <div className="flex items-center justify-between gap-3 border-t border-line-subtle pt-5">
+      <div className="flex items-center justify-between gap-3 border-t border-border-soft pt-5">
         <Button variant="ghost" size="md" onClick={back} disabled={index === 0 || submitting}>
           ← Back
         </Button>

@@ -21,7 +21,7 @@ export default function NonExclusivePage() {
         title="The default pathway"
         lead={LICENSE_PATHWAYS.non_exclusive.summary}
       />
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page max-w-3xl">
           <SectionLabel>What it means</SectionLabel>
           <div className="reading mt-4">
@@ -32,8 +32,8 @@ export default function NonExclusivePage() {
             </p>
           </div>
           <Card variant="sunken" className="mt-6">
-            <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-400">Good fit when</span>
-            <p className="mt-2 text-secondary text-ink-700">
+            <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">Good fit when</span>
+            <p className="mt-2 text-secondary text-ink-secondary">
               You want the advantage in your own stack, you don't need to lock competitors out of the method,
               and you value speed and standard terms over bespoke arrangements.
             </p>

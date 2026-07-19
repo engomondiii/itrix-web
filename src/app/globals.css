@@ -1,11 +1,14 @@
-/* itriX · Mathematical Glass Intelligence (Brand Bible v1.2) — globals.
-   Order: font CDN → tokens → Tailwind → base/grid/animations/chat/shell/glass.
+/* itriX · Brand Manual v1.5 EN — globals.
+   Order: font CDN → brand tokens → §8.1 aliases → other tokens → Tailwind →
+   base/grid/animations/chat/shell/glass.
    @import rules must precede all other rules, so the Pretendard CDN is first. */
 
-/* Korean face (Brand Bible §4.1). Space Grotesk + Inter + IBM Plex Mono are
+/* Korean face (Brand Manual §4.1). Space Grotesk + Inter + IBM Plex Mono are
    loaded via next/font in layout.tsx; Pretendard is CDN-hosted here. */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
+/* brand.css is the SINGLE SOURCE OF TRUTH for colour and must load first. */
+@import '../styles/tokens/brand.css';
 @import '../styles/tokens/colors.css';
 @import '../styles/tokens/typography.css';
 @import '../styles/tokens/spacing.css';

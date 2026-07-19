@@ -26,8 +26,8 @@ export function AccountCreateGate({ token }: { token: string }) {
     <RevealGate surface="account_invite">
       <Card variant="featured" className="flex flex-col gap-3">
         <SectionLabel tone="gold">A workspace for this conversation</SectionLabel>
-        <h3 className="text-web-h3 text-indigo-950">Continue privately with the itriX team</h3>
-        <p className="reading text-ink-700">
+        <h3 className="text-web-h3 text-structure-900">Continue privately with the itriX team</h3>
+        <p className="reading text-ink-secondary">
           Based on your review, you can create a private workspace to keep this conversation, share
           documents under NDA, and track next steps with the team.
         </p>

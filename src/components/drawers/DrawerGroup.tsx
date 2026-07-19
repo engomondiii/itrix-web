@@ -14,7 +14,7 @@ export function DrawerGroup({ ids }: { ids?: string[] }) {
     : INFO_DRAWERS;
 
   return (
-    <div className="border-t border-line-subtle">
+    <div className="border-t border-border-soft">
       {drawers.map((d) => (
         <InfoDrawer key={d.id} drawer={d} />
       ))}

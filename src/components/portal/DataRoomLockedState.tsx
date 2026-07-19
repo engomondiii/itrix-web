@@ -13,7 +13,7 @@ export function DataRoomLockedState() {
   return (
     <Card variant="warm" className="flex flex-col gap-3">
       <SectionLabel tone="gold">{PORTAL_COPY.documents.dataRoomLocked.heading}</SectionLabel>
-      <p className="reading text-ink-700">{PORTAL_COPY.documents.dataRoomLocked.body}</p>
+      <p className="reading text-ink-secondary">{PORTAL_COPY.documents.dataRoomLocked.body}</p>
       <div className="pt-1">
         <Link href={routes.workspaceMessages}>
           <Button variant="gold" size="md">

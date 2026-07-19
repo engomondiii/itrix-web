@@ -14,7 +14,7 @@ export default function FqnmPage() {
   return (
     <>
       <TechnologyHero eyebrow={t.gap} title="FQNM" expansion={t.expansion} lead={t.oneLiner} />
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page max-w-3xl">
           <div className="flex items-center gap-3">
             <DisclosureLevelBadge level="public" />

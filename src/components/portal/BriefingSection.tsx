@@ -8,13 +8,13 @@ export function BriefingSection({ section }: { section: PortalBriefingSection })
     <div
       className={cn(
         'flex flex-col gap-2 rounded-md border px-4 py-4',
-        section.updated ? 'border-sapphire-300 bg-sapphire-50' : 'border-line-subtle bg-surface',
+        section.updated ? 'border-accent-soft bg-soft' : 'border-border-soft bg-surface',
       )}
     >
       <SectionLabel withRule={false} tone={section.updated ? 'default' : 'default'}>
         {section.title}
       </SectionLabel>
-      <p className="reading text-ink-900">{section.body}</p>
+      <p className="reading text-ink-primary">{section.body}</p>
     </div>
   );
 }

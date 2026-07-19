@@ -10,7 +10,7 @@ export function StageHint({ stage, eyebrow }: { stage: ReviewStageId; eyebrow?: 
   return (
     <div className="flex flex-col gap-1">
       <SectionLabel>{stageLabel(stage)}</SectionLabel>
-      {eyebrow ? <span className="text-secondary text-ink-500">{eyebrow}</span> : null}
+      {eyebrow ? <span className="text-secondary text-ink-secondary">{eyebrow}</span> : null}
     </div>
   );
 }

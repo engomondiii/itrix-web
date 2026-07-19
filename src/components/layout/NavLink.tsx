@@ -28,11 +28,11 @@ export function NavLink({ href, children, className, exact, onClick, onIndigo }:
         'relative inline-flex items-center text-secondary font-medium transition-colors',
         onIndigo
           ? active
-            ? 'text-oni'
-            : 'text-oni/80 hover:text-oni'
+            ? 'text-ink-inverse'
+            : 'text-ink-inverse/80 hover:text-ink-inverse'
           : active
-            ? 'text-ink-900'
-            : 'text-ink-500 hover:text-ink-900',
+            ? 'text-ink-primary'
+            : 'text-ink-secondary hover:text-ink-primary',
         className,
       )}
     >
@@ -40,7 +40,7 @@ export function NavLink({ href, children, className, exact, onClick, onIndigo }:
       <span
         aria-hidden
         className={cn(
-          'absolute -bottom-1.5 left-0 h-0.5 w-full origin-left rounded-pill bg-gold-500 transition-transform duration-base',
+          'absolute -bottom-1.5 left-0 h-0.5 w-full origin-left rounded-pill bg-accent transition-transform duration-base',
           active ? 'scale-x-100' : 'scale-x-0',
         )}
       />

@@ -4,7 +4,7 @@ import { PORTAL_COPY } from '@/lib/content/portalCopy';
 export function TeamJoinedNotice({ name }: { name: string }) {
   return (
     <div className="my-1 text-center">
-      <span className="text-caption text-ink-400">{PORTAL_COPY.messages.states.teamJoined(name)}</span>
+      <span className="text-caption text-ink-secondary">{PORTAL_COPY.messages.states.teamJoined(name)}</span>
     </div>
   );
 }

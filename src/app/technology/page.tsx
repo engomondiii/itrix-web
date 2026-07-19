@@ -24,13 +24,13 @@ export default function TechnologyPage() {
         title="One pipeline, three methods"
         lead="Every iTrix method serves a single chain: represent the problem, observe what matters, transfer what's conserved, execute against real hardware, and reconstruct the answer. Here is the public view."
       />
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page">
           <SectionLabel>The unified view</SectionLabel>
           <div className="mt-6"><UnifiedViewDiagram /></div>
         </div>
       </section>
-      <section className="section border-b border-line bg-canvas">
+      <section className="section border-b border-border-medium bg-canvas">
         <div className="container-page">
           <SectionLabel>The three methods</SectionLabel>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
@@ -41,7 +41,7 @@ export default function TechnologyPage() {
           <div className="mt-8"><TechnologyComparisonTable /></div>
         </div>
       </section>
-      <section className="section bg-surface-warm">
+      <section className="section bg-surface">
         <div className="container-page max-w-3xl">
           <SectionLabel>The public proof point</SectionLabel>
           <div className="mt-6">

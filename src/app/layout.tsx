@@ -8,18 +8,17 @@ import { ToastProvider } from '@/components/ui/ToastProvider';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 
 /**
- * Mathematical Glass Intelligence (Brand Bible v1.2) type system.
+ * itriX Brand Manual v1.5 EN — type system (§4.1).
  *
- *   Space Grotesk → --font-space-grotesk   (Display: Hero/Page/Section headings)
- *   Inter         → --font-sans / --font-inter  (Primary: all UI + body text)
- *   IBM Plex Mono → --font-mono              (Technical labels, code, IDs, KPIs)
+ *   Space Grotesk → --font-space-grotesk   Display: hero / page / section headings
+ *   Inter         → --font-inter           Primary: ALL UI and body text
+ *   IBM Plex Mono → --font-mono            Technical labels, versions, code, IDs
  *
- * Pretendard (Korean) is loaded from CDN in globals.css and referenced in the
- * font stacks; Space Grotesk is Latin-only, so Korean glyphs in a Display
- * heading fall back to Pretendard automatically (Brand Bible §4.1).
- *
- * The CSS-variable names --font-sans and --font-mono are preserved so the
- * token layer and every existing component continue to resolve correctly.
+ * Pretendard (Korean) is CDN-loaded in globals.css and sits in every stack.
+ * Space Grotesk is Latin-only, so Korean glyphs in a Display heading fall back
+ * to Pretendard automatically — designers assign ONE "Display" style and the
+ * script decides the face. Korean headings additionally release the negative
+ * letter-spacing (see styles/base.css) to stop full-width glyphs clipping.
  */
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -60,27 +59,29 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // v1.2 dark structural ink (was Atelier deep indigo #131A33).
-  themeColor: '#1F2937',
+  /* Soft Signal White — the dominant canvas (Brand Manual §3.2). The browser
+     chrome should match the page, not the structural ink. */
+  themeColor: '#F8FAFC',
   width: 'device-width',
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}
-    >
-      <body className="min-h-dvh bg-canvas text-ink-900 antialiased">
+    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
+      <body className="min-h-dvh bg-canvas text-ink-primary antialiased">
+        <a href="#content" className="skip-link">
+          Skip to the assessment
+        </a>
         <ThemeProvider>
           <VisitorProvider>
             <ToastProvider>
               {/*
-                Global marketing chrome (Header + Footer + #content main) is now
-                applied by SiteChrome, which renders it for marketing routes and
-                steps aside for self-chromed segments like /review (ReviewLayout).
-                This replaces the chrome for the funnel instead of duplicating it.
+                SiteChrome mounts the RelationshipShell around every public route
+                and steps aside for self-chromed segments (/review owns its
+                ReviewLayout; the (portal) group owns its PortalShell). It is the
+                ONE place that decision is made, so the shell can never be
+                double-mounted.
               */}
               <SiteChrome>{children}</SiteChrome>
             </ToastProvider>

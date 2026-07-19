@@ -3,7 +3,7 @@ export function StreamingCursor() {
   return (
     <span
       aria-hidden
-      className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-sapphire-600 align-middle"
+      className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-pulse bg-ink-primary align-middle"
     />
   );
 }

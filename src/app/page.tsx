@@ -1,30 +1,51 @@
 import { StructuredData } from '@/components/seo/StructuredData';
-import { ShellLanding } from '@/components/shell/ShellLanding';
+import { StableCenterWorkspace } from '@/components/shell/StableCenterWorkspace';
+import { SituationFraming } from '@/components/center/SituationFraming';
+import { MainQuestion } from '@/components/center/MainQuestion';
+import { PersistentItrixComposer } from '@/components/shell/PersistentItrixComposer';
+import { PathwayHint } from '@/components/center/PathwayHint';
 import { ThinksDifferentlySection } from '@/components/homepage/ThinksDifferentlySection';
 import { TrustLayerSection } from '@/components/homepage/TrustLayerSection';
 import { InfoDrawerRow } from '@/components/homepage/InfoDrawerRow';
 import { HumanFollowUpSection } from '@/components/homepage/HumanFollowUpSection';
 
 /**
- * Homepage — AI-app shell landing (Surface 1 v3.1).
+ * Homepage — THE APPROVED INVARIANT CENTER (Surface 1 v4.0 §2, State 1).
  *
- * The first view is now a large, calm AI composer (ShellLanding) inside the
- * application shell — a modern AI-interface first screen rather than a marketing
- * homepage. It still obeys the spec: prompt-first, one question, soft examples,
- * the exact confidentiality line, one primary action; the composer seeds the
- * review store and moves into /review.
+ *   NON-NEGOTIABLE
+ *   Retain the approved center and the exact opening question. The first prompt
+ *   is the actual beginning of the review. Do not replace it with a new opening
+ *   and do not ask the visitor to repeat the same input.
  *
- * The calm static narrative and the pulled-not-pushed drawers remain, moved below
- * the fold and anchored at #learn-more (the rail's "Learn more" entry and the
- * landing's scroll affordance both target this anchor). The old dynamic funnel
- * sections stay removed — their content lives in the review conversation and the
- * token-gated client page.
+ * The seven center elements, in order (§2.1):
+ *   1  situation framing   "You already know computation is holding you back."
+ *   2  main question       "What would you like computation to do better?"
+ *   3  supporting line
+ *   4  prompt composer     glass surface, 600-char counter, inline submit
+ *   5  safety notice
+ *   6  five example prompts, one per functional family
+ *   7  pathway hint
+ *
+ * Everything else is BELOW the fold at #learn-more and is pulled, not pushed:
+ * the calm narrative, the trust layer, the closed-by-default drawers, and the
+ * human follow-up offer. No product explanation, pricing, performance claim or
+ * exclusivity CTA appears before the visitor has spoken.
+ *
+ * The rails around this centre are ambient structure only at State 1 — that is
+ * decided by RelationshipShell in app/layout.tsx, not here.
  */
 export default function HomePage() {
   return (
     <>
       <StructuredData />
-      <ShellLanding />
+
+      <StableCenterWorkspace variant="landing">
+        <SituationFraming />
+        <MainQuestion id="main-question" />
+        <PersistentItrixComposer mode="arrival" showExamples labelledBy="main-question" />
+        <PathwayHint />
+      </StableCenterWorkspace>
+
       <div id="learn-more" className="scroll-mt-16">
         <ThinksDifferentlySection />
         <TrustLayerSection />

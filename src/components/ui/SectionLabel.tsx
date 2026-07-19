@@ -4,8 +4,8 @@ import { cn } from '@/lib/cn';
 type Tone = 'default' | 'gold' | 'error';
 
 const toneClass: Record<Tone, string> = {
-  default: 'text-sapphire-600',
-  gold: 'text-gold-600',
+  default: 'text-ink-primary',
+  gold: 'text-structure-600',
   error: 'text-error-text',
 };
 

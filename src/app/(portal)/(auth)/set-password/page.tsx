@@ -48,27 +48,27 @@ function SetPasswordInner() {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h1 className="text-web-h2 text-indigo-950">{PORTAL_COPY.setPassword.title}</h1>
-        <p className="reading mt-2 text-ink-700">{PORTAL_COPY.setPassword.intro}</p>
+        <h1 className="text-web-h2 text-structure-900">{PORTAL_COPY.setPassword.title}</h1>
+        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.setPassword.intro}</p>
       </div>
       <label className="flex flex-col gap-1.5">
-        <span className="text-secondary font-medium text-ink-900">{PORTAL_COPY.setPassword.passwordLabel}</span>
+        <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.setPassword.passwordLabel}</span>
         <input
           type="password"
           value={password}
           autoComplete="new-password"
           onChange={(e) => setPassword(e.target.value)}
-          className="h-11 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:border-sapphire-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+          className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
         />
       </label>
       <label className="flex flex-col gap-1.5">
-        <span className="text-secondary font-medium text-ink-900">{PORTAL_COPY.setPassword.confirmLabel}</span>
+        <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.setPassword.confirmLabel}</span>
         <input
           type="password"
           value={confirm}
           autoComplete="new-password"
           onChange={(e) => setConfirm(e.target.value)}
-          className="h-11 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:border-sapphire-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+          className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
         />
       </label>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}

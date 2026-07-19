@@ -13,11 +13,11 @@ export function TechnologyCard({ tech, href }: TechnologyCardProps) {
   const body = (
     <Card variant="default" interactive={!!href} className="flex h-full flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="text-web-h3 text-indigo-950">{tech.name}</h3>
-        <span className="text-caption text-ink-400">{tech.expansion}</span>
+        <h3 className="text-web-h3 text-structure-900">{tech.name}</h3>
+        <span className="text-caption text-ink-secondary">{tech.expansion}</span>
       </div>
       <Tag>{tech.gap}</Tag>
-      <p className="text-secondary text-ink-700">{tech.oneLiner}</p>
+      <p className="text-secondary text-ink-secondary">{tech.oneLiner}</p>
       {tech.patentRef ? <PatentReference patentRef={tech.patentRef} className="mt-auto pt-2" /> : null}
     </Card>
   );

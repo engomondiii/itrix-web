@@ -28,8 +28,8 @@ export function QualificationQuestion({ question, value, onChange }: Qualificati
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-web-h3 text-indigo-950">{question.prompt}</h2>
-        {question.helper ? <p className="mt-1 text-secondary text-ink-500">{question.helper}</p> : null}
+        <h2 className="text-web-h3 text-structure-900">{question.prompt}</h2>
+        {question.helper ? <p className="mt-1 text-secondary text-ink-secondary">{question.helper}</p> : null}
       </div>
 
       {question.type === 'multi' ? (
@@ -53,8 +53,8 @@ export function QualificationQuestion({ question, value, onChange }: Qualificati
               className={cn(
                 'self-start rounded-pill border px-3 py-1.5 text-secondary transition-colors',
                 notSureSelected
-                  ? 'border-sapphire-300 bg-sapphire-50 text-sapphire-700'
-                  : 'border-line bg-surface text-ink-500 hover:border-line-strong hover:text-ink-700',
+                  ? 'border-accent-soft bg-soft text-ink-primary'
+                  : 'border-border-medium bg-surface text-ink-secondary hover:border-border-strong hover:text-ink-secondary',
               )}
             >
               Not sure

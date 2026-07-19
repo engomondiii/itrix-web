@@ -10,17 +10,17 @@ const STAGES = [
 
 export function CommercialFlowTimeline() {
   return (
-    <section className="section border-b border-line bg-surface-warm">
+    <section className="section border-b border-border-medium bg-surface">
       <div className="container-page">
         <SectionLabel>How a license comes together</SectionLabel>
-        <ol className="mt-8 border-l border-line-strong pl-6">
+        <ol className="mt-8 border-l border-border-strong pl-6">
           {STAGES.map((s, i) => (
             <li key={s.t} className="relative pb-7 last:pb-0">
-              <span className="absolute -left-[1.65rem] flex h-6 w-6 items-center justify-center rounded-pill border border-line bg-surface font-mono text-micro text-sapphire-700">
+              <span className="absolute -left-[1.65rem] flex h-6 w-6 items-center justify-center rounded-pill border border-border-medium bg-surface font-mono text-micro text-ink-primary">
                 {i + 1}
               </span>
-              <p className="text-card-title text-ink-900">{s.t}</p>
-              <p className="mt-1 text-secondary text-ink-500">{s.d}</p>
+              <p className="text-card-title text-ink-primary">{s.t}</p>
+              <p className="mt-1 text-secondary text-ink-secondary">{s.d}</p>
             </li>
           ))}
         </ol>

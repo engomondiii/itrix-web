@@ -14,12 +14,12 @@ export function PortalNavLink({ href, label, badge }: { href: string; label: str
       aria-current={active ? 'page' : undefined}
       className={cn(
         'flex items-center justify-between gap-2 rounded-md px-3 py-2 text-body transition-colors',
-        active ? 'bg-sapphire-50 text-sapphire-700 font-medium' : 'text-ink-700 hover:bg-surface-warm hover:text-ink-900',
+        active ? 'bg-soft text-ink-primary font-medium' : 'text-ink-secondary hover:bg-surface hover:text-ink-primary',
       )}
     >
       <span>{label}</span>
       {badge && badge > 0 ? (
-        <span className="inline-flex min-w-5 items-center justify-center rounded-pill bg-sapphire-600 px-1.5 text-micro font-semibold text-white">
+        <span className="inline-flex min-w-5 items-center justify-center rounded-pill bg-ink-primary px-1.5 text-micro font-semibold text-white">
           {badge}
         </span>
       ) : null}

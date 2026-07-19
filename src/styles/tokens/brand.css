@@ -1,0 +1,94 @@
+/* ============================================================================
+   itriX · Brand Manual v1.5 EN — token layer  (Surface 1 v4.0, Phase 1)
+
+   THE SINGLE SOURCE OF TRUTH for colour, and the vocabulary every other token
+   file and every Tailwind utility name now derives from.
+
+   Atelier Indigo is retired by NAME as well as by value. Its structural,
+   action, signature, numeric-ink and hairline families no longer exist anywhere
+   in the codebase. The `no-atelier-tokens` ESLint rule holds the line: it lists
+   every retired name and its replacement, and fails the build if one reappears.
+   (The retired names are deliberately not repeated here — this file must itself
+   pass the rule.)
+
+   Vocabulary (Brand Manual §3, §8.1):
+     canvas · soft · tint · surface(+glass variants)
+     ink-primary / ink-secondary / ink-muted / ink-inverse
+     border-glass / border-soft / border-medium / border-strong
+     accent · accent-soft · accent-line
+     structure-600..900   (the restrained dark ramp for dark sections)
+
+   ACCESSIBILITY CONTRACT (Brand Manual §3.3)
+   ---------------------------------------------------------------------------
+   On the canvas (#F8FAFC):
+     ink-primary   #1F2937  ~14.0:1   AAA — titles, key sentences, primary button
+     ink-secondary #4B5563  ~7.6:1    AAA — body, captions, nav, technical labels
+     ink-muted     #94A3B8  ~2.5:1    FAILS — placeholders / disabled / dividers ONLY
+   ink-muted must never carry information-bearing text on a light surface.
+   On the dark ground (#1F2937) it reaches ~5.7:1 and may carry quiet supporting
+   text — that is the only place it is permitted.
+   ============================================================================ */
+:root {
+  /* ── Foundations ─────────────────────────────────────────────────────────── */
+  --canvas: #F8FAFC;                 /* Soft Signal White — dominant, ~70% of a screen */
+  --soft: #EAF0FF;                   /* Holographic Mist — rails, sections, highlights */
+  --tint: #D6E6FF;                   /* Ice Blue — glass panels, borders, selected     */
+  --surface: #FFFFFF;                /* Cards, documents, elevated content             */
+
+  /* ── Glass surfaces (always background + border + blur together, §8.7) ───── */
+  --surface-glass: rgba(248, 250, 252, 0.72);
+  --surface-glass-strong: rgba(248, 250, 252, 0.88);  /* @supports fallback     */
+  --surface-glass-soft: rgba(234, 240, 255, 0.56);
+  --surface-dark-glass: rgba(31, 41, 55, 0.72);
+
+  /* ── Ink ─────────────────────────────────────────────────────────────────── */
+  --ink-primary: #1F2937;            /* Deep Navy Slate */
+  --ink-secondary: #4B5563;          /* Graphite Blue Gray — ALL readable support text */
+  --ink-muted: #94A3B8;              /* Steel Blue Gray — NON-informational only */
+  --ink-inverse: #F8FAFC;            /* Reversed text on dark */
+
+  /* ── Structure — the restrained dark ramp for dark sections/covers/footers ── */
+  --structure-900: #1F2937;
+  --structure-800: #273343;
+  --structure-700: #313E50;
+  --structure-600: #3C4A5E;
+
+  /* ── Borders — slate glass hairlines ─────────────────────────────────────── */
+  --border-glass: rgba(214, 230, 255, 0.88);
+  --border-soft: rgba(148, 163, 184, 0.32);
+  --border-medium: rgba(148, 163, 184, 0.56);
+  --border-strong: rgba(31, 41, 55, 0.72);
+
+  /* ── Accent — the restrained holographic soft-blue (§3.5). Under 5% of a
+        screen. Never a full holographic button, never a rainbow gradient. ──── */
+  --accent: #8FA8EA;
+  --accent-soft: #B7CBF4;
+  --accent-line: rgba(148, 163, 184, 0.48);
+
+  /* ── Interaction ─────────────────────────────────────────────────────────── */
+  --focus-ring: rgba(148, 163, 184, 0.72);
+  --hover-glow: rgba(214, 230, 255, 0.64);
+  --disabled-surface: rgba(248, 250, 252, 0.45);
+  --disabled-text: rgba(148, 163, 184, 0.72);
+
+  /* ── Semantic feedback (§8.6) — lines, icons and short message text only.
+        Never a large background fill, never colour alone. ──────────────────── */
+  --success: #067647;  --success-surface: #ECFDF3;
+  --warning: #B54708;  --warning-surface: #FFFAEB;
+  --error: #B42318;    --error-border: #D92D20;  --error-surface: #FEF3F2;
+
+  /* ── Lead tiers (internal surfaces only; never rendered to a visitor) ────── */
+  --tier-1: #2C3A4E; --tier-1-soft: #D6E6FF;
+  --tier-2: #5B6B82; --tier-2-soft: #EAF0FF;
+  --tier-3: #64748B; --tier-3-soft: #EEF2F7;
+  --tier-4: #94A3B8; --tier-4-soft: #F2F5F9;
+
+  /* ── Charts — cool-anchored, colour-blind-safe order ─────────────────────── */
+  --chart-1: #2C3A4E; --chart-2: #8FA8EA; --chart-3: #067647;
+  --chart-4: #6E7CA8; --chart-5: #B54708; --chart-6: #4A93A8;
+
+  /* ── Blur levels (§8.7). Do not stack blurred surfaces. ──────────────────── */
+  --blur-glass-sm: 10px;   /* secondary panels close to the background */
+  --blur-glass-md: 18px;   /* default: composer, buttons, inputs, nav  */
+  --blur-glass-lg: 28px;   /* one emphasis panel per screen, maximum   */
+}

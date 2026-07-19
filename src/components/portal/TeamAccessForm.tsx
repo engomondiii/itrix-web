@@ -35,15 +35,15 @@ export function TeamAccessForm({
     <Card variant="default" className="flex flex-col gap-4">
       <div>
         <SectionLabel>{PORTAL_COPY.settings.teamHeader}</SectionLabel>
-        <p className="reading mt-2 text-ink-700">{PORTAL_COPY.settings.teamIntro}</p>
+        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.settings.teamIntro}</p>
       </div>
 
       {team.length > 0 ? (
-        <ul className="flex flex-col divide-y divide-line-subtle">
+        <ul className="flex flex-col divide-y divide-border-soft">
           {team.map((member) => (
             <li key={member.email} className="flex items-center justify-between gap-4 py-2.5">
-              <span className="text-body text-ink-900">{member.email}</span>
-              <span className="rounded-pill bg-surface-warm px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em] text-ink-500">
+              <span className="text-body text-ink-primary">{member.email}</span>
+              <span className="rounded-pill bg-surface px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em] text-ink-secondary">
                 {member.status}
               </span>
             </li>
@@ -58,7 +58,7 @@ export function TeamAccessForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={PORTAL_COPY.settings.invitePlaceholder}
-            className="h-10 rounded-md border border-line bg-surface px-3 text-body text-ink-900 placeholder:text-ink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600"
+            className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary placeholder:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
         </label>
         <Button variant="secondary" size="md" disabled={saving} onClick={submit}>

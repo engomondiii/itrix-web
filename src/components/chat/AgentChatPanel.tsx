@@ -50,7 +50,7 @@ export function AgentChatPanel({
     <Card variant="default" className="flex flex-col gap-4">
       <div>
         <SectionLabel>{title}</SectionLabel>
-        {intro ? <p className="reading mt-2 text-ink-500">{intro}</p> : null}
+        {intro ? <p className="reading mt-2 text-ink-secondary">{intro}</p> : null}
       </div>
 
       {messages.length === 0 && suggestions.length > 0 ? (
@@ -60,7 +60,7 @@ export function AgentChatPanel({
               key={s}
               type="button"
               onClick={() => handleSend(s)}
-              className="rounded-pill border border-line bg-surface-warm px-3 py-1.5 text-secondary text-ink-700 transition-colors hover:border-sapphire-300 hover:text-sapphire-700"
+              className="rounded-pill border border-border-medium bg-surface px-3 py-1.5 text-secondary text-ink-secondary transition-colors hover:border-accent-soft hover:text-ink-primary"
             >
               {s}
             </button>

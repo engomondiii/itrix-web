@@ -45,13 +45,13 @@ export function MessageThread({
           key={m.id}
           className={cn(
             'rounded-md px-4 py-3',
-            m.senderKind === 'client' && 'border border-line bg-surface',
-            m.senderKind === 'agent' && 'border-l-[3px] border-sapphire-600 bg-sapphire-50',
-            m.senderKind === 'team' && 'border-l-[3px] border-gold-500 bg-gold-50',
+            m.senderKind === 'client' && 'border border-border-medium bg-surface',
+            m.senderKind === 'agent' && 'border-l-[3px] border-ink-primary bg-soft',
+            m.senderKind === 'team' && 'border-l-[3px] border-accent bg-soft',
           )}
         >
           <SenderKindBadge kind={m.senderKind} />
-          <p className="mt-1 whitespace-pre-wrap text-body text-ink-900">
+          <p className="mt-1 whitespace-pre-wrap text-body text-ink-primary">
             {m.body}
             {m.streaming ? <StreamingCursor /> : null}
           </p>
@@ -66,9 +66,9 @@ export function MessageThread({
       ))}
 
       {pending && !underReview ? (
-        <div className="rounded-md border-l-[3px] border-sapphire-600 bg-sapphire-50 px-4 py-3">
+        <div className="rounded-md border-l-[3px] border-ink-primary bg-soft px-4 py-3">
           <SenderKindBadge kind="agent" />
-          <p className="mt-1 text-body text-ink-500">
+          <p className="mt-1 text-body text-ink-secondary">
             {PORTAL_COPY.messages.states.preparing}
             <StreamingCursor />
           </p>

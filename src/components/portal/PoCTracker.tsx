@@ -12,8 +12,8 @@ export function PoCTracker({ poc }: { poc: PortalPoC }) {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="text-web-h2 text-indigo-950">{PORTAL_COPY.poc.header}</h2>
-        <p className="reading text-ink-700">{PORTAL_COPY.poc.intro}</p>
+        <h2 className="text-web-h2 text-structure-900">{PORTAL_COPY.poc.header}</h2>
+        <p className="reading text-ink-secondary">{PORTAL_COPY.poc.intro}</p>
       </header>
 
       <Card variant="default" className="flex flex-col gap-4">
@@ -33,8 +33,8 @@ export function PoCTracker({ poc }: { poc: PortalPoC }) {
           <SectionLabel withRule={false}>Success criteria</SectionLabel>
           <ul className="flex flex-col gap-1.5">
             {poc.successCriteria.map((c) => (
-              <li key={c} className="flex items-start gap-2 text-secondary text-ink-700">
-                <span aria-hidden className="mt-1 text-sapphire-600">•</span>
+              <li key={c} className="flex items-start gap-2 text-secondary text-ink-secondary">
+                <span aria-hidden className="mt-1 text-ink-primary">•</span>
                 {c}
               </li>
             ))}
@@ -42,8 +42,8 @@ export function PoCTracker({ poc }: { poc: PortalPoC }) {
         </Card>
       ) : null}
 
-      <div className="rounded-md border border-line-subtle bg-surface-warm px-4 py-3">
-        <p className="text-secondary text-ink-700">{PORTAL_COPY.poc.successNote}</p>
+      <div className="rounded-md border border-border-soft bg-surface px-4 py-3">
+        <p className="text-secondary text-ink-secondary">{PORTAL_COPY.poc.successNote}</p>
       </div>
     </div>
   );

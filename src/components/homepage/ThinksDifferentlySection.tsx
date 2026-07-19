@@ -12,10 +12,10 @@ const STAGES = [
 
 export function ThinksDifferentlySection() {
   return (
-    <section className="section border-b border-line bg-surface-warm">
+    <section className="section border-b border-border-medium bg-surface">
       <div className="container-page">
         <SectionLabel>How iTrix thinks</SectionLabel>
-        <h2 className="mt-4 max-w-2xl text-web-h2 text-indigo-950">
+        <h2 className="mt-4 max-w-2xl text-web-h2 text-structure-900">
           Most tools optimize execution. We start one step earlier — at representation.
         </h2>
         <p className="reading mt-4">
@@ -25,10 +25,10 @@ export function ThinksDifferentlySection() {
         <ol className="mt-10 grid gap-4 md:grid-cols-5">
           {STAGES.map((s, i) => (
             <Card key={s.k} variant="default" className="relative flex flex-col gap-2">
-              <span className="font-mono text-caption text-sapphire-600">0{i + 1}</span>
-              <span className="text-card-title text-ink-900">{s.k}</span>
-              <span className="text-caption text-ink-500">{s.d}</span>
-              {i === 4 ? <GeometricAccent shape="square" className="absolute right-3 top-3 text-gold-500" size={16} /> : null}
+              <span className="font-mono text-caption text-ink-primary">0{i + 1}</span>
+              <span className="text-card-title text-ink-primary">{s.k}</span>
+              <span className="text-caption text-ink-secondary">{s.d}</span>
+              {i === 4 ? <GeometricAccent shape="square" className="absolute right-3 top-3 text-accent" size={16} /> : null}
             </Card>
           ))}
         </ol>

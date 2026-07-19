@@ -38,24 +38,24 @@ export function Modal({ open, onClose, title, children, footer, size = 'md', cla
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-indigo-950/40 backdrop-blur-[1px] animate-fade-in" onClick={onClose} aria-hidden />
+      <div className="absolute inset-0 bg-structure-900/40 backdrop-blur-[1px] animate-fade-in" onClick={onClose} aria-hidden />
       <div
         ref={panelRef}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
-        className={cn('relative w-full rounded-lg border border-line bg-surface shadow-3 animate-scale-in focus:outline-none', sizeClass[size], className)}
+        className={cn('relative w-full rounded-lg border border-border-medium bg-surface shadow-3 animate-scale-in focus:outline-none', sizeClass[size], className)}
       >
         {title ? (
-          <div className="flex items-center justify-between border-b border-line px-5 py-4">
-            <h2 className="text-section text-ink-900">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Close" className="rounded-sm p-1 text-ink-400 transition-colors hover:bg-surface-sunken hover:text-ink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600">
+          <div className="flex items-center justify-between border-b border-border-medium px-5 py-4">
+            <h2 className="text-section text-ink-primary">{title}</h2>
+            <button type="button" onClick={onClose} aria-label="Close" className="rounded-sm p-1 text-ink-secondary transition-colors hover:bg-soft hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary">
               <span aria-hidden className="text-lg leading-none">×</span>
             </button>
           </div>
         ) : null}
-        <div className="px-5 py-5 text-secondary text-ink-700">{children}</div>
-        {footer ? <div className="flex justify-end gap-3 border-t border-line px-5 py-4">{footer}</div> : null}
+        <div className="px-5 py-5 text-secondary text-ink-secondary">{children}</div>
+        {footer ? <div className="flex justify-end gap-3 border-t border-border-medium px-5 py-4">{footer}</div> : null}
       </div>
     </div>
   );

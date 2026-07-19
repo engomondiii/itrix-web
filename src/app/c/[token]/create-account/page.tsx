@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { ConfidentialityNote } from '@/components/homepage/ConfidentialityNote';
+import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
 import { JourneyProvider } from '@/context/JourneyContext';
 import { RevealGate } from '@/components/client-page/RevealGate';
 import { portalApi } from '@/lib/api/portalApi';
@@ -100,8 +100,8 @@ function CreateAccountInner({ token }: { token: string }) {
           fallback={
             <Card variant="warm" className="flex flex-col gap-3 text-center">
               <SectionLabel>Not yet available</SectionLabel>
-              <h1 className="text-web-h3 text-indigo-950">Your workspace isn’t open yet</h1>
-              <p className="reading text-ink-700">
+              <h1 className="text-web-h3 text-structure-900">Your workspace isn’t open yet</h1>
+              <p className="reading text-ink-secondary">
                 A private workspace becomes available once the team has reviewed your case. Return to
                 your review — you’ll see the option there the moment it’s ready.
               </p>
@@ -116,8 +116,8 @@ function CreateAccountInner({ token }: { token: string }) {
           {fallback ? (
             <Card variant="featured" className="flex flex-col gap-3 text-center">
               <SectionLabel tone="gold">Thank you</SectionLabel>
-              <h1 className="text-web-h3 text-indigo-950">{PORTAL_COPY.invite.fallbackTitle}</h1>
-              <p className="reading text-ink-700">{PORTAL_COPY.invite.fallbackBody}</p>
+              <h1 className="text-web-h3 text-structure-900">{PORTAL_COPY.invite.fallbackTitle}</h1>
+              <p className="reading text-ink-secondary">{PORTAL_COPY.invite.fallbackBody}</p>
               <div className="pt-1">
                 <Link href={routes.clientPage(token)}>
                   <Button variant="secondary">Back to my review</Button>
@@ -128,8 +128,8 @@ function CreateAccountInner({ token }: { token: string }) {
             <Card variant="featured" className="flex flex-col gap-4">
               <div>
                 <SectionLabel tone="gold">Create your itriX workspace</SectionLabel>
-                <h1 className="mt-2 text-web-h3 text-indigo-950">Continue privately with the team</h1>
-                <p className="reading mt-2 text-ink-700">
+                <h1 className="mt-2 text-web-h3 text-structure-900">Continue privately with the team</h1>
+                <p className="reading mt-2 text-ink-secondary">
                   Set up your private workspace to keep this conversation, share documents under NDA,
                   and track next steps with the itriX team.
                 </p>

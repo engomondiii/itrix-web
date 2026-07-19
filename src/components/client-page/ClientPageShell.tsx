@@ -6,7 +6,7 @@ import { AccountCreateGate } from './AccountCreateGate';
 import { Card } from '@/components/ui/Card';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { AgentChatPanel } from '@/components/chat/AgentChatPanel';
-import { ConfidentialityNote } from '@/components/homepage/ConfidentialityNote';
+import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
 import { routeLabel, licenseLabel } from '@/lib/formatting/formatRoute';
 import { cn } from '@/lib/cn';
 import type { ClientPage, DiagnosisRelevanceRow, KpiPreviewRow, ProofPreviewRow } from '@/types/client.types';
@@ -25,9 +25,9 @@ import type { ClientPage, DiagnosisRelevanceRow, KpiPreviewRow, ProofPreviewRow 
  */
 
 const RELEVANCE_TONE: Record<'high' | 'medium' | 'low', string> = {
-  high: 'text-sapphire-700',
-  medium: 'text-ink-700',
-  low: 'text-ink-400',
+  high: 'text-ink-primary',
+  medium: 'text-ink-secondary',
+  low: 'text-ink-secondary',
 };
 
 function asArray<T>(v: unknown): T[] {
@@ -58,13 +58,13 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
           {diagnosis.length > 0 ? (
             <Card variant="default" className="flex flex-col gap-3">
               <SectionLabel>Structural read</SectionLabel>
-              <h2 className="text-web-h3 text-indigo-950">How your workload maps to the bottleneck</h2>
-              <ul className="mt-1 flex flex-col divide-y divide-line-subtle">
+              <h2 className="text-web-h3 text-structure-900">How your workload maps to the bottleneck</h2>
+              <ul className="mt-1 flex flex-col divide-y divide-border-soft">
                 {diagnosis.map((row, i) => {
                   const relevance = relevanceOf(row);
                   return (
                     <li key={`${row.label}-${i}`} className="flex items-center justify-between gap-4 py-2.5">
-                      <span className="text-body text-ink-900">{row.label}</span>
+                      <span className="text-body text-ink-primary">{row.label}</span>
                       <span className={cn('text-secondary font-medium capitalize', RELEVANCE_TONE[relevance])}>
                         {relevance} relevance
                       </span>
@@ -78,10 +78,10 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
           {/* ALPHA fit + recommended pathway. */}
           <Card variant="warm" className="flex flex-col gap-3">
             <SectionLabel>Where itriX fits</SectionLabel>
-            <p className="reading text-ink-900">{page.alphaFitSummary}</p>
-            <div className="mt-1 flex flex-wrap gap-x-8 gap-y-2 text-secondary text-ink-500">
-              <span>Recommended: <strong className="text-ink-900">{routeLabel(page.productRoute)}</strong></span>
-              <span>Pathway: <strong className="text-ink-900">{licenseLabel(page.licensePathway)}</strong></span>
+            <p className="reading text-ink-primary">{page.alphaFitSummary}</p>
+            <div className="mt-1 flex flex-wrap gap-x-8 gap-y-2 text-secondary text-ink-secondary">
+              <span>Recommended: <strong className="text-ink-primary">{routeLabel(page.productRoute)}</strong></span>
+              <span>Pathway: <strong className="text-ink-primary">{licenseLabel(page.licensePathway)}</strong></span>
             </div>
           </Card>
 
@@ -91,11 +91,11 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
               <SectionLabel>What an evaluation could measure</SectionLabel>
               <div className="grid gap-3 sm:grid-cols-3">
                 {kpiPreview.map((kpi, i) => (
-                  <div key={`${kpi.label}-${i}`} className="rounded-md border border-line-subtle bg-surface p-3">
-                    <span className="text-micro font-semibold uppercase tracking-[0.08em] text-sapphire-600">
+                  <div key={`${kpi.label}-${i}`} className="rounded-md border border-border-soft bg-surface p-3">
+                    <span className="text-micro font-semibold uppercase tracking-[0.08em] text-ink-primary">
                       {kpi.label}
                     </span>
-                    <p className="mt-1 text-secondary text-ink-700">{kpi.metric}</p>
+                    <p className="mt-1 text-secondary text-ink-secondary">{kpi.metric}</p>
                   </div>
                 ))}
               </div>
@@ -109,11 +109,11 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
               <ul className="flex flex-col gap-2">
                 {proofPreview.map((p, i) => (
                   <li key={`${p.title}-${i}`} className="flex items-center justify-between gap-4">
-                    <span className="text-body text-ink-900">{p.title}</span>
+                    <span className="text-body text-ink-primary">{p.title}</span>
                     {p.disclosure === 'public' && p.reference ? (
-                      <span className="font-mono text-caption text-ink-500">{p.reference}</span>
+                      <span className="font-mono text-caption text-ink-secondary">{p.reference}</span>
                     ) : (
-                      <span className="rounded-pill bg-gold-50 px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em] text-gold-600">
+                      <span className="rounded-pill bg-soft px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em] text-structure-600">
                         Shared after NDA
                       </span>
                     )}
@@ -126,7 +126,7 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
           {/* Recommended next step. */}
           <Card variant="featured" className="flex flex-col gap-2">
             <SectionLabel tone="gold">Suggested next step</SectionLabel>
-            <p className="reading text-ink-900">{page.recommendedNextStep}</p>
+            <p className="reading text-ink-primary">{page.recommendedNextStep}</p>
           </Card>
         </div>
 

@@ -19,11 +19,11 @@ export function NextStepCard({ stepKey }: { stepKey: PortalNextStepKey }) {
   if (!copy || !href) return null;
   return (
     <Card variant="default" interactive className="flex flex-col gap-2">
-      <h3 className="text-web-h3 text-indigo-950">{copy.title}</h3>
-      <p className="text-secondary text-ink-700">{copy.body}</p>
+      <h3 className="text-web-h3 text-structure-900">{copy.title}</h3>
+      <p className="text-secondary text-ink-secondary">{copy.body}</p>
       <Link
         href={href}
-        className="mt-1 inline-flex items-center gap-1 text-secondary font-medium text-sapphire-600 hover:text-sapphire-700"
+        className="mt-1 inline-flex items-center gap-1 text-secondary font-medium text-ink-primary hover:text-ink-primary"
       >
         {copy.cta} <span aria-hidden>→</span>
       </Link>

@@ -6,12 +6,12 @@ export type BadgeTone =
   | 'tier-1' | 'tier-2' | 'tier-3' | 'tier-4';
 
 const toneStyle: Record<BadgeTone, { bg: string; fg: string }> = {
-  neutral: { bg: 'var(--surface-sunken)', fg: 'var(--ink-700)' },
-  info: { bg: 'var(--sapphire-100)', fg: 'var(--sapphire-700)' },
+  neutral: { bg: 'var(--soft)', fg: 'var(--ink-secondary)' },
+  info: { bg: 'var(--tint)', fg: 'var(--ink-primary)' },
   success: { bg: 'var(--success-soft)', fg: 'var(--success-text)' },
   warning: { bg: 'var(--warning-soft)', fg: 'var(--warning-text)' },
   error: { bg: 'var(--error-soft)', fg: 'var(--error-text)' },
-  special: { bg: 'var(--gold-100)', fg: 'var(--gold-600)' },
+  special: { bg: 'var(--tint)', fg: 'var(--structure-600)' },
   'tier-1': { bg: 'var(--tier-1-soft)', fg: 'var(--tier-1)' },
   'tier-2': { bg: 'var(--tier-2-soft)', fg: 'var(--tier-2)' },
   'tier-3': { bg: 'var(--tier-3-soft)', fg: 'var(--tier-3)' },

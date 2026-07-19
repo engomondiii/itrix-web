@@ -9,6 +9,6 @@ export function SenderKindBadge({ kind, teamName }: { kind: SenderKind; teamName
       : kind === 'agent'
         ? PORTAL_COPY.messages.labels.agent
         : teamName || PORTAL_COPY.messages.labels.team;
-  const tone = kind === 'client' ? 'text-ink-500' : kind === 'agent' ? 'text-sapphire-700' : 'text-gold-600';
+  const tone = kind === 'client' ? 'text-ink-secondary' : kind === 'agent' ? 'text-ink-primary' : 'text-structure-600';
   return <span className={`text-micro font-semibold uppercase tracking-[0.08em] ${tone}`}>{label}</span>;
 }

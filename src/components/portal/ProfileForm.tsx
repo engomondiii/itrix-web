@@ -27,20 +27,20 @@ export function ProfileForm({
       <SectionLabel>{PORTAL_COPY.settings.profileHeader}</SectionLabel>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{f.fullName}</span>
-          <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-10 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600" />
+          <span className="text-secondary font-medium text-ink-primary">{f.fullName}</span>
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary" />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{f.email}</span>
-          <input value={profile.email} disabled className="h-10 rounded-md border border-line bg-surface-sunken px-3 text-body text-ink-500" />
+          <span className="text-secondary font-medium text-ink-primary">{f.email}</span>
+          <input value={profile.email} disabled className="h-10 rounded-md border border-border-medium bg-soft px-3 text-body text-ink-secondary" />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{f.organization}</span>
-          <input value={organization} onChange={(e) => setOrganization(e.target.value)} className="h-10 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600" />
+          <span className="text-secondary font-medium text-ink-primary">{f.organization}</span>
+          <input value={organization} onChange={(e) => setOrganization(e.target.value)} className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary" />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-900">{f.role}</span>
-          <input value={role} onChange={(e) => setRole(e.target.value)} className="h-10 rounded-md border border-line bg-surface px-3 text-body text-ink-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600" />
+          <span className="text-secondary font-medium text-ink-primary">{f.role}</span>
+          <input value={role} onChange={(e) => setRole(e.target.value)} className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary" />
         </label>
       </div>
       <div>

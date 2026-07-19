@@ -11,8 +11,8 @@ export function InfoDrawerRow() {
     <section className="container-page py-16">
       <div className="mx-auto max-w-reading">
         <SectionLabel>{LEARN_MORE_INTRO}</SectionLabel>
-        <h2 className="mt-3 text-web-h2 text-indigo-950">Understand itriX at your own pace</h2>
-        <p className="reading mt-2 text-ink-500">
+        <h2 className="mt-3 text-web-h2 text-structure-900">Understand itriX at your own pace</h2>
+        <p className="reading mt-2 text-ink-secondary">
           Nothing here is pushed. Open only what’s useful — each answer stays qualitative until an NDA is in place.
         </p>
         <div className="mt-6">

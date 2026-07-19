@@ -20,7 +20,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         will still receive any review you submitted.
       </p>
       {error.digest ? (
-        <p className="mt-3 font-mono text-caption text-ink-400">Reference: {error.digest}</p>
+        <p className="mt-3 font-mono text-caption text-ink-secondary">Reference: {error.digest}</p>
       ) : null}
       <div className="mt-8 flex gap-3">
         <Button variant="primary" onClick={reset}>

@@ -17,12 +17,12 @@ export function PageWrapper({ children, eyebrow, title, lead, grid, className }:
   return (
     <div className={cn('relative', className)}>
       {(eyebrow || title || lead) && (
-        <header className="relative overflow-hidden border-b border-line bg-canvas">
+        <header className="relative overflow-hidden border-b border-border-medium bg-canvas">
           {grid ? <BackgroundGrid /> : null}
           <div className="container-page section">
             {eyebrow ? <SectionLabel>{eyebrow}</SectionLabel> : null}
-            {title ? <h1 className="mt-4 max-w-3xl text-web-h1 text-indigo-950">{title}</h1> : null}
-            {lead ? <p className="reading mt-4 text-web-lead text-ink-700">{lead}</p> : null}
+            {title ? <h1 className="mt-4 max-w-3xl text-web-h1 text-structure-900">{title}</h1> : null}
+            {lead ? <p className="reading mt-4 text-web-lead text-ink-secondary">{lead}</p> : null}
           </div>
         </header>
       )}

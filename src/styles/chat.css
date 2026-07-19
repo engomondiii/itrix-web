@@ -2,7 +2,7 @@
  * Chat-specific tokens (Phase 3) — Mathematical Glass Intelligence (v1.2).
  * Sender washes and the under-review pill are expressed as custom properties so
  * the chat + portal message surfaces stay consistent without hard-coding hexes
- * in TSX. They mirror the token layer (sapphire-50 / gold-50 / warning-soft).
+ * in TSX. They mirror the token layer (soft / soft / warning-soft).
  *
  * The agent (soft blue) vs. team (holographic soft-blue) wash distinction is
  * preserved from the architecture (§21.1); v1.2 has no gold, so the team rule
@@ -10,13 +10,13 @@
  */
 :root {
   --chat-client-bg: var(--surface, #ffffff);
-  --chat-client-border: var(--line, rgba(148,163,184,0.32));
+  --chat-client-border: var(--border-medium, rgba(148,163,184,0.32));
 
-  --chat-agent-bg: var(--sapphire-50, #eaf0ff);
-  --chat-agent-rule: var(--sapphire-500, #5b6b82);
+  --chat-agent-bg: var(--soft, #eaf0ff);
+  --chat-agent-rule: var(--structure-600, #5b6b82);
 
-  --chat-team-bg: var(--gold-50, #f2f6ff);
-  --chat-team-rule: var(--gold-500, #8fa8ea);
+  --chat-team-bg: var(--soft, #f2f6ff);
+  --chat-team-rule: var(--accent, #8fa8ea);
 
   --chat-review-bg: var(--warning-soft, #fffaeb);
   --chat-review-text: var(--warning-text, #b54708);

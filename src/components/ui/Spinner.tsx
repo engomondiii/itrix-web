@@ -14,7 +14,7 @@ export function Spinner({ size = 'md', className, label = 'Loading' }: SpinnerPr
     <span
       role="status"
       aria-label={label}
-      className={cn('inline-block animate-spin rounded-pill border-line-strong border-t-sapphire-600', sizeClass[size], className)}
+      className={cn('inline-block animate-spin rounded-pill border-border-strong border-t-ink-primary', sizeClass[size], className)}
     />
   );
 }

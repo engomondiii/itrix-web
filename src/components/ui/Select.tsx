@@ -29,7 +29,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   return (
     <div className="flex flex-col gap-1.5">
       {label ? (
-        <label htmlFor={fieldId} className="text-secondary font-medium text-ink-700">
+        <label htmlFor={fieldId} className="text-secondary font-medium text-ink-secondary">
           {label}
         </label>
       ) : null}
@@ -40,8 +40,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={cn(
-            'h-10 w-full appearance-none rounded-sm border bg-surface-sunken pl-3 pr-9 text-body text-ink-900 transition-colors focus:outline-none focus:ring-2 focus:ring-sapphire-600 disabled:opacity-50',
-            error ? 'border-error' : 'border-line',
+            'h-10 w-full appearance-none rounded-sm border bg-soft pl-3 pr-9 text-body text-ink-primary transition-colors focus:outline-none focus:ring-2 focus:ring-ink-primary disabled:opacity-50',
+            error ? 'border-error' : 'border-border-medium',
             className,
           )}
           {...rest}
@@ -53,9 +53,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
             </option>
           ))}
         </select>
-        <span aria-hidden className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-400">▾</span>
+        <span aria-hidden className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-secondary">▾</span>
       </div>
-      {hint && !error ? <p id={`${fieldId}-hint`} className="text-caption text-ink-400">{hint}</p> : null}
+      {hint && !error ? <p id={`${fieldId}-hint`} className="text-caption text-ink-secondary">{hint}</p> : null}
       <ErrorMessage id={`${fieldId}-error`}>{error}</ErrorMessage>
     </div>
   );

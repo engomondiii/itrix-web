@@ -19,8 +19,8 @@ export function LearnMoreRow({
     <section className="container-page py-14">
       <div className="mx-auto max-w-reading">
         <SectionLabel>{LEARN_MORE_INTRO}</SectionLabel>
-        <h2 className="mt-3 text-web-h3 text-indigo-950">{heading}</h2>
-        {intro ? <p className="reading mt-2 text-ink-500">{intro}</p> : null}
+        <h2 className="mt-3 text-web-h3 text-structure-900">{heading}</h2>
+        {intro ? <p className="reading mt-2 text-ink-secondary">{intro}</p> : null}
         <div className="mt-5">
           <DrawerGroup ids={ids} />
         </div>

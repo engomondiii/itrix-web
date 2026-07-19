@@ -1,8 +1,10 @@
-# iTrix — Surface 1 (public site)
+# itriX — Surface 1 (public site)
 User-agent: *
 Allow: /
 
-# Funnel, private client pages, portal, and proxy routes are not for indexing
+# The funnel, the token-gated client pages, the portal and every proxy route are
+# not for indexing. /c/* in particular is a PERSONALIZED page behind a capability
+# token — indexing one would publish a private brief.
 Disallow: /review
 Disallow: /c/
 Disallow: /workspace

@@ -16,7 +16,7 @@ export function PresenceBar({ conversationId }: { conversationId?: string | null
 
   if (present.length === 0) return null;
   return (
-    <div className="flex items-center gap-2 border-b border-line-subtle px-1 pb-2 text-caption text-ink-500">
+    <div className="flex items-center gap-2 border-b border-border-soft px-1 pb-2 text-caption text-ink-secondary">
       <span aria-hidden className="inline-block h-2 w-2 rounded-pill bg-tier-1" />
       {present.join(', ')} from the itriX team {present.length === 1 ? 'is' : 'are'} here
     </div>

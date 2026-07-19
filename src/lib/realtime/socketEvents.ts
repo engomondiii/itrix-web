@@ -11,7 +11,10 @@
  */
 
 import type { ChatMessage, Citation, GovernanceStatus } from '@/types/chat.types';
-import type { JourneyState, RevealSurface, JourneyReveal } from '@/types/journey.types';
+import type {
+  JourneyState, RevealSurface, JourneyReveal, RailsPayload,
+  IdentityState, DisclosureCeiling, StateKey,
+} from '@/types/journey.types';
 import type { ClientPage } from '@/types/client.types';
 
 /** ---- Server → client payloads ---- */
@@ -42,10 +45,42 @@ export interface MessageUnderReviewPayload {
 /** A journey reveal pushed the instant the backend authorizes a surface. */
 export interface JourneyRevealPayload {
   state: JourneyState;
+  /** v4.0: the 1–10 number and stable key travel with every reveal. */
+  journeyNumber?: number | null;
+  stateKey?: StateKey;
+  identityState?: IdentityState;
+  disclosureCeiling?: DisclosureCeiling;
   authorizedSurface: RevealSurface | null;
   reveal: JourneyReveal;
   valueDelivered: boolean;
   accountInviteAvailable: boolean;
+  /** Reveals often change what the rails may show, so they may carry them. */
+  rails?: RailsPayload;
+}
+
+/**
+ * The backend RE-AUTHORIZED the rails (Architecture v2.5 Appendix A).
+ *
+ * The lists are absolute, not a delta: a section the backend drops must
+ * disappear from the UI. Consumers replace rather than merge.
+ */
+export interface RailUpdatePayload {
+  journeyState?: JourneyState;
+  journeyNumber?: number | null;
+  rails: RailsPayload;
+}
+
+/**
+ * A support request changed state (Architecture v2.5 Appendix A).
+ *
+ * Typed here in Phase 2 so the contract is settled; the customer-success
+ * surfaces that consume it arrive in Phase 3.
+ */
+export interface SupportUpdatePayload {
+  requestId: string;
+  status: 'open' | 'in_progress' | 'waiting_on_customer' | 'resolved';
+  owner?: string | null;
+  slaDueAt?: string | null;
 }
 
 /** A streamed chunk of the client-page narrative as it generates (live). */
@@ -79,6 +114,8 @@ export type ServerEvent =
   | { type: 'message.final'; payload: MessageFinalPayload }
   | { type: 'message.under_review'; payload: MessageUnderReviewPayload }
   | { type: 'journey.reveal'; payload: JourneyRevealPayload }
+  | { type: 'rail.update'; payload: RailUpdatePayload }
+  | { type: 'support.update'; payload: SupportUpdatePayload }
   | { type: 'clientpage.delta'; payload: ClientPageDeltaPayload }
   | { type: 'clientpage.final'; payload: ClientPageFinalPayload }
   | { type: 'presence.update'; payload: PresenceUpdatePayload }

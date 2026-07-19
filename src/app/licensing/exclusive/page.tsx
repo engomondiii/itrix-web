@@ -21,7 +21,7 @@ export default function ExclusivePage() {
         title="When the advantage should be yours alone"
         lead={LICENSE_PATHWAYS.exclusive.summary}
       />
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page grid gap-8 md:grid-cols-[1.3fr_1fr]">
           <div className="reading">
             <p>

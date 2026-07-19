@@ -13,19 +13,19 @@ export function MobileMenu() {
   return (
     <div
       id="mobile-menu"
-      className={cn('md:hidden overflow-hidden border-b border-line bg-surface transition-[max-height] duration-base ease-out', open ? 'max-h-[80vh]' : 'max-h-0')}
+      className={cn('md:hidden overflow-hidden border-b border-border-medium bg-surface transition-[max-height] duration-base ease-out', open ? 'max-h-[80vh]' : 'max-h-0')}
       aria-hidden={!open}
     >
       <nav className="container-page flex flex-col gap-1 py-4">
         {primaryNav.map((item) => (
           <div key={item.label} className="py-1">
-            <Link href={item.href} onClick={close} className="block py-2 text-body font-medium text-ink-900">
+            <Link href={item.href} onClick={close} className="block py-2 text-body font-medium text-ink-primary">
               {item.label}
             </Link>
             {item.children ? (
-              <div className="ml-3 flex flex-col border-l border-line pl-3">
+              <div className="ml-3 flex flex-col border-l border-border-medium pl-3">
                 {item.children.map((child) => (
-                  <Link key={child.href} href={child.href} onClick={close} className="py-1.5 text-secondary text-ink-500 hover:text-ink-900">
+                  <Link key={child.href} href={child.href} onClick={close} className="py-1.5 text-secondary text-ink-secondary hover:text-ink-primary">
                     {child.label}
                   </Link>
                 ))}

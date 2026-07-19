@@ -4,10 +4,10 @@ import { cn } from '@/lib/cn';
 type Variant = 'default' | 'warm' | 'sunken' | 'featured';
 
 const variants: Record<Variant, string> = {
-  default: 'bg-surface border border-line shadow-1',
-  warm: 'bg-surface-warm border border-line shadow-1',
-  sunken: 'bg-surface-sunken border border-line-subtle',
-  featured: 'bg-surface border border-gold-400 shadow-gold',
+  default: 'bg-surface border border-border-medium shadow-1',
+  warm: 'bg-surface border border-border-medium shadow-1',
+  sunken: 'bg-soft border border-border-soft',
+  featured: 'bg-surface border border-accent-soft shadow-signature',
 };
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -35,7 +35,7 @@ export function Card({ variant = 'default', padded = true, interactive, classNam
 
 export function CardTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h3 className={cn('text-card-title text-ink-700', className)} {...rest}>
+    <h3 className={cn('text-card-title text-ink-secondary', className)} {...rest}>
       {children}
     </h3>
   );

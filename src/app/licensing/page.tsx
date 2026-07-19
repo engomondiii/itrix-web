@@ -21,7 +21,7 @@ export default function LicensingPage() {
         title="License the methods, not the hardware"
         lead="iTrix monetizes patented methods through licensing. Pathways run from standard non-exclusive use to scoped exclusivity and deep strategic partnership — all reached through evaluation, never a public price list."
       />
-      <section className="section border-b border-line bg-canvas">
+      <section className="section border-b border-border-medium bg-canvas">
         <div className="container-page">
           <SectionLabel>Pathways</SectionLabel>
           <div className="mt-6"><PathwayComparisonTable /></div>

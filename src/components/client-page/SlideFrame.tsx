@@ -21,24 +21,24 @@ export function SlideFrame({
   children: ReactNode;
 }) {
   return (
-    <article className="rounded-lg border border-line bg-surface p-6 shadow-1">
+    <article className="rounded-lg border border-border-medium bg-surface p-6 shadow-1">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-caption text-ink-400">
+        <span className="font-mono text-caption text-ink-secondary">
           {index} / {total}
         </span>
         <span
           className={cn(
             'rounded-pill px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em]',
             disclosure === 'controlled_public'
-              ? 'bg-gold-50 text-gold-600'
-              : 'bg-sapphire-50 text-sapphire-700',
+              ? 'bg-soft text-structure-600'
+              : 'bg-soft text-ink-primary',
           )}
         >
           {disclosure === 'controlled_public' ? 'Discussed after NDA' : 'Overview'}
         </span>
       </div>
-      <h3 className="mt-3 text-web-h3 text-indigo-950">{title}</h3>
-      <div className="reading mt-2 text-ink-700">{children}</div>
+      <h3 className="mt-3 text-web-h3 text-structure-900">{title}</h3>
+      <div className="reading mt-2 text-ink-secondary">{children}</div>
     </article>
   );
 }

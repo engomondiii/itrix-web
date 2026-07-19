@@ -8,11 +8,11 @@ export function TechnologyRouteCard({ tech, relevance }: { tech: Technology; rel
   return (
     <Card variant="default" className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="text-card-title text-indigo-950">{tech.name}</h3>
+        <h3 className="text-card-title text-structure-900">{tech.name}</h3>
         <Tag>{tech.gap}</Tag>
       </div>
-      <p className="text-secondary text-ink-700">{tech.oneLiner}</p>
-      <p className="text-caption text-ink-500">{relevance}</p>
+      <p className="text-secondary text-ink-secondary">{tech.oneLiner}</p>
+      <p className="text-caption text-ink-secondary">{relevance}</p>
       {tech.patentRef ? <PatentReference patentRef={tech.patentRef} className="mt-auto pt-1" /> : null}
     </Card>
   );

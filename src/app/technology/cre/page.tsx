@@ -15,7 +15,7 @@ export default function CrePage() {
   return (
     <>
       <TechnologyHero eyebrow={t.gap} title="CRE" expansion={t.expansion} lead={t.oneLiner} />
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page max-w-3xl">
           <div className="flex items-center gap-3">
             <DisclosureLevelBadge level="controlled_public" />
@@ -35,8 +35,8 @@ export default function CrePage() {
             </p>
           </div>
           <Card variant="sunken" className="mt-8">
-            <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-400">Public boundary</span>
-            <p className="mt-2 text-secondary text-ink-700">{NDA_WARNINGS.benchmarks}</p>
+            <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">Public boundary</span>
+            <p className="mt-2 text-secondary text-ink-secondary">{NDA_WARNINGS.benchmarks}</p>
           </Card>
         </div>
       </section>

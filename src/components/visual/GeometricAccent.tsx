@@ -11,7 +11,7 @@ export interface GeometricAccentProps {
 
 export function GeometricAccent({ shape = 'square', className, size = 24 }: GeometricAccentProps) {
   return (
-    <svg aria-hidden width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn('text-sapphire-500', className)}>
+    <svg aria-hidden width={size} height={size} viewBox="0 0 24 24" fill="none" className={cn('text-structure-600', className)}>
       {shape === 'square' && <rect x="4" y="4" width="16" height="16" stroke="currentColor" strokeWidth="1.5" />}
       {shape === 'cross' && (
         <>

@@ -5,7 +5,7 @@ export default function Loading() {
     <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-live="polite">
       <div className="flex flex-col items-center gap-3">
         <Spinner size="lg" />
-        <p className="text-caption text-ink-400">Loading…</p>
+        <p className="text-caption text-ink-secondary">Loading…</p>
       </div>
     </div>
   );

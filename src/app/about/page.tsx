@@ -27,15 +27,15 @@ export default function AboutPage() {
             a transformation hypothesis. ALPHA Core validates whether that transformed form can actually run.
             Underneath sit three patented methods — AXIOM, CRE, and FQNM — and a published numerical result.
           </p>
-          <p className="mt-4 font-medium text-indigo-950">"{brand.thesis}"</p>
+          <p className="mt-4 font-medium text-structure-900">"{brand.thesis}"</p>
         </div>
         <Card variant="warm" className="self-start">
-          <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-400">The name</span>
+          <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">The name</span>
           <ul className="mt-3 flex flex-col gap-3">
             {brand.letters.map((l) => (
               <li key={l.meaning} className="flex items-baseline gap-3">
-                <span className="font-mono text-web-h3 text-sapphire-600">{l.char}</span>
-                <span className="text-secondary text-ink-700">{l.meaning}</span>
+                <span className="font-mono text-web-h3 text-ink-primary">{l.char}</span>
+                <span className="text-secondary text-ink-secondary">{l.meaning}</span>
               </li>
             ))}
           </ul>

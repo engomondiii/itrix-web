@@ -32,22 +32,22 @@ export function CommercialLadder({ className }: { className?: string }) {
               aria-hidden
               className={cn(
                 'mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-pill text-micro font-semibold',
-                rung.paid ? 'bg-gold-500 text-indigo-950' : 'bg-sapphire-50 text-sapphire-700',
+                rung.paid ? 'bg-accent text-structure-900' : 'bg-soft text-ink-primary',
               )}
             >
               {i + 1}
             </span>
             <div className="flex flex-col">
-              <span className="text-body font-medium text-ink-900">
+              <span className="text-body font-medium text-ink-primary">
                 {rung.label}
-                {rung.paid ? <span className="ml-2 text-micro font-semibold uppercase tracking-[0.08em] text-gold-600">Paid</span> : null}
+                {rung.paid ? <span className="ml-2 text-micro font-semibold uppercase tracking-[0.08em] text-structure-600">Paid</span> : null}
               </span>
-              <span className="text-secondary text-ink-500">{rung.detail}</span>
+              <span className="text-secondary text-ink-secondary">{rung.detail}</span>
             </div>
           </li>
         ))}
       </ol>
-      <p className="text-caption text-ink-400">
+      <p className="text-caption text-ink-secondary">
         Exclusive arrangements exist for selected strategic partners and are discussed privately. No fees are shown here.
       </p>
     </div>

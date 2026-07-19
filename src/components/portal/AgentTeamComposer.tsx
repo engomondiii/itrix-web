@@ -23,7 +23,7 @@ export function AgentTeamComposer({ onSend, disabled }: { onSend: (body: string)
   }
 
   return (
-    <div className="flex flex-col gap-2 border-t border-line pt-3">
+    <div className="flex flex-col gap-2 border-t border-border-medium pt-3">
       <div className="flex items-end gap-2">
         <textarea
           value={value}
@@ -32,13 +32,13 @@ export function AgentTeamComposer({ onSend, disabled }: { onSend: (body: string)
           rows={2}
           placeholder={PORTAL_COPY.messages.inputPlaceholder}
           disabled={disabled}
-          className="min-h-[2.75rem] w-full resize-y rounded-md border border-line bg-surface px-3 py-2 text-body text-ink-900 placeholder:text-ink-400 focus-visible:border-sapphire-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600 focus-visible:ring-offset-1 focus-visible:ring-offset-canvas disabled:opacity-50"
+          className="min-h-[2.75rem] w-full resize-y rounded-md border border-border-medium bg-surface px-3 py-2 text-body text-ink-primary placeholder:text-ink-secondary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-1 focus-visible:ring-offset-canvas disabled:opacity-50"
         />
         <Button variant="primary" size="md" onClick={submit} disabled={disabled || !value.trim()}>
           {PORTAL_COPY.messages.sendButton}
         </Button>
       </div>
-      <p className="text-caption text-ink-400">{PORTAL_COPY.messages.inputNote}</p>
+      <p className="text-caption text-ink-secondary">{PORTAL_COPY.messages.inputNote}</p>
     </div>
   );
 }

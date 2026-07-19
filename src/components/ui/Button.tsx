@@ -7,16 +7,16 @@ type Size = 'sm' | 'md' | 'lg';
 
 const base =
   'inline-flex items-center justify-center gap-2 rounded-sm font-medium transition-colors duration-fast ease-out select-none ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ' +
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ' +
   'disabled:opacity-50 disabled:pointer-events-none';
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-sapphire-600 text-white shadow-1 hover:bg-sapphire-500 active:bg-sapphire-700',
-  secondary: 'bg-transparent text-ink-700 border border-line-strong hover:bg-surface-warm hover:border-ink-400',
-  dark: 'bg-indigo-700 text-oni hover:bg-indigo-800 focus-visible:ring-gold-400',
-  gold: 'bg-gold-500 text-indigo-950 font-semibold shadow-gold hover:bg-gold-400',
+  primary: 'bg-ink-primary text-white shadow-1 hover:bg-structure-600 active:bg-ink-primary',
+  secondary: 'bg-transparent text-ink-secondary border border-border-strong hover:bg-surface hover:border-ink-secondary',
+  dark: 'bg-structure-600 text-ink-inverse hover:bg-structure-700 focus-visible:ring-accent-soft',
+  gold: 'bg-accent text-structure-900 font-semibold shadow-signature hover:bg-accent-soft',
   destructive: 'bg-error text-white hover:brightness-95 active:brightness-90',
-  ghost: 'bg-transparent text-sapphire-600 hover:bg-sapphire-50',
+  ghost: 'bg-transparent text-ink-primary hover:bg-soft',
 };
 
 const sizes: Record<Size, string> = {

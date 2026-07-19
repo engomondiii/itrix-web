@@ -6,7 +6,7 @@ import type { SenderKind } from '@/types/chat.types';
 export function SenderLabel({ kind, teamName }: { kind: SenderKind; teamName?: string | null }) {
   const label = kind === 'client' ? 'You' : kind === 'agent' ? AGENT_DISPLAY_LABEL : teamName || 'itriX team';
   const tone =
-    kind === 'client' ? 'text-ink-500' : kind === 'agent' ? 'text-sapphire-700' : 'text-gold-600';
+    kind === 'client' ? 'text-ink-secondary' : kind === 'agent' ? 'text-ink-primary' : 'text-structure-600';
   return (
     <span className={`text-micro font-semibold uppercase tracking-[0.08em] ${tone}`}>{label}</span>
   );

@@ -11,7 +11,7 @@ export function Tag({ active, className, children, ...rest }: TagProps) {
     <span
       className={cn(
         'inline-flex items-center gap-1 rounded-pill border px-3 py-1 text-caption font-medium',
-        active ? 'border-sapphire-300 bg-sapphire-50 text-sapphire-700' : 'border-line text-ink-500',
+        active ? 'border-accent-soft bg-soft text-ink-primary' : 'border-border-medium text-ink-secondary',
         className,
       )}
       {...rest}

@@ -29,8 +29,8 @@ export default function MessagesPage() {
       <div className="mx-auto flex max-w-3xl flex-col gap-5 px-6 py-8">
         <Card variant="default" className="flex flex-col gap-4">
           <div>
-            <p className="reading text-ink-700">{PORTAL_COPY.messages.greeting}</p>
-            <p className="mt-2 text-caption text-ink-400">{PORTAL_COPY.messages.greetingConfidentiality}</p>
+            <p className="reading text-ink-secondary">{PORTAL_COPY.messages.greeting}</p>
+            <p className="mt-2 text-caption text-ink-secondary">{PORTAL_COPY.messages.greetingConfidentiality}</p>
           </div>
 
           {loading && !thread ? (
@@ -48,7 +48,7 @@ export default function MessagesPage() {
               <EmptyState>{PORTAL_COPY.home.empty}</EmptyState>
               <div className="flex flex-wrap gap-2">
                 {PORTAL_COPY.messages.suggestedFirst.map((q) => (
-                  <span key={q} className="rounded-pill border border-line bg-surface-warm px-3 py-1.5 text-secondary text-ink-500">
+                  <span key={q} className="rounded-pill border border-border-medium bg-surface px-3 py-1.5 text-secondary text-ink-secondary">
                     {q}
                   </span>
                 ))}

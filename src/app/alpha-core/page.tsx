@@ -26,13 +26,13 @@ export default function AlphaCorePage() {
         statement="Core validates whether it can run."
         body="A transformation is only worth anything if it survives contact with real hardware. ALPHA Core takes the representation hypothesis from Compute and validates it through execution and proof-of-concept — against agreed baselines, on the workloads that matter."
       />
-      <section className="section border-b border-line bg-canvas">
+      <section className="section border-b border-border-medium bg-canvas">
         <div className="container-page">
           <SectionLabel>The boundary</SectionLabel>
           <div className="mt-6"><ProductBoundaryTable /></div>
         </div>
       </section>
-      <section className="section border-b border-line bg-surface-warm">
+      <section className="section border-b border-border-medium bg-surface">
         <div className="container-page">
           <SectionLabel>Technology routes</SectionLabel>
           <div className="mt-6 grid gap-4 md:grid-cols-3">

@@ -5,13 +5,21 @@ import { journeyApi } from '@/lib/api/journeyApi';
 import { useSocket } from '@/lib/realtime/useSocket';
 import { wsUrls } from '@/lib/realtime/wsUrls';
 import { siteConfig } from '@/config/site.config';
-import type { JourneyState, JourneyReveal, RevealSurface } from '@/types/journey.types';
+import { normalizeState, journeyNumber as numberFor, stateKey as keyFor } from '@/lib/journey/journeyStates';
+import type {
+  JourneyState, JourneyReveal, RevealSurface, StateKey,
+  IdentityState, DisclosureCeiling,
+} from '@/types/journey.types';
 import type { JourneyRevealPayload } from '@/lib/realtime/socketEvents';
 
 const POLL_MS = 5000;
 
 interface UseJourneyResult {
   state: JourneyState | null;
+  journeyNumber: number | null;
+  stateKey: StateKey;
+  identityState: IdentityState;
+  disclosureCeiling: DisclosureCeiling;
   authorizedSurface: RevealSurface | null;
   reveals: JourneyReveal[];
   valueDelivered: boolean;
@@ -24,13 +32,31 @@ interface UseJourneyResult {
 /**
  * Subscribe to journey state for a capability token.
  *
- * Phase 3: when realtime is ON, a WebSocket subscription (journey.reveal) pushes
- * state the instant the backend authorizes a surface — no reload, no poll lag. The
- * GET remains as (a) the initial fetch and (b) a fallback poll while the socket is
- * connecting or when realtime is OFF. The public shape is identical across phases.
+ * v4.0 adds journey_number, state_key, identity_state and disclosure_ceiling to
+ * the subscription, and handles `rail.update` alongside `journey.reveal`.
+ *
+ * Two things this hook will not do, both deliberate:
+ *
+ *   · It never DERIVES authorization. `authorizedSurface`, `valueDelivered` and
+ *     `accountInviteAvailable` come from the backend verbatim. A visitor cannot
+ *     reach a surface by manipulating a URL or a prompt, because nothing here
+ *     computes entitlement from anything the visitor controls.
+ *
+ *   · It never trusts an unknown state. `normalizeState` maps legacy values
+ *     forward and resolves anything unrecognised to ARRIVED — the most
+ *     restrictive state. Vocabulary drift costs a visitor access they had;
+ *     it never grants access they did not.
+ *
+ * With realtime on, pushes update state the instant the backend authorizes it.
+ * The GET remains the initial fetch and the fallback poll; behaviour is
+ * identical either way.
  */
 export function useJourney(token: string | null): UseJourneyResult {
   const [state, setState] = useState<JourneyState | null>(null);
+  const [journeyNumber, setJourneyNumber] = useState<number | null>(null);
+  const [stateKey, setStateKey] = useState<StateKey>('arrival');
+  const [identityState, setIdentityState] = useState<IdentityState>('anonymous');
+  const [disclosureCeiling, setDisclosureCeiling] = useState<DisclosureCeiling>('public');
   const [authorizedSurface, setAuthorizedSurface] = useState<RevealSurface | null>(null);
   const [reveals, setReveals] = useState<JourneyReveal[]>([]);
   const [valueDelivered, setValueDelivered] = useState(false);
@@ -45,7 +71,12 @@ export function useJourney(token: string | null): UseJourneyResult {
     if (!token) return;
     const { data, error: err } = await journeyApi.getState(token);
     if (data) {
-      setState(data.state);
+      const normalized = normalizeState(data.state);
+      setState(normalized);
+      setJourneyNumber(data.journeyNumber ?? numberFor(normalized));
+      setStateKey(data.stateKey ?? keyFor(normalized));
+      setIdentityState(data.identityState ?? 'anonymous');
+      setDisclosureCeiling(data.disclosureCeiling ?? 'public');
       setAuthorizedSurface(data.authorizedSurface);
       setReveals(data.reveals ?? []);
       setValueDelivered(Boolean(data.valueDelivered));
@@ -57,42 +88,56 @@ export function useJourney(token: string | null): UseJourneyResult {
     setLoading(false);
   }, [token]);
 
-  const refresh = useCallback(() => {
-    void fetchOnce();
-  }, [fetchOnce]);
+  const refresh = useCallback(() => void fetchOnce(), [fetchOnce]);
 
-  // Live journey.reveal pushes (Phase 3). Merges into the same state the GET fills.
-  const { connected } = useSocket({
+  const { status } = useSocket({
     url: token ? wsUrls.clientPage(token) : null,
     token,
     enabled: realtime && Boolean(token),
     handlers: {
       'journey.reveal': (p: JourneyRevealPayload) => {
-        setState(p.state);
+        const normalized = normalizeState(p.state);
+        setState(normalized);
+        setJourneyNumber(p.journeyNumber ?? numberFor(normalized));
+        setStateKey(p.stateKey ?? keyFor(normalized));
+        if (p.identityState) setIdentityState(p.identityState);
+        if (p.disclosureCeiling) setDisclosureCeiling(p.disclosureCeiling);
         setAuthorizedSurface(p.authorizedSurface);
-        setReveals((prev) => {
-          const exists = prev.some((r) => r.surface === p.reveal.surface);
-          return exists ? prev : [...prev, p.reveal];
-        });
+        setReveals((prev) =>
+          prev.some((r) => r.surface === p.reveal.surface) ? prev : [...prev, p.reveal],
+        );
         setValueDelivered(Boolean(p.valueDelivered));
         setAccountInviteAvailable(Boolean(p.accountInviteAvailable));
         setLoading(false);
         setError(null);
       },
+      // A rails re-authorization can accompany a state change. useRails owns the
+      // rail lists themselves; here we only keep the number in step so the shell
+      // never renders State 4 rails beside a State 2 centre.
+      'rail.update': (p) => {
+        if (p.journeyNumber !== undefined && p.journeyNumber !== null) {
+          setJourneyNumber(p.journeyNumber);
+        } else if (p.journeyState) {
+          setJourneyNumber(numberFor(normalizeState(p.journeyState)));
+        }
+      },
     },
   });
 
-  useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    void fetchOnce(); // always do the initial GET
+  const connected = status === 'open';
 
-    // Poll only while the socket isn't carrying us (realtime off, or not yet open).
-    const shouldPoll = !realtime || !connected;
-    if (shouldPoll) {
+  useEffect(() => {
+    // No token means no subscription. The result is DERIVED below rather than
+    // written here — representing something already known at render time as
+    // effect state just causes a cascading render.
+    if (!token) return;
+
+    // An async fetch that resolves into setState is the canonical legitimate
+    // effect. The lint rule cannot see that the writes happen in a promise
+    // callback rather than synchronously in the effect body.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchOnce();
+    if (!realtime || !connected) {
       timer.current = setInterval(() => void fetchOnce(), POLL_MS);
     }
     return () => {
@@ -101,5 +146,12 @@ export function useJourney(token: string | null): UseJourneyResult {
     };
   }, [token, fetchOnce, realtime, connected]);
 
-  return { state, authorizedSurface, reveals, valueDelivered, accountInviteAvailable, loading, error, refresh };
+  return {
+    state, journeyNumber, stateKey, identityState, disclosureCeiling,
+    authorizedSurface, reveals, valueDelivered, accountInviteAvailable,
+    // Derived: with no token there is nothing to load and nothing to report.
+    loading: token ? loading : false,
+    error: token ? error : null,
+    refresh,
+  };
 }

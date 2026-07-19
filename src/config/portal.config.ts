@@ -9,17 +9,45 @@ export interface PortalNavItem {
   key: string;
   label: string;
   href: string;
+  /** Hide until the journey reaches this number. Presentation only, never auth. */
+  minJourneyNumber?: number;
 }
 
-/** The seven workspace screens, in order (§60 flow: Home → … → Settings). */
+/**
+ * The workspace screens, in order.
+ *
+ * v4.0 Phase 3 adds the paid workspaces and the customer-success zone. The order
+ * is the order of the relationship: what is happening now, then the work, then
+ * the commercial track, then settings.
+ *
+ * `minJourneyNumber` hides a screen until the state that owns it. A customer at
+ * State 6 has no assessment to look at, and showing them an empty Assessment tab
+ * is the "empty decorative dashboard" the spec forbids. It is a PRESENTATION
+ * rule only — Django re-authorizes every fetch regardless of what the nav shows.
+ */
 export const PORTAL_NAV: PortalNavItem[] = [
   { key: 'overview', label: 'Home', href: '/workspace/overview' },
+  { key: 'success', label: 'Your workspace', href: '/workspace/success', minJourneyNumber: 7 },
   { key: 'messages', label: 'Messages', href: '/workspace/messages' },
   { key: 'briefing', label: 'Briefing', href: '/workspace/briefing' },
   { key: 'documents', label: 'Documents', href: '/workspace/documents' },
   { key: 'evaluation', label: 'Evaluation', href: '/workspace/evaluation' },
-  { key: 'poc', label: 'Proof of concept', href: '/workspace/poc' },
+  { key: 'assessment', label: 'Assessment', href: '/workspace/assessment', minJourneyNumber: 7 },
+  { key: 'poc', label: 'Proof of concept', href: '/workspace/poc', minJourneyNumber: 8 },
+  { key: 'integration', label: 'Integration', href: '/workspace/integration', minJourneyNumber: 9 },
   { key: 'settings', label: 'Settings', href: '/workspace/settings' },
+];
+
+/** The customer-success sub-navigation (State 10, and the overlay from State 7). */
+export const SUCCESS_NAV: PortalNavItem[] = [
+  { key: 'success-home', label: 'Overview', href: '/workspace/success' },
+  { key: 'outcomes', label: 'Outcomes', href: '/workspace/success/outcomes' },
+  { key: 'deployments', label: 'Deployments', href: '/workspace/success/deployments' },
+  { key: 'support', label: 'Support', href: '/workspace/success/support' },
+  { key: 'knowledge', label: 'Learning', href: '/workspace/success/knowledge' },
+  { key: 'meetings', label: 'Meetings', href: '/workspace/success/meetings' },
+  { key: 'governance', label: 'Decisions', href: '/workspace/success/governance' },
+  { key: 'feedback', label: 'Feedback', href: '/workspace/success/feedback' },
 ];
 
 /** Human status line per portal stage (§62). */

@@ -12,18 +12,18 @@ const ITEMS = [
 
 export function ResearchRoomContent() {
   return (
-    <section className="section border-b border-line bg-surface-warm">
+    <section className="section border-b border-border-medium bg-surface">
       <div className="container-page">
         <div className="grid gap-4 md:grid-cols-3">
           {ITEMS.map((it) => (
             <Card key={it.h} className="flex flex-col gap-2">
               <Badge tone={it.tone}>{it.h}</Badge>
-              <span className="text-secondary text-ink-700">{it.d}</span>
+              <span className="text-secondary text-ink-secondary">{it.d}</span>
             </Card>
           ))}
         </div>
-        <p className="mt-6 text-caption text-ink-400">{NDA_WARNINGS.benchmarks}</p>
-        <Link href={routes.fqnmPaper} className="mt-2 inline-block text-secondary text-sapphire-600 underline-offset-2 hover:underline">
+        <p className="mt-6 text-caption text-ink-secondary">{NDA_WARNINGS.benchmarks}</p>
+        <Link href={routes.fqnmPaper} className="mt-2 inline-block text-secondary text-ink-primary underline-offset-2 hover:underline">
           Read the FQNM paper →
         </Link>
       </div>

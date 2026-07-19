@@ -9,12 +9,12 @@ import type { RoomId } from '@/types/room.types';
 export function RoomHero({ roomId }: { roomId: RoomId }) {
   const { room } = useVisitorRoom(roomId);
   return (
-    <section className="relative overflow-hidden border-b border-line bg-canvas">
+    <section className="relative overflow-hidden border-b border-border-medium bg-canvas">
       <BackgroundGrid />
       <div className="container-page relative py-16">
         <SectionLabel>{room.audience}</SectionLabel>
-        <h1 className="mt-4 max-w-3xl text-web-h1 text-indigo-950">{room.title}</h1>
-        <p className="reading mt-4 text-web-lead text-ink-700">{room.intro}</p>
+        <h1 className="mt-4 max-w-3xl text-web-h1 text-structure-900">{room.title}</h1>
+        <p className="reading mt-4 text-web-lead text-ink-secondary">{room.intro}</p>
       </div>
     </section>
   );

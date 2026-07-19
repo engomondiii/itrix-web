@@ -21,12 +21,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
         ref={ref}
         id={fieldId}
         type="checkbox"
-        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-[4px] border-line-strong text-sapphire-600 accent-sapphire-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+        className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer rounded-[4px] border-border-strong text-ink-primary accent-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
         {...rest}
       />
       <span>
-        {label ? <span className="text-body text-ink-900">{label}</span> : null}
-        {description ? <span className="block text-caption text-ink-500">{description}</span> : null}
+        {label ? <span className="text-body text-ink-primary">{label}</span> : null}
+        {description ? <span className="block text-caption text-ink-secondary">{description}</span> : null}
       </span>
     </label>
   );

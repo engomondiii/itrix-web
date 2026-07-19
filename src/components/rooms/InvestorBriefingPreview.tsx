@@ -11,21 +11,21 @@ const POINTS = [
 
 export function InvestorBriefingPreview() {
   return (
-    <section className="section border-b border-line bg-surface-warm">
+    <section className="section border-b border-border-medium bg-surface">
       <div className="container-page">
         <div className="mb-6 flex items-center gap-2">
           <Badge tone="info">Investor briefing</Badge>
-          <span className="text-caption text-ink-400">High-level preview</span>
+          <span className="text-caption text-ink-secondary">High-level preview</span>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           {POINTS.map((p) => (
             <Card key={p.h} className="flex flex-col gap-2">
-              <span className="text-card-title text-indigo-950">{p.h}</span>
-              <span className="text-secondary text-ink-700">{p.d}</span>
+              <span className="text-card-title text-structure-900">{p.h}</span>
+              <span className="text-secondary text-ink-secondary">{p.d}</span>
             </Card>
           ))}
         </div>
-        <p className="mt-6 text-caption text-ink-400">
+        <p className="mt-6 text-caption text-ink-secondary">
           Figures, projections, and the data room are shared directly by the {brand.assessmentTeam}. {NDA_WARNINGS.pricing}
         </p>
       </div>

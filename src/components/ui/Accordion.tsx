@@ -30,7 +30,7 @@ export function Accordion({ items, defaultOpenId, allowMultiple = false, classNa
   }
 
   return (
-    <div className={cn('divide-y divide-line rounded-md border border-line bg-surface', className)}>
+    <div className={cn('divide-y divide-border-medium rounded-md border border-border-medium bg-surface', className)}>
       {items.map((item) => {
         const isOpen = open.includes(item.id);
         const btnId = `${baseId}-${item.id}-btn`;
@@ -44,13 +44,13 @@ export function Accordion({ items, defaultOpenId, allowMultiple = false, classNa
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => toggle(item.id)}
-                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-card-title text-ink-900 transition-colors hover:bg-surface-warm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600 focus-visible:ring-inset"
+                className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-card-title text-ink-primary transition-colors hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-inset"
               >
                 <span>{item.title}</span>
-                <span aria-hidden className={cn('text-ink-400 transition-transform duration-base', isOpen && 'rotate-45')}>+</span>
+                <span aria-hidden className={cn('text-ink-secondary transition-transform duration-base', isOpen && 'rotate-45')}>+</span>
               </button>
             </h3>
-            <div id={panelId} role="region" aria-labelledby={btnId} hidden={!isOpen} className="px-5 pb-5 text-secondary text-ink-700">
+            <div id={panelId} role="region" aria-labelledby={btnId} hidden={!isOpen} className="px-5 pb-5 text-secondary text-ink-secondary">
               {item.content}
             </div>
           </div>

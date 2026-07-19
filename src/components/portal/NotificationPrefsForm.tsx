@@ -25,7 +25,7 @@ export function NotificationPrefsForm({
     <Card variant="default" className="flex flex-col gap-4">
       <div>
         <SectionLabel>{PORTAL_COPY.settings.notificationsHeader}</SectionLabel>
-        <p className="reading mt-2 text-ink-700">{PORTAL_COPY.settings.notificationsIntro}</p>
+        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.settings.notificationsIntro}</p>
       </div>
       <ul className="flex flex-col gap-2">
         {keys.map((key) => (
@@ -35,9 +35,9 @@ export function NotificationPrefsForm({
                 type="checkbox"
                 checked={state[key]}
                 onChange={(e) => setState((s) => ({ ...s, [key]: e.target.checked }))}
-                className="h-4 w-4 rounded-sm border-line-strong text-sapphire-600 focus-visible:ring-2 focus-visible:ring-sapphire-600"
+                className="h-4 w-4 rounded-sm border-border-strong text-ink-primary focus-visible:ring-2 focus-visible:ring-ink-primary"
               />
-              <span className="text-body text-ink-900">{labels[key]}</span>
+              <span className="text-body text-ink-primary">{labels[key]}</span>
             </label>
           </li>
         ))}

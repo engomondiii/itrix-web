@@ -8,16 +8,16 @@ import { CTA } from '@/lib/content/ctaCopy';
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden border-b border-line bg-canvas">
+    <section className="relative overflow-hidden border-b border-border-medium bg-canvas">
       <BackgroundGrid />
       <div className="container-page relative grid items-center gap-10 py-20 md:grid-cols-[1.5fr_1fr] md:py-28">
         <div>
           <SectionLabel>{brand.positioning}</SectionLabel>
-          <h1 className="mt-5 max-w-2xl text-web-h1 text-indigo-950">
+          <h1 className="mt-5 max-w-2xl text-web-h1 text-structure-900">
             Do not scale inefficient computation.
-            <span className="block text-sapphire-600">Make computation worth scaling first.</span>
+            <span className="block text-ink-primary">Make computation worth scaling first.</span>
           </h1>
-          <p className="reading mt-5 text-web-lead text-ink-700">
+          <p className="reading mt-5 text-web-lead text-ink-secondary">
             iTrix is computational AI infrastructure for sustainable AI. We diagnose how a workload is
             represented before anyone tries to run it faster — because the cheapest computation is the
             one you never needed to do.
@@ -34,7 +34,7 @@ export function HeroSection() {
               </Button>
             </Link>
           </div>
-          <p className="mt-3 text-caption text-ink-400">{CTA.beginReview.sublabel}</p>
+          <p className="mt-3 text-caption text-ink-secondary">{CTA.beginReview.sublabel}</p>
         </div>
         <div className="hidden justify-center md:flex">
           <XMotif size={220} />

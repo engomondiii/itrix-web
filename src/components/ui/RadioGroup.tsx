@@ -28,7 +28,7 @@ export function RadioGroup({ name, label, options, value, onChange, error, class
 
   return (
     <fieldset className={cn('flex flex-col gap-2', className)} aria-invalid={!!error}>
-      {label ? <legend className="mb-1 text-secondary font-medium text-ink-700">{label}</legend> : null}
+      {label ? <legend className="mb-1 text-secondary font-medium text-ink-secondary">{label}</legend> : null}
       {options.map((o) => {
         const selected = value === o.value;
         return (
@@ -36,7 +36,7 @@ export function RadioGroup({ name, label, options, value, onChange, error, class
             key={o.value}
             className={cn(
               'flex cursor-pointer items-start gap-3 rounded-md border px-4 py-3 transition-colors',
-              selected ? 'border-sapphire-300 bg-sapphire-50' : 'border-line bg-surface hover:border-line-strong hover:bg-surface-warm',
+              selected ? 'border-accent-soft bg-soft' : 'border-border-medium bg-surface hover:border-border-strong hover:bg-surface',
             )}
           >
             <input
@@ -45,11 +45,11 @@ export function RadioGroup({ name, label, options, value, onChange, error, class
               value={o.value}
               checked={selected}
               onChange={() => onChange?.(o.value)}
-              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-sapphire-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sapphire-600 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+              className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-ink-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
             />
             <span>
-              <span className={cn('text-body', selected ? 'text-ink-900' : 'text-ink-700')}>{o.label}</span>
-              {o.description ? <span className="block text-caption text-ink-500">{o.description}</span> : null}
+              <span className={cn('text-body', selected ? 'text-ink-primary' : 'text-ink-secondary')}>{o.label}</span>
+              {o.description ? <span className="block text-caption text-ink-secondary">{o.description}</span> : null}
             </span>
           </label>
         );
