@@ -1,32 +1,33 @@
 'use client';
 
 import { ArrivalLanding } from './ArrivalLanding';
-import { ConversationShell } from '@/components/shell/ConversationShell';
+import { ArrivalCenter } from './ArrivalCenter';
 import { ConversationColumn } from '@/components/shell/ConversationColumn';
 import { useArrivalMode } from '@/hooks/useArrivalMode';
 
 /**
  * The switch between the two surfaces.
  *
- * It lives here rather than in SiteChrome for one reason: SiteChrome wraps EVERY
- * route, and only the landing has an arrival state. Putting the branch in the
- * shared chrome would mean every marketing page carried a condition that is
- * false for it.
+ * EXACTLY ONE COMPONENT MOUNTS THE CONVERSATION SHELL, and it is SiteChrome.
  *
- * The empty state passed to ConversationColumn is never actually rendered —
- * `useArrivalMode` is exactly the condition ConversationColumn uses to decide
- * emptiness, so by the time we render the shell there is at least one turn. It
- * is supplied as a defensive fallback rather than left null, because a column
- * with no empty state and a race on the store would render a blank screen.
+ * This used to mount its own, which produced two sidebars: submitting rewrites
+ * the URL to /review/<id> with history.replaceState, Next's usePathname reacts
+ * to that, SiteChrome stopped treating the route as chromeless and mounted a
+ * shell — while this component, still the rendered page because replaceState
+ * does not change the route segment, mounted a second one inside it.
+ *
+ * The rule that prevents it recurring: a component may render EITHER the shell
+ * OR its contents, never both. SiteChrome owns the shell; everything below it
+ * renders contents only.
+ *
+ * The fallback passed to ConversationColumn is the bare CENTRE, not the full
+ * arrival screen — if it ever renders it will be inside the shell, and a second
+ * header and footer in there would be the same class of mistake.
  */
 export function LandingSurface() {
   const arrival = useArrivalMode();
 
   if (arrival) return <ArrivalLanding />;
 
-  return (
-    <ConversationShell>
-      <ConversationColumn emptyState={<ArrivalLanding />} />
-    </ConversationShell>
-  );
+  return <ConversationColumn emptyState={<ArrivalCenter />} />;
 }

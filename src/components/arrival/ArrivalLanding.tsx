@@ -6,39 +6,25 @@ import { ArrivalLeftRail } from './ArrivalLeftRail';
 import { ArrivalRightRail } from './ArrivalRightRail';
 import { ArrivalFooter } from './ArrivalFooter';
 import { ArrivalMotifs } from './ArrivalMotifs';
+import { ArrivalCenter } from './ArrivalCenter';
 import { NdaDialog } from './NdaDialog';
-import { SituationFraming } from '@/components/center/SituationFraming';
-import { MainQuestion } from '@/components/center/MainQuestion';
-import { SupportingLine } from '@/components/center/SupportingLine';
-import { ExamplePromptGrid } from '@/components/center/ExamplePromptGrid';
-import { PathwayHint } from '@/components/center/PathwayHint';
-import { Composer } from '@/components/composer/Composer';
 
 /**
  * THE ARRIVAL SCREEN — the approved landing, before the visitor has spoken.
  *
- * This is the reconciliation the change request asked for. Two surfaces, one
- * threshold:
+ * Two surfaces, one threshold:
  *
- *   BEFORE the first prompt   the approved three-column arrival screen — header,
- *                             quiet left rail, big centre, quiet right rail,
- *                             footer. Exactly the package that was signed off.
- *   AFTER the first prompt    the conversation shell — sidebar and transcript,
- *                             the composer docked, no header and no rails.
+ *   BEFORE the first prompt   this — header, quiet left rail, big centre, quiet
+ *                             right rail, footer. The signed-off package.
+ *   AFTER the first prompt    the conversation shell, with the transcript.
  *
- * The switch is not a navigation. `useArrivalMode` reads whether the active
- * thread has any turns; the moment one exists this component stops rendering and
- * ConversationColumn takes over in the same mounted tree. R21 holds: submitting
- * still does not route.
+ * The switch is a re-render of a mounted tree, not a navigation (R21).
  *
- * The centre is IDENTICAL in both — same components, same copy, same composer.
- * That is the point of an invariant centre: the visitor never relearns the one
- * thing they came to use.
- *
- * Rail growth is deliberately absent. The approved package says the rails "can
- * grow in later journey states"; in v5.0 they do not, because the conversation
- * itself is what grows. A rail that grew alongside a transcript would be the
- * two-rail shell v5.0 retired.
+ * IT MOUNTS NO SHELL AND IS MOUNTED BY NO SHELL. SiteChrome renders this bare —
+ * it is a complete page, with its own header and footer. Wrapping it in the
+ * conversation shell would put a sidebar beside a screen the approved design
+ * does not have one on, and that is precisely the duplicate-sidebar bug this
+ * component's contract now prevents.
  */
 export function ArrivalLanding() {
   const [ndaOpen, setNdaOpen] = useState(false);
@@ -52,16 +38,7 @@ export function ArrivalLanding() {
 
         <div className="arrival-shell">
           <ArrivalLeftRail />
-
-          <section className="arrival-center" aria-labelledby="hero-title">
-            <SituationFraming />
-            <MainQuestion id="main-question" />
-            <SupportingLine />
-            <Composer variant="arrival" labelledBy="main-question" />
-            <ExamplePromptGrid />
-            <PathwayHint />
-          </section>
-
+          <ArrivalCenter />
           <ArrivalRightRail onOpenNda={() => setNdaOpen(true)} />
         </div>
 

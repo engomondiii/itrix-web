@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { useThreadContext } from '@/context/ThreadContext';
 import { useComposerStore } from '@/store/composerStore';
 import { useSidebarStore } from '@/store/sidebarStore';
@@ -11,22 +9,16 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
 /**
  * Start a new review.
  *
- * This one DOES navigate, and that is correct. R21 forbids a route transition on
- * SUBMIT — the visitor must never be thrown to a new page for describing their
- * problem. Deliberately starting over is the opposite: they are asking for the
- * front door.
- *
- * It has to be a real navigation because the ARRIVAL SCREEN only renders from
- * the `/` route segment. Clearing the thread and rewriting the URL with
- * replaceState left /review/[threadId] rendered, so "New review" produced a bare
- * centre with no header, rails or footer.
+ * It does NOT navigate. Starting a new review clears the active thread, which
+ * returns the same mounted surface to its empty state — the approved centre with
+ * the composer back in the middle. The URL is updated with replaceState by
+ * `startNew`; no route transition fires (R21).
  */
 export function NewReviewButton() {
   const { startNew } = useThreadContext();
   const clear = useComposerStore((s) => s.clear);
+  const requestFocus = useComposerStore((s) => s.requestFocus);
   const closeSheet = useSidebarStore((s) => s.closeSheet);
-
-  const router = useRouter();
 
   return (
     <button
@@ -35,11 +27,9 @@ export function NewReviewButton() {
       onClick={() => {
         startNew();
         clear();
+        requestFocus();
         closeSheet();
         trackEvent('shell.new_review', {});
-        /* Back to the front door. The arrival screen takes focus itself, so
-           requestFocus() is not called here — it would fight the new mount. */
-        router.push('/');
       }}
     >
       <svg
