@@ -25,6 +25,20 @@ interface DataLayerWindow extends Window {
  * not a hard gate.
  */
 export type KnownEvent =
+  /* v5.0 — the conversation surface. All internal telemetry. */
+  | 'thread.started'
+  | 'thread.turn_submitted'
+  | 'thread.selected'
+  | 'shell.new_review'
+  | 'sidebar.section_opened'
+  /* Phase 2 — attachments, suggestions, artifacts, cards. */
+  | 'attachment.uploaded'
+  | 'suggestion.selected'
+  | 'artifact.delivered'
+  | 'artifact.opened'
+  | 'card.action_taken'
+  /* Phase 3 — State 10. NEVER carries a satisfaction score. */
+  | 'success.improvement_submitted'
   | 'review.prompt_started'
   | 'review.diagnosed'
   | 'drawer.opened'

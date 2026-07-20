@@ -1,0 +1,112 @@
+/* ============================================================================
+   itriX · Surface 1 v5.0 — PHASE 3
+
+   States 7–10 artifacts, the success thread, the workspace sidebar, and the
+   example-card glyph tiles from the approved landing prototype.
+
+   Every value is a Brand Manual v1.5 token.
+   ============================================================================ */
+
+/* ── Example cards: the prototype's tinted glyph tile + the approved index ── */
+.example-card__glyph { display: flex; align-items: center; gap: 8px; }
+.example-card__glyph > svg {
+  width: 35px;
+  height: 35px;
+  padding: 7px;
+  border-radius: 10px;
+  color: var(--ink-primary);
+  background: var(--tint);
+  flex-shrink: 0;
+}
+.example-card__index {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--ink-secondary);
+}
+
+/* ── Pinned artifact (success_overview) ───────────────────────────────────── */
+.transcript__pinned {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  max-width: var(--composer-max-w);
+  margin: 0 auto;
+  padding: 16px clamp(16px, 3vw, 32px) 0;
+}
+.artifact[data-pinned] {
+  border-color: var(--border-medium);
+  background: var(--surface-glass-strong);
+  -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  backdrop-filter: blur(var(--blur-glass-sm, 10px));
+}
+
+/* ── Artifact extras introduced by the States 7–10 renderers ──────────────── */
+.artifact__pending {
+  padding: 12px 14px;
+  border: 1px dashed var(--border-medium);
+  border-radius: var(--radius-sm, 10px);
+  font-size: 14px;
+  color: var(--ink-secondary);
+}
+.artifact__standing { font-size: 13px; font-style: italic; color: var(--ink-secondary); }
+.artifact__outcomes { display: flex; flex-direction: column; gap: 10px; }
+.artifact__document {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm, 10px);
+  background: var(--soft);
+}
+.artifact__document-name { font-size: 15px; font-weight: 600; color: var(--ink-primary); }
+.artifact__document-meta { display: flex; gap: 10px; font-size: 12px; color: var(--ink-secondary); }
+.artifact--deeplink {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg, 20px);
+  background: var(--surface);
+}
+
+/* ── Workspace sidebar entries ────────────────────────────────────────────── */
+.sidebar-section--workspace { gap: 2px; }
+.sidebar-workspace-link {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px;
+  border-radius: var(--radius-sm, 10px);
+  transition: background 180ms;
+}
+.sidebar-workspace-link:hover { background: var(--soft); }
+.sidebar-workspace-link[aria-current='page'] { background: var(--tint); }
+.sidebar-workspace-link__label { font-size: 14px; color: var(--ink-primary); }
+.sidebar-workspace-link__desc {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ink-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── State 10 card variants ───────────────────────────────────────────────── */
+.inline-card--support,
+.inline-card--team,
+.inline-card--pulse,
+.inline-card--review {
+  /* Customer-success cards are quiet. The accent edge is reserved for the one
+     next step, so a support card never competes with it visually. */
+  border-left-color: var(--border-medium);
+}
+.inline-card--nba { border-left-color: var(--ink-primary); }
+
+@media (max-width: 767px) {
+  .transcript__pinned { position: static; }
+  .example-card__glyph > svg { width: 30px; height: 30px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-workspace-link { transition: none; }
+}

@@ -7,9 +7,21 @@
  * page has already authenticated via the httpOnly cookie and the server upgrades the
  * connection, so no token is needed in-band there.
  *
- * Responsibilities: connect, JSON encode/decode, heartbeat ping, and reconnect with
- * backoff (resume on drop). It is transport only — it knows nothing about journeys or
- * chat; consumers subscribe to typed events.
+ * Responsibilities: connect, JSON encode/decode, heartbeat ping, reconnect with
+ * backoff, and SEQUENCE TRACKING. It is transport only — it knows nothing about
+ * journeys or conversations; consumers subscribe to typed events.
+ *
+ * v5.0 adds ordering (Architecture v2.6 §14.4). Every `message.delta` carries a
+ * monotonic `seq` per message. Three behaviours follow, and they exist so a
+ * streamed turn is never rendered wrong:
+ *
+ *   · An OUT-OF-ORDER delta (seq ≤ the last one seen) is dropped. Re-applying it
+ *     would duplicate text the visitor is already reading.
+ *   · A GAP (seq jumps by more than one) fires `onGap`. The consumer re-fetches
+ *     the message rather than rendering a hole — guessing at the missing tokens
+ *     is exactly how an unapproved fragment could reach the screen.
+ *   · On RECONNECT the last acknowledged sequence per message is retained, so a
+ *     resumed stream continues rather than restarting.
  */
 
 import { Backoff } from './reconnect';
@@ -23,6 +35,11 @@ export interface WsClientOptions {
   token?: string | null;
   onEvent: (event: ServerEvent) => void;
   onStatus?: (status: WsStatus) => void;
+  /**
+   * A delta arrived with a sequence gap. The consumer should re-fetch the
+   * message; it must NOT interpolate the missing tokens.
+   */
+  onGap?: (messageId: string, expected: number, received: number) => void;
   heartbeatMs?: number;
 }
 
@@ -36,6 +53,8 @@ export class WsClient {
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private closedByUs = false;
   private status: WsStatus = 'idle';
+  /** Last acknowledged sequence per streaming message. Survives reconnects. */
+  private readonly lastSeq = new Map<string, number>();
 
   constructor(opts: WsClientOptions) {
     this.opts = opts;
@@ -75,7 +94,34 @@ export class WsClient {
       } catch {
         parsed = null;
       }
-      if (parsed && typeof parsed.type === 'string') this.opts.onEvent(parsed);
+      if (!parsed || typeof parsed.type !== 'string') return;
+
+      /* Ordering is enforced here rather than in every consumer, so a component
+         can never accidentally render an out-of-order fragment. */
+      if (parsed.type === 'message.delta') {
+        const { messageId, seq } = parsed.payload;
+        if (typeof seq === 'number') {
+          const previous = this.lastSeq.get(messageId);
+          if (previous !== undefined) {
+            if (seq <= previous) return;                    // stale or duplicate
+            if (seq > previous + 1) {
+              this.opts.onGap?.(messageId, previous + 1, seq);
+              return;                                       // re-fetch, never guess
+            }
+          }
+          this.lastSeq.set(messageId, seq);
+        }
+      }
+
+      /* A settled message needs no further ordering state. */
+      if (parsed.type === 'message.final') {
+        this.lastSeq.delete(parsed.payload.message.id);
+      }
+      if (parsed.type === 'message.halted') {
+        this.lastSeq.delete(parsed.payload.messageId);
+      }
+
+      this.opts.onEvent(parsed);
     };
 
     this.ws.onclose = () => {
@@ -133,6 +179,10 @@ export class WsClient {
       /* noop */
     }
     this.ws = null;
+    /* A deliberate close ends the conversation's stream state. A DROP does not:
+       scheduleReconnect leaves the map intact so a resumed stream continues from
+       the last acknowledged sequence rather than restarting. */
+    this.lastSeq.clear();
     this.setStatus('closed');
   }
 }

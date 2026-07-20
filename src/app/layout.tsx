@@ -5,40 +5,30 @@ import { siteConfig } from '@/config/site.config';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { VisitorProvider } from '@/context/VisitorContext';
 import { ToastProvider } from '@/components/ui/ToastProvider';
+import { ThreadProvider } from '@/context/ThreadContext';
+import { ShellProvider } from '@/context/ShellContext';
 import { SiteChrome } from '@/components/layout/SiteChrome';
 
 /**
- * itriX Brand Manual v1.5 EN — type system (§4.1).
+ * itriX Brand Manual v1.5 EN — type system (§4.1). Unchanged in v5.0.
  *
  *   Space Grotesk → --font-space-grotesk   Display: hero / page / section headings
  *   Inter         → --font-inter           Primary: ALL UI and body text
  *   IBM Plex Mono → --font-mono            Technical labels, versions, code, IDs
  *
  * Pretendard (Korean) is CDN-loaded in globals.css and sits in every stack.
- * Space Grotesk is Latin-only, so Korean glyphs in a Display heading fall back
- * to Pretendard automatically — designers assign ONE "Display" style and the
- * script decides the face. Korean headings additionally release the negative
- * letter-spacing (see styles/base.css) to stop full-width glyphs clipping.
  */
 const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-space-grotesk',
-  display: 'swap',
+  subsets: ['latin'], weight: ['500', '600', '700'],
+  variable: '--font-space-grotesk', display: 'swap',
 });
-
 const inter = Inter({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
-  display: 'swap',
+  subsets: ['latin'], weight: ['400', '500', '600', '700'],
+  variable: '--font-inter', display: 'swap',
 });
-
 const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-mono',
-  display: 'swap',
+  subsets: ['latin'], weight: ['400', '500'],
+  variable: '--font-mono', display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -47,11 +37,8 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: [...siteConfig.keywords],
   openGraph: {
-    type: 'website',
-    siteName: siteConfig.name,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    url: siteConfig.url,
+    type: 'website', siteName: siteConfig.name, title: siteConfig.title,
+    description: siteConfig.description, url: siteConfig.url,
     images: [{ url: '/og-image.png', width: 1200, height: 630, alt: siteConfig.name }],
   },
   twitter: { card: 'summary_large_image', title: siteConfig.title, description: siteConfig.description },
@@ -59,13 +46,23 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  /* Soft Signal White — the dominant canvas (Brand Manual §3.2). The browser
-     chrome should match the page, not the structural ink. */
   themeColor: '#F8FAFC',
   width: 'device-width',
   initialScale: 1,
 };
 
+/**
+ * v5.0: the global HEADER AND FOOTER ARE GONE.
+ *
+ * Their contents moved into the sidebar — brand, navigation and NDA access to
+ * SidebarBrandNav, the legal links to SidebarLegalFooter (Surface 1 v5.0 §00.1
+ * change 8, Playbook v1.6 §16A/§16D). A full-width bar above a conversation is
+ * furniture, and it competes with the one thing the visitor came to do.
+ *
+ * The two providers wrap every route because the sidebar is present on every
+ * route. ThreadProvider comes first: ShellProvider keys its contract off the
+ * active thread, so the order is a real dependency, not a preference.
+ */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
@@ -76,14 +73,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <VisitorProvider>
             <ToastProvider>
-              {/*
-                SiteChrome mounts the RelationshipShell around every public route
-                and steps aside for self-chromed segments (/review owns its
-                ReviewLayout; the (portal) group owns its PortalShell). It is the
-                ONE place that decision is made, so the shell can never be
-                double-mounted.
-              */}
-              <SiteChrome>{children}</SiteChrome>
+              <ThreadProvider>
+                <ShellProvider>
+                  <SiteChrome>{children}</SiteChrome>
+                </ShellProvider>
+              </ThreadProvider>
             </ToastProvider>
           </VisitorProvider>
         </ThemeProvider>

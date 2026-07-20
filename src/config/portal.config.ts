@@ -26,7 +26,7 @@ export interface PortalNavItem {
  * rule only — Django re-authorizes every fetch regardless of what the nav shows.
  */
 export const PORTAL_NAV: PortalNavItem[] = [
-  { key: 'overview', label: 'Home', href: '/workspace/overview' },
+  { key: 'overview', label: 'Home', href: '/workspace' },
   { key: 'success', label: 'Your workspace', href: '/workspace/success', minJourneyNumber: 7 },
   { key: 'messages', label: 'Messages', href: '/workspace/messages' },
   { key: 'briefing', label: 'Briefing', href: '/workspace/briefing' },

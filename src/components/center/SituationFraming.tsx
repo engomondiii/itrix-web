@@ -1,13 +1,20 @@
 import { CENTER_COPY } from '@/lib/content/centerCopy';
 
 /**
- * The H1 framing line of the approved center.
+ * The eyebrow and the situation framing — the top of the approved center.
  *
+ *   MATHEMATICAL INTELLIGENCE
  *   "You already know computation is holding you back."
  *
- * It states the visitor's situation before we ask anything. It is the first of
- * the seven center elements (Surface 1 v4.0 §2.1) and must remain recognisable:
- * Display face, 56px desktop / 32px mobile, ink-primary, tight leading.
+ * PHASE 2 CORRECTION. Phase 1 demoted this line to secondary text and gave the
+ * document's h1 to the main question. That inverted the approved package:
+ * Playbook v1.6 §12 labels this line "SITUATION FRAMING — H1", and the approved
+ * landing prototype composes the same way — a small tracked eyebrow, then one
+ * dominant heading, then supporting copy.
+ *
+ * The question keeps its own prominence directly beneath (§2.1 element 2); it is
+ * still the single most important sentence on the platform. What changed is
+ * which line carries the heading level and the display size.
  *
  * There is exactly one visually dominant message per screen (Brand Manual §6),
  * and on the first screen this is it.
@@ -15,12 +22,8 @@ import { CENTER_COPY } from '@/lib/content/centerCopy';
 export function SituationFraming() {
   return (
     <>
-      <p className="font-mono text-micro uppercase tracking-[0.12em] text-ink-secondary">
-        {CENTER_COPY.eyebrow}
-      </p>
-      <h1 className="mt-3 font-display text-web-h1 text-ink-primary">
-        {CENTER_COPY.situationFraming}
-      </h1>
+      <p className="arrival__eyebrow">{CENTER_COPY.eyebrow}</p>
+      <h1 className="arrival__framing">{CENTER_COPY.situationFraming}</h1>
     </>
   );
 }

@@ -1,20 +1,33 @@
 /**
- * Typed WebSocket event map (Architecture §12 — realtime layer).
+ * Typed WebSocket event map (Architecture v2.6 §14.3).
  *
- * The same event vocabulary is used across all three socket contexts (review,
- * client page, portal). Server → client events carry a `type` discriminator and a
- * `payload`; client → server events are the small set the UI can emit. Keeping the
- * map here means every socket consumer shares one contract.
+ * The same event vocabulary is used across every socket context (review, client
+ * page, portal). Server → client events carry a `type` discriminator and a
+ * `payload`; client → server events are the small set the UI can emit. Keeping
+ * the map here means every socket consumer shares one contract.
  *
- * v4.0.3: adds `clientpage.delta` / `clientpage.final` so the customized client page can
- * render its generation live (token-by-token) instead of polling for a background swap.
+ * v5.0 CHANGES
+ *   · `rail.update` is REMOVED. `shell.update` supersedes it and carries the
+ *     sidebar sections, the conversation header and the composer label — the
+ *     right value rail is retired and the left rail became navigation.
+ *   · `message.delta` gains a monotonic `seq` for ordering, gap detection and
+ *     resume.
+ *   · `thread.updated` is added so the sidebar list re-orders live.
+ *   · `turn.submit` / `turn.cancel` are added to the client → server set.
+ *
+ * Phase 1 uses `shell.update` and `thread.updated`. The streaming events are
+ * typed now so the contract is settled before Phase 2 renders them.
  */
 
 import type { ChatMessage, Citation, GovernanceStatus } from '@/types/chat.types';
 import type {
-  JourneyState, RevealSurface, JourneyReveal, RailsPayload,
+  JourneyState, RevealSurface, JourneyReveal,
   IdentityState, DisclosureCeiling, StateKey,
 } from '@/types/journey.types';
+import type { ShellContractPayload } from '@/types/shell.types';
+import type { AttachmentErrorCode, AttachmentStatus } from '@/types/attachment.types';
+import type { ArtifactType } from '@/lib/journey/artifactTypes';
+import type { ThreadSummary } from '@/types/thread.types';
 import type { ClientPage } from '@/types/client.types';
 
 /** ---- Server → client payloads ---- */
@@ -23,6 +36,14 @@ import type { ClientPage } from '@/types/client.types';
 export interface MessageDeltaPayload {
   conversationId: string;
   messageId: string;
+  /**
+   * MONOTONIC PER THREAD (Architecture v2.6 §14.4).
+   *
+   * Ordering and gap detection both key off this. A client that detects a gap
+   * re-fetches the message rather than rendering a hole, and a reconnect resumes
+   * from the last acknowledged sequence.
+   */
+  seq: number;
   /** The incremental text chunk to append. */
   delta: string;
   senderKind: 'agent' | 'team';
@@ -42,10 +63,22 @@ export interface MessageUnderReviewPayload {
   governanceStatus: Extract<GovernanceStatus, 'pending' | 'blocked'>;
 }
 
+/**
+ * The stream guard stopped a response mid-flight (Architecture v2.6 §19.8).
+ *
+ * The client DISCARDS the partial text. It is never left on screen, because
+ * partial text that tripped a prohibited pattern is exactly the text that must
+ * not be read.
+ */
+export interface MessageHaltedPayload {
+  conversationId: string;
+  messageId: string;
+  reason?: string | null;
+}
+
 /** A journey reveal pushed the instant the backend authorizes a surface. */
 export interface JourneyRevealPayload {
   state: JourneyState;
-  /** v4.0: the 1–10 number and stable key travel with every reveal. */
   journeyNumber?: number | null;
   stateKey?: StateKey;
   identityState?: IdentityState;
@@ -54,28 +87,78 @@ export interface JourneyRevealPayload {
   reveal: JourneyReveal;
   valueDelivered: boolean;
   accountInviteAvailable: boolean;
-  /** Reveals often change what the rails may show, so they may carry them. */
-  rails?: RailsPayload;
+  /** A reveal often changes what the shell may show, so it may carry it. */
+  shell?: ShellContractPayload;
 }
 
 /**
- * The backend RE-AUTHORIZED the rails (Architecture v2.5 Appendix A).
+ * The backend RE-AUTHORIZED the shell (Architecture v2.6 Appendix A).
  *
- * The lists are absolute, not a delta: a section the backend drops must
+ * REPLACES `rail.update`. It carries sidebar sections, the conversation header
+ * and the composer label.
+ *
+ * The section list is ABSOLUTE, not a delta: a section the backend drops must
  * disappear from the UI. Consumers replace rather than merge.
  */
-export interface RailUpdatePayload {
+export interface ShellUpdatePayload {
   journeyState?: JourneyState;
   journeyNumber?: number | null;
-  rails: RailsPayload;
+  shell: ShellContractPayload;
 }
 
 /**
- * A support request changed state (Architecture v2.5 Appendix A).
+ * The next question the platform wants to ask (Architecture v2.6 §3.1).
  *
- * Typed here in Phase 2 so the contract is settled; the customer-success
- * surfaces that consume it arrive in Phase 3.
+ * The DIVISION OF AUTHORITY matters more than the payload: a deterministic
+ * coverage tracker and stop rule decide WHETHER to ask, and the model decides
+ * only the WORDING — bound to Claim-Card level 1, so it may ask and never
+ * assert, and never reveals an inference.
+ *
+ * `primary` closes the assistant turn. `chips` render above the composer and
+ * POPULATE it; they never submit.
  */
+export interface QuestionSuggestedPayload {
+  threadId: string;
+  primary?: string;
+  chips: string[];
+}
+
+/**
+ * A governed artifact is ready (Architecture v2.6 §14.3).
+ *
+ * The event carries a REFERENCE, not the content. The client fetches it, which
+ * means the server re-authorizes the read — the socket never delivers a payload
+ * that bypassed the disclosure check.
+ */
+export interface ArtifactReadyPayload {
+  threadId: string;
+  artifactId: string;
+  type: ArtifactType;
+  disclosureLevel?: string;
+}
+
+/**
+ * An attachment moved through scan and extraction (Backend v6.0 §4.3).
+ *
+ * Scanning strictly precedes extraction, so the status sequence a client can
+ * observe is staged → scanning → extracting → ready | opaque | quarantined.
+ *
+ * `opaque` is a SUCCESS state: the file was accepted and stored, we simply could
+ * not read inside it. It must never be presented as a failure.
+ */
+export interface AttachmentStatusPayload {
+  attachmentId: string;
+  status: AttachmentStatus;
+  errorCode?: AttachmentErrorCode | null;
+  error?: string | null;
+}
+
+/** A thread was created, renamed or touched — the sidebar list re-orders. */
+export interface ThreadUpdatedPayload {
+  thread: ThreadSummary;
+}
+
+/** A support request changed state (Architecture v2.6 Appendix A). */
 export interface SupportUpdatePayload {
   requestId: string;
   status: 'open' | 'in_progress' | 'waiting_on_customer' | 'resolved';
@@ -98,7 +181,7 @@ export interface ClientPageFinalPayload {
 /** Presence in a portal conversation (who from the team is here). */
 export interface PresenceUpdatePayload {
   conversationId: string;
-  present: string[]; // team member display names
+  present: string[];
 }
 
 /** A team member is typing in a portal conversation. */
@@ -113,8 +196,13 @@ export type ServerEvent =
   | { type: 'message.delta'; payload: MessageDeltaPayload }
   | { type: 'message.final'; payload: MessageFinalPayload }
   | { type: 'message.under_review'; payload: MessageUnderReviewPayload }
+  | { type: 'message.halted'; payload: MessageHaltedPayload }
   | { type: 'journey.reveal'; payload: JourneyRevealPayload }
-  | { type: 'rail.update'; payload: RailUpdatePayload }
+  | { type: 'shell.update'; payload: ShellUpdatePayload }
+  | { type: 'thread.updated'; payload: ThreadUpdatedPayload }
+  | { type: 'question.suggested'; payload: QuestionSuggestedPayload }
+  | { type: 'artifact.ready'; payload: ArtifactReadyPayload }
+  | { type: 'attachment.status'; payload: AttachmentStatusPayload }
   | { type: 'support.update'; payload: SupportUpdatePayload }
   | { type: 'clientpage.delta'; payload: ClientPageDeltaPayload }
   | { type: 'clientpage.final'; payload: ClientPageFinalPayload }
@@ -126,6 +214,9 @@ export type ServerEventType = ServerEvent['type'];
 
 /** ---- Client → server events ---- */
 export type ClientEvent =
+  /** v5.0: a turn in a thread. Phase 2 sends this instead of chat.send. */
+  | { type: 'turn.submit'; payload: { threadId: string; body: string; attachmentIds?: string[] } }
+  | { type: 'turn.cancel'; payload: { threadId: string; messageId: string } }
   | { type: 'chat.send'; payload: { conversationId: string; body: string } }
   | { type: 'chat.typing'; payload: { conversationId: string; typing: boolean } }
   | { type: 'subscribe'; payload: { channel: string } }

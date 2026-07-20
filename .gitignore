@@ -156,3 +156,7 @@ itrix-*-fix.zip
 .phase*-backup-*/
 itrix-web-surface1-phase*.zip
 itrix-web-surface1-phase*/
+
+# itriX Surface 1 v5.0 phase installers
+itrix-web-surface1-v5-phase*.zip
+itrix-web-surface1-v5-phase*/

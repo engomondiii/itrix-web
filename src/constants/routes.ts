@@ -34,8 +34,10 @@ export const routes = {
   portalSignIn: '/sign-in',
   portalSetPassword: '/set-password',
   portalForgotPassword: '/forgot-password',
-  workspace: '/workspace/overview',
-  workspaceOverview: '/workspace/overview',
+  /* v5.0 Phase 3: /workspace IS the thread. The overview dashboard is retired —
+     a customer's home is the conversation they have been having all along. */
+  workspace: '/workspace',
+  workspaceOverview: '/workspace',
   workspaceMessages: '/workspace/messages',
   workspaceBriefing: '/workspace/briefing',
   workspaceDocuments: '/workspace/documents',

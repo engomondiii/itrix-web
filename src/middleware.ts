@@ -18,7 +18,7 @@ import { CLIENT_COOKIE_NAMES } from '@/lib/server/session';
  * sub-route. It is a CONVENIENCE redirect and deliberately not an authorization
  * decision — the state hint is read from a non-sensitive cookie the backend sets
  * alongside the session, and if it is missing, malformed, or names a route the
- * visitor cannot reach, we fall through to /workspace/overview and let the
+ * visitor cannot reach, we fall through to /workspace and let the
  * backend decide what they see. A visitor cannot reach a surface by editing that
  * cookie, because the destination re-authorizes on every fetch.
  */
@@ -26,15 +26,26 @@ const STATE_HINT_COOKIE = 'itrix_state_key';
 
 /** state_key → the sub-route that state most likely wants. */
 const STATE_ROUTE: Record<string, string> = {
-  nda: '/workspace/overview',
-  assessment: '/workspace/overview',
+  nda: '/workspace',
+  assessment: '/workspace',
   poc: '/workspace/poc',
-  integration: '/workspace/overview',
-  'customer-success': '/workspace/overview',
+  integration: '/workspace',
+  'customer-success': '/workspace',
 };
 
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+
+  /* v5.0: a review is a THREAD. /review with no thread has nothing to restore,
+     so it returns the visitor to the one place a conversation is created — the
+     approved centre. A convenience redirect, not an authorization decision
+     (Surface 1 v5.0 §1.1). */
+  if (pathname === '/review' || pathname === '/review/') {
+    const url = req.nextUrl.clone();
+    url.pathname = '/';
+    url.search = '';
+    return NextResponse.redirect(url);
+  }
 
   const hasSession = Boolean(req.cookies.get(CLIENT_COOKIE_NAMES.access)?.value);
 
@@ -51,7 +62,7 @@ export function middleware(req: NextRequest) {
     if (pathname === '/workspace' || pathname === '/workspace/') {
       const hint = req.cookies.get(STATE_HINT_COOKIE)?.value ?? '';
       const url = req.nextUrl.clone();
-      url.pathname = STATE_ROUTE[hint] ?? '/workspace/overview';
+      url.pathname = STATE_ROUTE[hint] ?? '/workspace';
       return NextResponse.redirect(url);
     }
   }
@@ -59,7 +70,7 @@ export function middleware(req: NextRequest) {
   // If already signed in, keep users out of the auth screens.
   if (hasSession && (pathname === '/sign-in' || pathname === '/set-password')) {
     const url = req.nextUrl.clone();
-    url.pathname = '/workspace/overview';
+    url.pathname = '/workspace';
     url.search = '';
     return NextResponse.redirect(url);
   }
@@ -68,5 +79,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/workspace', '/workspace/:path*', '/sign-in', '/set-password'],
+  matcher: ['/review', '/workspace', '/workspace/:path*', '/sign-in', '/set-password'],
 };

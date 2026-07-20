@@ -2,9 +2,8 @@ import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
 import { buildMetadata } from '@/components/seo/PageMeta';
 import { JourneyProvider } from '@/context/JourneyContext';
-import { RelationshipShell } from '@/components/shell/RelationshipShell';
-import { StableCenterWorkspace } from '@/components/shell/StableCenterWorkspace';
 import { ClientPageLive } from '@/components/client-page/ClientPageLive';
+import { Composer } from '@/components/composer/Composer';
 import type { ClientPage } from '@/types/client.types';
 import type { Metadata } from 'next';
 
@@ -35,14 +34,14 @@ async function fetchClientPage(token: string): Promise<ClientPage | null> {
 /**
  * The customized client page — State 4, the pitch room.
  *
- * PHASE 2: the pitch room now renders INSIDE the relationship shell rather than
- * as a standalone page. The visitor keeps the same centre, and the rails that
- * appear beside it are the ones the backend authorized for their state — their
- * saved context on the left, the next step and the disclosure boundary on the
- * right. Signing in later does not change interface; it changes state.
+ * It renders the token-bound artifact inside the conversation shell (mounted
+ * globally in app/layout.tsx) WITH THE COMPOSER BENEATH IT (Surface 1 v5.0 §4).
+ * That last part is the point: a visitor who opens their emailed brief and wants
+ * to react to slide three should be able to say so on the spot, rather than
+ * hunting for a way back into the conversation.
  *
- * JourneyProvider wraps the shell so both read the same subscription. Rails and
- * state can never disagree, because there is only one of each.
+ * The capability-token semantics are UNCHANGED. This is still the emailed link,
+ * and Django still re-checks token, journey and disclosure on every fetch.
  */
 export default async function ClientPageRoute({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
@@ -51,13 +50,15 @@ export default async function ClientPageRoute({ params }: { params: Promise<{ to
 
   return (
     <JourneyProvider token={token}>
-      <RelationshipShell>
-        <StableCenterWorkspace variant="work">
-          <div id="pitch-room">
-            <ClientPageLive token={token} initialPage={page} />
-          </div>
-        </StableCenterWorkspace>
-      </RelationshipShell>
+      <div className="token-page">
+        <div id="pitch-room">
+          <ClientPageLive token={token} initialPage={page} />
+        </div>
+
+        <div className="token-page__composer">
+          <Composer variant="docked" />
+        </div>
+      </div>
     </JourneyProvider>
   );
 }

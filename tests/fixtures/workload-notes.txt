@@ -1,0 +1,4 @@
+Workload notes
+
+Inference fleet: mixed A100 / H100.
+Observed: HBM traffic dominates step time.

@@ -12,19 +12,35 @@ function flag(value: string | undefined): boolean {
 /**
  * Feature flags. All default OFF so a fresh deploy is safe.
  *
- *   customerSuccess   — Phase 3. The State 10 zone and the overlay that begins
- *                       at the first payment. With it off the success routes
- *                       render their unavailable state and fetch nothing.
- *   relationshipShell — Phase 2. Drives the shell from the backend journey
- *                       payload: real rail contracts, state-aware growth, and
- *                       centre morphing. With it OFF the rails stay ambient and
- *                       every route behaves exactly as it did in Phase 1.
- *   realtime          — live WebSockets for journey + rails + chat + presence
- *   clientPortal      — the (portal) route group
- *   agentChat         — embedded governed agent chat
+ *   conversationSurface — v5.0 Phase 1. The conversation shell, the minimal
+ *                         landing and the no-navigation composer. With it OFF
+ *                         every route renders bare rather than inside a
+ *                         half-migrated shell, so the phase is reversible in
+ *                         production.
+ *   streamingTurns      — v5.0 Phase 2. Streamed assistant turns.
+ *   attachments         — v5.0 Phase 2. Any-format uploads in the composer.
+ *   adaptiveQuestions   — v5.0 Phase 2. Generated follow-up questions and chips.
+ *   customerSuccess     — Phase 3. The State 10 zone and the overlay that begins
+ *                         at the first payment.
+ *   realtime            — live WebSockets for shell + turns + presence
+ *   clientPortal        — the (portal) route group
+ *   agentChat           — embedded governed agent chat
+ *
+ * ORDERING RULE (Architecture v2.6 Appendix B.1): a frontend flag may only be
+ * enabled once its backend counterpart is on. Turning on `attachments` against a
+ * backend without ENABLE_ATTACHMENTS presents a control that cannot succeed,
+ * which is worse than not offering it.
+ *
+ * NOTE the deliberate name divergence: NEXT_PUBLIC_ENABLE_STREAMING_TURNS pairs
+ * with the backend's ENABLE_ANONYMOUS_STREAMING. The backend flag admits
+ * unidentified visitors to streaming; this one renders streamed turns on any
+ * plane.
  */
 export const featureFlags = {
-  relationshipShell: flag(process.env.NEXT_PUBLIC_ENABLE_RELATIONSHIP_SHELL),
+  conversationSurface: flag(process.env.NEXT_PUBLIC_ENABLE_CONVERSATION_SURFACE),
+  streamingTurns: flag(process.env.NEXT_PUBLIC_ENABLE_STREAMING_TURNS),
+  attachments: flag(process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS),
+  adaptiveQuestions: flag(process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_QUESTIONS),
   customerSuccess: flag(process.env.NEXT_PUBLIC_ENABLE_CUSTOMER_SUCCESS),
   realtime: flag(process.env.NEXT_PUBLIC_ENABLE_REALTIME),
   clientPortal: flag(process.env.NEXT_PUBLIC_ENABLE_CLIENT_PORTAL),
@@ -44,7 +60,7 @@ export const siteConfig = {
   apiUrl,
   wsUrl,
   /** The portal lives inside this same site; base kept for absolute links. */
-  portalUrl: `${siteUrl}/workspace/overview`,
+  portalUrl: `${siteUrl}/workspace`,
   ogImage: '/og-image.png',
   thesis: brand.thesis,
   featureFlags,

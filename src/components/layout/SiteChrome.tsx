@@ -2,31 +2,30 @@
 
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
-import { RelationshipShell } from '@/components/shell/RelationshipShell';
+import { ConversationShell } from '@/components/shell/ConversationShell';
+import { siteConfig } from '@/config/site.config';
 
 /**
- * Decides the chrome for each route (Surface 1 v4.0 §3).
+ * Decides the chrome for each route (Surface 1 v5.0 §3).
  *
- * The public surface is ONE adaptive relationship shell: a quiet enterprise
- * header, an invariant centre, and two rails whose content the backend
- * authorizes. The AppShell / SidebarRail experiment from v3.1 is gone — its left
- * rail was navigation dressed as memory, which is exactly what the left rail
- * must never be.
+ * The public surface is ONE CONVERSATION SHELL: a sidebar and a conversation
+ * column. The v4.0 RelationshipShell is gone, and with it the right value rail —
+ * every payload the rail carried was re-homed before it was removed
+ * (Architecture v2.6 §11.6A).
  *
- * Self-chromed segments keep their own focused chrome and must NOT be wrapped
- * (otherwise two navigations stack):
- *   · /review*            → ReviewLayout owns its header + main
- *   · the (portal) group  → its own PortalShell (own layout.tsx)
+ * Self-chromed segments keep their own chrome and must NOT be wrapped, or two
+ * navigations stack:
+ *   · the (portal) group → its own PortalShell (own layout.tsx)
  *
- * Add any future fullscreen / self-chromed segment to CHROMELESS_PREFIXES.
+ * NOTE: /review is no longer chromeless. In v4.0 it was a separate funnel
+ * surface with its own ReviewLayout; in v5.0 a review IS the conversation, so it
+ * renders inside the same shell as everything else.
  *
- * PHASE 1: journeyNumber is fixed at 1, so the rails render as ambient
- * structure. Phase 2 replaces the constant with `useJourney()` and the same
- * component grows without changing shape.
+ * The flag makes this reversible in production: with
+ * NEXT_PUBLIC_ENABLE_CONVERSATION_SURFACE off, routes render bare rather than
+ * inside a half-migrated shell.
  */
-const CHROMELESS_PREFIXES = ['/review'];
+const CHROMELESS_PREFIXES = ['/workspace', '/sign-in', '/set-password', '/forgot-password'];
 
 function isChromeless(pathname: string): boolean {
   return CHROMELESS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
@@ -35,14 +34,8 @@ function isChromeless(pathname: string): boolean {
 export function SiteChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
-  // Self-chromed segment: render bare.
   if (isChromeless(pathname)) return <>{children}</>;
+  if (!siteConfig.featureFlags.conversationSurface) return <main id="content">{children}</main>;
 
-  return (
-    <>
-      <Header />
-      <RelationshipShell journeyNumber={1}>{children}</RelationshipShell>
-      <Footer />
-    </>
-  );
+  return <ConversationShell>{children}</ConversationShell>;
 }

@@ -3,11 +3,15 @@ import type {
 } from '@/types/journey.types';
 
 /**
- * The ten-state journey vocabulary (Surface 1 v4.0 §4, Architecture v2.5 §11.1).
+ * The ten-state journey vocabulary (Surface 1 v5.0 §4, Architecture v2.6 §11.1).
  *
  * The backend owns STATE; this module owns only the client-side VOCABULARY —
  * ordering, numbering, normalisation and the predicates components need.
  * Nothing here decides what a visitor may see.
+ *
+ * v5.0 CHANGE: the rail helpers are gone with the rails. What a state authorizes
+ * is now expressed as sidebar sections and in-thread artifacts, which live in
+ * lib/journey/sidebarSections.ts and come from the backend contract.
  */
 
 /** Ordered lifecycle, 1–10. DORMANT is off-ladder and not on it. */
@@ -29,7 +33,7 @@ export const STATE_KEY: Record<JourneyState, StateKey> = {
   CUSTOMER_SUCCESS: 'customer-success', DORMANT: 'dormant',
 };
 
-/** The surface each state authorizes on Surface 1 (null = public/static only). */
+/** The surface each state authorizes (null = public/static only). */
 export const STATE_SURFACE: Record<JourneyState, RevealSurface | null> = {
   ARRIVED: null,
   IN_REVIEW: null,
@@ -44,7 +48,7 @@ export const STATE_SURFACE: Record<JourneyState, RevealSurface | null> = {
   DORMANT: null,
 };
 
-/** v3.0 wire values → their v4.0 equivalents (Backend v5.0 keeps these one release). */
+/** v3.0 wire values → their current equivalents (the backend keeps these one release). */
 const LEGACY: Record<string, JourneyState> = {
   CLIENT: 'NDA_REVIEW',
   ENGAGED: 'ASSESSMENT',
@@ -100,7 +104,7 @@ export function canCreateAccount(state: JourneyState): boolean {
   return hasReached(state, 'INVITED');
 }
 
-/** A workspace state (7–10): rails become full workspace navigation. */
+/** A workspace state (7–10): the sidebar gains its workspace sections. */
 export function isWorkspaceState(state: JourneyState | null | undefined): boolean {
   const n = journeyNumber(state);
   return n !== null && n >= 7;
@@ -108,7 +112,7 @@ export function isWorkspaceState(state: JourneyState | null | undefined): boolea
 
 /**
  * The customer-success overlay activates at the FIRST PAYMENT (State 7), not at
- * license-out (Architecture v2.5 §7.1, §11.4). A paid Assessment customer must
+ * license-out (Architecture v2.6 §7.1, §11.4). A paid Assessment customer must
  * already see named owners, support access and success goals.
  */
 export function isSuccessOverlayActive(state: JourneyState | null | undefined): boolean {

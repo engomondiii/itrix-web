@@ -1,84 +1,57 @@
 'use client';
 
+import Link from 'next/link';
 import { PortalTopbar } from '@/components/portal/PortalTopbar';
-import { PoCTracker } from '@/components/portal/PoCTracker';
 import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
-import { StateMorph } from '@/components/shell/StateMorph';
-import { PoCEvidenceTable } from '@/components/workspace/PoCEvidenceTable';
-import { usePoCTracking } from '@/hooks/usePoCTracking';
+import { PoCEvidenceArtifact } from '@/components/artifacts/PoCEvidenceArtifact';
 import { usePoCEvidence } from '@/hooks/usePoCEvidence';
-import { useJourneyContext } from '@/context/JourneyContext';
 import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+import type { Artifact } from '@/types/artifact.types';
 
 /**
- * State 8 — the PoC evidence workspace.
+ * State 8 — PoC evidence, as a DEEP-LINK VIEW.
  *
- * Phase 3 promotes this from milestone tracking to the full evidence surface:
- * baseline, agreed KPIs, the criteria set BEFORE the run, and the observed
- * outcomes shown as pass, partial or negative.
- *
- * The milestone tracker stays above the evidence, because it answers "where are
- * we" and the evidence answers "what did we find" — and the second question only
- * makes sense once the first is settled.
+ * It renders the same artifact component the transcript renders, so a result
+ * cannot be worded one way in the thread and another way here. That matters more
+ * for this artifact than any other: a PoC outcome is pass, partial, negative or
+ * pending, and it is never re-described after the fact.
  */
 export default function PoCPage() {
-  const { data: tracking, loading: trackingLoading } = usePoCTracking();
-  const { data: evidence, loading: evidenceLoading } = usePoCEvidence();
-  const { stateKey } = useJourneyContext();
+  const { data, loading } = usePoCEvidence();
 
-  const loading = trackingLoading || evidenceLoading;
-  const hasAnything = (tracking && tracking.exists) || (evidence && evidence.exists);
+  const artifact: Artifact | null = data?.exists
+    ? {
+        id: 'poc-deeplink',
+        threadId: '',
+        type: 'poc_evidence',
+        version: 1,
+        payload: data as unknown as Record<string, unknown>,
+        disclosureLevel: 'nda_only',
+        governanceStatus: 'approved',
+        seq: 0,
+        createdAt: new Date().toISOString(),
+      }
+    : null;
 
   return (
     <>
       <PortalTopbar title="Proof of concept" />
-      <div className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-8">
+      <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
+        <Link href="/workspace" className="artifact-page__back">
+          Back to your conversation
+        </Link>
+
         {loading ? (
           <div className="flex justify-center py-16"><Spinner size="lg" /></div>
-        ) : hasAnything ? (
-          <StateMorph stateKey={stateKey}>
-            <div className="flex flex-col gap-10">
-              <header>
-                <h1 className="font-display text-web-h2 text-ink-primary">{WORKSPACE_COPY.poc.title}</h1>
-                <p className="mt-3 max-w-reading text-web-body text-ink-secondary">{WORKSPACE_COPY.poc.intro}</p>
-              </header>
-
-              {tracking && tracking.exists ? <PoCTracker poc={tracking} /> : null}
-
-              {evidence && evidence.exists ? (
-                <>
-                  {evidence.workloadScope ? <Section title="Workload scope" body={evidence.workloadScope} /> : null}
-                  {evidence.baselineSummary ? <Section title="Baseline" body={evidence.baselineSummary} /> : null}
-                  {evidence.benchmarkProtocol ? (
-                    <Section title="Benchmark protocol" body={evidence.benchmarkProtocol} />
-                  ) : null}
-
-                  <section className="flex flex-col gap-3">
-                    <h2 className="font-display text-web-h3 text-ink-primary">Evidence</h2>
-                    <PoCEvidenceTable kpis={evidence.kpis} />
-                  </section>
-
-                  {evidence.decisionSummary ? (
-                    <Section title={WORKSPACE_COPY.poc.decisionTitle} body={evidence.decisionSummary} />
-                  ) : null}
-                </>
-              ) : null}
-            </div>
-          </StateMorph>
+        ) : artifact ? (
+          <div className="artifact artifact--deeplink">
+            <PoCEvidenceArtifact artifact={artifact} />
+          </div>
         ) : (
           <EmptyState>{WORKSPACE_COPY.poc.empty}</EmptyState>
         )}
       </div>
     </>
-  );
-}
-
-function Section({ title, body }: { title: string; body: string }) {
-  return (
-    <section className="flex flex-col gap-2">
-      <h2 className="font-display text-web-h3 text-ink-primary">{title}</h2>
-      <p className="max-w-reading text-web-body leading-relaxed text-ink-secondary">{body}</p>
-    </section>
   );
 }

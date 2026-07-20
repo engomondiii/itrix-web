@@ -3,8 +3,6 @@
 import { createContext, useContext, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import { useJourney } from '@/hooks/useJourney';
-import { useRails } from '@/hooks/useRails';
-import { RailsProvider } from '@/context/RailsContext';
 import { journeyNumber as numberFor, stateKey as keyFor } from '@/lib/journey/journeyStates';
 import type {
   JourneyState, JourneyReveal, RevealSurface, StateKey,
@@ -37,13 +35,12 @@ const JourneyContext = createContext<JourneyContextValue | null>(null);
  * surface and never raises a ceiling — it only makes the backend's answer
  * available in a shape components can use.
  *
- * It also mounts RailsProvider, because rails and state must come from the same
- * subscription. Splitting them is how a UI ends up showing State 4's rails
- * beside State 2's centre.
+ * v5.0: it no longer mounts a rails provider. The shell contract — sidebar
+ * sections, conversation header, composer label — is owned by ShellContext,
+ * which is mounted once in app/layout.tsx and keyed off the active thread.
  */
 export function JourneyProvider({ token, children }: { token: string; children: ReactNode }) {
   const j = useJourney(token);
-  const r = useRails(token);
 
   const value = useMemo<JourneyContextValue>(
     () => ({
@@ -65,13 +62,7 @@ export function JourneyProvider({ token, children }: { token: string; children: 
     [j],
   );
 
-  return (
-    <JourneyContext.Provider value={value}>
-      <RailsProvider rails={r.rails} loading={r.loading} error={r.error}>
-        {children}
-      </RailsProvider>
-    </JourneyContext.Provider>
-  );
+  return <JourneyContext.Provider value={value}>{children}</JourneyContext.Provider>;
 }
 
 /**

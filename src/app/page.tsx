@@ -1,16 +1,14 @@
 import { StructuredData } from '@/components/seo/StructuredData';
-import { StableCenterWorkspace } from '@/components/shell/StableCenterWorkspace';
+import { ConversationColumn } from '@/components/shell/ConversationColumn';
 import { SituationFraming } from '@/components/center/SituationFraming';
 import { MainQuestion } from '@/components/center/MainQuestion';
-import { PersistentItrixComposer } from '@/components/shell/PersistentItrixComposer';
+import { SupportingLine } from '@/components/center/SupportingLine';
+import { Composer } from '@/components/composer/Composer';
+import { ExamplePromptGrid } from '@/components/center/ExamplePromptGrid';
 import { PathwayHint } from '@/components/center/PathwayHint';
-import { ThinksDifferentlySection } from '@/components/homepage/ThinksDifferentlySection';
-import { TrustLayerSection } from '@/components/homepage/TrustLayerSection';
-import { InfoDrawerRow } from '@/components/homepage/InfoDrawerRow';
-import { HumanFollowUpSection } from '@/components/homepage/HumanFollowUpSection';
 
 /**
- * Homepage — THE APPROVED INVARIANT CENTER (Surface 1 v4.0 §2, State 1).
+ * THE MINIMAL APPROVED CENTER (Surface 1 v5.0 §2, State 1).
  *
  *   NON-NEGOTIABLE
  *   Retain the approved center and the exact opening question. The first prompt
@@ -21,37 +19,43 @@ import { HumanFollowUpSection } from '@/components/homepage/HumanFollowUpSection
  *   1  situation framing   "You already know computation is holding you back."
  *   2  main question       "What would you like computation to do better?"
  *   3  supporting line
- *   4  prompt composer     glass surface, 600-char counter, inline submit
- *   5  safety notice
+ *   4  composer            attach + arrow, NO counter, NO "Begin review" button
+ *   5  safety notice       (rendered inside the composer footer)
  *   6  five example prompts, one per functional family
  *   7  pathway hint
  *
- * Everything else is BELOW the fold at #learn-more and is pulled, not pushed:
- * the calm narrative, the trust layer, the closed-by-default drawers, and the
- * human follow-up offer. No product explanation, pricing, performance claim or
- * exclusivity CTA appears before the visitor has spoken.
+ * THE PATHWAY HINT IS THE LAST THING ON THIS ROUTE (R29). There is no audience
+ * strip, no how-it-works step list, no marketing footer, and no scrollable
+ * narrative below the fold at any breakpoint. The content that lived at
+ * #learn-more in v4.0 is RELOCATED, not deleted — the drawers and the marketing
+ * routes are reached from the sidebar's Explore group, so R5 is preserved.
  *
- * The rails around this centre are ambient structure only at State 1 — that is
- * decided by RelationshipShell in app/layout.tsx, not here.
+ * Submitting does not navigate. ConversationColumn keeps this component mounted
+ * and swaps the centre for the transcript in place (R21).
  */
 export default function HomePage() {
   return (
     <>
       <StructuredData />
 
-      <StableCenterWorkspace variant="landing">
-        <SituationFraming />
-        <MainQuestion id="main-question" />
-        <PersistentItrixComposer mode="arrival" showExamples labelledBy="main-question" />
-        <PathwayHint />
-      </StableCenterWorkspace>
+      <ConversationColumn
+        emptyState={
+          <section className="arrival" aria-labelledby="main-question">
+            {/* Structural motif from the approved composition. Decorative. */}
+            <div aria-hidden="true" className="arrival__geometry arrival__geometry--left" />
+            <div aria-hidden="true" className="arrival__geometry arrival__geometry--right" />
 
-      <div id="learn-more" className="scroll-mt-16">
-        <ThinksDifferentlySection />
-        <TrustLayerSection />
-        <InfoDrawerRow />
-        <HumanFollowUpSection />
-      </div>
+            <div className="arrival__inner">
+              <SituationFraming />
+              <MainQuestion id="main-question" />
+              <SupportingLine />
+              <Composer variant="arrival" labelledBy="main-question" />
+              <ExamplePromptGrid />
+              <PathwayHint />
+            </div>
+          </section>
+        }
+      />
     </>
   );
 }

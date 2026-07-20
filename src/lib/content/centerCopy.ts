@@ -14,6 +14,17 @@
  * approved copy. Do not inline any of these in a component.
  */
 
+/**
+ * The approved confidentiality wording, re-exported here so every surface that
+ * needs it imports from ONE place: the composer footer, the attachment flow and
+ * the artifact views all read this symbol.
+ *
+ * DO NOT REWORD WITHOUT LEGAL SIGN-OFF (Architecture v2.6 §19.4). Because the
+ * composer is present at every state from 1 to 10, this notice is now present at
+ * every state.
+ */
+export { CONFIDENTIALITY_NOTICE } from '@/lib/content/ctaCopy';
+
 export const CENTER_COPY = {
   /** Technical label above the H1 (IBM Plex Mono, uppercase, tracked). */
   eyebrow: 'Mathematical intelligence',
@@ -41,8 +52,11 @@ export const CENTER_COPY = {
   /** The short safety note directly under the composer. */
   safetyNote: 'A non-confidential summary is enough to begin.',
 
-  /** The primary action. The ONLY start label (Playbook §08). */
-  primaryAction: 'Begin review',
+  /**
+   * RETIRED IN v5.0. There is no labelled start button any more — the send
+   * control is an icon-only arrow (Surface 1 v5.0 §00.1 change 5). Its
+   * accessible name lives in COMPOSER_COPY.sendLabel, the one place it exists.
+   */
 
   /** Section label above the example chips. */
   examplesLabel: 'Examples from the work our visitors bring',
@@ -50,8 +64,12 @@ export const CENTER_COPY = {
   /** The four-step pathway hint below the examples. */
   pathwayHint: ['You share', 'itriX reflects', 'You receive a tailored brief', 'You decide what happens next'],
 
-  /** Character ceiling on the composer, matching the approved package. */
-  maxLength: 600,
+  /**
+   * RETIRED IN v5.0. There is NO user-facing character limit and no counter
+   * (R28). The server keeps a safety cap of 100,000 characters and reports it as
+   * a recoverable message; the UI never pre-empts or truncates the visitor's
+   * sentence. See COMPOSER_COPY.serverCap.
+   */
 
   /** Validation message when the visitor submits an empty or too-short sentence. */
   tooShort: 'Add a little more so we can read the structure of the problem.',
@@ -60,33 +78,16 @@ export const CENTER_COPY = {
   learnMore: 'What itriX does',
 } as const;
 
-/**
- * The left rail at State 1 — ambient structure only.
- * No functional panel, no inferred company, no persona, no history.
- */
-export const ARRIVAL_LEFT_RAIL = {
-  label: 'Your itriX path',
-  stageNumber: '01',
-  stageTitle: 'Start',
-  stageBody: 'Share the challenge you came to examine.',
-  caption: 'The relationship grows only when you choose to continue.',
-} as const;
 
-/**
- * The right rail at State 1 — disclosure and control only.
- * Never a sales panel.
+/*
+ * RETIRED IN v5.0 — the two arrival rail copy blocks.
+ *
+ * The right value rail is gone and the left rail became navigation. Everything
+ * those blocks said is RE-HOMED rather than deleted (Architecture v2.6 §11.6A):
+ * the confidentiality line sits under the composer, the NDA link is in the
+ * sidebar's Explore group, and sidebar strings live in
+ * lib/content/composerCopy.ts (SIDEBAR_COPY).
  */
-export const ARRIVAL_RIGHT_RAIL = {
-  label: 'Your control',
-  statusTitle: 'Public-safe start',
-  statusBody: 'No account required',
-  points: [
-    'Share only what you choose.',
-    'Nothing confidential is needed.',
-    'An NDA appears only when useful.',
-  ],
-  ndaLink: 'What can be shared before an NDA?',
-} as const;
 
 /** The drawer that the right-rail link opens (controlled-public). */
 export const NDA_DRAWER = {

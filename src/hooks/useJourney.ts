@@ -32,8 +32,9 @@ interface UseJourneyResult {
 /**
  * Subscribe to journey state for a capability token.
  *
- * v4.0 adds journey_number, state_key, identity_state and disclosure_ceiling to
- * the subscription, and handles `rail.update` alongside `journey.reveal`.
+ * v5.0 handles `shell.update` alongside `journey.reveal`. `rail.update` is gone
+ * with the rails: the shell contract now carries sidebar sections, the
+ * conversation header and the composer label (Architecture v2.6 §11.6).
  *
  * Two things this hook will not do, both deliberate:
  *
@@ -111,10 +112,10 @@ export function useJourney(token: string | null): UseJourneyResult {
         setLoading(false);
         setError(null);
       },
-      // A rails re-authorization can accompany a state change. useRails owns the
-      // rail lists themselves; here we only keep the number in step so the shell
-      // never renders State 4 rails beside a State 2 centre.
-      'rail.update': (p) => {
+      // A shell re-authorization can accompany a state change. ShellContext owns
+      // the section list itself; here we only keep the number in step so the
+      // sidebar never renders State 4 sections beside a State 2 thread.
+      'shell.update': (p) => {
         if (p.journeyNumber !== undefined && p.journeyNumber !== null) {
           setJourneyNumber(p.journeyNumber);
         } else if (p.journeyState) {

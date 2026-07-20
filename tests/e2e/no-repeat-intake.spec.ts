@@ -1,52 +1,30 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 /**
- * ACCEPTANCE — the no-repeat-intake contract (Surface 1 v4.0 §2.3).
+ * R12 — THE FIRST PROMPT IS THE FIRST REVIEW TURN.
  *
- *   The sentence typed on the approved center IS the first review turn. The
- *   review surface continues from it. A second "describe your bottleneck" input
- *   anywhere in the flow is a defect.
- *
- * This is the test that keeps it true, because the regression is invisible in
- * review: both screens look reasonable on their own.
+ * No screen anywhere asks the visitor to restate the sentence they already
+ * typed. Retained from v4.0 and re-pointed at the thread route, where it is now
+ * structurally true: there is no second surface on which to ask again.
  */
-
-const SENTENCE = 'Our nightly CFD run is dominated by dense linear solves and the cluster bill keeps climbing.';
-
-test('the center sentence carries into the review and is not re-asked', async ({ page }) => {
+test('the opening sentence is never requested twice', async ({ page }) => {
   await page.goto('/');
 
-  const composer = page.getByLabel(/describe your compute challenge/i);
-  await expect(composer).toBeVisible();
-  await composer.fill(SENTENCE);
-  await page.getByRole('button', { name: /begin review/i }).click();
+  const sentence = 'Our solver drifts after a few thousand steps and we cannot reproduce it.';
+  const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+  await composer.fill(sentence);
+  await composer.press('Enter');
 
-  await page.waitForURL('**/review');
+  // It is now turn 1 of the thread.
+  await expect(page.getByText(sentence)).toBeVisible();
+  await expect(page).toHaveURL(/\/review\/[^/]+$/);
 
-  // The captured sentence is present and editable.
-  await expect(page.getByText('What we heard')).toBeVisible();
-  await expect(page.locator('textarea')).toHaveValue(SENTENCE);
+  // The docked composer invites a REPLY, not a restatement.
+  const docked = page.getByRole('textbox', { name: /describe your compute challenge/i });
+  await expect(docked).toHaveValue('');
+  await expect(page.getByPlaceholder(/Describe the bottleneck or opportunity/i)).toHaveCount(0);
 
-  // And nothing on this page asks for it again.
-  await expect(page.getByText(/describe the workload that/i)).toHaveCount(0);
-  await expect(page.getByText(/what would you like computation to do better/i)).toHaveCount(0);
-});
-
-test('selecting an example populates the composer but does not submit', async ({ page }) => {
-  await page.goto('/');
-
-  await page.getByRole('button', { name: /training and inference cost/i }).click();
-
-  await expect(page).toHaveURL(/\/$/);           // still on the center
-  await expect(page.getByLabel(/describe your compute challenge/i)).toHaveValue(
-    /training and inference cost/i,
-  );
-});
-
-test('a visitor who lands on /review directly still gets one input', async ({ page }) => {
-  await page.goto('/review');
-
-  // Cold start: the question appears here because it appeared nowhere else.
-  await expect(page.getByText(/what would you like computation to do better/i)).toBeVisible();
-  await expect(page.locator('textarea')).toHaveCount(1);
+  // Reloading the thread restores it rather than starting over.
+  await page.reload();
+  await expect(page.getByText(sentence)).toBeVisible();
 });
