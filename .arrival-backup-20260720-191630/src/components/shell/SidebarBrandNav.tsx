@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ItrixLogo } from '@/components/brand/ItrixLogo';
 import { brand } from '@/constants/brand';
 import { routes } from '@/constants/routes';
 import { SIDEBAR_BRAND_NAV, SIDEBAR_NDA_ACCESS } from '@/config/shellNav.config';
@@ -10,17 +9,16 @@ import { SIDEBAR_BRAND_NAV, SIDEBAR_NDA_ACCESS } from '@/config/shellNav.config'
 /**
  * Brand, navigation and NDA access — at the top of the sidebar.
  *
- * THIS IS WHERE THE HEADER GOES once the conversation starts (Surface 1 v5.0
- * §00.1 change 8). The arrival screen keeps its own header; the working surface
- * does not carry one, because a full-width bar above a conversation is furniture
- * that competes with the one thing the visitor came to do.
+ * THIS IS WHERE THE GLOBAL HEADER WENT (Surface 1 v5.0 §00.1 change 8). There is
+ * no site header any more: a full-width bar above a conversation is furniture,
+ * and it competes with the one thing the visitor came to do.
  *
- * It now renders the SUPPLIED BRAND ASSET rather than a typeset stand-in. The
- * earlier "itri<span>X</span>" markup was built from Space Grotesk with the X in
- * accent blue — a reasonable placeholder, but not the real lockup.
+ * Brand Manual §2.3–2.4: the wordmark renders at ≥120px with clear space equal
+ * to the lowercase "i" height, enforced by the padding rather than trusted to a
+ * neighbour.
  *
- * Brand Manual §2.3–2.4: ≥120px wide with clear space equal to the lowercase "i"
- * height, enforced by the padding rather than trusted to a neighbour.
+ * NDA access stays quiet and gated. It is never a primary CTA — the composer is
+ * the only primary action on this surface (§2.4).
  */
 export function SidebarBrandNav() {
   const pathname = usePathname();
@@ -30,9 +28,11 @@ export function SidebarBrandNav() {
       <Link
         href={routes.home}
         aria-label={`${brand.name} home`}
-        className="flex min-w-[120px] flex-col gap-2 pb-1 pr-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        className="flex min-w-[120px] flex-col gap-1 pb-1 pr-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       >
-        <ItrixLogo width={120} priority />
+        <span className="font-display text-lg font-bold tracking-tight text-ink-primary">
+          itri<span className="text-accent">X</span>
+        </span>
         <span className="font-mono text-micro uppercase leading-tight tracking-[0.08em] text-ink-secondary">
           Computational AI Infrastructure
         </span>

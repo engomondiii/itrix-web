@@ -55,12 +55,7 @@ export function normalizeShellContract(
     valueDelivered: Boolean(payload?.valueDelivered),
     composerLabel: payload?.composerLabel ?? composerLabelForState(journeyState),
     questionLoopOpen: Boolean(payload?.questionLoopOpen),
-    /* DEFAULT ON. The composer offers the attach control unless the backend
-       explicitly withholds it — the visitor should be able to hand us a document
-       from the first screen. Uploading is still authorized server-side, and a
-       refusal surfaces as a specific, recoverable message rather than a control
-       that was never there. Only an explicit `false` hides it. */
-    attachmentsEnabled: payload?.attachmentsEnabled !== false,
+    attachmentsEnabled: Boolean(payload?.attachmentsEnabled),
     sidebarSections: sectionsFromContract(payload?.sidebarSections, journeyState),
     conversationHeader:
       payload?.conversationHeader ??

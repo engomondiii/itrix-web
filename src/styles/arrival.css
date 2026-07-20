@@ -1,0 +1,479 @@
+/* ============================================================================
+   itriX · THE ARRIVAL SCREEN
+
+   The approved landing package, rendered before the visitor has spoken:
+   itriX_Brand_Aligned_First_Landing_Page_v1.0.
+
+   Two surfaces, one threshold. This file owns the FIRST one — header, quiet
+   left and right rails, the big centre, the dark footer. The moment the visitor
+   submits, LandingSurface swaps to the conversation shell and none of this
+   renders.
+
+   Every measurement below is taken from the approved package's styles.css. The
+   token NAMES are the repo's Brand Manual v1.5 vocabulary; the VALUES are
+   identical to the package's own custom properties, which were themselves
+   generated from the Brand Manual.
+   ============================================================================ */
+
+.arrival-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--canvas);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.arrival-nav {
+  position: relative;
+  z-index: 20;
+  height: var(--shell-nav-h, 72px);
+  border-bottom: 1px solid var(--border-soft);
+  background: rgba(248, 250, 252, 0.76);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+}
+.arrival-nav__inner {
+  width: 100%;
+  height: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+.arrival-brand { display: inline-flex; align-items: center; gap: 16px; text-decoration: none; }
+.arrival-brand__descriptor {
+  padding-left: 16px;
+  border-left: 1px solid var(--border-medium);
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.arrival-nav__links { display: flex; align-items: center; gap: 32px; }
+.arrival-nav__link {
+  border-radius: 6px;
+  color: var(--ink-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+.arrival-nav__link:hover { color: var(--ink-primary); }
+.arrival-nav__gated { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.arrival-nav__gated svg { width: 17px; height: 17px; }
+.arrival-nav__menu {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-primary);
+}
+.arrival-nav__menu svg { width: 24px; height: 24px; }
+.arrival-nav__mobile {
+  position: absolute;
+  inset: var(--shell-nav-h, 72px) 0 auto;
+  padding: 24px;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--surface-glass-strong);
+  z-index: 21;
+}
+.arrival-nav__mobile a,
+.arrival-nav__mobile button {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  border: 0;
+  color: var(--ink-primary);
+  background: transparent;
+  text-align: left;
+  text-decoration: none;
+}
+
+/* ── Shared arrival primitives ────────────────────────────────────────────── */
+.arrival-glass {
+  background: var(--surface-glass);
+  border: 1px solid var(--border-glass);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+}
+.arrival-label {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.arrival-button-primary,
+.arrival-button-secondary {
+  min-height: 48px;
+  padding: 0 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-size: 14px;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+.arrival-button-primary {
+  border: 1px solid var(--ink-primary);
+  color: var(--ink-inverse);
+  background: var(--ink-primary);
+  font-weight: 600;
+}
+.arrival-button-primary:hover { transform: translateY(-1px); box-shadow: 0 0 0 4px var(--hover-glow, rgba(214,230,255,.64)); }
+.arrival-button-secondary {
+  border: 1px solid var(--border-glass);
+  color: var(--ink-primary);
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+  font-weight: 500;
+}
+.arrival-button-secondary:hover { border-color: var(--border-medium); box-shadow: 0 0 0 4px var(--hover-glow, rgba(214,230,255,.64)); }
+.arrival-button-text {
+  padding: 0;
+  border: 0;
+  color: var(--ink-secondary);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--border-medium);
+  text-underline-offset: 4px;
+}
+.arrival-button-text:hover { color: var(--ink-primary); }
+
+/* ── Hero and motifs ──────────────────────────────────────────────────────── */
+.arrival-hero {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: calc(100vh - var(--shell-nav-h, 72px));
+  overflow: hidden;
+  padding: 64px 0 48px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(214, 230, 255, 0.44), transparent 34%),
+    linear-gradient(180deg, var(--canvas) 0%, rgba(234, 240, 255, 0.34) 100%);
+}
+.arrival-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.32;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--border-glass) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-glass) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(ellipse 72% 65% at 50% 42%, rgba(0,0,0,.54), transparent 82%);
+  mask-image: radial-gradient(ellipse 72% 65% at 50% 42%, rgba(0,0,0,.54), transparent 82%);
+}
+.arrival-x { position: absolute; width: 230px; height: 310px; opacity: 0.14; pointer-events: none; }
+.arrival-x i,
+.arrival-x b {
+  position: absolute;
+  left: 92px;
+  top: 0;
+  width: 46px;
+  height: 310px;
+  border: 1px solid var(--border-medium);
+  background: rgba(214, 230, 255, 0.36);
+  transform-origin: center;
+}
+.arrival-x i { transform: rotate(34deg); }
+.arrival-x b { transform: rotate(-34deg); }
+.arrival-x--left { left: -76px; top: 180px; transform: scale(0.84); }
+.arrival-x--right { right: -48px; top: 96px; transform: scale(1.22); }
+
+/* ── The three-column arrival shell ───────────────────────────────────────── */
+.arrival-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: grid;
+  grid-template-columns: 176px minmax(0, 840px) 176px;
+  align-items: start;
+  justify-content: center;
+  gap: 32px;
+}
+.arrival-center { text-align: center; }
+
+/* ── Rails ────────────────────────────────────────────────────────────────── */
+.arrival-rail {
+  position: sticky;
+  top: calc(var(--shell-nav-h, 72px) + 32px);
+  margin-top: 96px;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-1, 0 18px 48px rgba(31, 41, 55, 0.08));
+  text-align: left;
+}
+.arrival-rail__stage { display: grid; grid-template-columns: 38px 1fr; gap: 8px; margin-top: 24px; }
+.arrival-rail__stage-number { color: var(--ink-secondary); font-family: var(--font-mono, monospace); font-size: 14px; }
+.arrival-rail__stage strong,
+.arrival-rail__status strong { display: block; color: var(--ink-primary); font-size: 14px; }
+.arrival-rail__stage span,
+.arrival-rail__status span { display: block; margin-top: 4px; color: var(--ink-secondary); font-size: 12px; line-height: 1.45; }
+.arrival-rail__route { margin: 24px 0; display: flex; align-items: center; }
+.arrival-rail__dot {
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--border-medium);
+  border-radius: 50%;
+  background: var(--canvas);
+}
+.arrival-rail__dot.is-active {
+  border-color: var(--ink-primary);
+  background: var(--ink-primary);
+  box-shadow: 0 0 0 5px var(--soft);
+}
+.arrival-rail__line { flex: 1; height: 1px; background: var(--border-medium); }
+.arrival-rail__caption { margin: 0; color: var(--ink-secondary); font-size: 12px; line-height: 1.5; }
+.arrival-rail__status { display: grid; grid-template-columns: 34px 1fr; gap: 8px; margin-top: 24px; }
+.arrival-rail__status-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  background: var(--soft);
+  color: var(--ink-primary);
+}
+.arrival-rail__status-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.arrival-rail__list { margin: 24px 0; padding: 0; list-style: none; }
+.arrival-rail__list li {
+  position: relative;
+  margin-top: 8px;
+  padding-left: 16px;
+  color: var(--ink-secondary);
+  font-size: 12px;
+  line-height: 1.45;
+}
+.arrival-rail__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 1px;
+  background: var(--border-medium);
+}
+
+/* ── The centre, scoped to the arrival screen ─────────────────────────────── */
+/* The centre COMPONENTS are shared with the conversation surface. Only their
+   arrival-screen sizing lives here, so neither surface can drift from the other
+   in copy or structure — only in scale. */
+.arrival-center .arrival__eyebrow { margin-top: 16px; }
+.arrival-center .arrival__framing {
+  max-width: 780px;
+  margin: 16px auto 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(42px, 4.25vw, 56px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  color: var(--ink-primary);
+  text-wrap: balance;
+}
+.arrival-center .arrival__question {
+  max-width: none;
+  margin: 24px 0 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink-primary);
+}
+.arrival-center .arrival__support {
+  max-width: 680px;
+  margin: 16px auto 32px;
+  color: var(--ink-secondary);
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+/* The composer becomes the approved prompt box: a full-width glass panel. */
+.arrival-center .composer { max-width: none; }
+.arrival-center .composer-shell {
+  padding: 32px;
+  border: 1px solid var(--border-glass);
+  border-radius: 28px;
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+  box-shadow: var(--shadow-1, 0 18px 48px rgba(31, 41, 55, 0.08));
+  text-align: left;
+}
+.arrival-center .composer-shell:focus-within {
+  transform: translateY(-1px);
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-2, 0 24px 72px rgba(31, 41, 55, 0.12)), 0 0 0 4px rgba(214, 230, 255, 0.54);
+}
+.arrival-center .composer-textarea { min-height: 92px; font-size: 18px; }
+.arrival-center .composer-footer {
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-soft);
+  text-align: left;
+}
+.arrival-center .attachment-tray { text-align: left; }
+
+/* Example chips, from the approved package. */
+.arrival-center .example-grid-wrap { margin-top: 32px; text-align: left; }
+.arrival-center .example-grid__label { margin-bottom: 16px; }
+.arrival-center .example-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.arrival-center .example-card {
+  min-height: 112px;
+  padding: 16px;
+  gap: 8px;
+  border-radius: 20px;
+  background: var(--surface-glass-soft);
+  -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  box-shadow: none;
+  font-size: 12.5px;
+  line-height: 1.42;
+  color: var(--ink-secondary);
+}
+.arrival-center .example-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-medium);
+  background: var(--surface-glass-strong);
+  box-shadow: var(--shadow-1, 0 18px 48px rgba(31, 41, 55, 0.08));
+}
+.arrival-center .example-card__glyph > svg { width: 24px; height: 24px; padding: 4px; }
+.arrival-center .example-card__label { font-size: 12px; font-weight: 600; color: var(--ink-primary); }
+.arrival-center .example-card__text { font-size: 12.5px; }
+.arrival-center .arrival__pathway { margin-top: 32px; gap: 8px; }
+
+/* ── Dialog ───────────────────────────────────────────────────────────────── */
+.arrival-dialog {
+  width: min(560px, calc(100vw - 40px));
+  padding: 0;
+  border: 1px solid var(--border-glass);
+  border-radius: 28px;
+  color: var(--ink-primary);
+  background: var(--surface-glass-strong);
+  box-shadow: var(--shadow-2, 0 24px 72px rgba(31, 41, 55, 0.12));
+}
+.arrival-dialog::backdrop {
+  background: rgba(31, 41, 55, 0.26);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.arrival-dialog__inner { position: relative; padding: 48px; }
+.arrival-dialog h2 {
+  margin: 16px 0;
+  font-family: var(--font-display, inherit);
+  font-size: 32px;
+  line-height: 1.2;
+}
+.arrival-dialog p { color: var(--ink-secondary); line-height: 1.55; }
+.arrival-dialog__close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--ink-primary);
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.arrival-footer {
+  flex: 0 0 auto;
+  min-height: 64px;
+  padding: 16px max(24px, calc((100vw - 1280px) / 2 + 48px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  color: var(--ink-inverse);
+  background: var(--structure-900);
+  font-size: 12px;
+}
+.arrival-footer nav { display: flex; gap: 24px; }
+.arrival-footer a,
+.arrival-footer button {
+  color: var(--ink-inverse);
+  opacity: 0.76;
+  border: 0;
+  background: transparent;
+  font-size: 12px;
+  text-decoration: none;
+}
+.arrival-footer a:hover,
+.arrival-footer button:hover { opacity: 1; }
+
+/* ── Responsive, from the approved package ────────────────────────────────── */
+@media (max-width: 1180px) {
+  .arrival-shell { grid-template-columns: minmax(0, 1fr); max-width: 920px; }
+  .arrival-rail { position: static; margin: 0; display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center; gap: 24px; }
+  .arrival-rail--left { order: 2; }
+  .arrival-center { order: 1; }
+  .arrival-rail--right { order: 3; }
+  .arrival-rail__route, .arrival-rail__list { margin: 0; }
+  .arrival-rail__caption, .arrival-rail .arrival-button-text { grid-column: 2; }
+  .arrival-center .example-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .arrival-nav { height: 64px; }
+  .arrival-nav__inner { padding: 0 24px; }
+  .arrival-brand__descriptor,
+  .arrival-nav__links,
+  .arrival-nav__gated { display: none; }
+  .arrival-nav__menu { display: block; }
+  .arrival-nav__mobile { inset: 64px 0 auto; }
+  .arrival-hero { min-height: calc(100vh - 64px); padding: 48px 0; }
+  .arrival-shell { padding: 0 24px; }
+  .arrival-x { display: none; }
+  .arrival-center .arrival__framing { font-size: 32px; line-height: 1.2; }
+  .arrival-center .arrival__question { font-size: 24px; }
+  .arrival-center .composer-shell { padding: 24px; border-radius: 20px; }
+  .arrival-center .composer-textarea { min-height: 116px; font-size: 16px; }
+  .arrival-center .example-grid { grid-template-columns: minmax(0, 1fr); }
+  .arrival-center .example-card { min-height: 76px; }
+  .arrival-rail--left, .arrival-rail--right { grid-template-columns: minmax(0, 1fr); }
+  .arrival-rail__caption, .arrival-rail .arrival-button-text { grid-column: auto; }
+  .arrival-footer { align-items: flex-start; flex-direction: column; padding: 24px; }
+  .arrival-footer nav { flex-wrap: wrap; gap: 16px; }
+}
+
+/* Glass discipline: opaque fallback where backdrop-filter is unsupported. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .arrival-glass,
+  .arrival-nav,
+  .arrival-button-secondary,
+  .arrival-center .composer-shell,
+  .arrival-center .example-card { background: var(--surface-glass-strong); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival-button-primary,
+  .arrival-button-secondary,
+  .arrival-nav__link,
+  .arrival-center .composer-shell,
+  .arrival-center .example-card { transition: none; }
+  .arrival-button-primary:hover,
+  .arrival-center .composer-shell:focus-within,
+  .arrival-center .example-card:hover { transform: none; }
+}

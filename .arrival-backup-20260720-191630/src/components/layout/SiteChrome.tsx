@@ -13,14 +13,13 @@ import { siteConfig } from '@/config/site.config';
  * every payload the rail carried was re-homed before it was removed
  * (Architecture v2.6 §11.6A).
  *
- * SELF-CHROMED SEGMENTS keep their own chrome and must NOT be wrapped, or two
+ * Self-chromed segments keep their own chrome and must NOT be wrapped, or two
  * navigations stack:
- *   · the (portal) group  → its own PortalShell
- *   · `/` (the landing)   → LandingSurface owns the switch between the approved
- *                           ARRIVAL screen (its own header, rails and footer)
- *                           and the conversation shell. Wrapping it here would
- *                           put a sidebar beside the arrival screen, which is
- *                           precisely what the approved design does not have.
+ *   · the (portal) group → its own PortalShell (own layout.tsx)
+ *
+ * NOTE: /review is no longer chromeless. In v4.0 it was a separate funnel
+ * surface with its own ReviewLayout; in v5.0 a review IS the conversation, so it
+ * renders inside the same shell as everything else.
  *
  * The flag makes this reversible in production: with
  * NEXT_PUBLIC_ENABLE_CONVERSATION_SURFACE off, routes render bare rather than
@@ -29,7 +28,6 @@ import { siteConfig } from '@/config/site.config';
 const CHROMELESS_PREFIXES = ['/workspace', '/sign-in', '/set-password', '/forgot-password'];
 
 function isChromeless(pathname: string): boolean {
-  if (pathname === '/') return true;
   return CHROMELESS_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 

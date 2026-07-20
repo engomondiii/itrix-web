@@ -11,6 +11,7 @@ import { useComposer } from '@/hooks/useComposer';
 import { useAttachments } from '@/hooks/useAttachments';
 import { useShellContext } from '@/context/ShellContext';
 import { useThreadContext } from '@/context/ThreadContext';
+import { siteConfig } from '@/config/site.config';
 import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { ATTACHMENT_COPY } from '@/lib/content/attachmentCopy';
 import { filesFromClipboard } from '@/lib/attachments/accept';
@@ -58,16 +59,7 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
   const [dragging, setDragging] = useState(false);
 
   const docked = variant === 'docked';
-  /**
-   * THE ATTACH CONTROL IS PART OF THE COMPOSER.
-   *
-   * It renders whenever the backend has not explicitly withheld it. The build
-   * flag now only governs whether uploads are ATTEMPTED against the attachment
-   * service — it no longer hides the control, because a composer that silently
-   * cannot accept a document is worse than one that accepts it and reports an
-   * honest failure (Surface 1 v5.0 §2.1 element 4, R25).
-   */
-  const attachOn = attachmentsEnabled !== false;
+  const attachOn = siteConfig.featureFlags.attachments && attachmentsEnabled !== false;
 
   const handleDrop = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
