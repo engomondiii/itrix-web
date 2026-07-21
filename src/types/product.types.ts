@@ -1,4 +1,4 @@
-/** ALPHA products and the underlying technologies (public-safe framing, Atelier/KC v2.0). */
+/** ALPHA products and the underlying technologies (public-safe framing, KC v2.0). */
 
 export type ProductRoute = 'alpha_compute' | 'alpha_core' | 'both' | 'general';
 
