@@ -1,2 +1,0 @@
-src/app/api/shell/route.ts
-src/app/api/artifacts/[id]/route.ts

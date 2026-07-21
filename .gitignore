@@ -160,3 +160,11 @@ itrix-web-surface1-phase*/
 # itriX Surface 1 v5.0 phase installers
 itrix-web-surface1-v5-phase*.zip
 itrix-web-surface1-v5-phase*/
+
+# ── v6.0 contract fix artefacts ──────────────────────────────────────────────
+itrix-web-v6-contract-fix/
+itrix-web-v6-contract-fix.zip
+.v6-contract-fix-backup-*/
+.phase*-backup-*/
+.arrival-backup-*/
+.sidebarfix-backup-*/
