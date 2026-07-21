@@ -60,6 +60,25 @@ const STATE_KEY_SLUG: Record<string, string> = {
   ENGAGED: 'assessment',
 };
 
+/**
+ * A `thr_local_…` id is the composer's OPTIMISTIC id, minted so the visitor's
+ * sentence renders instantly, before any network call. The backend has never
+ * seen it and never will — it is swapped for the server id the moment
+ * `POST /threads/` answers.
+ *
+ * Between those two moments, hooks keyed on the active thread fire with the
+ * local id. Forwarding those to Django produced the 404 pairs in the console:
+ * harmless, transient, and indistinguishable at a glance from a real failure —
+ * which is the actual cost. A console that cries wolf during normal operation
+ * trains you to ignore it.
+ *
+ * So a local id is answered HERE, without a round trip. It is not an error
+ * condition; it is a request about a thread that does not exist yet.
+ */
+function isLocalId(id: string): boolean {
+  return id.startsWith('thr_local_');
+}
+
 type Raw = Record<string, unknown>;
 
 const str = (v: unknown): string | null => (typeof v === 'string' && v ? v : null);
@@ -118,7 +137,10 @@ export async function GET(req: Request) {
   // No thread means no relationship yet. The backend has nothing to say, and an
   // empty payload gives the client the base sections — which is correct for a
   // first-time visitor rather than an error to report.
-  if (!thread) return NextResponse.json({}, { status: 200 });
+  // No thread, or a thread the backend has not issued yet. Either way there is
+  // nothing to ask about, and an empty payload gives the client the base
+  // sections — correct for a conversation that has not started.
+  if (!thread || isLocalId(thread)) return NextResponse.json({}, { status: 200 });
 
   try {
     const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(thread)}/shell/`, {
