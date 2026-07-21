@@ -168,3 +168,8 @@ itrix-web-v6-contract-fix.zip
 .phase*-backup-*/
 .arrival-backup-*/
 .sidebarfix-backup-*/
+
+# v6.0 fix artefacts (never committed)
+itrix-web-v6-*/
+itrix-web-v6-*.zip
+.v6-*-backup-*/
