@@ -13,6 +13,16 @@ interface ClaimBody {
   full_name?: string;
   organization?: string;
   role?: string;
+  /**
+   * v8.0 — the instrument versions the visitor was shown (Architecture v2.9 §19.10, R62).
+   *
+   * This proxy ALLOWLISTS the fields it forwards, so a new field does not arrive by
+   * accident — which is why adding assent to the payload means editing this file too. The
+   * backend stores its OWN versions and uses these only for a mismatch check: a difference
+   * means the visitor read something other than what binds them, and that is worth a loud
+   * log rather than a silent acceptance.
+   */
+  assent?: { slug: string; version: string; effective: string }[];
 }
 
 /**
@@ -41,6 +51,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ token: string 
       full_name: body.full_name ?? '',
       organization: body.organization ?? '',
       role: body.role ?? '',
+      assent: Array.isArray(body.assent) ? body.assent : [],
     },
   });
 

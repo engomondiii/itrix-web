@@ -62,6 +62,10 @@ const SELF_CHROMED_PREFIXES = [
   '/set-password',
   '/forgot-password',
   '/reset-password',
+  /* v8.0 Phase 5. The confirmation screen belongs to the authentication zone: it is
+     chrome-free here so `AuthShell` can give it the wordmark, the geometry and the pinned
+     legal strip, exactly like the other five. */
+  '/verify-email',
 ];
 
 const LEGAL_PATHS = LEGAL_INSTRUMENTS.map((i) => `/${i.slug}`);

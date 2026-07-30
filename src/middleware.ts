@@ -67,8 +67,16 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  // If already signed in, keep users out of the auth screens.
-  if (hasSession && (pathname === '/sign-in' || pathname === '/set-password')) {
+  /* If already signed in, keep users out of the auth screens.
+
+     v8.0 ADDS /sign-up, and it is not cosmetic: with open registration the route renders a
+     real form, so a signed-in visitor reaching it could submit one and attempt to create a
+     SECOND account — which the backend's one-address-one-account constraint would then have
+     to refuse, producing a confusing failure for somebody who is already a customer (R63).
+
+     /verify-email is deliberately NOT in this list. A signed-in person with an unconfirmed
+     address is exactly who needs it. */
+  if (hasSession && (pathname === '/sign-in' || pathname === '/sign-up' || pathname === '/set-password')) {
     const url = req.nextUrl.clone();
     url.pathname = '/workspace';
     url.search = '';
@@ -79,5 +87,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/review', '/workspace', '/workspace/:path*', '/sign-in', '/set-password'],
+  matcher: ['/review', '/workspace', '/workspace/:path*', '/sign-in', '/sign-up', '/set-password'],
 };

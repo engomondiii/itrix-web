@@ -17,6 +17,18 @@ export interface ClientIdentity {
   role: string | null;
   /** NDA state gates the data room + disclosure ceiling. */
   ndaSigned: boolean;
+  /**
+   * v8.0 Phase 5. Whether this address has been confirmed (Architecture v2.9 R66).
+   *
+   * OPTIONAL on purpose: Backend v7.2 Phase 4 is what adds it to `client/me/`, and until
+   * that lands the key is simply absent. Absent must be read as UNKNOWN rather than as
+   * unconfirmed — treating a missing key as `false` would put a permanent "confirm your
+   * email" banner on every existing customer's workspace the day this ships.
+   *
+   * It is a fact about the holder's own address, so it is theirs to see. It is not a
+   * disclosure about anybody else.
+   */
+  emailVerified?: boolean;
 }
 
 /** Portal journey/stage line shown on the overview (§62 status line). */

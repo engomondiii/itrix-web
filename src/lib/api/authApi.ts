@@ -1,5 +1,5 @@
 /**
- * Typed client for the authentication proxies (Backend v7.1 §15.1).
+ * Typed client for the authentication proxies (Backend v7.2 §15.1).
  *
  * Never throws — returns a discriminated result rather than `{ data, error }`, because
  * the interesting outcomes here are not "data or failure" but WHICH failure, and one of
@@ -7,10 +7,13 @@
  *
  * ── WHAT THIS CLIENT CAN AND CANNOT LEARN ───────────────────────────────────
  * By design, very little. It cannot tell whether an address is registered, whether an
- * invitation code exists, or why a sign-in failed. The proxies collapse those
- * distinctions before the answer reaches here, so the surface is structurally unable
- * to leak them even if a future component tried to (Architecture v2.8 §26.5).
+ * invitation code exists, why a sign-in failed, or — from v8.0 — whether a registration
+ * created anything. The proxies collapse those distinctions before the answer reaches
+ * here, so the surface is structurally unable to leak them even if a future component
+ * tried to (Architecture v2.9 §26.5, §27.6).
  */
+
+import type { LegalInstrumentVersion } from '@/lib/api/legalApi';
 
 export type AuthOutcome =
   | { kind: 'ok' }
@@ -73,7 +76,7 @@ export const authApi = {
    * Unlike the request, this one reports failure honestly: the visitor is holding a
    * link they believe works, and telling them nothing would leave them stuck. It still
    * does not distinguish expired from consumed from unknown — one message covers all
-   * three (Playbook v1.8 §18E).
+   * three (Playbook v1.9 §18E).
    */
   async confirmReset(token: string, password: string): Promise<AuthOutcome> {
     try {
@@ -97,7 +100,7 @@ export const authApi = {
    *
    * Returns usable-or-not and, when usable, where to go. It returns no Lead, no
    * organisation, no persona and no email — everything it returns is a disclosure to an
-   * unauthenticated party (Backend v7.1 §15.4).
+   * unauthenticated party (Backend v7.2 §15.4).
    */
   async lookupInvite(code: string): Promise<{ outcome: AuthOutcome; result?: InviteLookupResult }> {
     try {
@@ -119,8 +122,22 @@ export const authApi = {
   },
 
   /**
-   * Open registration. 404s unless the backend has it enabled — a disabled feature
-   * should not advertise itself with a 403 (Backend v7.1 §15.5).
+   * OPEN REGISTRATION (Architecture v2.9 §27, R60).
+   *
+   * `assent` carries the instrument versions the visitor was shown, and the backend writes
+   * the record inside the transaction that creates the Client (R62). It is sent HERE rather
+   * than POSTed first because `portal/legal/assent/` authenticates on the client plane, and
+   * at registration there is no client-JWT and no Client to attach a record to.
+   *
+   * ── `ok` MEANS ACCEPTED, NOT CREATED ────────────────────────────────────
+   * The proxy collapses every non-rate-limited outcome into one response so the browser
+   * cannot learn whether the address was already in use (R64). A 409 from the backend
+   * arrives here as an acceptance, and that is the intended behaviour rather than a bug to
+   * be fixed later: the alternative is a form that answers "is this company your customer?"
+   * for anyone who can type an address.
+   *
+   * It 404s when the kill switch is thrown — a disabled capability should not advertise
+   * itself with a 403 (Backend v7.2 §15.5).
    */
   async register(payload: {
     email: string;
@@ -128,6 +145,7 @@ export const authApi = {
     fullName: string;
     organization: string;
     role?: string;
+    assent: LegalInstrumentVersion[];
   }): Promise<AuthOutcome> {
     try {
       const res = await fetch('/api/auth/register', {
@@ -136,12 +154,57 @@ export const authApi = {
         headers: JSON_HEADERS,
         body: JSON.stringify(payload),
       });
-      if (res.ok) return { kind: 'ok' };
+      if (res.status === 202 || res.ok) return { kind: 'ok' };
       if (res.status === 429) return { kind: 'rate_limited', retryAfterSeconds: retryAfterFrom(res, await readJson(res)) };
-      if (res.status === 400 || res.status === 409) return { kind: 'rejected' };
       return { kind: 'unavailable' };
     } catch {
       return { kind: 'unavailable' };
+    }
+  },
+
+  /**
+   * Confirm an email address.
+   *
+   * Reports failure honestly, like the reset confirm and for the same reason: the visitor
+   * is holding a link they believe works. It does not distinguish expired from consumed
+   * from unknown — one message covers all three (Playbook v1.9 §18G).
+   */
+  async verifyEmail(token: string): Promise<AuthOutcome> {
+    try {
+      const res = await fetch('/api/auth/verify-email', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ token }),
+      });
+      if (res.ok) return { kind: 'ok' };
+      if (res.status === 429) return { kind: 'rate_limited', retryAfterSeconds: retryAfterFrom(res, await readJson(res)) };
+      if (res.status === 400 || res.status === 404 || res.status === 410) return { kind: 'rejected' };
+      return { kind: 'unavailable' };
+    } catch {
+      return { kind: 'unavailable' };
+    }
+  },
+
+  /**
+   * Ask for another confirmation link.
+   *
+   * ALWAYS resolves `ok`, like the reset request: a resend that answered differently for an
+   * unknown, an unconfirmed and an already-confirmed address would be the enumeration
+   * oracle the whole zone is built to avoid.
+   */
+  async resendVerification(email?: string): Promise<AuthOutcome> {
+    try {
+      const res = await fetch('/api/auth/verify-email/resend', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: JSON_HEADERS,
+        body: JSON.stringify(email ? { email } : {}),
+      });
+      if (res.status === 429) return { kind: 'rate_limited', retryAfterSeconds: retryAfterFrom(res, await readJson(res)) };
+      return { kind: 'ok' };
+    } catch {
+      return { kind: 'ok' };
     }
   },
 };

@@ -73,7 +73,11 @@ function CreateAccountInner({ token }: { token: string }) {
   const [fallback, setFallback] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const assent = useLegalAssent();
+  /* v8.0 — the versions travel in the CLAIM payload and the backend records them inside the
+     transaction that creates the Client (R62). `record()` therefore no longer POSTs: it
+     confirms the gate was satisfied. The separate POST produced a second record, because
+     `claim_invite()` has written one in-transaction since Backend v7.1 Phase 3. */
+  const assent = useLegalAssent({ transport: 'in_payload' });
   const policy = usePasswordPolicy(password, confirm);
 
   function validate(): boolean {
@@ -125,6 +129,7 @@ function CreateAccountInner({ token }: { token: string }) {
       full_name: fullName.trim(),
       organization: organization.trim(),
       role: role.trim(),
+      assent: assent.versions,
     });
     setSubmitting(false);
 

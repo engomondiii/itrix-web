@@ -16,8 +16,17 @@ import { CENTER_COPY } from '@/lib/content/centerCopy';
  * and nothing here is allowed to compete with it.
  *
  * ── v7.0 PHASE 4 ADDS A SECOND LINK ─────────────────────────────────────────
- * `Sign up`, beside it and quieter. R32 is amended to permit exactly these two plus the
- * four legal instruments, and nothing else.
+ * `Sign up`, beside it. R32 is amended to permit exactly these two plus the four legal
+ * instruments, and nothing else.
+ *
+ * ── v8.0 GIVES IT EQUAL WEIGHT, AND NOT FIRST PLACE ─────────────────────────
+ * In v7.0 it was deliberately quieter, because it led to a page that mostly explained why
+ * there was no form. It now leads to a real front door, so it carries the same weight as
+ * the second of two links (Playbook v1.9 §12) — handled in `surface-v6.css`.
+ *
+ * Sign in STAYS FIRST and stays primary: most people arriving at the top right of this
+ * screen already have an account. Opening registration does not change who is standing
+ * here.
  *
  * TWO LINKS, NOT A MENU. A dropdown on the front door would be chrome on the one screen
  * that is supposed to have none — and it would hide the second option behind an

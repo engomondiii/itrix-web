@@ -10,44 +10,48 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { LegalInstrumentVersion } from '@/lib/api/legalApi';
 
 /**
- * Sign up — invite redemption, and open registration behind a flag.
+ * Sign up — open registration, and invitation redemption (Architecture v2.9 §27).
  *
- * ── WHY THIS IS NOT OPEN REGISTRATION BY DEFAULT ────────────────────────────
- * Accounts on this platform are EARNED: a visitor describes a problem, a brief is
- * delivered, and only then is an invite minted (State 5). A public form that opened a
- * workspace on demand would produce Clients with no Lead, no journey state and no
- * disclosure basis — which breaks value-first (R4), qualification (R2) and the
- * persona-keyed pitch model (R3). Architecture v2.8 §00.2 records all four
- * consequences and the decision that needs sign-off.
+ * ── WHAT CHANGED FROM v7.0 ──────────────────────────────────────────────────
+ * `register()` no longer refuses. v7.0 had it guard on `featureFlags.openSignup` as the
+ * third of three layers keeping open registration switched off; the flag now DEFAULTS ON
+ * and that branch inverts into the kill-switch path (§27.10). With the switch thrown the
+ * page does not render the form, this refuses, and the proxy 404s — the same three layers,
+ * pointing the other way.
  *
- * So the default has two doors, and only one of them is a form:
+ * `register()` also carries the ASSENT VERSIONS. They are sent with the credentials and
+ * the backend writes the record inside the transaction that creates the Client (R62).
+ * The v7.0 component POSTed them first, to an endpoint that authenticates on the client
+ * plane — before registration there is no client-JWT and no Client for the record to
+ * attach to, so that sequence could not work here.
  *
- *   DOOR 1  a code → the existing, assent-gated account-creation flow. This is the
- *           case the missing sign-up link was actually blocking: someone who was
- *           invited, closed the email, and typed the site name into a browser.
- *   DOOR 2  no form at all. It says a workspace opens after a short conversation and
- *           goes to the arrival composer, because the front door already IS the
- *           sign-up flow here.
+ * ── WHAT DELIBERATELY DID NOT CHANGE ────────────────────────────────────────
+ * `redeem()`. The lookup, the single failure message for unknown/used/expired, and the
+ * hand-off to `/c/[token]/create-account` all work and are not being rewritten because
+ * the page around them moved.
  *
- * ── DOOR 1 HANDS OFF RATHER THAN DUPLICATING ────────────────────────────────
- * `/c/[token]/create-account` already collects the details, takes assent, records it
- * BEFORE the claim, and mints the JWT. Rebuilding that here would create a second
- * account-creation path — and therefore a second place for the assent gate to be
- * forgotten.
+ * ── WHAT THIS HOOK CANNOT LEARN ─────────────────────────────────────────────
+ * Whether the address was already in use. The proxy collapses every non-rate-limited
+ * outcome into one response (R64), so `register()` resolving `true` means "the request was
+ * accepted", never "an account was created". The screen it navigates to is written to be
+ * true either way.
  */
 
+export interface RegisterPayload {
+  email: string;
+  password: string;
+  fullName: string;
+  organization: string;
+  role?: string;
+  /** The versions the visitor actually saw. Recorded server-side, in one transaction. */
+  assentVersions: LegalInstrumentVersion[];
+}
+
 export interface UseSignUpResult {
-  /** Door 1. Navigates to the assent-gated flow when the code is usable. */
+  /** Open registration. Navigates to the confirmation screen when accepted. */
+  register: (payload: RegisterPayload) => Promise<boolean>;
+  /** The invitation code. Navigates to the assent-gated claim flow when usable. */
   redeem: (code: string) => Promise<void>;
-  /** Open registration. Only reachable when the flag is on. */
-  register: (payload: {
-    email: string;
-    password: string;
-    fullName: string;
-    organization: string;
-    role?: string;
-    assentVersions: LegalInstrumentVersion[];
-  }) => Promise<boolean>;
   openSignupEnabled: boolean;
   submitting: boolean;
   error: string | null;
@@ -60,6 +64,53 @@ export function useSignUp(): UseSignUpResult {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryAfterSeconds, setRetryAfter] = useState<number | null>(null);
+
+  const register = useCallback(
+    async (payload: RegisterPayload): Promise<boolean> => {
+      if (!siteConfig.featureFlags.openSignup) {
+        /* The kill switch is thrown. The page does not render the form, so reaching here
+           means something called the hook directly — refuse rather than post. */
+        setError(AUTH_COPY.signUp.serviceFailure);
+        return false;
+      }
+
+      setSubmitting(true);
+      setError(null);
+      setRetryAfter(null);
+      const outcome = await authApi.register({
+        email: payload.email.trim(),
+        password: payload.password,
+        fullName: payload.fullName.trim(),
+        organization: payload.organization.trim(),
+        role: payload.role?.trim() || undefined,
+        assent: payload.assentVersions,
+      });
+      setSubmitting(false);
+
+      if (outcome.kind === 'ok') {
+        /* No address, no organisation, no indication of whether the account already
+           existed. Telemetry must not be able to answer "is this person a customer". */
+        trackEvent('auth.signed_up', {});
+        trackEvent('auth.verification_sent', {});
+        router.push(routes.portalVerifyEmail);
+        return true;
+      }
+
+      if (outcome.kind === 'rate_limited') {
+        setRetryAfter(outcome.retryAfterSeconds);
+        return false;
+      }
+
+      /* Honest failure. NOT a fake success: telling somebody they have a workspace when
+         nothing was created sends them to a sign-in page that will reject them. The reset
+         REQUEST proxy degrades to accepted because a missing account and a broken service
+         must be indistinguishable there; registration has no such requirement and must
+         not borrow the pattern (Surface 1 v8.0 §16.7). */
+      setError(AUTH_COPY.signUp.serviceFailure);
+      return false;
+    },
+    [router],
+  );
 
   const redeem = useCallback(
     async (code: string) => {
@@ -93,48 +144,9 @@ export function useSignUp(): UseSignUpResult {
     [router],
   );
 
-  const register = useCallback(
-    async (payload: Parameters<UseSignUpResult['register']>[0]): Promise<boolean> => {
-      if (!siteConfig.featureFlags.openSignup) {
-        /* Defence in depth. The route does not render the form, the proxy 404s, and
-           this refuses — three layers, because the consequence of open registration
-           arriving by accident is Clients with no journey behind them. */
-        setError(AUTH_COPY.shared.serviceFailure);
-        return false;
-      }
-
-      setSubmitting(true);
-      setError(null);
-      setRetryAfter(null);
-      const outcome = await authApi.register({
-        email: payload.email.trim(),
-        password: payload.password,
-        fullName: payload.fullName.trim(),
-        organization: payload.organization.trim(),
-        role: payload.role?.trim() || undefined,
-      });
-      setSubmitting(false);
-
-      if (outcome.kind === 'ok') {
-        trackEvent('auth.signup_door_chosen', { door: 'open', outcome: 'created' });
-        router.push(routes.workspaceOverview);
-        return true;
-      }
-
-      if (outcome.kind === 'rate_limited') {
-        setRetryAfter(outcome.retryAfterSeconds);
-        return false;
-      }
-
-      setError(AUTH_COPY.shared.serviceFailure);
-      return false;
-    },
-    [router],
-  );
-
   return {
-    redeem,
     register,
+    redeem,
     openSignupEnabled: siteConfig.featureFlags.openSignup,
     submitting,
     error,

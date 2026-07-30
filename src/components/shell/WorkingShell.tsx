@@ -8,6 +8,7 @@ import { useRailStore } from '@/store/railStore';
 import { ContentPane } from '@/components/content-pane/ContentPane';
 import { PaneSheet } from '@/components/content-pane/PaneSheet';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
+import { VerificationNotice } from '@/components/auth/VerificationNotice';
 import { RAIL_COPY } from '@/lib/content/composerCopy';
 
 /**
@@ -77,6 +78,12 @@ export function WorkingShell({ children }: { children: ReactNode }) {
             <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
         </button>
+
+        {/* v8.0 — the unconfirmed-address banner (R66). It sits ABOVE the conversation and
+            never in the content pane, and it never blocks: an unconfirmed account can type,
+            send and receive answers. It returns null unless the backend has actually said the
+            address is unconfirmed, so it is inert until Backend v7.2 Phase 4 lands. */}
+        <VerificationNotice />
 
         {children}
       </main>

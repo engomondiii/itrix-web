@@ -337,3 +337,56 @@
   .prompt-card,
   .sign-in-link { background: var(--surface); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.0 PHASE 5 — KEEPING AN ANONYMOUS CONVERSATION, AND THE SIGN-UP LINK
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Sign up now leads to a real front door, so it carries the same weight as the second of
+   two links (Playbook v1.9 §12). Sign in stays first and stays primary. */
+.sign-up-link { color: var(--ink-secondary); }
+.sign-up-link:hover { color: var(--ink-primary); }
+
+/* The "keep this conversation" card. Quiet by construction: it is an offer about the
+   visitor's own work, and anything that looked like a promotion would make it the
+   commitment ask it is specifically not (Playbook v1.9 §18H). */
+.keep-work {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0 8px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--soft);
+}
+
+.keep-work__title { margin: 0; font-size: 14px; font-weight: 600; color: var(--ink-primary); }
+.keep-work__body { margin: 0; max-width: 62ch; font-size: 13px; line-height: 1.6; color: var(--ink-secondary); }
+.keep-work__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding-top: 2px; }
+
+.keep-work__action {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.keep-work__dismiss {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  color: var(--ink-secondary);
+  cursor: pointer;
+}
+
+.keep-work__dismiss:hover { color: var(--ink-primary); }
+
+/* Coarse pointers get a 44px target without changing the visual weight (§25). */
+@media (any-pointer: coarse) {
+  .keep-work__action,
+  .keep-work__dismiss,
+  .auth-disclosure__trigger { min-height: 44px; display: inline-flex; align-items: center; }
+}

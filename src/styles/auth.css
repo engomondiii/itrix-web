@@ -314,3 +314,87 @@
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .auth-panel { background: var(--surface-glass-strong, var(--surface)); }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v8.0 PHASE 5 — OPEN REGISTRATION
+   Extends this stylesheet rather than adding a new one. Every prior phase added a new
+   .css file and, with it, one more of the CSS parser errors this repo's eslint reports
+   on every stylesheet. Extending an existing file keeps the lint count flat, which is
+   what makes the phase's verification numbers readable.
+   Brand Manual v1.5 tokens only. Atelier names remain lint-banned.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.auth-register { display: flex; flex-direction: column; gap: 20px; }
+
+/* The invitation code: second, and collapsed. A real button, not a styled div — someone
+   arriving by keyboard has to be able to find the second option (R47). */
+.auth-disclosure { display: flex; flex-direction: column; gap: 12px; }
+
+.auth-disclosure__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+  cursor: pointer;
+}
+
+.auth-disclosure__trigger:hover { color: var(--ink-primary); }
+
+.auth-disclosure__trigger:focus-visible {
+  outline: 2px solid var(--ink-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.auth-disclosure__chevron { display: inline-flex; transition: transform 160ms ease-out; }
+.auth-disclosure__chevron svg { width: 14px; height: 14px; }
+.auth-disclosure__chevron[data-open='true'] { transform: rotate(90deg); }
+
+.auth-disclosure__panel { display: flex; flex-direction: column; gap: 12px; }
+.auth-disclosure__panel[hidden] { display: none; }
+
+/* Confirming an address. */
+.verify-actions { display: flex; flex-direction: column; gap: 12px; }
+.verify-unlocks { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-secondary); }
+.verify-status { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-primary); }
+.verify-status--warn { color: var(--ink-secondary); }
+
+/* The banner inside the workspace. It must never read as a block, so it is a quiet strip
+   rather than a modal, a bar across the composer, or anything with an error colour. */
+.verify-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--tint);
+}
+
+.verify-banner__body { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink-primary); }
+
+.verify-banner__action {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.verify-banner__action:disabled { opacity: 0.5; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-disclosure__chevron { transition: none; }
+}

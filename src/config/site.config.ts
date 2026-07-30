@@ -10,6 +10,28 @@ function flag(value: string | undefined): boolean {
 }
 
 /**
+ * A flag that DEFAULTS ON, and only `false` turns it off (v8.0).
+ *
+ * Used for exactly one thing: `openSignup`. Architecture v2.9 retires that flag as a
+ * product gate and keeps it as a KILL SWITCH, which inverts its default — an unset
+ * variable now has to mean "registration is available".
+ *
+ * ── AND A TYPO HAS TO FAIL SAFE IN THE OTHER DIRECTION ────────────────────
+ * `flag()` is strict on purpose: for a feature that is off by default, `'ture'` meaning
+ * OFF is the safe reading. Here the safe reading is the opposite — a mistyped value must
+ * not silently close the front door — so anything that is not literally `false` leaves it
+ * open. That asymmetry is deliberate and is the reason this is a separate helper rather
+ * than a parameter on `flag()`.
+ *
+ * NOTE this is NOT the dashboard's `useMocks !== 'false'` pattern, which was a defect: there
+ * the default-on value bypassed authentication. Here the default-on value is the product
+ * decision itself, and it grants nothing — reach is unchanged by having an account (R59).
+ */
+function flagDefaultOn(value: string | undefined): boolean {
+  return (value ?? '').toLowerCase() !== 'false';
+}
+
+/**
  * Feature flags. All default OFF so a fresh deploy is safe.
  *
  *   conversationSurface — v5.0 Phase 1. The conversation shell, the minimal
@@ -106,19 +128,33 @@ export const featureFlags = {
    */
   passwordReset: flag(process.env.NEXT_PUBLIC_ENABLE_PASSWORD_RESET),
   /**
-   * v7.0 Phase 4. Registration WITHOUT an invitation.
+   * v8.0 Phase 5. OPEN REGISTRATION — and it DEFAULTS ON (Architecture v2.9 §27, R60).
    *
-   * EXPECTED TO STAY FALSE. Accounts on this platform are earned: a Client always arrives
-   * attached to a Lead, a journey state and a disclosure basis. Open registration produces
-   * Clients with none of those, which breaks value-first (R4), qualification (R2) and the
-   * persona-keyed pitch model (R3). Architecture v2.8 §00.2 records all four consequences
-   * and flags the decision for sign-off.
+   * v7.0 had this off with four consequences recorded against it. The decision was taken
+   * the other way, and three of the four do not survive contact with the code: the ceiling
+   * is min(plane cap, state ceiling) and State 1 is `public`, so a registered subject who
+   * has said nothing reaches exactly what an anonymous visitor reaches (R59); Layer 1
+   * qualifies conversations, not forms; and a persona is inferred from what somebody SAID,
+   * so silence keys to nothing and no pitch room renders.
    *
-   * With it on: the sign-up page renders a real form, the Client is created at the public
-   * ceiling with `value_delivered = false` so every gated reveal stays shut, and assent is
-   * still taken in the same transaction as the account.
+   * What was left was the real risk — anyone can register anyone's work address — and that
+   * is answered by verification (R66) and by one-account-per-address (R63) on the backend.
+   *
+   * IT IS NOW A KILL SWITCH RATHER THAN A PRODUCT GATE. With it thrown, /sign-up renders the
+   * invitation path only and /api/auth/register returns 404. That off state is specified and
+   * still in the tree, because a switch whose off state has been deleted is not a switch
+   * (§27.10).
    */
-  openSignup: flag(process.env.NEXT_PUBLIC_ENABLE_OPEN_SIGNUP),
+  openSignup: flagDefaultOn(process.env.NEXT_PUBLIC_ENABLE_OPEN_SIGNUP),
+  /**
+   * v8.0 Phase 5. The collapsed invitation-code option on /sign-up.
+   *
+   * Defaults ON. It is the path an invited person uses when they closed the email and typed
+   * the site name into a browser, and it is never removed (R68) — an invitation is how itriX
+   * opens a workspace FOR somebody, which is worth more now that it carries no
+   * administrative freight.
+   */
+  signupInviteCode: flagDefaultOn(process.env.NEXT_PUBLIC_ENABLE_SIGNUP_INVITE_CODE),
   streamingTurns: flag(process.env.NEXT_PUBLIC_ENABLE_STREAMING_TURNS),
   attachments: flag(process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS),
   adaptiveQuestions: flag(process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_QUESTIONS),

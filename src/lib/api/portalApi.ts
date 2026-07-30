@@ -47,6 +47,15 @@ async function sendJson<T>(url: string, body: unknown, method: 'POST' | 'PATCH' 
 
 export const portalApi = {
   // --- auth ---
+  /**
+   * Claim an invitation (reveal ③).
+   *
+   * v8.0 adds `assent`: the instrument versions the visitor was SHOWN travel with the claim,
+   * and `claim_invite()` writes the record inside the transaction that creates the Client
+   * (Architecture v2.9 §19.10, R62). The page used to POST them separately to
+   * `portal/legal/assent/` first — which produced a SECOND record, because the backend has
+   * been recording one in-transaction since Backend v7.1 Phase 3.
+   */
   claimInvite: (
     token: string,
     payload: {
@@ -55,6 +64,7 @@ export const portalApi = {
       full_name?: string;
       organization?: string;
       role?: string;
+      assent?: { slug: string; version: string; effective: string }[];
     },
   ) =>
     sendJson<InviteClaimResult>(`/api/accounts/invite/${encodeURIComponent(token)}/claim`, payload),

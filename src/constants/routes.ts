@@ -40,14 +40,25 @@ export const routes = {
   /** (portal) route group — the private client workspace (Phase 2, reveal ③). */
   portalSignIn: '/sign-in',
   /**
-   * v7.0 Phase 4. Two doors: invitation redemption, and a route to the conversation for
-   * anyone without one. It is NOT open registration by default — Architecture v2.8 §00.2.
+   * v8.0 Phase 5. OPEN REGISTRATION, and it is the default (Architecture v2.9 §27.2, R60).
+   *
+   * The v7.0 comment said this was "NOT open registration by default". That decision was
+   * taken the other way: anyone may open a workspace on arrival, and the invitation code is
+   * a collapsed second option on the same page.
    */
   portalSignUp: '/sign-up',
   portalSetPassword: '/set-password',
   portalForgotPassword: '/forgot-password',
   /** v7.0 Phase 4. The reset landing, reached from the emailed link. */
   portalResetPassword: '/reset-password',
+  /**
+   * v8.0 Phase 5. Confirming an email address (Architecture v2.9 §27.7).
+   *
+   * It is where registration lands, and it is NOT a gate: an unconfirmed account can sign
+   * in, hold a conversation and get an answer. Confirmation is required for the NDA path,
+   * for anything we would email, and for being named on a commercial document (R66).
+   */
+  portalVerifyEmail: '/verify-email',
   /* v5.0 Phase 3: /workspace IS the thread. The overview dashboard is retired —
      a customer's home is the conversation they have been having all along. */
   workspace: '/workspace',

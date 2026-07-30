@@ -60,6 +60,13 @@ export type KnownEvent =
   | 'auth.reset_completed'
   | 'auth.invite_redeemed'
   | 'auth.signup_door_chosen'
+  /* v8.0 Phase 5. NONE of these carries an email address, an organisation, an invite code,
+     or any indication of whether an address was already registered — telemetry must not be
+     able to answer "is this person a customer" (Surface 1 v8.0 §07.5). */
+  | 'auth.signed_up'
+  | 'auth.verification_sent'
+  | 'auth.verification_confirmed'
+  | 'auth.thread_adopted'
   /* Attachments, suggestions, artifacts, cards. */
   | 'attachment.uploaded'
   | 'suggestion.selected'
