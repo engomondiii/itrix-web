@@ -48,7 +48,21 @@ import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
  * even while its transcript is still loading. Otherwise a visitor opening a thread
  * link would see the front door flash before their conversation appeared.
  */
-const SELF_CHROMED_PREFIXES = ['/workspace', '/sign-in', '/set-password', '/forgot-password'];
+/**
+ * v7.0 PHASE 4 adds `/sign-up` and `/reset-password`.
+ *
+ * The whole authentication zone is self-chromed: it renders its own `AuthShell`, which
+ * carries the wordmark, the geometry and the pinned legal strip. Mounting the working
+ * shell around a sign-in form would put a conversation rail beside a password field.
+ */
+const SELF_CHROMED_PREFIXES = [
+  '/workspace',
+  '/sign-in',
+  '/sign-up',
+  '/set-password',
+  '/forgot-password',
+  '/reset-password',
+];
 
 const LEGAL_PATHS = LEGAL_INSTRUMENTS.map((i) => `/${i.slug}`);
 

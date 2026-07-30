@@ -73,6 +73,16 @@ export const CENTER_COPY = {
    */
   signIn: 'Sign in',
 
+  /**
+   * v7.0 Phase 4. The second — and last — link on the arrival screen.
+   *
+   * `Sign in` stays FIRST and stays the primary of the two: most people arriving at the
+   * top right of this screen have an account. `Sign up` sits beside it as a quieter
+   * secondary link, not a button and not a dropdown — a menu on the front door is chrome,
+   * and R32 permits exactly these two links plus the four legal instruments.
+   */
+  signUp: 'Sign up',
+
   /** Section label above the rotating prompts. */
   examplesLabel: 'Examples from the work our visitors bring',
 

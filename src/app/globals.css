@@ -40,4 +40,6 @@
    refine anything above without !important — except in the two places where the
    reduced-motion and print guarantees have to win outright. */
 @import '../styles/phase3-pane.css';
+/* Phase 4. auth.css before mobile.css so the zone's breakpoint sweeps land last. */
+@import '../styles/auth.css';
 @import '../styles/mobile.css';

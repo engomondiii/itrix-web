@@ -7,8 +7,15 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { SectionLabel } from '@/components/ui/SectionLabel';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
 import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
+import { PasswordField } from '@/components/auth/PasswordField';
+import { PasswordRules } from '@/components/auth/PasswordRules';
+import { AssentCheckbox } from '@/components/legal/AssentCheckbox';
+import { AssentSummary } from '@/components/legal/AssentSummary';
+import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
+import { useLegalAssent } from '@/hooks/useLegalAssent';
+import { AUTH_COPY } from '@/lib/content/authCopy';
+import { ASSENT_COPY } from '@/lib/content/legalCopy';
 import { JourneyProvider } from '@/context/JourneyContext';
 import { RevealGate } from '@/components/client-page/RevealGate';
 import { portalApi } from '@/lib/api/portalApi';
@@ -28,6 +35,28 @@ import { PORTAL_COPY } from '@/lib/content/portalCopy';
  * httpOnly cookie, so the visitor lands directly inside their workspace — no "we'll
  * be in touch", no separate email round-trip. When the portal flag is OFF, the same
  * form shows the graceful fallback so the reveal never dead-ends.
+ *
+ * ── v6.0 PHASE 3: THIS IS WHERE ASSENT IS TAKEN (R44) ───────────────────────
+ * An explicit, UNTICKED checkbox naming the Terms and the Privacy Policy WITH THEIR
+ * VERSION IDENTIFIERS, recorded against the Client with a timestamp
+ * (Architecture v2.8 §19.10).
+ *
+ * It is taken HERE and, from v7.0, on every other path that creates a Client. Never at
+ * the first sentence — gating the composer behind a click-wrap would ask for a commitment
+ * before anything had been given, which is the one rule this surface is built on.
+ * Browsing and the first turn are governed by NOTICE: the pinned legal strip plus the
+ * confidentiality line.
+ *
+ * THE ORDER MATTERS. Assent is recorded BEFORE the invite is claimed, so a Client is
+ * never created without it. If the record fails, nothing else happens and the visitor is
+ * told — an account that exists without a recorded assent is precisely the state §19.10
+ * exists to prevent, and it cannot be repaired afterwards by guessing what they read.
+ *
+ * ── v7.0 PHASE 4: ONE PASSWORD CONTRACT (R52) ───────────────────────────────
+ * This page used to validate at TEN characters in its own `validate()`, and nothing else
+ * in the codebase agreed with it. It now mounts `PasswordField` + `PasswordRules` and
+ * reads the policy from `lib/validation/password.ts` — the same components and the same
+ * numbers as set-password and reset-password.
  */
 function CreateAccountInner({ token }: { token: string }) {
   const router = useRouter();
@@ -44,19 +73,43 @@ function CreateAccountInner({ token }: { token: string }) {
   const [fallback, setFallback] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const assent = useLegalAssent();
+  const policy = usePasswordPolicy(password, confirm);
+
   function validate(): boolean {
     const next: Record<string, string> = {};
     if (!fullName.trim()) next.fullName = 'Tell us who to address in the workspace.';
     if (!organization.trim()) next.organization = 'Add your company or organization.';
     if (!/.+@.+\..+/.test(email.trim())) next.email = 'Enter a valid work email.';
-    if (password.length < 10) next.password = 'Use at least 10 characters.';
-    if (password !== confirm) next.confirm = 'Those passwords do not match.';
+    if (policy.tooShort) next.password = AUTH_COPY.reset.tooShort;
+    else if (!policy.matches) next.confirm = AUTH_COPY.reset.mismatch;
     setErrors(next);
     return Object.keys(next).length === 0;
   }
 
   async function submit() {
     if (!validate()) return;
+
+    /* THE GATE. Blocking locally first means the visitor is told what to do before any
+       request is made, rather than after one fails. */
+    if (!assent.accepted) {
+      setErrors((prev) => ({ ...prev, assent: ASSENT_COPY.blocked }));
+      trackEvent('assent.blocked', {});
+      return;
+    }
+    setErrors((prev) => {
+      const next = { ...prev };
+      delete next.assent;
+      return next;
+    });
+
+    /* Recorded BEFORE the claim, so a Client is never created without it. A failure stops
+       here and says so — it is not swallowed and the claim does not proceed. */
+    const recorded = await assent.record(token);
+    if (!recorded) {
+      setErrors((prev) => ({ ...prev, assent: assent.error ?? ASSENT_COPY.blocked }));
+      return;
+    }
 
     // Portal not switched on yet — record intent and show the graceful fallback.
     if (!portalEnabled) {
@@ -168,28 +221,44 @@ function CreateAccountInner({ token }: { token: string }) {
                   error={errors.email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
-                <Input
-                  label="Password"
-                  type="password"
+                {/* The shared field: show/hide, caps-lock hint, correct autofill token,
+                    and paste never blocked. The rules render beneath it, ALWAYS — not as
+                    a correction after a failure. */}
+                <PasswordField
+                  label={AUTH_COPY.reset.passwordLabel}
                   value={password}
+                  onChange={setPassword}
                   autoComplete="new-password"
-                  placeholder="At least 10 characters"
-                  hint="You’ll use this to sign back into your workspace."
                   error={errors.password}
-                  onChange={(e) => setPassword(e.target.value)}
                 />
-                <Input
-                  label="Confirm password"
-                  type="password"
+                <PasswordRules assessment={policy} />
+                <PasswordField
+                  label={AUTH_COPY.reset.confirmLabel}
                   value={confirm}
+                  onChange={setConfirm}
                   autoComplete="new-password"
                   error={errors.confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
                 />
               </div>
 
-              <Button variant="gold" size="md" onClick={submit} disabled={submitting}>
-                {submitting ? PORTAL_COPY.invite.accepting : 'Create workspace'}
+              <div className="auth-assent">
+                <p className="auth-assent__title">{ASSENT_COPY.sectionTitle}</p>
+                <AssentSummary />
+                <AssentCheckbox
+                  checked={assent.accepted}
+                  onChange={assent.setAccepted}
+                  versions={assent.versions}
+                  error={errors.assent ?? null}
+                />
+              </div>
+
+              <Button
+                variant="gold"
+                size="md"
+                onClick={submit}
+                disabled={submitting || assent.recording}
+              >
+                {submitting || assent.recording ? PORTAL_COPY.invite.accepting : 'Create workspace'}
               </Button>
               <ConfidentialityNote />
             </Card>

@@ -1,75 +1,129 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { usePortalAuth } from '@/hooks/usePortalAuth';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { AuthPanel } from '@/components/auth/AuthPanel';
+import { AuthHeading } from '@/components/auth/AuthHeading';
+import { AuthFooterLinks } from '@/components/auth/AuthFooterLinks';
+import { AuthErrorSummary } from '@/components/auth/AuthErrorSummary';
+import { RateLimitNotice } from '@/components/auth/RateLimitNotice';
+import { PasswordField } from '@/components/auth/PasswordField';
+import { useSignIn } from '@/hooks/useSignIn';
+import { AUTH_COPY } from '@/lib/content/authCopy';
 import { routes } from '@/constants/routes';
 
-/** Sign-in form (§61). Delegates to the portal auth context; on success it routes
- *  into the workspace (respecting a `next` param). */
-export function ClientAuthForm({ next }: { next?: string }) {
-  const { signIn, loading, error } = usePortalAuth();
+/**
+ * The sign-in form.
+ *
+ * ── REBUILT IN PLACE, NOT REPLACED ──────────────────────────────────────────
+ * Phase 4 keeps this component and its transport — `usePortalAuth().signIn` posting to
+ * /api/portal/auth/login, with the client-JWT left in an httpOnly cookie the browser
+ * cannot read. That path works and is not being rewritten for cosmetics. What changes is
+ * everything around it.
+ *
+ * ── THE THREE FIXES ─────────────────────────────────────────────────────────
+ *
+ * 1. IT LOOKS LIKE THE FRONT DOOR. Same glass panel as the arrival composer, inside the
+ *    same shell, with the same wordmark above it.
+ *
+ * 2. IT IS NOT A DEAD END (R47). v3.1 offered "forgot your password" and a "need access"
+ *    link into the review flow — but nothing for the person holding an invitation who has
+ *    no account yet, which is exactly who arrives at a sign-in page they cannot use.
+ *    `Sign up` is now the second link.
+ *
+ * 3. THE FAILURE MESSAGE IS SINGLE (R54). One string for a wrong password and for an
+ *    address we have never seen. `useSignIn` owns it so a component cannot helpfully
+ *    split it later.
+ *
+ * ── AND ONE THING IT DELIBERATELY DOES NOT DO ───────────────────────────────
+ * There is no greeting, and none appears once the email is recognised (R57). A "welcome
+ * back" that arrives on recognition is an enumeration oracle with a friendly face.
+ */
+/**
+ * Where to go after signing in.
+ *
+ * Read from `window.location` at SUBMIT time rather than through `useSearchParams`,
+ * because `useSearchParams` would put this whole panel behind a Suspense boundary and
+ * leave the static HTML for /sign-in with no heading and no fields in it — a flash of
+ * empty panel on the screen a customer sees every morning.
+ *
+ * The `/workspace` prefix check is not cosmetic: an unvalidated `next` is an open
+ * redirect, and the one after a successful sign-in is the most valuable kind to have.
+ * `PortalAuthContext` re-checks the same prefix, so this is defence in depth rather than
+ * the only guard.
+ */
+function nextFromLocation(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const raw = new URLSearchParams(window.location.search).get('next');
+  if (!raw) return undefined;
+  return raw.startsWith('/workspace') ? raw : undefined;
+}
+
+export function ClientAuthForm({ next }: { next?: string } = {}) {
+  const { submit, submitting, error, retryAfterSeconds, clearError } = useSignIn();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [localError, setLocalError] = useState<string | null>(null);
 
-  async function submit() {
-    if (!email.trim() || !password) {
-      setLocalError('Enter your email and password.');
-      return;
-    }
-    setLocalError(null);
-    await signIn(email.trim(), password, next);
+  function send() {
+    void submit(email, password, next ?? nextFromLocation());
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <h1 className="text-web-h2 text-structure-900">{PORTAL_COPY.signIn.title}</h1>
-      </div>
-      <div className="flex flex-col gap-3">
-        <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.signIn.emailLabel}</span>
+    <AuthPanel>
+      <AuthHeading title={AUTH_COPY.signIn.title} standfirst={AUTH_COPY.signIn.standfirst} />
+
+      <AuthErrorSummary messages={[error]} />
+      <RateLimitNotice retryAfterSeconds={retryAfterSeconds} />
+
+      <div className="auth-fields">
+        <div className="auth-field">
+          <label htmlFor="signin-email" className="auth-field__label">
+            {AUTH_COPY.signIn.emailLabel}
+          </label>
           <input
+            id="signin-email"
             type="email"
             value={email}
-            autoComplete="email"
-            onChange={(e) => setEmail(e.target.value)}
-            className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
-          />
-        </label>
-        <label className="flex flex-col gap-1.5">
-          <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.signIn.passwordLabel}</span>
-          <input
-            type="password"
-            value={password}
-            autoComplete="current-password"
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') void submit();
+            /* `username`, not `email`: it is what password managers key a credential
+               pair on, and the wrong token is why a manager offers nothing here. */
+            autoComplete="username"
+            inputMode="email"
+            autoCapitalize="off"
+            spellCheck={false}
+            className="auth-field__input"
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (error) clearError();
             }}
-            className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
-        </label>
+        </div>
+
+        <PasswordField
+          label={AUTH_COPY.signIn.passwordLabel}
+          value={password}
+          onChange={(v) => {
+            setPassword(v);
+            if (error) clearError();
+          }}
+          autoComplete="current-password"
+          onSubmitKey={send}
+        />
       </div>
 
-      {(localError || error) ? <ErrorMessage>{localError ?? error}</ErrorMessage> : null}
-
-      <Button variant="primary" size="lg" fullWidth onClick={submit} disabled={loading}>
-        {loading ? 'Signing in…' : PORTAL_COPY.signIn.button}
+      <Button variant="primary" size="lg" fullWidth onClick={send} disabled={submitting}>
+        {submitting ? AUTH_COPY.signIn.submitting : AUTH_COPY.signIn.submit}
       </Button>
 
-      <div className="flex flex-col gap-1 text-secondary text-ink-secondary">
-        <Link href={routes.portalForgotPassword} className="hover:text-ink-primary">
-          {PORTAL_COPY.signIn.forgot}
-        </Link>
-        <Link href={routes.review} className="hover:text-ink-primary">
-          {PORTAL_COPY.signIn.needAccess}
-        </Link>
-      </div>
-    </div>
+      <AuthFooterLinks
+        links={[
+          { label: AUTH_COPY.signIn.forgot, href: routes.portalForgotPassword },
+          {
+            prefix: AUTH_COPY.signIn.noAccountPrefix,
+            label: AUTH_COPY.signIn.noAccountLink,
+            href: routes.portalSignUp,
+          },
+        ]}
+      />
+    </AuthPanel>
   );
 }

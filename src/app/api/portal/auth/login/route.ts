@@ -29,8 +29,26 @@ export async function POST(req: Request) {
   );
 
   if (res.status === 401 || res.status === 400) {
-    return NextResponse.json({ error: { detail: 'Those credentials did not match.' } }, { status: 401 });
+    /* ONE message for a wrong password and for an address we have never seen (R54).
+       Anything more specific here is a way to test whether a company is our customer. */
+    return NextResponse.json(
+      { error: { detail: 'Those details did not match. Please check your email and password.' } },
+      { status: 401 },
+    );
   }
+
+  /* v7.0 PHASE 4 — A REAL BUG FIXED.
+     A rate-limited login previously fell into the branch below and was reported as
+     `502 login 429`, so the surface showed a service failure for a security control
+     working correctly. The visitor was told to try again immediately, which is exactly
+     the traffic the limit exists to stop (R55). */
+  if (res.status === 429) {
+    return NextResponse.json(
+      { error: { detail: 'Too many attempts. 429' }, retryAfter: 60 },
+      { status: 429, headers: { 'Retry-After': '60' } },
+    );
+  }
+
   if (!res.ok || !res.data?.access) {
     return NextResponse.json({ error: { detail: `login ${res.status}` } }, { status: 502 });
   }

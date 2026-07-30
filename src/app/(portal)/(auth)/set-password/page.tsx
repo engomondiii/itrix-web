@@ -3,28 +3,54 @@
 import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { AuthPanel } from '@/components/auth/AuthPanel';
+import { AuthHeading } from '@/components/auth/AuthHeading';
+import { AuthFooterLinks } from '@/components/auth/AuthFooterLinks';
+import { AuthErrorSummary } from '@/components/auth/AuthErrorSummary';
+import { PasswordField } from '@/components/auth/PasswordField';
+import { PasswordRules } from '@/components/auth/PasswordRules';
+import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
+import { AUTH_COPY } from '@/lib/content/authCopy';
 import { routes } from '@/constants/routes';
 
+/**
+ * FIRST-TIME PASSWORD, from an invitation.
+ *
+ * ── THE SAME RULES AS /reset-password, IN THE SAME COMPONENTS (R52) ─────────
+ * This route and `/reset-password` differ in a heading, a standfirst, the token they
+ * carry, and where they go afterwards. They do NOT differ in what a valid password is:
+ * both mount `PasswordField` + `PasswordRules` + `usePasswordPolicy`, which read
+ * `lib/validation/password.ts`.
+ *
+ * That matters because this page previously validated at TEN characters inline, and
+ * nothing else in the codebase agreed with it. Two pages differing only in a heading is
+ * two places for the rules to drift, and this is where the drift already was.
+ *
+ * The transport — POST /api/portal/auth/set-password — is unchanged.
+ *
+ * The panel and heading sit ABOVE the Suspense boundary for the same reason as
+ * /reset-password: the token comes from `useSearchParams`, and with the whole panel
+ * inside a `null` fallback the static HTML had no heading and no fields in it.
+ */
 function SetPasswordInner() {
   const router = useRouter();
   const params = useSearchParams();
   const token = params.get('token') ?? '';
+
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [touched, setTouched] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
 
+  const policy = usePasswordPolicy(password, confirm);
+  const shortError = touched && policy.tooShort ? AUTH_COPY.reset.tooShort : null;
+  const mismatchError = touched && !policy.tooShort && !policy.matches ? AUTH_COPY.reset.mismatch : null;
+
   async function submit() {
-    if (password.length < 10) {
-      setError('Use at least 10 characters.');
-      return;
-    }
-    if (password !== confirm) {
-      setError('Those passwords do not match.');
-      return;
-    }
+    setTouched(true);
+    if (!policy.ready) return;
+
     setError(null);
     setSaving(true);
     try {
@@ -37,53 +63,57 @@ function SetPasswordInner() {
         router.push(routes.workspaceOverview);
         return;
       }
-      setError('That link may have expired. Request a new one from sign in.');
+      /* One message for expired, consumed and unknown, and it offers a way forward. */
+      setError(AUTH_COPY.reset.expired);
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError(AUTH_COPY.shared.serviceFailure);
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      <div>
-        <h1 className="text-web-h2 text-structure-900">{PORTAL_COPY.setPassword.title}</h1>
-        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.setPassword.intro}</p>
-      </div>
-      <label className="flex flex-col gap-1.5">
-        <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.setPassword.passwordLabel}</span>
-        <input
-          type="password"
+    <>
+      <p className="auth-heading__standfirst">{AUTH_COPY.setPassword.standfirst}</p>
+
+      <AuthErrorSummary messages={[error, shortError, mismatchError]} />
+
+      <div className="auth-fields">
+        <PasswordField
+          label={AUTH_COPY.reset.passwordLabel}
           value={password}
+          onChange={setPassword}
           autoComplete="new-password"
-          onChange={(e) => setPassword(e.target.value)}
-          className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
+          error={shortError}
+          autoFocus
         />
-      </label>
-      <label className="flex flex-col gap-1.5">
-        <span className="text-secondary font-medium text-ink-primary">{PORTAL_COPY.setPassword.confirmLabel}</span>
-        <input
-          type="password"
+        <PasswordRules assessment={policy} />
+        <PasswordField
+          label={AUTH_COPY.reset.confirmLabel}
           value={confirm}
+          onChange={setConfirm}
           autoComplete="new-password"
-          onChange={(e) => setConfirm(e.target.value)}
-          className="h-11 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
+          error={mismatchError}
+          onSubmitKey={() => void submit()}
         />
-      </label>
-      {error ? <ErrorMessage>{error}</ErrorMessage> : null}
-      <Button variant="primary" size="lg" fullWidth onClick={submit} disabled={saving}>
-        {saving ? 'Setting…' : PORTAL_COPY.setPassword.button}
+      </div>
+
+      <Button variant="primary" size="lg" fullWidth onClick={() => void submit()} disabled={saving}>
+        {saving ? AUTH_COPY.reset.submitting : AUTH_COPY.reset.submit}
       </Button>
-    </div>
+
+      <AuthFooterLinks links={[{ label: AUTH_COPY.reset.back, href: routes.portalSignIn }]} />
+    </>
   );
 }
 
-/** First-time password set (§61 companion). */
 export default function SetPasswordPage() {
   return (
-    <Suspense fallback={null}>
-      <SetPasswordInner />
-    </Suspense>
+    <AuthPanel>
+      <AuthHeading title={AUTH_COPY.setPassword.title} />
+      <Suspense fallback={null}>
+        <SetPasswordInner />
+      </Suspense>
+    </AuthPanel>
   );
 }

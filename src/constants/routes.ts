@@ -39,8 +39,15 @@ export const routes = {
 
   /** (portal) route group — the private client workspace (Phase 2, reveal ③). */
   portalSignIn: '/sign-in',
+  /**
+   * v7.0 Phase 4. Two doors: invitation redemption, and a route to the conversation for
+   * anyone without one. It is NOT open registration by default — Architecture v2.8 §00.2.
+   */
+  portalSignUp: '/sign-up',
   portalSetPassword: '/set-password',
   portalForgotPassword: '/forgot-password',
+  /** v7.0 Phase 4. The reset landing, reached from the emailed link. */
+  portalResetPassword: '/reset-password',
   /* v5.0 Phase 3: /workspace IS the thread. The overview dashboard is retired —
      a customer's home is the conversation they have been having all along. */
   workspace: '/workspace',

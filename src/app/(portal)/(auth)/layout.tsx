@@ -1,17 +1,20 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
-import { routes } from '@/constants/routes';
-import { brand } from '@/constants/brand';
+import { AuthShell } from '@/components/auth/AuthShell';
 
-/** Centered auth layout — no sidebar, calm warm-paper canvas (Playbook §61). */
+/**
+ * The authentication zone's layout.
+ *
+ * ── THE SHELL IS MOUNTED HERE, NOT PER PAGE (R46) ───────────────────────────
+ * Every route in the zone gets the wordmark, the geometry and the PINNED LEGAL STRIP
+ * because the layout provides them — not because each page remembered to. That is what
+ * makes "no route in the zone renders bare" a structural property rather than a
+ * convention four files have to keep.
+ *
+ * v3.1's layout did a simpler version of this: a centred box, an inline wordmark drawn
+ * with a `<span>`, and the brand thesis in italics underneath. It is replaced rather
+ * than extended, because the point of Phase 4 is that these screens use the SAME
+ * components as the front door.
+ */
 export default function PortalAuthLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-canvas px-4 py-12">
-      <Link href={routes.home} className="mb-8 text-xl font-bold tracking-tight text-structure-900">
-        iTri<span className="text-accent">X</span>
-      </Link>
-      <div className="w-full max-w-md rounded-lg border border-border-medium bg-surface p-8 shadow-1">{children}</div>
-      <p className="mt-6 text-caption italic text-ink-secondary">“{brand.thesis}”</p>
-    </div>
-  );
+  return <AuthShell>{children}</AuthShell>;
 }

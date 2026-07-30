@@ -13,6 +13,14 @@ interface PortalAuthValue {
   client: ClientIdentity | null;
   loading: boolean;
   error: string | null;
+  /**
+   * v7.0 Phase 4. Seconds to wait when the backend rate-limited the attempt (R55).
+   *
+   * Exposed here rather than discovered by a second fetch, so there stays exactly ONE
+   * credential path. A form that silently stops working teaches people to retry harder,
+   * which is the traffic the limit exists to stop.
+   */
+  retryAfterSeconds: number | null;
   signIn: (email: string, password: string, next?: string) => Promise<boolean>;
   signOut: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -41,6 +49,7 @@ export function PortalAuthProvider({
   const reset = usePortalStore((s) => s.reset);
   const [loading, setLoading] = useState<boolean>(initialClient === null);
   const [error, setError] = useState<string | null>(null);
+  const [retryAfterSeconds, setRetryAfter] = useState<number | null>(null);
 
   useEffect(() => {
     if (initialClient) setClient(initialClient);
@@ -61,16 +70,27 @@ export function PortalAuthProvider({
   const signIn = useCallback(
     async (email: string, password: string, next?: string) => {
       setError(null);
+      setRetryAfter(null);
       setLoading(true);
-      const { data } = await portalApi.login(email, password);
+      const { data, error: err } = await portalApi.login(email, password);
       setLoading(false);
+
+      /* A rate limit is a fact about the request, not about the account, so it is the one
+         failure the surface may report specifically. The proxy carries the wait in its
+         detail string. */
+      const wait = err ? /(\d+)/.exec(err.includes('429') || /too many/i.test(err) ? err : '')?.[1] : null;
+      if (wait) setRetryAfter(Number.parseInt(wait, 10));
+
       if (data?.client) {
         setClient(data.client);
         trackEvent('portal.signed_in', { clientId: data.client.id });
         router.push(next && next.startsWith('/workspace') ? next : routes.workspaceOverview);
         return true;
       }
-      setError('Those credentials did not match.');
+      /* ONE message for a wrong password and for an address we have never seen (R54).
+         `useSignIn` renders the approved copy; this string is the fallback for any caller
+         that reads `error` directly, and it is deliberately just as generic. */
+      setError('Those details did not match. Please check your email and password.');
       return false;
     },
     [router, setClient],
@@ -84,7 +104,9 @@ export function PortalAuthProvider({
   }, [reset, router]);
 
   return (
-    <PortalAuthContext.Provider value={{ client, loading, error, signIn, signOut, refresh }}>
+    <PortalAuthContext.Provider
+      value={{ client, loading, error, retryAfterSeconds, signIn, signOut, refresh }}
+    >
       {children}
     </PortalAuthContext.Provider>
   );

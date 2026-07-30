@@ -15,7 +15,14 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/review', '/c/', '/workspace', '/sign-in', '/set-password', '/forgot-password', '/api'],
+      /* v7.0 Phase 4 adds the two new authentication routes. An authentication page has
+         no business in an index: it is not content, it cannot be usefully entered from a
+         search result, and a crawled reset URL is a crawled bearer token. */
+      disallow: [
+        '/review', '/c/', '/workspace',
+        '/sign-in', '/sign-up', '/set-password', '/forgot-password', '/reset-password',
+        '/api',
+      ],
     },
     sitemap: `${base}/sitemap.xml`,
   };

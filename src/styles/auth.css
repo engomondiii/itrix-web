@@ -1,0 +1,316 @@
+/* ============================================================================
+   itriX · THE AUTHENTICATION ZONE
+
+   Four routes: sign in, sign up, forgot password, reset password.
+
+   ── WHAT THIS FILE IS ACTUALLY FIXING ───────────────────────────────────────
+   The complaint was that sign-in is "basic and ugly". The cause was not a missing
+   gradient: these screens were built in v3.1 and never revisited while the rest of
+   the surface was rewritten twice. They had a `<span>` wordmark, a plain white
+   box, and none of the §21.12 type scale.
+
+   So the visual language here is BORROWED, not invented. The panel uses the
+   arrival composer's own treatment — 28px padding, 28px radius, the same glass
+   surface, the same --shadow-1 — because the composer is the object a visitor
+   interacts with on the front door, and the sign-in panel should read as the same
+   kind of thing.
+
+   Every colour is a Brand Manual v1.5 token.
+   ============================================================================ */
+
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--canvas);
+}
+
+/* ── The bar. Wordmark only: no navigation, no product links, no greeting. ── */
+.auth-bar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 48px;
+}
+
+.auth-main {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 32px 0 48px;
+  /* The arrival screen's own wash, at the same angle. */
+  background:
+    radial-gradient(circle at 50% 18%, rgba(214, 230, 255, 0.38), transparent 32%),
+    linear-gradient(180deg, var(--canvas) 0%, rgba(234, 240, 255, 0.3) 100%);
+}
+.auth-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── The panel: the arrival composer's treatment ──────────────────────────── */
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--border-glass);
+  border-radius: 28px;
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+  box-shadow: var(--shadow-1, 0 18px 48px rgba(31, 41, 55, 0.08));
+}
+
+.auth-heading { display: flex; flex-direction: column; gap: 8px; }
+/* Display face, but nowhere near the arrival question's 56px — this is a heading
+   on a form, not the one sentence a screen exists for. */
+.auth-heading__title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(22px, 2.4vw, 27px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  color: var(--ink-primary);
+}
+.auth-heading__standfirst {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ── Fields ───────────────────────────────────────────────────────────────── */
+.auth-fields { display: flex; flex-direction: column; gap: 14px; }
+.auth-field { display: flex; flex-direction: column; gap: 6px; }
+.auth-field__label,
+.password-field__label,
+.invite-field__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-secondary);
+}
+.auth-field__input,
+.password-field__input,
+.invite-field__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink-primary);
+  font-size: 16px; /* 16px or iOS zooms the viewport on focus. */
+  line-height: 1.4;
+}
+.auth-field__input:focus-visible,
+.password-field__input:focus-visible,
+.invite-field__input:focus-visible {
+  outline: none;
+  border-color: var(--ink-primary);
+  box-shadow: 0 0 0 3px var(--hover-glow, rgba(214, 230, 255, 0.6));
+}
+.auth-field__input[aria-invalid='true'],
+.password-field__input[aria-invalid='true'],
+.invite-field__input[aria-invalid='true'] { border-color: var(--border-strong, var(--ink-primary)); }
+
+/* ── Password field ───────────────────────────────────────────────────────── */
+.password-field { display: flex; flex-direction: column; gap: 6px; }
+.password-field__row { position: relative; display: flex; }
+.password-field__input { padding-right: 48px; }
+/* A real button, >=44px, with aria-pressed. A div with an eye in it is invisible to
+   a keyboard. */
+.password-field__toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-secondary);
+}
+.password-field__toggle:hover { color: var(--ink-primary); }
+.password-field__toggle svg { width: 18px; height: 18px; }
+.password-field__caps,
+.password-field__error,
+.invite-field__error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-primary);
+}
+/* Never colour alone — the message carries the meaning. */
+.password-field__error::before,
+.invite-field__error::before { content: '— '; color: var(--ink-secondary); }
+.invite-field { display: flex; flex-direction: column; gap: 6px; }
+.invite-field__input {
+  font-family: var(--font-mono, monospace);
+  font-size: 15px;
+  letter-spacing: 0.02em;
+}
+.invite-field__hint { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink-secondary); }
+
+/* ── Password rules and meter ─────────────────────────────────────────────── */
+.password-rules { display: flex; flex-direction: column; gap: 6px; }
+/* Shown ALWAYS, not as a correction. Describes; never scolds. */
+.password-rules__text { margin: 0; font-size: 12px; line-height: 1.55; color: var(--ink-secondary); }
+.password-rules__meter {
+  position: relative;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-soft);
+  overflow: visible;
+}
+.password-rules__bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--ink-primary);
+  transition: width 220ms ease;
+}
+/* The WORD is the meaning; the bar is decoration. No time-to-crack figure, ever. */
+.password-rules__label {
+  margin: 6px 0 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.password-rules__meter[data-strength='short'] .password-rules__bar { background: var(--border-medium); }
+
+/* ── Doors, on the sign-up route ──────────────────────────────────────────── */
+.auth-door { display: flex; flex-direction: column; gap: 12px; }
+.auth-door__label {
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.auth-door__body { margin: 0; font-size: 14px; line-height: 1.6; color: var(--ink-primary); }
+/* Door 2's action is a LINK, not a button — it goes and has a conversation rather
+   than submitting anything. */
+.auth-door__action {
+  align-self: flex-start;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 16px;
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.auth-door__action:hover { box-shadow: 0 0 0 3px var(--hover-glow, rgba(214, 230, 255, 0.5)); }
+.auth-divider { height: 1px; background: var(--border-soft); }
+
+/* ── Assent, on the paths that create an account ──────────────────────────── */
+.auth-assent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-soft);
+}
+.auth-assent__title { margin: 0; font-size: 13px; font-weight: 600; color: var(--ink-primary); }
+
+/* ── Errors, confirmations, rate limits ───────────────────────────────────── */
+/* One summary, above the fields, focused on submit failure. */
+.auth-error-summary {
+  padding: 12px 14px;
+  border: 1px solid var(--border-medium);
+  border-left: 3px solid var(--ink-primary);
+  border-radius: 12px;
+  background: var(--soft);
+}
+.auth-error-summary:focus-visible { outline: 2px solid var(--ink-primary); outline-offset: 2px; }
+.auth-error-summary__heading { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--ink-primary); }
+.auth-error-summary ul { margin: 0; padding-left: 18px; }
+.auth-error-summary li { font-size: 13px; line-height: 1.55; color: var(--ink-primary); }
+
+.auth-confirmation { margin: 0; font-size: 15px; line-height: 1.6; color: var(--ink-primary); }
+.auth-confirmation__follow { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink-secondary); }
+
+.auth-rate-limit {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  background: var(--soft);
+  font-size: 13px;
+  color: var(--ink-primary);
+}
+
+/* ── Footer links. No route in the zone is a dead end (R47). ──────────────── */
+.auth-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+.auth-footer__row { margin: 0; font-size: 13px; color: var(--ink-secondary); }
+.auth-footer__prefix { color: var(--ink-secondary); }
+.auth-footer__link {
+  color: var(--ink-primary);
+  text-decoration: underline;
+  text-decoration-color: var(--border-medium);
+  text-underline-offset: 3px;
+}
+.auth-footer__link:hover { text-decoration-color: var(--ink-primary); }
+
+/* ── The arrival screen's Sign in / Sign up pair ─────────────────────────── */
+.sign-in-group { display: inline-flex; align-items: center; gap: 10px; }
+/* Quieter than Sign in, and deliberately not a button: most people arriving here
+   have an account, and the second link must not compete with the first. */
+.sign-up-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 6px;
+  color: var(--ink-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.sign-up-link:hover { color: var(--ink-primary); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 767px) {
+  .auth-bar { padding: 14px 20px; }
+  .auth-main { padding: 20px 0 32px; }
+  .auth-stage { padding: 0 16px; }
+  .auth-panel { padding: 20px; border-radius: 20px; gap: 16px; }
+  /* The descriptor goes the same way it does on the arrival bar: the mark carries
+     the brand and the phone bar has no width for the sentence. */
+  .auth-bar .wordmark__descriptor { display: none; }
+  .sign-in-group { gap: 4px; }
+  .sign-up-link { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .password-rules__bar,
+  .auth-door__action { transition: none; }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .auth-panel { background: var(--surface-glass-strong, var(--surface)); }
+}

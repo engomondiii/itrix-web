@@ -14,11 +14,36 @@ import { CENTER_COPY } from '@/lib/content/centerCopy';
  *
  * It is a SECONDARY control. The primary action on this screen is the composer,
  * and nothing here is allowed to compete with it.
+ *
+ * ── v7.0 PHASE 4 ADDS A SECOND LINK ─────────────────────────────────────────
+ * `Sign up`, beside it and quieter. R32 is amended to permit exactly these two plus the
+ * four legal instruments, and nothing else.
+ *
+ * TWO LINKS, NOT A MENU. A dropdown on the front door would be chrome on the one screen
+ * that is supposed to have none — and it would hide the second option behind an
+ * interaction, which is the problem this change exists to fix.
+ *
+ * In the RAIL variant only `Sign in` renders. Someone with a thread in progress who is
+ * not signed in is either mid-review or holds an invitation, and both of those reach
+ * sign-up from the sign-in page. A second link in a 240px rail earns less than the space.
  */
 export function SignInLink({ variant = 'arrival' }: { variant?: 'arrival' | 'rail' }) {
+  if (variant === 'rail') {
+    return (
+      <Link href={routes.portalSignIn} className="sign-in-link" data-variant={variant}>
+        {CENTER_COPY.signIn}
+      </Link>
+    );
+  }
+
   return (
-    <Link href={routes.portalSignIn} className="sign-in-link" data-variant={variant}>
-      {CENTER_COPY.signIn}
-    </Link>
+    <span className="sign-in-group">
+      <Link href={routes.portalSignIn} className="sign-in-link" data-variant={variant}>
+        {CENTER_COPY.signIn}
+      </Link>
+      <Link href={routes.portalSignUp} className="sign-up-link">
+        {CENTER_COPY.signUp}
+      </Link>
+    </span>
   );
 }

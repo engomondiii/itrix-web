@@ -89,6 +89,36 @@ export const featureFlags = {
    * so the gate is honest even before Backend v7.0 Phase 3 ships the assent record.
    */
   legalAssent: flag(process.env.NEXT_PUBLIC_ENABLE_LEGAL_ASSENT),
+  /**
+   * v7.0 Phase 4. The designed authentication zone.
+   *
+   * Reserved for a staged rollout; the four routes render unconditionally because they
+   * replace three pages that already existed and one that did not, and there is no older
+   * version worth keeping alive behind a switch. Reversal is `git revert`.
+   */
+  authZone: flag(process.env.NEXT_PUBLIC_ENABLE_AUTH_ZONE),
+  /**
+   * v7.0 Phase 4. The password-reset flow.
+   *
+   * With it off the request form still renders and still shows its confirmation — which
+   * is correct, because the confirmation is deliberately true whether or not anything was
+   * sent. Turn it on with Backend v7.1 Phase 4.
+   */
+  passwordReset: flag(process.env.NEXT_PUBLIC_ENABLE_PASSWORD_RESET),
+  /**
+   * v7.0 Phase 4. Registration WITHOUT an invitation.
+   *
+   * EXPECTED TO STAY FALSE. Accounts on this platform are earned: a Client always arrives
+   * attached to a Lead, a journey state and a disclosure basis. Open registration produces
+   * Clients with none of those, which breaks value-first (R4), qualification (R2) and the
+   * persona-keyed pitch model (R3). Architecture v2.8 §00.2 records all four consequences
+   * and flags the decision for sign-off.
+   *
+   * With it on: the sign-up page renders a real form, the Client is created at the public
+   * ceiling with `value_delivered = false` so every gated reveal stays shut, and assent is
+   * still taken in the same transaction as the account.
+   */
+  openSignup: flag(process.env.NEXT_PUBLIC_ENABLE_OPEN_SIGNUP),
   streamingTurns: flag(process.env.NEXT_PUBLIC_ENABLE_STREAMING_TURNS),
   attachments: flag(process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS),
   adaptiveQuestions: flag(process.env.NEXT_PUBLIC_ENABLE_ADAPTIVE_QUESTIONS),

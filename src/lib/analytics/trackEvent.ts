@@ -49,6 +49,17 @@ export type KnownEvent =
      and by which transport. */
   | 'assent.recorded'
   | 'assent.blocked'
+  /* v7.0 Phase 4 — the authentication zone.
+     NONE of these carries an email address, an invitation code, a password, or any
+     indication of whether an address is registered. `auth.sign_in_failed` deliberately
+     carries no reason: a telemetry stream that can answer "is this address a customer" is
+     the same leak as a helpful error message, just slower (Surface 1 v7.0 §7.5). */
+  | 'auth.signed_in'
+  | 'auth.sign_in_failed'
+  | 'auth.reset_requested'
+  | 'auth.reset_completed'
+  | 'auth.invite_redeemed'
+  | 'auth.signup_door_chosen'
   /* Attachments, suggestions, artifacts, cards. */
   | 'attachment.uploaded'
   | 'suggestion.selected'
