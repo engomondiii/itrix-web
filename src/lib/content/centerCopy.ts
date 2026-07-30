@@ -1,17 +1,22 @@
 /**
  * The approved invariant center — copy, single source.
  *
- * Source: itriX_Brand_Aligned_First_Landing_Page_v1.0 (the approved package) and
- * Playbook v1.5 §12. Surface 1 v4.0 §2.
+ * Source: Playbook v1.7 §12. Surface 1 v6.0 §2.1.
  *
  *   NON-NEGOTIABLE
- *   Retain the approved center and the exact opening question. The first prompt
- *   is the actual beginning of the review. Do not replace it with a new opening
- *   and do not ask the visitor to repeat the same input.
+ *   Retain the exact opening question. The first prompt is the actual beginning
+ *   of the review. Do not replace it with a new opening and do not ask the
+ *   visitor to repeat the same input.
+ *
+ * v6.0 — WHAT WAS DELETED, AND WHY IT IS NOT COMING BACK
+ * `situationFraming` is GONE: "You already know computation is holding you back."
+ * has left the product (Playbook v1.7 §00 change 1, R31). It was not moved and it
+ * was not resized. The MAIN QUESTION is now the only large sentence on the
+ * arrival screen and the route's only h1. If you find that line anywhere in
+ * `src/`, in a seeded template, or in a `metadata.description`, it is a bug.
  *
  * Every string a visitor reads on the first screen lives here so a wording change
- * is one edit with one owner, and so no component can quietly drift from the
- * approved copy. Do not inline any of these in a component.
+ * is one edit with one owner. Do not inline any of these in a component.
  */
 
 /**
@@ -19,21 +24,22 @@
  * needs it imports from ONE place: the composer footer, the attachment flow and
  * the artifact views all read this symbol.
  *
- * DO NOT REWORD WITHOUT LEGAL SIGN-OFF (Architecture v2.6 §19.4). Because the
- * composer is present at every state from 1 to 10, this notice is now present at
+ * DO NOT REWORD WITHOUT LEGAL SIGN-OFF (Architecture v2.7 §19.4). Because the
+ * composer is present at every state from 1 to 10, this notice is present at
  * every state.
  */
 export { CONFIDENTIALITY_NOTICE } from '@/lib/content/ctaCopy';
 
 export const CENTER_COPY = {
-  /** Technical label above the H1 (IBM Plex Mono, uppercase, tracked). */
+  /** Technical label above the question (IBM Plex Mono, uppercase, tracked). */
   eyebrow: 'Mathematical intelligence',
 
-  /** H1 — the situation framing. Display face, 56px desktop / 32px mobile. */
-  situationFraming: 'You already know computation is holding you back.',
-
   /**
-   * THE MAIN QUESTION. The single most important sentence on the platform.
+   * THE MAIN QUESTION. The single most important sentence on the platform, and
+   * from v6.0 the arrival route's ONLY h1 — display face at
+   * `--arrival-question-size`, which lands on the Brand Manual H1 of 56px desktop
+   * / 32px mobile.
+   *
    * It invites a problem; it does not announce a product.
    * Approved 2026-07. Requires Brand & Messaging + Park Dae-hyuk sign-off to change.
    */
@@ -53,43 +59,47 @@ export const CENTER_COPY = {
   safetyNote: 'A non-confidential summary is enough to begin.',
 
   /**
-   * RETIRED IN v5.0. There is no labelled start button any more — the send
-   * control is an icon-only arrow (Surface 1 v5.0 §00.1 change 5). Its
-   * accessible name lives in COMPOSER_COPY.sendLabel, the one place it exists.
+   * THE WORDMARK DESCRIPTOR — beside the logo, top left. Not a link.
+   *
+   * v6.0: "AI" is removed. It reads "Computational Infrastructure company"
+   * (Playbook v1.7 §00 change 4). Only the DESCRIPTOR changed; the corporate
+   * positioning line in the Knowledge Core is untouched.
    */
-
-  /** Section label above the example chips. */
-  examplesLabel: 'Examples from the work our visitors bring',
-
-  /** The four-step pathway hint below the examples. */
-  pathwayHint: ['You share', 'itriX reflects', 'You receive a tailored brief', 'You decide what happens next'],
+  descriptor: 'Computational Infrastructure company',
 
   /**
-   * RETIRED IN v5.0. There is NO user-facing character limit and no counter
-   * (R28). The server keeps a safety cap of 100,000 characters and reports it as
-   * a recoverable message; the UI never pre-empts or truncates the visitor's
-   * sentence. See COMPOSER_COPY.serverCap.
+   * The only control in the top right of the arrival screen.
+   * v6.0: replaces "NDA access" everywhere it appeared.
    */
+  signIn: 'Sign in',
+
+  /** Section label above the rotating prompts. */
+  examplesLabel: 'Examples from the work our visitors bring',
+
+  /** Reveal the five prompts as a static list, for anyone who should not wait. */
+  showAllPrompts: 'Show all five',
+  hideAllPrompts: 'Show one at a time',
+
+  /** Accessible names for the carousel controls. */
+  previousPrompt: 'Previous example',
+  nextPrompt: 'Next example',
+  promptGroupLabel: 'Example ways visitors describe their situation',
+
+  /** The four-step pathway hint below the prompts. */
+  pathwayHint: ['You share', 'itriX reflects', 'You receive a tailored brief', 'You decide what happens next'],
 
   /** Validation message when the visitor submits an empty or too-short sentence. */
   tooShort: 'Add a little more so we can read the structure of the problem.',
-
-  /** Scroll affordance to the calm narrative below the fold. */
-  learnMore: 'What itriX does',
 } as const;
 
-
 /*
- * RETIRED IN v5.0 — the two arrival rail copy blocks.
- *
- * The right value rail is gone and the left rail became navigation. Everything
- * those blocks said is RE-HOMED rather than deleted (Architecture v2.6 §11.6A):
- * the confidentiality line sits under the composer, the NDA link is in the
- * sidebar's Explore group, and sidebar strings live in
- * lib/content/composerCopy.ts (SIDEBAR_COPY).
+ * RETIRED IN v5.0 and still retired: the two arrival rail copy blocks, the
+ * labelled start button, and the character counter. RETIRED IN v6.0: the
+ * situation framing line, the arrival navigation links, and the dark arrival
+ * footer. Nothing here reinstates any of them.
  */
 
-/** The drawer that the right-rail link opens (controlled-public). */
+/** The drawer behind the "what can be shared before an NDA?" control. */
 export const NDA_DRAWER = {
   tier: 'Controlled public',
   title: 'What can be shared before an NDA?',
@@ -99,7 +109,7 @@ export const NDA_DRAWER = {
 } as const;
 
 /**
- * The review surface (Playbook v1.5 §13). The review CONTINUES from the
+ * The review surface (Playbook v1.7 §13). The review CONTINUES from the
  * center sentence — it never re-asks for it.
  */
 export const REVIEW_COPY = {

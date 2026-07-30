@@ -32,6 +32,7 @@
  * differences so no component ever learns the backend's field names.
  */
 
+import type { Artifact, InlineCard } from '@/types/artifact.types';
 import type {
   SubmitResult,
   Thread,
@@ -100,11 +101,79 @@ export function toThreadSummary(raw: unknown): ThreadSummary {
   };
 }
 
+/**
+ * One artifact from the wire.
+ *
+ * DEFENSIVE ON EVERY FIELD, for one reason: an artifact whose `governanceStatus` is
+ * missing must NOT default to approved. Any unrecognised value resolves to
+ * `under_review`, which renders nothing — the frontend cannot display ungoverned
+ * content, and a normaliser that guessed "probably fine" would be the one place that
+ * rule could be quietly broken (Architecture v2.7 §19).
+ */
+export function toArtifact(raw: unknown, threadId: string): Artifact {
+  const r = (raw ?? {}) as Raw;
+  const status = str(r.governanceStatus);
+  return {
+    id: str(r.id) || str(r.artifactId),
+    threadId: str(r.threadId) || threadId,
+    type: str(r.type) as Artifact['type'],
+    version: num(r.version, 1),
+    payload: (r.payload && typeof r.payload === 'object' ? r.payload : {}) as Record<string, unknown>,
+    disclosureLevel: (str(r.disclosureLevel) || 'public') as Artifact['disclosureLevel'],
+    governanceStatus:
+      status === 'approved' || status === 'blocked' ? status : 'under_review',
+    capabilityToken: str(r.capabilityToken) || null,
+    seq: num(r.seq),
+    createdAt: str(r.createdAt) || str(r.at) || new Date().toISOString(),
+  };
+}
+
+/**
+ * One inline card from the wire.
+ *
+ * ONE ACTION PER CARD (Playbook v1.7 §16G). If the backend ever sends an array, only
+ * the first is taken rather than rendering a list of offers — a card carrying several
+ * asks is a defect, and normalising it into a single action is the cheapest place to
+ * refuse it.
+ */
+export function toInlineCard(raw: unknown, threadId: string): InlineCard {
+  const r = (raw ?? {}) as Raw;
+  const rawAction = Array.isArray(r.actions) ? r.actions[0] : r.action;
+  const a = (rawAction ?? null) as Raw | null;
+  return {
+    id: str(r.id) || str(r.cardId),
+    threadId: str(r.threadId) || threadId,
+    type: str(r.type) as InlineCard['type'],
+    title: str(r.title),
+    body: str(r.body) || null,
+    action: a && str(a.label)
+      ? { label: str(a.label), href: str(a.href) || null, commercial: a.commercial === true }
+      : null,
+    payload: (r.payload && typeof r.payload === 'object' ? r.payload : undefined) as
+      | Record<string, unknown>
+      | undefined,
+    seq: num(r.seq),
+    createdAt: str(r.createdAt) || str(r.at) || new Date().toISOString(),
+  };
+}
+
 export function toThread(raw: unknown): Thread {
   const r = (raw ?? {}) as Raw;
   const summary = toThreadSummary(r);
   const turns = Array.isArray(r.turns) ? r.turns : [];
-  return { ...summary, turns: turns.map((t) => toTurn(t, summary.id)) };
+  /* v6.0 PHASE 2: artifacts and cards were being DROPPED here. `useArtifacts` read
+     them off the thread payload through a cast, so it always received undefined and
+     the transcript rendered no artifacts and no cards at all — silently, because the
+     cast suppressed the type error that would have caught it. The content pane's
+     whole input is artifacts, so this is a prerequisite rather than an improvement. */
+  const artifacts = Array.isArray(r.artifacts) ? r.artifacts : [];
+  const cards = Array.isArray(r.cards) ? r.cards : [];
+  return {
+    ...summary,
+    turns: turns.map((t) => toTurn(t, summary.id)),
+    artifacts: artifacts.map((a) => toArtifact(a, summary.id)).filter((a) => a.id && a.type),
+    cards: cards.map((c) => toInlineCard(c, summary.id)).filter((c) => c.id && c.type),
+  };
 }
 
 /**

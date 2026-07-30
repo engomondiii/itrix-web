@@ -6,38 +6,27 @@ export const dynamic = 'force-dynamic';
 const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
- * GET /api/shell — the shell contract (Backend v6.0 §3.1).
+ * GET /api/shell — the shell contract (Backend v7.0 §4.1).
  *
- * REPLACES the rails proxy. It returns sidebar sections, the conversation header
- * and the composer label; `left_rail` and `right_rail` are gone.
+ * ── WHAT v6.0 ADDS ──────────────────────────────────────────────────────────
+ * The contract now carries `shell_mode` and splits the zone vocabulary into
+ * `conversation_rail_sections` and `content_pane_sections`
+ * (Architecture v2.7 §11.6). This route normalises all three, and continues to
+ * read the v6.0 `sidebar_sections` key because Backend v7.0 Phase 1 emits it as
+ * an alias for one release and a pre-v7.0 backend still emits only that.
  *
- * ── WHY THIS ROUTE DOES MORE THAN FORWARD (v6.0 contract fix) ───────────────
- * It previously called `GET {API_BASE}/shell/`, which DOES NOT EXIST on the
- * backend. Django mounts the contract at `/threads/{id}/shell/` and also embeds
- * it in the thread detail response. Every call 404'd, the client fell back to
- * the five base sections, and the sidebar never grew past State 1 — silently,
- * because the fallback is deliberately quiet.
- *
- * Two further mismatches had to be closed here:
- *
- *   1. CASING. Django emits snake_case (`journey_state`, `state_key`,
- *      `sidebar_sections`); `ShellContract` is camelCase. Unnormalised, every
- *      field read as `undefined`.
- *
- *   2. STATE KEY VOCABULARY. Django's `state_key` is the ENUM NAME (`ARRIVED`,
- *      `NDA_REVIEW`). The frontend `StateKey` type is the slug (`arrival`,
- *      `nda`). They are two names for the same thing and the mapping lives in
- *      `journeyStates.ts` — so it is applied here, once, at the boundary.
- *
- * This is the right layer for it. `api/client-page/[token]/route.ts` already
- * normalises the same way and for the same reason: the BFF absorbs wire-shape
- * differences so no component ever has to know the backend's field casing.
+ * ── WHY THIS ROUTE DOES MORE THAN FORWARD (unchanged from the v6.0 fix) ──────
+ * Django mounts the contract at `/threads/{id}/shell/`, emits snake_case, and
+ * emits `state_key` as the ENUM NAME (`ARRIVED`, `NDA_REVIEW`) where the frontend
+ * type is the slug (`arrival`, `nda`). All three mismatches are closed here, once,
+ * at the boundary — the BFF absorbs wire-shape differences so no component ever
+ * has to know the backend's field casing.
  *
  * THE FAILURE MODE IS UNCHANGED AND DELIBERATE. On any error this returns an
- * EMPTY payload rather than a permissive default. The client then falls back to
- * the five base sections — the most restrictive sidebar there is. If the backend
- * is down or the vocabularies drift, the visitor sees LESS than they were
- * entitled to, never more.
+ * EMPTY payload rather than a permissive default. The client then falls back to a
+ * null shell mode and the three rail sections — the most restrictive shell there
+ * is. If the backend is down or the vocabularies drift, the visitor sees LESS than
+ * they were entitled to, never more.
  */
 
 /** Django `state_key` (enum name) → frontend `StateKey` (slug). */
@@ -53,24 +42,24 @@ const STATE_KEY_SLUG: Record<string, string> = {
   INTEGRATION: 'integration',
   CUSTOMER_SUCCESS: 'customer-success',
   DORMANT: 'dormant',
-  // Legacy values the backend can still READ from a stale row, even though
-  // Phase 3 removed them from the enum. Mapped forward so a pre-migration row
-  // renders rather than falling through to the unknown branch.
+  // Legacy values the backend can still READ from a stale row, even though the
+  // ENGAGED-split migration removes them from the enum. Mapped forward so a
+  // pre-migration row renders rather than falling through to the unknown branch.
   CLIENT: 'nda',
   ENGAGED: 'assessment',
 };
 
 /**
  * A `thr_local_…` id is the composer's OPTIMISTIC id, minted so the visitor's
- * sentence renders instantly, before any network call. The backend has never
- * seen it and never will — it is swapped for the server id the moment
- * `POST /threads/` answers.
+ * sentence renders instantly, before any network call. The backend has never seen
+ * it and never will — it is swapped for the server id the moment `POST /threads/`
+ * answers.
  *
- * Between those two moments, hooks keyed on the active thread fire with the
- * local id. Forwarding those to Django produced the 404 pairs in the console:
- * harmless, transient, and indistinguishable at a glance from a real failure —
- * which is the actual cost. A console that cries wolf during normal operation
- * trains you to ignore it.
+ * Between those two moments, hooks keyed on the active thread fire with the local
+ * id. Forwarding those to Django produced 404 pairs in the console: harmless,
+ * transient, and indistinguishable at a glance from a real failure — which is the
+ * actual cost. A console that cries wolf during normal operation trains you to
+ * ignore it.
  *
  * So a local id is answered HERE, without a round trip. It is not an error
  * condition; it is a request about a thread that does not exist yet.
@@ -83,6 +72,8 @@ type Raw = Record<string, unknown>;
 
 const str = (v: unknown): string | null => (typeof v === 'string' && v ? v : null);
 const bool = (v: unknown): boolean => v === true;
+const strArray = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((s): s is string => typeof s === 'string') : [];
 
 function normaliseHeader(raw: unknown): Raw | null {
   if (!raw || typeof raw !== 'object') return null;
@@ -100,16 +91,20 @@ function normaliseHeader(raw: unknown): Raw | null {
  * Map Django's shell payload onto `ShellContractPayload`.
  *
  * Tolerates BOTH casings on every field. That is not defensive clutter: the
- * thread-detail response and the dedicated shell endpoint are produced by the
- * same builder today, but accepting either shape means a future serializer
- * change cannot silently blank the sidebar.
+ * thread-detail response and the dedicated shell endpoint are produced by the same
+ * builder today, but accepting either shape means a future serializer change
+ * cannot silently blank a zone.
+ *
+ * `shell_mode` is passed through UNVALIDATED as a string. Validation belongs in
+ * lib/journey/shellModes.ts, which has the vocabulary; a second copy of it here
+ * would be a second place for it to drift.
  */
 function normaliseShell(raw: Raw): Raw {
   const stateKeyRaw = str(raw.state_key) ?? str(raw.stateKey) ?? 'ARRIVED';
-  const sections = raw.sidebar_sections ?? raw.sidebarSections;
 
   return {
     threadId: str(raw.thread_id) ?? str(raw.threadId),
+    shellMode: str(raw.shell_mode) ?? str(raw.shellMode),
     journeyState:
       typeof raw.journey_state === 'number'
         ? raw.journey_state
@@ -125,7 +120,16 @@ function normaliseShell(raw: Raw): Raw {
     composerLabel: str(raw.composer_label) ?? str(raw.composerLabel) ?? '',
     questionLoopOpen: bool(raw.question_loop_open ?? raw.questionLoopOpen),
     attachmentsEnabled: bool(raw.attachments_enabled ?? raw.attachmentsEnabled),
-    sidebarSections: Array.isArray(sections) ? sections.filter((s) => typeof s === 'string') : [],
+    conversationRailSections: strArray(
+      raw.conversation_rail_sections ?? raw.conversationRailSections,
+    ),
+    contentPaneSections: strArray(raw.content_pane_sections ?? raw.contentPaneSections),
+    contentPaneDefaultArtifactId:
+      str(raw.content_pane_default_artifact_id) ?? str(raw.contentPaneDefaultArtifactId),
+    /* The one-release alias. Forwarded so the client can fall back; never merged
+       with the new key here, because deciding precedence is the client's job and
+       it does it in railSectionsFromContract. */
+    sidebarSections: strArray(raw.sidebar_sections ?? raw.sidebarSections),
     conversationHeader: normaliseHeader(raw.conversation_header ?? raw.conversationHeader),
   };
 }
@@ -134,12 +138,10 @@ export async function GET(req: Request) {
   const cookie = req.headers.get('cookie');
   const thread = new URL(req.url).searchParams.get('thread');
 
-  // No thread means no relationship yet. The backend has nothing to say, and an
-  // empty payload gives the client the base sections — which is correct for a
-  // first-time visitor rather than an error to report.
   // No thread, or a thread the backend has not issued yet. Either way there is
-  // nothing to ask about, and an empty payload gives the client the base
-  // sections — correct for a conversation that has not started.
+  // nothing to ask about, and an empty payload gives the client a null shell mode
+  // plus the three rail sections — correct for a conversation that has not
+  // started.
   if (!thread || isLocalId(thread)) return NextResponse.json({}, { status: 200 });
 
   try {

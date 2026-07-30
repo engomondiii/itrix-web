@@ -20,35 +20,65 @@
    ============================================================================ */
 
 :root {
-  --shell-sidebar-w: 280px;
-  --shell-sidebar-collapsed-w: 64px;
+  --shell-rail-w: 280px;
+  --shell-rail-collapsed-w: 64px;
+  /* v6.0 Phase 2. The content pane: 360-420px at >=1280px (Architecture v2.7 §25.2). */
+  --shell-pane-w: clamp(360px, 26vw, 420px);
+  --shell-pane-collapsed-w: 52px;
+  /* Kept as aliases for one release: the (portal) shell and a handful of shipped
+     rules still reference the old names. Phase 2 removes them. */
+  --shell-sidebar-w: var(--shell-rail-w);
+  --shell-sidebar-collapsed-w: var(--shell-rail-collapsed-w);
   --shell-gutter: 24px;
   --composer-max-w: 850px;      /* prototype .prompt-form */
   --arrival-max-w: 1040px;      /* prototype .hero-inner  */
 
-  /* The hero heading size.
+  /* ── THE v6.0 TYPE SCALE (Architecture v2.7 §21.12) ──────────────────────
+     Set once, here, and referenced everywhere. The reference point for the
+     conversation is the reading experience of the mainstream assistant surfaces:
+     a 16px body on a ~27px line in a measure of roughly 68-72 characters. Those
+     figures are a design target taken from observation, not a citation, and they
+     should be re-measured against the current builds of the reference products at
+     design sign-off.
 
-     PHASE 2: this now matches the APPROVED LANDING PROTOTYPE exactly —
-     clamp(44px, 6vw, 76px) — because the prototype is the approved reference and
-     was asked for by name. Brand Manual §4.2 specifies a 32→56px hero; that
-     range is preserved below as --arrival-heading-brand for anyone who needs to
-     step back to it in one edit.
+     Two rules outrank the numbers: the visitor's turn and the assistant's turn
+     use the SAME size and weight, distinguished by alignment, label and spacing
+     only; and no informational text is set below 13px at any breakpoint.      */
+  --arrival-question-size: clamp(2rem, 1.05rem + 4.2vw, 3.5rem);  /* 32 -> 56px */
+  --supporting-line-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem); /* 16 -> 18px */
+  --composer-text-size: 16px;      /* WAS 18px in v5.0 */
+  --turn-body-size: 16px;
+  --turn-line-height: 1.7;
+  --turn-measure: min(72ch, 720px);
+  --prompt-size: clamp(1rem, 0.97rem + 0.12vw, 1.0625rem);        /* 16 -> 17px */
+  --rail-item-size: 14px;
+  --hint-size: 13px;
 
-     The heading itself is the SITUATION FRAMING, per Playbook v1.6 §12, which
-     labels that line "SITUATION FRAMING — H1". Phase 1 had this inverted. */
-  --arrival-heading-size: clamp(2.75rem, 1rem + 6vw, 4.75rem);
-  --arrival-heading-brand: clamp(2rem, 1.05rem + 4.2vw, 3.5rem);
+  /* RETIRED IN v6.0: --arrival-heading-size and --arrival-heading-brand. They
+     sized the SITUATION FRAMING, and that sentence has left the product (R31).
+     The question inherited the display scale as --arrival-question-size above,
+     which lands on the Brand Manual H1 of 56px desktop / 32px mobile — not on the
+     prototype's 76px, which would read as a slogan rather than a question.
+     Do not reinstate either name. */
 }
 
 /* ── The shell grid ───────────────────────────────────────────────────────── */
-.conversation-shell {
+/* ── The working shell: rail · conversation · content pane ─────────────────── */
+/* THE THIRD COLUMN EXISTS ONLY WHEN THE PANE HAS SOMETHING TO SHOW. A permanently
+   reserved empty column would narrow the reading measure for every visitor whose
+   conversation has not produced anything yet — and §25.2 protects the measure above
+   the other dimensions: THE PANE COLLAPSES BEFORE THE COLUMN NARROWS. */
+.working-shell {
   display: grid;
-  grid-template-columns: var(--shell-sidebar-w) minmax(0, 1fr);
+  grid-template-columns: var(--shell-rail-w) minmax(0, 1fr);
   min-height: 100dvh;
   width: 100%;
   background: var(--canvas);
 }
-.conversation-shell[data-collapsed='true'] {
+.working-shell[data-pane='true'] {
+  grid-template-columns: var(--shell-rail-w) minmax(0, 1fr) var(--shell-pane-w);
+}
+.working-shell[data-collapsed='true'] {
   grid-template-columns: var(--shell-sidebar-collapsed-w) minmax(0, 1fr);
 }
 
@@ -76,8 +106,11 @@
   border: 1px solid var(--border-soft);
 }
 
-/* ── Sidebar ──────────────────────────────────────────────────────────────── */
-.conversation-sidebar {
+/* ── The conversation rail (v5.0's sidebar) ───────────────────────────────── */
+/* IT IS NAVIGATION BETWEEN CONVERSATIONS AND NOTHING ELSE. v6.0 removed brand
+   navigation, the Explore group and the growing family of workspace sections; the
+   rail never grows (Architecture v2.7 §11.6). */
+.conversation-rail {
   position: sticky;
   top: 0;
   align-self: start;
@@ -87,14 +120,14 @@
   -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
   backdrop-filter: blur(var(--blur-glass-sm, 10px));
 }
-.conversation-sidebar__inner {
+.conversation-rail__inner {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   padding: 20px 14px 12px;
 }
-.conversation-sidebar__body {
+.conversation-rail__body {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
@@ -102,12 +135,12 @@
   flex-direction: column;
   gap: 18px;
 }
-.conversation-sidebar__foot {
+.conversation-rail__foot {
   flex: 0 0 auto;
   padding-top: 12px;
   border-top: 1px solid var(--border-soft);
 }
-.conversation-sidebar__collapse {
+.conversation-rail__collapse {
   position: absolute;
   right: 8px;
   bottom: 8px;
@@ -119,26 +152,26 @@
   color: var(--ink-secondary);
   transition: background 180ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
-.conversation-sidebar__collapse:hover { background: var(--soft); }
+.conversation-rail__collapse:hover { background: var(--soft); }
 
 /* Collapsed: icons and the new-review control survive, labels do not. */
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-section__label,
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-section__empty,
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-threads,
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-explore,
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-legal,
-.conversation-sidebar__inner[data-collapsed='true'] .sidebar-new-review span,
-.conversation-sidebar__inner[data-collapsed='true'] nav { display: none; }
+.conversation-rail__inner[data-collapsed='true'] .rail-group__label,
+.conversation-rail__inner[data-collapsed='true'] .rail-group__empty,
+.conversation-rail__inner[data-collapsed='true'] .rail-threads,
+.conversation-rail__inner[data-collapsed='true'] .sidebar-explore,
+.conversation-rail__inner[data-collapsed='true'] .sidebar-legal,
+.conversation-rail__inner[data-collapsed='true'] .rail-new-chat span,
+.conversation-rail__inner[data-collapsed='true'] nav { display: none; }
 
-.sidebar-section { display: flex; flex-direction: column; gap: 8px; }
-.sidebar-section__label {
+.rail-group { display: flex; flex-direction: column; gap: 8px; }
+.rail-group__label {
   font-family: var(--font-mono, monospace);
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-secondary);
 }
-.sidebar-section__empty { font-size: 14px; color: var(--ink-secondary); }
+.rail-group__empty { font-size: 14px; color: var(--ink-secondary); }
 .sidebar-section__toggle {
   display: flex;
   align-items: center;
@@ -169,7 +202,7 @@
 .sidebar-link--sub { padding-left: 16px; font-size: 13px; }
 .sidebar-link--gated { color: var(--ink-primary); }
 
-.sidebar-new-review {
+.rail-new-chat {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -183,21 +216,21 @@
   background: var(--surface);
   transition: border-color 180ms, box-shadow 180ms;
 }
-.sidebar-new-review:hover {
+.rail-new-chat:hover {
   border-color: var(--ink-primary);
   box-shadow: var(--shadow-1, 0 18px 48px rgba(31, 41, 55, 0.08));
 }
 
-.sidebar-threads { display: flex; flex-direction: column; gap: 2px; }
-.sidebar-thread {
+.rail-threads { display: flex; flex-direction: column; gap: 2px; }
+.rail-thread {
   display: flex;
   align-items: center;
   gap: 4px;
   border-radius: var(--radius-sm, 10px);
 }
-.sidebar-thread:hover { background: var(--soft); }
-.sidebar-thread[data-active] { background: var(--tint); }
-.sidebar-thread__open {
+.rail-thread:hover { background: var(--soft); }
+.rail-thread[data-active] { background: var(--tint); }
+.rail-thread__open {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
@@ -206,18 +239,18 @@
   padding: 8px;
   text-align: left;
 }
-.sidebar-thread__title {
+.rail-thread__title {
   font-size: 14px;
   color: var(--ink-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.sidebar-thread__time { font-size: 12px; color: var(--ink-secondary); }
-.sidebar-thread__actions { display: flex; gap: 2px; padding-right: 6px; opacity: 0; }
-.sidebar-thread:hover .sidebar-thread__actions,
-.sidebar-thread:focus-within .sidebar-thread__actions { opacity: 1; }
-.sidebar-thread__action {
+.rail-thread__time { font-size: 12px; color: var(--ink-secondary); }
+.rail-thread__actions { display: flex; gap: 2px; padding-right: 6px; opacity: 0; }
+.rail-thread:hover .rail-thread__actions,
+.rail-thread:focus-within .rail-thread__actions { opacity: 1; }
+.rail-thread__action {
   display: grid;
   place-items: center;
   width: 26px;
@@ -225,8 +258,8 @@
   border-radius: 6px;
   color: var(--ink-secondary);
 }
-.sidebar-thread__action:hover { background: var(--surface); color: var(--ink-primary); }
-.sidebar-thread__input {
+.rail-thread__action:hover { background: var(--surface); color: var(--ink-primary); }
+.rail-thread__input {
   width: 100%;
   padding: 8px;
   border: 1px solid var(--border-medium);
@@ -261,14 +294,14 @@
 }
 
 /* ── Sidebar sheet (tablet / mobile) ──────────────────────────────────────── */
-.sidebar-sheet { position: fixed; inset: 0; z-index: 60; }
-.sidebar-sheet__scrim {
+.rail-sheet { position: fixed; inset: 0; z-index: 60; }
+.rail-sheet__scrim {
   position: absolute;
   inset: 0;
   width: 100%;
   background: rgba(31, 41, 55, 0.32);
 }
-.sidebar-sheet__panel {
+.rail-sheet__panel {
   position: absolute;
   inset-block: 0;
   inset-inline-start: 0;
@@ -499,11 +532,12 @@
   border: 0;
   outline: 0;
   background: transparent;
-  font-size: 18px;
-  line-height: 1.5;
+  font-size: var(--composer-text-size);
+  line-height: 1.6;
   color: var(--ink-primary);
 }
-.composer[data-variant='docked'] .composer-textarea { min-height: 48px; font-size: 16px; }
+/* Same size docked as on arrival: the v6.0 scale is one number, not two. */
+.composer[data-variant='docked'] .composer-textarea { min-height: 48px; }
 .composer-textarea::placeholder { color: var(--ink-muted); }
 
 /* The send control: 52px circle, icon-only, accessible-named in the component.
@@ -600,29 +634,21 @@
   text-transform: uppercase;
   color: var(--ink-secondary);
 }
-/* THE H1 — the situation framing (Playbook v1.6 §12).
-   Prototype .hero h1: max-width 930px; line-height .99; letter-spacing -.055em. */
-.arrival__framing {
-  max-width: 930px;
+/* REMOVED IN v6.0: .arrival__framing. The sentence it styled has left the product
+   (R31), and this is not the two lines trading sizes — the question is now the
+   ONLY large line on the front door.
+
+   THE MAIN QUESTION — the route's single h1, at the promoted display scale. */
+.arrival__question {
+  max-width: 860px;
   margin: 0 auto;
   font-family: var(--font-display, inherit);
-  font-size: var(--arrival-heading-size);
-  font-weight: 700;
-  line-height: 0.99;
-  letter-spacing: -0.055em;
+  font-size: var(--arrival-question-size);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   color: var(--ink-primary);
-}
-
-/* THE MAIN QUESTION — still the most important sentence, one step down in
-   size so the screen has exactly one dominant message (Brand Manual §6). */
-.arrival__question {
-  max-width: 830px;
-  margin: 24px auto 0;
-  font-family: var(--font-display, inherit);
-  font-size: clamp(1.25rem, 0.95rem + 1.3vw, 1.75rem);
-  font-weight: 500;
-  line-height: 1.25;
-  color: var(--ink-primary);
+  text-wrap: balance;
 }
 
 /* Prototype .hero-copy: max-width 770px; margin 28px auto 32px. */
@@ -706,12 +732,20 @@
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1279px) {
   .example-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* Between 1024 and 1279 all three zones fit, but only just: the pane gives up its
+     width first so the conversation keeps its measure. */
+  .working-shell[data-pane='true'] {
+    grid-template-columns: var(--shell-rail-collapsed-w) minmax(0, 1fr) minmax(300px, 340px);
+  }
 }
 
 @media (max-width: 1023px) {
-  .conversation-shell,
-  .conversation-shell[data-collapsed='true'] { grid-template-columns: minmax(0, 1fr); }
-  .conversation-sidebar { display: none; }
+  /* Both side zones become sheets, and only one may be open at a time (§25.2).
+     `.conversation-shell` was a v5.0 name that Phase 1's rename left behind in this
+     selector list — removed rather than kept as a dead branch. */
+  .working-shell,
+  .working-shell[data-pane='true'] { grid-template-columns: minmax(0, 1fr); }
+  .conversation-rail { display: none; }
   .conversation-main__nav { display: inline-flex; }
   .conversation-header__nav { display: grid; }
   .arrival { padding-top: 76px; }
@@ -733,7 +767,7 @@
   .composer-send__icon { width: 21px; height: 21px; }
   .transcript__log { padding-inline: 16px; }
   /* ≥48px tap targets on touch. */
-  .sidebar-thread__action { width: 32px; height: 32px; }
+  .rail-thread__action { width: 32px; height: 32px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -750,7 +784,7 @@
 /* Glass discipline (Brand Manual §8.7): where backdrop-filter is unsupported,
    the translucent surfaces become opaque so text contrast survives. */
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-  .conversation-sidebar,
+  .conversation-rail,
   .conversation-header,
   .conversation-column__composer { background: var(--canvas); }
   .example-card { background: var(--surface); }

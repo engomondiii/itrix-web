@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { PortalTopbar } from '@/components/portal/PortalTopbar';
 import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
-import { StateMorph } from '@/components/shell/StateMorph';
 import { OutcomeProgressCard } from '@/components/success/OutcomeProgressCard';
 import { DeploymentHealthPanel } from '@/components/success/DeploymentHealthPanel';
 import { SupportRequestList } from '@/components/success/SupportRequestList';
@@ -12,7 +11,6 @@ import { ChangesSinceLastVisit } from '@/components/success/ChangesSinceLastVisi
 import { RelationshipTeamCard } from '@/components/success/RelationshipTeamCard';
 import { ImprovementComposer } from '@/components/success/ImprovementComposer';
 import { useSuccessOverview } from '@/hooks/useSuccessOverview';
-import { useJourneyContext } from '@/context/JourneyContext';
 import { SUCCESS_COPY } from '@/lib/content/successCopy';
 import { siteConfig } from '@/config/site.config';
 
@@ -38,7 +36,6 @@ import { siteConfig } from '@/config/site.config';
  */
 export default function SuccessHomePage() {
   const { data, loading } = useSuccessOverview();
-  const { stateKey } = useJourneyContext();
 
   if (!siteConfig.featureFlags.customerSuccess) {
     return (
@@ -58,7 +55,7 @@ export default function SuccessHomePage() {
         {loading ? (
           <div className="flex justify-center py-16"><Spinner size="lg" /></div>
         ) : data ? (
-          <StateMorph stateKey={stateKey}>
+          <>
             <div className="flex flex-col gap-10">
               <header>
                 <h1 className="font-display text-web-h2 text-ink-primary">{SUCCESS_COPY.home.welcome}</h1>
@@ -97,7 +94,7 @@ export default function SuccessHomePage() {
                 <ImprovementComposer />
               </section>
             </div>
-          </StateMorph>
+          </>
         ) : (
           <EmptyState>{SUCCESS_COPY.outcomes.empty}</EmptyState>
         )}

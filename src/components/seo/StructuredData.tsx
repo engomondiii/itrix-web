@@ -54,7 +54,28 @@ export function StructuredData({ data }: { data?: JsonLd }) {
     <script
       type="application/ld+json"
       // JSON-LD is static, server-rendered, and not user-derived — safe to inline.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      /*
+        THE ONE EXCEPTION TO itrix/no-dangerous-html, and it is a real one.
+
+        JSON-LD cannot be a text child of <script>: React escapes text children,
+        which turns `<`, `>` and `&` into HTML entities and produces invalid JSON
+        inside the tag. So structured data has to be injected as a string.
+
+        WHY THAT IS SAFE HERE, unlike in a rendered turn: the content is OUR OWN
+        object, serialized on the server from siteConfig and brand constants. No
+        model output, no visitor input and no fetched content reaches it — which is
+        exactly the property the rule exists to protect in MarkdownTurn, where none
+        of those things is true.
+
+        The `<` is escaped anyway, because a `</script>` sequence appearing inside a
+        JSON string value would close the tag early. That is the standard hardening
+        for JSON-LD and it costs nothing.
+
+        Reviewed: Surface 1 v6.0 Phase 2. Do not widen this pattern — if another
+        component needs it, it needs its own review, not this one's precedent.
+      */
+      // eslint-disable-next-line itrix/no-dangerous-html
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\\u003c') }}
     />
   );
 }

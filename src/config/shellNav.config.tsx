@@ -1,27 +1,34 @@
 import { routes } from '@/constants/routes';
 
 /**
- * Sidebar navigation configuration.
+ * What is left of the navigation configuration.
  *
- * The global header is retired in v5.0. Its contents — brand, navigation and NDA
- * access — moved to the TOP OF THE SIDEBAR, above the conversation list
- * (Surface 1 v5.0 §00.1 change 8, Playbook v1.6 §16A). The marketing routes and
- * the closed-by-default drawers that used to live below the landing fold moved
- * into the Explore group (§16B). The legal links moved to the sidebar footer
- * (§16D).
+ * ── v6.0 EMPTIED THE NAVIGATION ─────────────────────────────────────────────
  *
- * Nothing here is an entitlement. Every item is a public route; the sidebar
- * sections that carry relationship content are authorized by the backend and
- * resolved through lib/journey/sidebarSections.ts.
+ * REMOVED: `SIDEBAR_BRAND_NAV` — the Approach · Technology · Resources trio. The
+ * change request removed the links from the top of the arrival screen and removed
+ * `Approach` from the rail by name; v6.0 retires all three AS NAVIGATION ITEMS on
+ * every surface (Architecture v2.7 §11.6). Their ROUTES remain live and in the
+ * sitemap: /about, /technology and /resources are untouched pages, reachable by
+ * search and by direct link, and Phase 2 reaches them from the content pane's
+ * Explore section.
+ *
+ * REMOVED: `SIDEBAR_NDA_ACCESS` — the label became "Sign in" and now lives in
+ * CENTER_COPY.signIn, beside the rest of the arrival copy, because it is one control
+ * with one string rather than a navigation item.
+ *
+ * WHAT SURVIVES is the Explore route list, which PHASE 2 mounts in the content
+ * pane's `explore` section, and the disclosure drawer id. Both are kept rather than
+ * deleted because Phase 2 consumes them unchanged — deleting them now and rewriting
+ * them in a fortnight would be churn, not tidiness.
+ *
+ * Nothing here is an entitlement. Every item is a public route; the sections that
+ * carry relationship content are authorized by the backend.
  */
 
 export interface ShellNavItem {
   label: string;
-  /**
-   * `null` means the route does not exist in this build yet. The renderer skips
-   * the item and warns in development rather than shipping a dead link.
-   */
-  href: string | null;
+  href: string;
 }
 
 export interface ShellNavGroup {
@@ -30,30 +37,12 @@ export interface ShellNavGroup {
 }
 
 /**
- * The condensed nav at the top of the sidebar.
+ * The Explore group — everything that used to be below the landing fold, and then
+ * in the sidebar, and from Phase 2 in the content pane.
  *
- * NOTE — "Approach" has no dedicated route in this repo. Playbook §16A names it,
- * and /about is the page that currently carries that content, so it points there
- * rather than at a 404. If a real /approach page is added, change it here.
- */
-export const SIDEBAR_BRAND_NAV: ShellNavItem[] = [
-  { label: 'Approach', href: routes.about },
-  { label: 'Technology', href: routes.technology },
-  { label: 'Resources', href: routes.resources },
-];
-
-/** NDA access — quiet and gated. Never a primary CTA (Surface 1 v5.0 §2.4). */
-export const SIDEBAR_NDA_ACCESS: ShellNavItem = {
-  label: 'Sign in',
-  href: routes.portalSignIn,
-};
-
-/**
- * The Explore group — everything that used to be below the landing fold.
- *
- * The drawers themselves are rendered by ExploreGroup from INFO_DRAWERS; this
- * list is the ROUTE half of the group. Both are closed by default and pulled,
- * never pushed (R5 is preserved — only the entry point moved).
+ * The drawers themselves are rendered from INFO_DRAWERS; this list is the ROUTE half
+ * of the group. Both are closed by default and pulled, never pushed — R5 is
+ * preserved, and only the entry point has moved (again).
  */
 export const SIDEBAR_EXPLORE: ShellNavGroup[] = [
   {
@@ -92,21 +81,21 @@ export const SIDEBAR_EXPLORE: ShellNavGroup[] = [
 ];
 
 /**
- * The legal footer (Playbook v1.6 §16D).
+ * The legal instruments, as routes.
  *
- * RELEASE BLOCKER, stated here so it cannot be forgotten: /privacy and /security
- * DO NOT EXIST in this repo. The Playbook requires all three links, and they are
- * "not permitted to disappear". Rather than ship two 404s, they are `null` here
- * and the renderer skips them with a development warning.
- *
- * Create the two routes, set the hrefs, and the footer completes itself.
- * "Disclosure policy" already has real content and opens the approved
- * before-an-NDA drawer instead of a route.
+ * THE v5.0 RELEASE BLOCKER IS CLEARED. /privacy and /security did not exist, so the
+ * sidebar footer carried `null` hrefs and warned in development rather than shipping
+ * two 404s. Phase 1 creates all four routes, so all four have real hrefs — and the
+ * canonical list now lives in lib/content/legalCopy.ts, beside the documents
+ * themselves. This export is kept as a route-only view of it for Phase 2's content
+ * pane, which needs hrefs without pulling in the body copy.
  */
 export const SIDEBAR_LEGAL: ShellNavItem[] = [
-  { label: 'Privacy', href: null },
-  { label: 'Security', href: null },
+  { label: 'Terms', href: routes.terms },
+  { label: 'Privacy', href: routes.privacy },
+  { label: 'Security', href: routes.security },
+  { label: 'Disclosure policy', href: routes.disclosurePolicy },
 ];
 
-/** The drawer id opened by the "Disclosure policy" control in the legal footer. */
+/** The drawer id for the approved before-an-NDA content, used inside Explore. */
 export const DISCLOSURE_DRAWER_ID = 'before-an-nda';

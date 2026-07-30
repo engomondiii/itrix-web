@@ -135,6 +135,34 @@ export interface ArtifactReadyPayload {
   artifactId: string;
   type: ArtifactType;
   disclosureLevel?: string;
+  /**
+   * v7.0. Whether the backend intends this artifact to be focused in the content
+   * pane on delivery (Architecture v2.7 §14.3).
+   *
+   * IT IS A HINT, NOT AN INSTRUCTION. The client focuses the pane only when the pane
+   * is already visible, and a reveal NEVER forces the pane open on a narrow
+   * breakpoint (§11.5) — the reference card expands inline instead. A server that
+   * could open an overlay on a phone would be deciding the visitor's layout.
+   */
+  openInPane?: boolean;
+}
+
+/**
+ * WHICH PIPELINE STAGE A PENDING TURN IS AT (Architecture v2.7 §14.3, Backend v7.0 §5).
+ *
+ * Emitted from the REAL transitions — retrieval starts, the first generation call,
+ * the settle pipeline starts — and NEVER on a timer. If a stage cannot be determined
+ * the backend sends nothing, and the client holds its current label rather than
+ * inventing the next one.
+ *
+ * The event carries the enum; the WORDING lives on the frontend in
+ * lib/content/pendingCopy.ts, so the three approved strings have one home and a
+ * backend change cannot silently reword what the visitor reads.
+ */
+export interface MessageStagePayload {
+  threadId: string;
+  messageId?: string;
+  stage: 'retrieving' | 'composing' | 'checking';
 }
 
 /**
@@ -202,6 +230,7 @@ export type ServerEvent =
   | { type: 'thread.updated'; payload: ThreadUpdatedPayload }
   | { type: 'question.suggested'; payload: QuestionSuggestedPayload }
   | { type: 'artifact.ready'; payload: ArtifactReadyPayload }
+  | { type: 'message.stage'; payload: MessageStagePayload }
   | { type: 'attachment.status'; payload: AttachmentStatusPayload }
   | { type: 'support.update'; payload: SupportUpdatePayload }
   | { type: 'clientpage.delta'; payload: ClientPageDeltaPayload }
@@ -217,6 +246,15 @@ export type ClientEvent =
   /** v5.0: a turn in a thread. Phase 2 sends this instead of chat.send. */
   | { type: 'turn.submit'; payload: { threadId: string; body: string; attachmentIds?: string[] } }
   | { type: 'turn.cancel'; payload: { threadId: string; messageId: string } }
+  /**
+   * v7.0. Scope the socket to the thread the visitor is actually looking at, so
+   * deltas for a background thread are not fanned out to a client that cannot render
+   * them (Architecture v2.7 §14.3).
+   *
+   * IT IS NOT AUTHORIZATION. The consumer still verifies that the session owns the
+   * thread; this only narrows what gets sent.
+   */
+  | { type: 'thread.select'; payload: { threadId: string } }
   | { type: 'chat.send'; payload: { conversationId: string; body: string } }
   | { type: 'chat.typing'; payload: { conversationId: string; typing: boolean } }
   | { type: 'subscribe'; payload: { channel: string } }

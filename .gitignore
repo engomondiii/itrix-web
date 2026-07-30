@@ -177,3 +177,11 @@ itrix-web-v6-*.zip
 itrix-web-v6-*/
 itrix-web-v6-*.zip
 .v6-*-backup-*/
+
+# itriX Surface 1 v6.0 Phase 1 installer artefacts
+itrix-web-surface1-v6-phase*/
+itrix-web-surface1-v6-phase*.zip
+.v6-phase1-backup-*/
+
+# itriX Surface 1 v6.0 Phase 2 installer artefacts
+.mdtest/

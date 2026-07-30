@@ -7,10 +7,11 @@ import { VisitorProvider } from '@/context/VisitorContext';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 import { ThreadProvider } from '@/context/ThreadContext';
 import { ShellProvider } from '@/context/ShellContext';
-import { SiteChrome } from '@/components/layout/SiteChrome';
+import { ContentPaneProvider } from '@/context/ContentPaneContext';
+import { ShellModeGate } from '@/components/shell/ShellModeGate';
 
 /**
- * itriX Brand Manual v1.5 EN — type system (§4.1). Unchanged in v5.0.
+ * itriX Brand Manual v1.5 EN — type system (§4.1). Unchanged in v6.0.
  *
  *   Space Grotesk → --font-space-grotesk   Display: hero / page / section headings
  *   Inter         → --font-inter           Primary: ALL UI and body text
@@ -52,16 +53,32 @@ export const viewport: Viewport = {
 };
 
 /**
- * v5.0: the global HEADER AND FOOTER ARE GONE.
+ * ── THE GATE SITS ABOVE EVERY ROUTE, AND THAT IS THE POINT ──────────────────
  *
- * Their contents moved into the sidebar — brand, navigation and NDA access to
- * SidebarBrandNav, the legal links to SidebarLegalFooter (Surface 1 v5.0 §00.1
- * change 8, Playbook v1.6 §16A/§16D). A full-width bar above a conversation is
- * furniture, and it competes with the one thing the visitor came to do.
+ * v6.0 mounts ShellModeGate here, replacing SiteChrome. Because it is above the
+ * route tree, going from the arrival shell to the working shell MOUNTS TWO ZONES
+ * AROUND A TREE THAT IS ALREADY ON SCREEN rather than navigating: the composer keeps
+ * focus and an in-flight upload survives (Architecture v2.7 §2.6, tested in
+ * tests/e2e/mode-transition.spec.ts).
  *
- * The two providers wrap every route because the sidebar is present on every
- * route. ThreadProvider comes first: ShellProvider keys its contract off the
- * active thread, so the order is a real dependency, not a preference.
+ * There is no global header and no global footer, and v6.0 removes what little was
+ * left of them from the arrival screen too: the navigation links are gone, "NDA
+ * access" became "Sign in", and the dark footer became the pinned legal strip. A
+ * full-width bar above a conversation is furniture, and it competes with the one
+ * thing the visitor came to do.
+ *
+ * The three providers wrap every route because the gate needs the contract on every
+ * route. The ORDER IS A REAL DEPENDENCY, not a preference: ShellProvider keys its
+ * contract off the active thread, and ContentPaneProvider needs both — it derives
+ * the pane's sections from the shell contract and its artifacts from the active
+ * thread.
+ *
+ * v6.0 PHASE 2 adds ContentPaneProvider here rather than inside WorkingShell,
+ * because three places need the SAME answer about the pane: the pane renders itself,
+ * the conversation header shows the open/hide control, and the artifact reference
+ * card in the transcript decides whether "Open" focuses the pane or expands inline.
+ * Mounting it per-shell would give each of them its own copy — three artifact
+ * subscriptions, and three chances to disagree about whether the pane is visible.
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -75,7 +92,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ToastProvider>
               <ThreadProvider>
                 <ShellProvider>
-                  <SiteChrome>{children}</SiteChrome>
+                  <ContentPaneProvider>
+                    <ShellModeGate>{children}</ShellModeGate>
+                  </ContentPaneProvider>
                 </ShellProvider>
               </ThreadProvider>
             </ToastProvider>

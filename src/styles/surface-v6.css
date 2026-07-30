@@ -1,0 +1,339 @@
+/* ============================================================================
+   itriX · SURFACE 1 v6.0 — what Phase 1 added
+
+   Kept as its own file rather than woven into shell.css and arrival.css, for one
+   practical reason: a reviewer should be able to see everything this phase
+   introduced in one place, and Phase 2 should be able to move the interim rules
+   (the rail's legal strip) without archaeology through a thousand-line stylesheet.
+
+   Contents
+     1  the wordmark lockup and its descriptor
+     2  Sign in
+     3  the arrival bar
+     4  the legal strip — arrival (pinned) and rail (interim)
+     5  the rotating prompt carousel
+     6  the composer key hint and the itriX X send glyph
+     7  the conversation rail's account footer
+
+   Every colour is a Brand Manual v1.5 token.
+   ============================================================================ */
+
+/* ── 1 · Wordmark lockup ──────────────────────────────────────────────────── */
+/* Brand Manual §2.3–2.4: ≥120px wide with clear space equal to the lowercase "i"
+   height, enforced by padding rather than trusted to a neighbour. */
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  padding: 2px 16px 2px 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.wordmark__descriptor {
+  padding-left: 16px;
+  border-left: 1px solid var(--border-medium);
+  color: var(--ink-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  max-width: 13ch;
+}
+.wordmark[data-variant='rail'] {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+.wordmark[data-variant='rail'] .wordmark__descriptor {
+  padding-left: 0;
+  border-left: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  max-width: none;
+}
+
+/* ── 2 · Sign in ──────────────────────────────────────────────────────────── */
+/* A SECONDARY control. The primary action on the arrival screen is the composer,
+   and nothing here may compete with it — hence no fill, no accent, no padlock. */
+.sign-in-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  background: var(--surface-glass);
+  color: var(--ink-primary);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+.sign-in-link:hover { border-color: var(--border-medium); background: var(--surface); }
+.sign-in-link[data-variant='rail'] {
+  width: 100%;
+  justify-content: center;
+  min-height: 38px;
+  font-size: 13px;
+}
+
+/* ── 3 · The arrival bar ──────────────────────────────────────────────────── */
+/* NOT a header. There is no navigation in it, because v6.0 removed the links; it
+   holds the wordmark and one control, and it does not blur or float. */
+.arrival-bar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 20px 48px;
+}
+
+/* ── 4 · The legal strip ──────────────────────────────────────────────────── */
+/* THE ARRIVAL VARIANT IS NOT A FOOTER AND NOT BELOW-FOLD CONTENT. It occupies the
+   bottom edge of the first viewport and does not scroll. R29 forbids scrollable
+   NARRATIVE below the prompts; it has never permitted the legal instruments to be
+   unreachable. */
+.legal-strip {
+  flex: 0 0 auto;
+  padding: 14px 48px;
+  border-top: 1px solid var(--border-soft);
+  background: var(--canvas);
+}
+.legal-strip ul {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.legal-strip__link {
+  color: var(--ink-secondary);
+  font-size: 12px;
+  text-decoration: none;
+}
+.legal-strip__link:hover { color: var(--ink-primary); text-decoration: underline; text-underline-offset: 3px; }
+
+/* THE RAIL VARIANT IS AN INTERIM. Phase 2 moves these into the content pane's
+   `legal` section and deletes this block; until then the working shell would have
+   no route to the four instruments at all. */
+.legal-strip[data-variant='rail'] {
+  padding: 10px 0 0;
+  border-top: 1px solid var(--border-soft);
+  background: transparent;
+}
+.legal-strip[data-variant='rail'] ul { gap: 4px 12px; }
+.legal-strip[data-variant='rail'] .legal-strip__link { font-size: 11px; }
+
+/* ── 5 · The rotating prompt carousel ─────────────────────────────────────── */
+.prompt-carousel { margin-top: 32px; text-align: left; }
+.prompt-carousel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.prompt-carousel__label {
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.prompt-carousel__tools { display: flex; align-items: center; gap: 12px; }
+.prompt-carousel__controls { display: flex; align-items: center; gap: 4px; }
+/* ≥40px targets, and ALWAYS RENDERED — never hover-only. A rotating element whose
+   manual control appears on hover is unusable on touch and invisible to a
+   keyboard (Surface 1 v6.0 §2.3). */
+.prompt-carousel__step {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--surface-glass);
+  color: var(--ink-secondary);
+}
+.prompt-carousel__step:hover { border-color: var(--border-medium); color: var(--ink-primary); }
+.prompt-carousel__step svg { width: 18px; height: 18px; }
+.prompt-carousel__position {
+  min-width: 44px;
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--ink-muted);
+}
+.prompt-carousel__showall {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  text-decoration: underline;
+  text-decoration-color: var(--border-medium);
+  text-underline-offset: 4px;
+}
+.prompt-carousel__showall:hover { color: var(--ink-primary); }
+
+.prompt-carousel__stage { display: grid; gap: 10px; }
+.prompt-carousel__stage[data-view='single'] { grid-template-columns: minmax(0, 1fr); }
+.prompt-carousel__stage[data-view='list'] { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+/* One prompt, as a card. The single-item view animates in; the static list does
+   not, because five cards fading at once is noise rather than motion. */
+.prompt-carousel__stage[data-view='single'] .prompt-card {
+  animation: prompt-rise 240ms ease both;
+}
+@keyframes prompt-rise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.prompt-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 76px;
+  padding: 16px 18px;
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  background: var(--surface-glass-soft, var(--surface-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  color: var(--ink-secondary);
+  font-size: var(--prompt-size);
+  line-height: 1.42;
+  text-align: left;
+  transition: transform 180ms, border-color 180ms, background 180ms;
+}
+.prompt-card:hover,
+.prompt-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--border-medium);
+  background: var(--surface-glass-strong);
+}
+.prompt-card[aria-pressed='true'] { border-color: var(--ink-primary); background: var(--surface); }
+.prompt-card__glyph {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--tint);
+  color: var(--ink-primary);
+}
+.prompt-card__glyph > svg { width: 20px; height: 20px; }
+.prompt-card__index {
+  position: absolute;
+  right: -4px;
+  bottom: -6px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--canvas);
+  color: var(--ink-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+}
+.prompt-card__label {
+  flex: 0 0 auto;
+  max-width: 22ch;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.prompt-card__text { flex: 1 1 auto; color: var(--ink-primary); }
+
+/* The static list stacks the label above the sentence — five side-by-side rows of
+   label + text would give every card a different text column. */
+.prompt-carousel__stage[data-view='list'] .prompt-card {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 132px;
+}
+.prompt-carousel__stage[data-view='list'] .prompt-card__label { max-width: none; }
+
+/* ── 6 · The composer key hint and the itriX X ────────────────────────────── */
+/* TEXT, NOT A TOOLTIP, and not aria-hidden: it advertises a NON-STANDARD
+   accelerator, so hiding it would hide the feature from the users most likely to
+   want a keyboard path (Surface 1 v6.0 §3.6, §7.4). */
+.composer-keyhint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin: 0;
+  font-size: var(--hint-size);
+  color: var(--ink-secondary);
+}
+.composer-keyhint__secondary { color: var(--ink-muted); }
+
+/* The X leans like the wordmark's, not like a 45° close glyph. Sized a touch
+   smaller than the retired arrow because two diagonal strokes read heavier than
+   one horizontal one at the same box. */
+.composer-send__icon--x { width: 22px; height: 22px; }
+.composer[data-variant='docked'] .composer-send__icon--x { width: 19px; height: 19px; }
+
+/* ── 7 · The rail's account footer ────────────────────────────────────────── */
+.rail-account { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .arrival-bar { padding: 16px 24px; }
+  .legal-strip { padding: 12px 24px; }
+}
+
+@media (max-width: 767px) {
+  /* The descriptor is the first thing to go: the mark carries the brand, and the
+     sentence needs more width than a phone bar has. */
+  .arrival-bar { padding: 14px 20px; }
+  .wordmark[data-variant='arrival'] .wordmark__descriptor { display: none; }
+  .legal-strip { padding: 12px 20px; }
+  .legal-strip ul { gap: 6px 16px; }
+  .prompt-carousel__stage[data-view='list'] { grid-template-columns: minmax(0, 1fr); }
+  .prompt-carousel__stage[data-view='list'] .prompt-card { min-height: 0; }
+  /* ≥48px tap targets on touch. */
+  .prompt-carousel__step { width: 44px; height: 44px; }
+}
+
+/* Below 420px the strip is allowed a second row rather than shrinking the type —
+   informational text never goes below 13px, and a legal link is informational. */
+@media (max-width: 419px) {
+  .legal-strip ul { gap: 8px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prompt-card,
+  .sign-in-link { transition: none; }
+  .prompt-card:hover { transform: none; }
+  /* No auto-advance under reduced motion, so nothing should fade in either. */
+  .prompt-carousel__stage[data-view='single'] .prompt-card { animation: none; }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .prompt-card,
+  .sign-in-link { background: var(--surface); }
+}

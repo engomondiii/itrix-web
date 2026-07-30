@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { shellApi } from '@/lib/api/shellApi';
-import { sectionsFromContract } from '@/lib/journey/sidebarSections';
+import { railSectionsFromContract } from '@/lib/journey/railSections';
+import { shellModeFromContract } from '@/lib/journey/shellModes';
 import { composerLabelForState, stateLabelFor, HEADER_COPY } from '@/lib/content/composerCopy';
 import type { ShellContract, ShellContractPayload } from '@/types/shell.types';
 
@@ -10,25 +11,25 @@ import type { ShellContract, ShellContractPayload } from '@/types/shell.types';
  * Subscribe to the shell contract — what the backend authorizes this surface to
  * render.
  *
- * REPLACES useRails. There is no `left`/`right` any more: the right value rail is
- * retired and the left rail became navigation, so the contract now names sidebar
- * sections, the conversation header and the composer label
- * (Architecture v2.6 §11.6, §11.7).
+ * v6.0 CHANGES. The contract now carries `shellMode` and splits the zone
+ * vocabulary into `conversationRailSections` and `contentPaneSections`
+ * (Architecture v2.7 §11.6). `sidebarSections` is read only as a one-release
+ * fallback for a backend that has not migrated.
  *
  * Two things this hook will not do, both deliberate:
  *
- *   · It never DERIVES authorization. `sidebarSections` comes from the backend
- *     verbatim; the only thing added locally is the five BASE sections, which
- *     are orientation and policy access rather than entitlements. A visitor
- *     cannot reach a section by editing a URL, because nothing here computes
- *     entitlement from anything the visitor controls.
+ *   · It never DERIVES authorization. The rail order comes from the backend; the
+ *     only thing added locally is the three rail sections, which are orientation
+ *     rather than entitlement — a visitor with no relationship still needs a way
+ *     to start a conversation. A visitor cannot reach a section by editing a URL,
+ *     because nothing here computes entitlement from anything they control.
  *
- *   · It never fails open. When the contract cannot be fetched it falls back to
- *     the base sections only — the most restrictive sidebar there is. If the
- *     backend is down or the vocabularies drift, the visitor sees LESS than they
- *     were entitled to, never more.
+ *   · It never fails open. When the contract cannot be fetched, `shellMode` stays
+ *     null and the rail falls back to the three sections — the most restrictive
+ *     shell there is. If the backend is down or the vocabularies drift, the
+ *     visitor sees LESS than they were entitled to, never more.
  *
- * Surface 1 v5.0 §3.2 · Backend v6.0 §3.1
+ * Surface 1 v6.0 §3.1 · Backend v7.0 §4.1
  */
 
 const POLL_MS = 20000;
@@ -48,6 +49,10 @@ export function normalizeShellContract(
 
   return {
     threadId: payload?.threadId ?? threadId,
+    /* NULL, not 'arrival'. A guessed mode is worse than an absent one: the caller
+       has a local threshold it can fall back to, and it should know it is using
+       it (Surface 1 v6.0 §3.1). */
+    shellMode: shellModeFromContract(payload?.shellMode),
     journeyState,
     stateKey: payload?.stateKey ?? 'arrival',
     identityState: payload?.identityState ?? 'anonymous',
@@ -61,7 +66,14 @@ export function normalizeShellContract(
        refusal surfaces as a specific, recoverable message rather than a control
        that was never there. Only an explicit `false` hides it. */
     attachmentsEnabled: payload?.attachmentsEnabled !== false,
-    sidebarSections: sectionsFromContract(payload?.sidebarSections, journeyState),
+    conversationRailSections: railSectionsFromContract(
+      payload?.conversationRailSections,
+      payload?.sidebarSections,
+    ),
+    contentPaneSections: Array.isArray(payload?.contentPaneSections)
+      ? payload.contentPaneSections.filter((s) => typeof s === 'string')
+      : [],
+    contentPaneDefaultArtifactId: payload?.contentPaneDefaultArtifactId ?? null,
     conversationHeader:
       payload?.conversationHeader ??
       (threadId
@@ -92,9 +104,9 @@ export function useShell(threadId: string | null): UseShellResult {
       setPayload(data);
       setError(null);
     } else if (err) {
-      /* Keep the last good contract rather than collapsing the sidebar mid-use.
-         If there was never one, `normalizeShellContract` already resolves to the
-         base sections, so the fallback is restrictive either way. */
+      /* Keep the last good contract rather than collapsing the rail mid-use. If
+         there was never one, `normalizeShellContract` already resolves to the
+         three rail sections, so the fallback is restrictive either way. */
       setError(err);
     }
     setLoadedFor(threadId);

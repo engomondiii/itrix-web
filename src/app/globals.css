@@ -1,13 +1,12 @@
-/* itriX · Brand Manual v1.5 EN — globals.
-   Order: font CDN → brand tokens → §8.1 aliases → other tokens → Tailwind →
-   base/grid/animations/chat/shell/glass.
+/* itriX global stylesheet.
+
    @import rules must precede all other rules, so the Pretendard CDN is first. */
 
-/* Korean face (Brand Manual §4.1). Space Grotesk + Inter + IBM Plex Mono are
-   loaded via next/font in layout.tsx; Pretendard is CDN-hosted here. */
+/* Korean display and body face (Brand Manual §4.1). CDN-loaded so it is available
+   to every font stack without a build step. */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-/* brand.css is the SINGLE SOURCE OF TRUTH for colour and must load first. */
+/* Design tokens — Brand Manual v1.5 EN. */
 @import '../styles/tokens/brand.css';
 @import '../styles/tokens/colors.css';
 @import '../styles/tokens/typography.css';
@@ -17,8 +16,10 @@
 @import '../styles/tokens/motion.css';
 
 @import 'tailwindcss';
-@config '../../tailwind.config.ts';
 
+/* Surface stylesheets. Order matters: shell.css owns the geometry contract and the
+   type scale, arrival.css scopes the centre to the front door, and surface-v6.css
+   comes last so what Phase 1 added can refine either without !important. */
 @import '../styles/base.css';
 @import '../styles/grid.css';
 @import '../styles/animations.css';
@@ -27,3 +28,16 @@
 @import '../styles/glass.css';
 @import '../styles/phase3.css';
 @import '../styles/arrival.css';
+@import '../styles/surface-v6.css';
+/* Phase 2. markdown.css after surface-v6.css so a rendered turn can refine the
+   transcript's own type rules; content-pane.css last because the pane is the newest
+   zone and refines the shell grid. */
+@import '../styles/markdown.css';
+@import '../styles/content-pane.css';
+@import '../styles/legal.css';
+/* Phase 3. phase3-pane.css completes the pane's sections; mobile.css is the whole
+   responsiveness contract in one file and comes LAST so its breakpoint sweeps can
+   refine anything above without !important — except in the two places where the
+   reduced-motion and print guarantees have to win outright. */
+@import '../styles/phase3-pane.css';
+@import '../styles/mobile.css';

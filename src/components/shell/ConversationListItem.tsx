@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useThreadContext } from '@/context/ThreadContext';
-import { useSidebarStore } from '@/store/sidebarStore';
-import { SIDEBAR_COPY } from '@/lib/content/composerCopy';
+import { useRailStore } from '@/store/railStore';
+import { RAIL_COPY } from '@/lib/content/composerCopy';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { ThreadSummary } from '@/types/thread.types';
 
@@ -21,18 +21,24 @@ function relativeTime(iso: string): string {
 }
 
 /**
- * One conversation in the sidebar list.
+ * One conversation in the rail.
  *
- * Selecting it does NOT navigate: the thread becomes active and the same
- * transcript node re-renders with its turns. The URL follows via replaceState.
+ * Selecting it does NOT navigate: the thread becomes active and the same transcript
+ * node re-renders with its turns. The URL follows via replaceState.
  *
- * The title is generated from the visitor's own words and is renameable. It
- * inherits the no-inference rule — a title may never name an inferred company,
- * department or persona (Playbook v1.6 §16A, Architecture v2.6 §4).
+ * PHASE 2 COMPLETES THE SWITCH. `switchTo` pushes a history entry, clears the
+ * composer (a half-typed message belongs to the conversation it was written in), and
+ * closes the pane's mobile sheet. The content pane's own state is keyed by thread, so
+ * it rebinds without being told. Scroll position is restored by the transcript's
+ * `useScrollMemory` (Surface 1 v6.0 §3.12, R37).
+ *
+ * The title is generated from the visitor's own words and is renameable. It inherits
+ * the no-inference rule — a title may never name an inferred company, department or
+ * persona (Playbook v1.7 §16A).
  */
 export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
-  const { activeThreadId, select, rename, remove } = useThreadContext();
-  const closeSheet = useSidebarStore((s) => s.closeSheet);
+  const { activeThreadId, switchTo, rename, remove } = useThreadContext();
+  const closeSheet = useRailStore((s) => s.closeSheet);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(thread.title);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -52,12 +58,12 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
 
   if (editing) {
     return (
-      <li className="sidebar-thread sidebar-thread--editing">
+      <li className="rail-thread rail-thread--editing">
         <input
           ref={inputRef}
           value={draft}
-          aria-label="Rename this review"
-          className="sidebar-thread__input"
+          aria-label="Rename this conversation"
+          className="rail-thread__input"
           onChange={(e) => setDraft(e.target.value)}
           onBlur={commit}
           onKeyDown={(e) => {
@@ -76,28 +82,32 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
   }
 
   return (
-    <li className="sidebar-thread" data-active={active || undefined}>
+    <li className="rail-thread" data-active={active || undefined}>
       <button
         type="button"
         aria-current={active ? 'true' : undefined}
-        className="sidebar-thread__open"
+        className="rail-thread__open"
         onClick={() => {
-          select(thread.id);
+          /* v6.0 PHASE 2: `switchTo`, not `select`. A deliberate switch adds a history
+             entry so Back returns to the previous conversation, and it rebinds the
+             transcript, the content pane and the composer inside the mounted shell —
+             the shell is never unmounted (R37). */
+          switchTo(thread.id);
           closeSheet();
-          trackEvent('thread.selected', { fromSidebar: true });
+          trackEvent('thread.selected', { fromRail: true });
         }}
       >
-        <span className="sidebar-thread__title">{thread.title}</span>
-        <span className="sidebar-thread__time">{relativeTime(thread.lastActivityAt)}</span>
+        <span className="rail-thread__title">{thread.title}</span>
+        <span className="rail-thread__time">{relativeTime(thread.lastActivityAt)}</span>
       </button>
 
       {/* Two plain controls rather than a hidden menu: a keyboard user should not
           have to discover a hover affordance to rename their own conversation. */}
-      <span className="sidebar-thread__actions">
+      <span className="rail-thread__actions">
         <button
           type="button"
-          className="sidebar-thread__action"
-          aria-label={`${SIDEBAR_COPY.rename} “${thread.title}”`}
+          className="rail-thread__action"
+          aria-label={`${RAIL_COPY.rename} “${thread.title}”`}
           onClick={() => setEditing(true)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -106,8 +116,8 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         </button>
         <button
           type="button"
-          className="sidebar-thread__action"
-          aria-label={`${SIDEBAR_COPY.delete} “${thread.title}”`}
+          className="rail-thread__action"
+          aria-label={`${RAIL_COPY.delete} “${thread.title}”`}
           onClick={() => remove(thread.id)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

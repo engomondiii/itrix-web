@@ -3,7 +3,7 @@
 import { useCallback, useId, useState } from 'react';
 import type { ClipboardEvent, DragEvent } from 'react';
 import { PromptTextarea } from './PromptTextarea';
-import { SendArrowButton } from './SendArrowButton';
+import { AskItrixButton } from './AskItrixButton';
 import { ComposerFooter } from './ComposerFooter';
 import { AttachControl } from './AttachControl';
 import { AttachmentTray } from './AttachmentTray';
@@ -14,30 +14,32 @@ import { useThreadContext } from '@/context/ThreadContext';
 import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { ATTACHMENT_COPY } from '@/lib/content/attachmentCopy';
 import { filesFromClipboard } from '@/lib/attachments/accept';
+import { trackEvent } from '@/lib/analytics/trackEvent';
 
 /**
  * THE COMPOSER — one component at every state.
  *
- * Only the LABEL changes (Surface 1 v5.0 §3.5):
+ * Only the LABEL changes (Surface 1 v6.0 §3.5):
  *   1      What would you like computation to do better?   → creates the thread
  *   2–9    Ask itriX                                       → the Concierge
  *   10     What can we improve for you?                    → improvement router
  *
  * Invariants at every state, all of them acceptance criteria:
- *   · the send control is an ICON-ONLY ARROW — there is no "Begin review" button
+ *   · the send control is the ITRIX X, named "Ask itriX" — no arrow, and no button
+ *     labelled "Begin review"
  *   · there is NO character counter and no maxLength
  *   · the confidentiality notice sits beneath it
- *   · Enter submits, Shift+Enter inserts a newline
+ *   · Enter submits · Shift+Enter inserts a newline · Ctrl+X submits, guarded
  *   · SUBMITTING NEVER NAVIGATES (R21) — see useComposer for the contract
  *   · it is never replaced by a form, a wizard or a modal
  *
- * PHASE 2 adds attachments. The whole prompt shell is the drop target, not just
- * the paperclip, and paste works too — a visitor dragging an architecture PDF
- * aims at the box, not at a 32px button.
+ * The whole prompt shell is the drop target, not just the paperclip, and paste
+ * works too — a visitor dragging an architecture PDF aims at the box, not at a
+ * 32px button.
  *
  * SEND IS BLOCKED ONLY WHILE AN UPLOAD IS STILL IN FLIGHT. It is never blocked
  * because an upload FAILED: a failed file is reported beside the tray and the
- * message goes without it (Surface 1 v5.0 §3.6).
+ * message goes without it (Surface 1 v6.0 §3.7).
  */
 export interface ComposerProps {
   variant?: 'arrival' | 'docked';
@@ -61,11 +63,11 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
   /**
    * THE ATTACH CONTROL IS PART OF THE COMPOSER.
    *
-   * It renders whenever the backend has not explicitly withheld it. The build
-   * flag now only governs whether uploads are ATTEMPTED against the attachment
-   * service — it no longer hides the control, because a composer that silently
-   * cannot accept a document is worse than one that accepts it and reports an
-   * honest failure (Surface 1 v5.0 §2.1 element 4, R25).
+   * It renders whenever the backend has not explicitly withheld it. The build flag
+   * now only governs whether uploads are ATTEMPTED against the attachment service
+   * — it no longer hides the control, because a composer that silently cannot
+   * accept a document is worse than one that accepts it and reports an honest
+   * failure (Surface 1 v6.0 §2.1 element 5, R25).
    */
   const attachOn = attachmentsEnabled !== false;
 
@@ -92,10 +94,11 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
     [attachOn, attachments],
   );
 
-  async function handleSubmit() {
+  async function handleSubmit(via: 'button' | 'keyboard') {
+    if (via === 'keyboard') trackEvent('composer.send_via_keyboard', {});
     await submit(attachOn ? attachments.ids : []);
-    /* The tray belongs to the next turn now. Clearing after — not before — means
-       a failed submit does not silently discard someone's files. */
+    /* The tray belongs to the next turn now. Clearing after — not before — means a
+       failed submit does not silently discard someone's files. */
     if (attachOn) attachments.clear();
   }
 
@@ -106,7 +109,7 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
-        void handleSubmit();
+        void handleSubmit('button');
       }}
     >
       {docked && journeyState && journeyState > 1 ? (
@@ -149,15 +152,16 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
           id={textareaId}
           value={value}
           onChange={setValue}
-          onSubmit={() => void handleSubmit()}
+          onSubmit={() => void handleSubmit('keyboard')}
           describedBy={`${noteId} ${statusId}`}
           labelledBy={labelledBy}
           placeholder={docked ? COMPOSER_COPY.placeholderContinuing : COMPOSER_COPY.placeholder}
           invalid={Boolean(error)}
           minRows={docked ? 2 : 3}
+          busy={submitting}
         />
 
-        <SendArrowButton
+        <AskItrixButton
           disabled={!canSubmit || (attachOn && attachments.uploading)}
           submitting={submitting}
         />

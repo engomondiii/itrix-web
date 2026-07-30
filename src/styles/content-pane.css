@@ -1,0 +1,324 @@
+/* ============================================================================
+   itriX · THE CONTENT PANE, THE PENDING INDICATOR, THE REFERENCE CARD
+
+   Three things Phase 2 introduced. They share a file because they share a job:
+   the pane is where work is READ, the reference card is how the transcript
+   RECORDS that work was delivered, and the pending indicator is what the visitor
+   sees while it is being made.
+
+   THE PANE IS NOT THE RETIRED RIGHT VALUE RAIL. It carries no next-best-action,
+   no confidentiality notice, no quick help, no specialist or scheduling card, no
+   satisfaction pulse — every one of those was re-homed by Architecture v2.6
+   §11.6A and v2.7 §2.7 restates the re-homing as a prohibition. There is
+   deliberately no styling below for a card, an offer or a call to action, so
+   adding one would look wrong before it looked finished.
+   ============================================================================ */
+
+/* ── The pane as a column ─────────────────────────────────────────────────── */
+.content-pane {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  min-width: 0;
+  border-left: 1px solid var(--border-soft);
+  background: var(--surface-glass-soft, var(--canvas));
+  -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  backdrop-filter: blur(var(--blur-glass-sm, 10px));
+}
+/* Collapsed to its edge. Still in the DOM, still keyboard-reachable — folding the
+   pane away is presentation, and it never removes a section from the authorized
+   list (§3.11). */
+.content-pane[data-collapsed] {
+  width: var(--shell-pane-collapsed-w);
+  align-items: center;
+}
+
+.pane__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.content-pane[data-collapsed] .pane__header {
+  padding: 12px 6px;
+  border-bottom: 0;
+}
+.content-pane[data-collapsed] .pane__title { display: none; }
+
+.pane__title {
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.pane__collapse,
+.pane__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 13px;
+}
+.pane__collapse:hover,
+.pane__close:hover { border-color: var(--border-medium); color: var(--ink-primary); }
+
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.pane__tabs {
+  display: flex;
+  gap: 2px;
+  padding: 8px 10px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--border-soft);
+}
+.pane__tab {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.pane__tab:hover { color: var(--ink-primary); }
+/* Not colour alone: the selected tab also carries a border and a weight change. */
+.pane__tab[aria-selected='true'] {
+  border-color: var(--border-medium);
+  background: var(--surface);
+  color: var(--ink-primary);
+  font-weight: 600;
+}
+
+.content-pane__body,
+.pane-sheet__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+}
+.content-pane[data-collapsed] .content-pane__body { display: none; }
+
+.pane__empty {
+  margin: 0;
+  padding: 8px 0;
+  color: var(--ink-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.pane__section { display: flex; flex-direction: column; gap: 12px; }
+.pane__section-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+.pane__section-intro { margin: 0; color: var(--ink-secondary); font-size: 13px; line-height: 1.6; }
+
+/* ── The artifact surface ─────────────────────────────────────────────────── */
+.pane__artifacts { display: flex; flex-direction: column; gap: 14px; }
+.pane__switcher ul { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.pane__switcher-item {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  text-align: left;
+}
+.pane__switcher-item:hover { border-color: var(--border-soft); color: var(--ink-primary); }
+.pane__switcher-item[aria-current='true'] {
+  border-color: var(--border-medium);
+  background: var(--soft);
+  color: var(--ink-primary);
+  font-weight: 500;
+}
+
+/* ── Explore and Legal ────────────────────────────────────────────────────── */
+.pane__explore-group { display: flex; flex-direction: column; gap: 4px; }
+.pane__explore-group ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 1px; }
+.pane__explore-title {
+  margin: 6px 0 2px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.pane__explore-link {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 7px;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  text-decoration: none;
+}
+.pane__explore-link:hover { background: var(--soft); color: var(--ink-primary); }
+.pane__drawers { margin-top: 12px; }
+
+.pane__legal { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.pane__legal-link {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.pane__legal-link:hover { background: var(--soft); }
+.pane__legal-title { color: var(--ink-primary); font-size: 14px; }
+.pane__legal-version {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* ── The pane as a sheet, below 1024px ────────────────────────────────────── */
+.pane-sheet { position: fixed; inset: 0; z-index: 60; }
+.pane-sheet__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(19, 26, 51, 0.32);
+}
+.pane-sheet__panel {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: min(440px, 100%);
+  /* OPAQUE, not glass. No nested blur: the composer is the blurred surface, and a
+     sheet over it is solid (Architecture v2.7 §25.3). */
+  background: var(--canvas);
+  border-left: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-2, 0 24px 72px rgba(31, 41, 55, 0.12));
+}
+.pane-sheet__panel:focus-visible { outline: none; }
+
+/* ── The pending indicator ────────────────────────────────────────────────── */
+.pending__row { display: flex; align-items: center; gap: 12px; min-height: 26px; }
+
+/* A 3x3 lattice. One filled cell hands off to a neighbour and the filled count is
+   CONSERVED — a visual restatement of the antisymmetric transfer FQNM executes. No
+   dots, no spinner, no shimmer: those are the chat-app furniture the Brand Manual
+   bans, and a progress bar would claim a duration nobody has. */
+.pending__lattice {
+  display: grid;
+  grid-template-columns: repeat(3, 6px);
+  grid-template-rows: repeat(3, 6px);
+  gap: 3px;
+  flex: 0 0 auto;
+}
+.pending__cell {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--border-medium);
+  transition: background 260ms ease, transform 260ms ease;
+}
+.pending__cell[data-filled] {
+  background: var(--structure, var(--ink-primary));
+  transform: scale(1.18);
+}
+/* Static under reduced motion: the timer never starts, so nothing here animates. */
+.pending__lattice[data-static] .pending__cell { transition: none; }
+.pending__lattice[data-static] .pending__cell[data-filled] { transform: none; }
+
+.pending__label { color: var(--ink-secondary); font-size: 14px; }
+.pending__retry {
+  padding: 4px 10px;
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-primary);
+  font-size: 13px;
+}
+
+/* ── The artifact reference card ──────────────────────────────────────────── */
+/* IT IS THE RECORD, AND IT CANNOT BE COLLAPSED AWAY (R35). Deliberately quieter
+   than an artifact block: it announces that something was delivered and when, and
+   the reading happens in the pane. */
+.artifact-ref {
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  background: var(--surface-glass-soft, var(--canvas));
+  overflow: hidden;
+}
+.artifact-ref__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.artifact-ref__glyph {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--tint);
+  color: var(--ink-primary);
+}
+.artifact-ref__glyph svg { width: 18px; height: 18px; }
+.artifact-ref__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1 1 auto; }
+.artifact-ref__label {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.artifact-ref__title { color: var(--ink-primary); font-size: 15px; font-weight: 500; }
+.artifact-ref__time { font-size: 12px; color: var(--ink-muted); }
+.artifact-ref__actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.artifact-ref__open {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--ink-primary);
+  font-size: 13px;
+}
+.artifact-ref__open:hover { box-shadow: 0 0 0 3px var(--hover-glow, rgba(214, 230, 255, 0.5)); }
+.artifact-ref__link { font-size: 12px; color: var(--ink-secondary); text-decoration: none; }
+.artifact-ref__link:hover { color: var(--ink-primary); text-decoration: underline; text-underline-offset: 3px; }
+.artifact-ref__inline { padding: 0 14px 14px; }
+
+/* The deep-link page's composer sits beneath the artifact. */
+.artifact-page__composer { margin-top: 28px; }
+
+@media (max-width: 767px) {
+  .artifact-ref__row { flex-wrap: wrap; }
+  .artifact-ref__actions { width: 100%; justify-content: flex-start; }
+  /* >=44px targets on touch. */
+  .artifact-ref__open { min-height: 44px; }
+  .pane__tab { min-height: 40px; }
+  .pane-sheet__panel { width: 100%; border-left: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pending__cell,
+  .artifact-ref__open { transition: none; }
+}
+
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .content-pane,
+  .artifact-ref { background: var(--surface); }
+}

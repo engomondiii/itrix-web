@@ -29,6 +29,7 @@ const FALLBACK: UseThreadResult = {
   threads: [],
   activeThreadId: null,
   select: () => {},
+  switchTo: () => {},
   startNew: () => {},
   rename: () => {},
   remove: () => {},

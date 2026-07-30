@@ -6,6 +6,8 @@ import { useSocket } from '@/lib/realtime/useSocket';
 import { wsUrls } from '@/lib/realtime/wsUrls';
 import { siteConfig } from '@/config/site.config';
 import { useTranscriptStore } from '@/store/transcriptStore';
+import { usePendingStore } from '@/store/pendingStore';
+import { isPendingStage } from '@/lib/content/pendingCopy';
 import type { Turn } from '@/types/thread.types';
 
 /**
@@ -29,6 +31,19 @@ import type { Turn } from '@/types/thread.types';
  *
  * With NEXT_PUBLIC_ENABLE_STREAMING_TURNS off, no socket is opened and turns
  * settle through the POST response exactly as they did in Phase 1.
+ *
+ * ── v6.0 PHASE 2 ADDS THE PENDING LIFECYCLE ─────────────────────────────────
+ *
+ * `message.stage` is recorded so the pending indicator can be HONEST: the label
+ * advances only when the backend reports a real pipeline transition, never on a timer
+ * (R42). Anything unrecognised is ignored rather than mapped to a guess.
+ *
+ * And the wait ENDS on the first sign of an answer — a delta, a settle, a halt or a
+ * review. All four are ends: the visitor is no longer waiting for something to
+ * appear, they are reading it, or being told plainly that they will not.
+ *
+ * `thread.select` is sent on subscribe so the server can narrow the fan-out to the
+ * thread being looked at. It grants nothing; the consumer still verifies ownership.
  */
 export interface UseStreamingTurnResult {
   /** True while a turn is actively streaming into this thread. */
@@ -44,6 +59,8 @@ export function useStreamingTurn(
 ): UseStreamingTurnResult {
   const append = useTranscriptStore((s) => s.append);
   const update = useTranscriptStore((s) => s.update);
+  const setStage = usePendingStore((s) => s.setStage);
+  const endPending = usePendingStore((s) => s.end);
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
 
   const registry = useMemo(() => new SequenceRegistry(), []);
@@ -91,8 +108,19 @@ export function useStreamingTurn(
     url: threadId ? wsUrls.review(threadId) : null,
     enabled,
     handlers: {
+      /* A real pipeline transition. The indicator's label follows this and nothing
+         else — no timer, no interpolation (Backend v7.0 §5). */
+      'message.stage': (p) => {
+        if (!threadId) return;
+        if (!isPendingStage(p.stage)) return;
+        setStage(threadId, p.stage);
+      },
+
       'message.delta': (p) => {
         if (!threadId) return;
+        /* Text is arriving: the wait is over, and StreamCaret takes over from the
+           pending indicator (Surface 1 v6.0 §3.10, lifecycle). */
+        endPending(threadId);
         const outcome = registry.apply(p.messageId, p.seq, p.delta);
 
         if (outcome.kind === 'stale') return;
@@ -112,6 +140,7 @@ export function useStreamingTurn(
 
       'message.final': (p) => {
         if (!threadId) return;
+        endPending(threadId);
         registry.release(p.message.id);
         setActiveMessageId(null);
 
@@ -140,6 +169,7 @@ export function useStreamingTurn(
 
       'message.under_review': (p) => {
         if (!threadId) return;
+        endPending(threadId);
         /* The provisional text is REPLACED, not annotated. The component reads
            the status and renders the approved wording instead of the body. */
         registry.release(p.messageId);
@@ -149,6 +179,7 @@ export function useStreamingTurn(
 
       'message.halted': (p) => {
         if (!threadId) return;
+        endPending(threadId);
         /* Discard. Partial text that tripped the guard is exactly what must not
            be read, so it is not kept for context either. */
         registry.release(p.messageId);
@@ -161,6 +192,13 @@ export function useStreamingTurn(
   useEffect(() => {
     return () => registry.clear();
   }, [registry, threadId]);
+
+  /* Narrow the socket to the visible thread. Sent after the connection opens,
+     because a select on a closed socket is dropped rather than queued. */
+  useEffect(() => {
+    if (!threadId || status !== 'open') return;
+    send({ type: 'thread.select', payload: { threadId } });
+  }, [threadId, status, send]);
 
   const cancel = useCallback(() => {
     if (!threadId || !activeMessageId) return;

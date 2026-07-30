@@ -1,28 +1,33 @@
 /**
  * The shell contract — what the backend authorizes the surface to render.
  *
- * This REPLACES the v4.0 rails contract. `left_rail` and `right_rail` are gone:
- * the right value rail is retired and the left rail became navigation, so the
- * payload now names sidebar sections, the conversation header and the composer
- * label instead (Architecture v2.6 §11.6, §11.7).
+ * v7.0 SPLITS THE ZONE VOCABULARY. `sidebar_sections` is superseded by
+ * `conversation_rail_sections` and `content_pane_sections`, and the payload now
+ * carries `shell_mode` (Architecture v2.7 §11.6, §11.7).
  *
- * The single rule this file exists to enforce: THE SIDEBAR IS RENDERED, NOT
+ * The retired `left_rail` and `right_rail` names are NOT reintroduced. The
+ * content pane is a new zone, not the old value rail: everything Architecture
+ * v2.6 §11.6A re-homed stays re-homed.
+ *
+ * The single rule this file exists to enforce: THE ZONES ARE RENDERED, NOT
  * DECIDED. A section the backend did not authorize must not be renderable, and
  * nothing in the frontend may add one back.
  *
- * Surface 1 v5.0 §3.2 · Backend v6.0 §3.1
+ * Surface 1 v6.0 §3.1–3.3 · Backend v7.0 §4.1
  */
 
 import type {
   DisclosureCeiling, IdentityState, StateKey,
 } from '@/types/journey.types';
+import type { ShellMode } from '@/lib/journey/shellModes';
+import type { ConversationRailSection } from '@/lib/journey/railSections';
 
 /**
  * The thin strip above the transcript.
  *
  * It is the home of the two guarantees the retired right rail was carrying:
  * a NAMED human owner, and quick help that reaches one in a single action
- * (Architecture v2.6 §11.6A, R30).
+ * (Architecture v2.7 §11.6A, R30). The content pane never becomes its home.
  */
 export interface ConversationHeaderContract {
   /** The thread title. Never an inferred organisation. */
@@ -36,7 +41,7 @@ export interface ConversationHeaderContract {
   /**
    * R30 is an absolute, not a layout preference. When the header collapses on a
    * narrow breakpoint this moves into the thread actions menu — it never
-   * disappears.
+   * disappears, and it never moves into the content pane.
    */
   quickHelp: boolean;
 }
@@ -46,10 +51,17 @@ export interface ConversationHeaderContract {
  *
  * Deliberately ABSENT, and a defect if they ever appear on this plane:
  * persona_id, tier, lead score, license_out_probability, coverage_map,
- * question_budget_remaining, attachment_risk_flags (Architecture v2.6 §10.5).
+ * question_budget_remaining, attachment_risk_flags, matched_text,
+ * content_pane_debug, thread_switch_history (Architecture v2.7 §10.5).
  */
 export interface ShellContract {
   threadId: string | null;
+  /**
+   * `arrival` renders the question alone; `working` renders rail + column +
+   * content pane. NULL means the backend has not answered yet — the caller falls
+   * back to the local threshold rather than inheriting a mode nobody chose.
+   */
+  shellMode: ShellMode | null;
   /** 1–10, or null for DORMANT / no relationship yet. */
   journeyState: number | null;
   stateKey: StateKey;
@@ -57,20 +69,32 @@ export interface ShellContract {
   disclosureCeiling: DisclosureCeiling;
   /** Commitment cards stay unreachable until this is true. */
   valueDelivered: boolean;
-  /** The state-appropriate composer label (Surface 1 v5.0 §3.5). */
+  /** The state-appropriate composer label (Surface 1 v6.0 §3.5). */
   composerLabel: string;
-  /** Whether suggestion chips should render. Phase 2 consumes it. */
+  /** Whether suggestion chips should render. */
   questionLoopOpen: boolean;
-  /** Whether the attach control is active for this plane and state. Phase 2. */
+  /** Whether the attach control is active for this plane and state. */
   attachmentsEnabled: boolean;
-  /** Ordered, closed vocabulary. The ONLY source of what the sidebar shows. */
-  sidebarSections: string[];
+  /**
+   * Ordered, closed, and it NEVER GROWS: new_chat, conversations, account.
+   * The only source of what the conversation rail shows.
+   */
+  conversationRailSections: ConversationRailSection[];
+  /**
+   * Ordered. PHASE 2 renders these; Phase 1 carries them through so the contract
+   * is complete the moment the pane lands, and so a payload from a v7.0 backend
+   * is never silently discarded.
+   */
+  contentPaneSections: string[];
+  /** Which artifact the pane opens on. Phase 2 consumes it. */
+  contentPaneDefaultArtifactId: string | null;
   conversationHeader: ConversationHeaderContract | null;
 }
 
 /** GET /api/shell — the wire shape, before normalisation. */
 export interface ShellContractPayload {
   threadId?: string | null;
+  shellMode?: string | null;
   journeyState?: number | null;
   stateKey?: StateKey;
   identityState?: IdentityState;
@@ -79,6 +103,15 @@ export interface ShellContractPayload {
   composerLabel?: string;
   questionLoopOpen?: boolean;
   attachmentsEnabled?: boolean;
+  conversationRailSections?: string[];
+  contentPaneSections?: string[];
+  contentPaneDefaultArtifactId?: string | null;
+  /**
+   * The v6.0 key. Backend v7.0 Phase 1 emits it as an alias of
+   * `conversation_rail_sections` for exactly one release, and Phase 3 removes it.
+   * It is read here so this surface keeps working against a backend that has not
+   * migrated yet — never to widen what the new key said.
+   */
   sidebarSections?: string[];
   conversationHeader?: ConversationHeaderContract | null;
 }

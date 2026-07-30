@@ -5,6 +5,7 @@ import { StreamCaret } from './StreamCaret';
 import { UnderReviewNotice } from './UnderReviewNotice';
 import { HaltedTurnNotice } from './HaltedTurnNotice';
 import { CitationChip } from './CitationChip';
+import { MarkdownTurn } from './MarkdownTurn';
 import { TurnActions } from './TurnActions';
 import type { Turn } from '@/types/thread.types';
 
@@ -25,6 +26,18 @@ import type { Turn } from '@/types/thread.types';
  *
  * Copy actions appear only once a turn is SETTLED — offering to copy text that
  * governance may still replace would be offering to copy a draft.
+ *
+ * ── v6.0 PHASE 2: THE BODY RENDERS AS MARKDOWN ──────────────────────────────
+ * It used to split on newlines and emit paragraphs, so a turn containing a list, a
+ * table or a code block arrived as asterisks and pipes. `MarkdownTurn` renders them —
+ * from a closed feature set, with no HTML string anywhere in the path, and throttled
+ * while the turn is still provisional so text arrives rather than flickers
+ * (Architecture v2.7 §19.9).
+ *
+ * The GOVERNANCE STATES ARE UNTOUCHED by that change, and must stay untouched:
+ * `under_review` and `halted` still render their notices instead of the body, so
+ * rendering Markdown cannot put provisional text on screen that governance has
+ * replaced or discarded. Formatting changes presentation only.
  */
 export interface StreamingTurnProps {
   turn: Turn;
@@ -49,9 +62,7 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
         <HaltedTurnNotice />
       ) : (
         <div className="turn__body">
-          {turn.body
-            ? turn.body.split('\n').map((line, i) => <p key={i}>{line || '\u00A0'}</p>)
-            : null}
+          {turn.body ? <MarkdownTurn body={turn.body} provisional={provisional} /> : null}
           {provisional ? (
             <p className="turn__preparing">
               <StreamCaret />

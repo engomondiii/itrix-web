@@ -1,0 +1,164 @@
+/* ============================================================================
+   itriX · PHASE 3 — the completed pane sections, and the assent block
+
+   Phase 2 shipped the pane with seven sections. Phase 3 fills all seventeen, so
+   the additions here are the shared furniture those sections need: a stack, a
+   loading slot, an honest note, the pathway list, the disclosure-boundary block,
+   the delivered-artifact list, and the legal assent checkbox.
+
+   THERE IS DELIBERATELY NO STYLING FOR A CARD, AN OFFER, A COUNTDOWN OR A CALL TO
+   ACTION. Architecture v2.7 §2.7 forbids all of them in the pane; leaving the
+   styles absent means adding one would look wrong before it looked finished.
+   ============================================================================ */
+
+/* A vertical stack inside a section. Most sections mount two shipped components
+   and need nothing more than honest spacing between them. */
+.pane__stack { display: flex; flex-direction: column; gap: 14px; }
+
+.pane__loading { display: flex; justify-content: center; padding: 20px 0; }
+
+/* A short factual line. Never a claim, never an offer. */
+.pane__note {
+  margin: 0;
+  color: var(--ink-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.pane__note strong { color: var(--ink-primary); font-weight: 600; }
+
+/* ── Pathway ──────────────────────────────────────────────────────────────── */
+/* The approved four-step hint with the furthest step reached marked. The mapping is
+   coarse on purpose: four steps cannot carry ten states, so it marks progress rather
+   than claiming a precision the copy does not have. */
+.pane__pathway {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: pathway;
+}
+.pane__pathway li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0 7px 26px;
+  counter-increment: pathway;
+  color: var(--ink-muted);
+  font-size: 13px;
+}
+.pane__pathway li::before {
+  content: counter(pathway);
+  position: absolute;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-medium);
+  border-radius: 5px;
+  background: var(--canvas);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+}
+/* Not colour alone: a reached step also gains weight, and the current one a border. */
+.pane__pathway li[data-reached] { color: var(--ink-secondary); }
+.pane__pathway li[data-reached]::before {
+  border-color: var(--ink-primary);
+  background: var(--tint);
+  color: var(--ink-primary);
+}
+.pane__pathway li[data-current] { color: var(--ink-primary); font-weight: 600; }
+
+/* ── Delivered artifacts, as a record ─────────────────────────────────────── */
+.pane__delivered { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 1px; }
+.pane__delivered li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 8px;
+  border-radius: 7px;
+}
+.pane__delivered li:hover { background: var(--soft); }
+.pane__delivered-title { color: var(--ink-primary); font-size: 13px; }
+.pane__delivered-time {
+  flex: 0 0 auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+
+/* ── The disclosure boundary, in approved wording ─────────────────────────── */
+.pane__boundary {
+  padding: 14px;
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--accent-line, var(--border-medium));
+  border-radius: 10px;
+  background: var(--soft);
+}
+.pane__boundary-tier {
+  margin: 0 0 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.pane__boundary-title { margin: 0 0 6px; font-size: 14px; font-weight: 600; color: var(--ink-primary); }
+.pane__boundary-body { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-secondary); }
+
+/* ── Legal assent ─────────────────────────────────────────────────────────── */
+/* Deliberately plain. A styled, reassuring consent block is a consent block designed
+   to be ticked without reading; this one is legible and unremarkable. */
+.assent { display: flex; flex-direction: column; gap: 6px; }
+.assent__row { display: flex; align-items: flex-start; gap: 10px; }
+/* >=20px, and >=44px of clickable label beside it, so the target is the sentence
+   rather than the box (Architecture v2.7 §25.3). */
+.assent__box {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  accent-color: var(--ink-primary);
+}
+.assent__label {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-primary);
+  cursor: pointer;
+}
+.assent__link {
+  color: var(--ink-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.assent__error {
+  margin: 0;
+  padding-left: 30px;
+  color: var(--ink-primary);
+  font-size: 13px;
+}
+/* Not colour alone — the message says what to do, and role="alert" announces it. */
+.assent__error::before { content: '— '; color: var(--ink-secondary); }
+
+.assent-summary {
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--soft);
+}
+.assent-summary__title {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-primary);
+}
+.assent-summary p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--ink-secondary); }
+
+@media (max-width: 767px) {
+  .assent__box { width: 22px; height: 22px; }
+  .pane__delivered li { padding: 10px 8px; }
+}

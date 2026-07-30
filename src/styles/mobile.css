@@ -1,0 +1,162 @@
+/* ============================================================================
+   itriX · THE MOBILE CONTRACT (Architecture v2.7 §25)
+
+   Phase 3 closes the responsiveness contract. It is written here as ONE file
+   organised by the five GUARANTEES rather than by breakpoint, because the
+   breakpoints exist to serve the guarantees and a rule filed under "768px" is a
+   rule nobody can check against the specification.
+
+   THE FIVE GUARANTEES, AT EVERY WIDTH (§25.1)
+     1. the composer is reachable and usable, above the keyboard, without the
+        visitor losing what they were reading;
+     2. the current task is never lost to a layout change, an orientation change,
+        or a keyboard appearing;
+     3. quick help stays one action from a named human (R30) — never nowhere;
+     4. the confidentiality notice stays visible wherever a problem can be
+        described;
+     5. the legal instruments stay reachable.
+
+   Earlier phases already satisfy most of this. What is left is the sweep: tap
+   targets that are still below 44px, the dvh units, and the reduced-motion and
+   focus rules that were set per-component and are easier to verify in one place.
+   ============================================================================ */
+
+/* ── Guarantee 1 · The composer, above the keyboard ───────────────────────── */
+/* dvh, NOT vh. On iOS `100vh` is the viewport WITHOUT the URL bar, so a pinned
+   composer sits underneath it and the visitor types into something they cannot see. */
+@media (max-width: 1023px) {
+  .arrival-page,
+  .conversation-column--active,
+  .content-pane { min-height: 100dvh; }
+  .conversation-column--active { height: 100dvh; }
+}
+
+@media (max-width: 767px) {
+  /* The transcript keeps its own scroll; only the composer is pinned. A page-level
+     sticky composer fights the keyboard on Android. */
+  .conversation-column__composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: var(--canvas);
+  }
+}
+
+/* ── Guarantee 2 · Nothing is lost to a layout change ─────────────────────── */
+/* Only ONE sheet at a time (§25.2). Enforced in PaneSheet, which closes the rail on
+   open; this is the visual backstop so two scrims can never stack even for a frame. */
+@media (max-width: 1023px) {
+  .rail-sheet ~ .pane-sheet .pane-sheet__scrim { display: none; }
+}
+
+/* ── Guarantee 3 · Quick help is never nowhere ────────────────────────────── */
+/* The header collapses below 768px, and quick help must survive the collapse. It stays
+   in the header rather than moving into an overflow menu, because R30 is one ACTION —
+   not one action after opening a menu. */
+@media (max-width: 767px) {
+  .conversation-header { flex-wrap: wrap; row-gap: 8px; }
+  .conversation-header__identity { order: 2; flex: 1 1 100%; min-width: 0; }
+  .conversation-header__reach { order: 1; margin-left: auto; }
+  .conversation-header__help-button { min-height: 44px; padding-inline: 12px; }
+  /* The SLA badge is the first thing to go: it is context, not a route to a human. */
+  .conversation-header__sla { display: none; }
+}
+
+/* ── Guarantee 4 · The confidentiality notice stays visible ───────────────── */
+/* It is a SAFETY CONTROL, not a caption, so it never becomes a truncated single line or
+   drops below 13px — the floor for informational text (§21.12). */
+@media (max-width: 767px) {
+  .composer-footer__note {
+    display: flex;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .composer-footer__note span { overflow: visible; white-space: normal; }
+}
+
+/* ── Guarantee 5 · The legal instruments stay reachable ───────────────────── */
+/* Wrapping to a second row rather than shrinking the type or hiding an instrument. */
+@media (max-width: 419px) {
+  .legal-strip ul { flex-wrap: wrap; row-gap: 6px; }
+  .legal-strip__link { font-size: 12px; }
+}
+
+/* ── Tap targets: the sweep ───────────────────────────────────────────────── */
+/* >=44px on touch, which is where the earlier phases set the per-component floors.
+   `any-pointer: coarse` rather than a width query, because a small window on a desktop
+   does not need bigger targets and a large tablet does. */
+@media (any-pointer: coarse) {
+  .turn__action,
+  .artifact__action,
+  .artifact-ref__link,
+  .pane__collapse,
+  .pane__close,
+  .pane__tab,
+  .pane__switcher-item,
+  .prompt-carousel__step,
+  .prompt-carousel__showall,
+  .rail-thread__action,
+  .turn-code__copy,
+  .legal-nav__link,
+  .legal-strip__link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  /* Turn actions are hover-revealed on a pointer surface; on touch there is no hover,
+     so they are always visible or they do not exist. */
+  .turn__actions { opacity: 1; }
+}
+
+/* ── Focus: visible everywhere, and never only on hover ──────────────────── */
+.pane__tab:focus-visible,
+.pane__switcher-item:focus-visible,
+.pane__collapse:focus-visible,
+.pane__close:focus-visible,
+.assent__box:focus-visible,
+.artifact-ref__open:focus-visible,
+.turn-code__copy:focus-visible,
+.prompt-carousel__step:focus-visible,
+.prompt-carousel__showall:focus-visible {
+  outline: 2px solid var(--ink-primary);
+  outline-offset: 2px;
+}
+
+/* ── Reduced motion: the complete sweep ───────────────────────────────────── */
+/* Every animated element introduced across the three phases, in one place, so the
+   guarantee can be verified rather than trusted. Nothing becomes unusable: each of
+   these conveys its meaning through text or state, not through the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .prompt-card,
+  .sign-in-link,
+  .pending__cell,
+  .artifact-ref__open,
+  .pane__tab,
+  .pane__switcher-item,
+  .turn__actions,
+  .composer-shell,
+  .composer-send,
+  .artifact__chevron {
+    transition: none !important;
+    animation: none !important;
+  }
+  .prompt-carousel__stage[data-view='single'] .prompt-card { animation: none !important; }
+  .prompt-card:hover,
+  .composer-shell:focus-within { transform: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ── Print: the pane is not part of a printed conversation ────────────────── */
+@media print {
+  .conversation-rail,
+  .content-pane,
+  .rail-sheet,
+  .pane-sheet,
+  .conversation-column__composer,
+  .conversation-main__nav,
+  .pending { display: none !important; }
+  .working-shell { display: block; }
+  .transcript { overflow: visible; height: auto; }
+  .artifact-ref__inline { display: block; }
+}

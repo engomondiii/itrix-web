@@ -1,0 +1,141 @@
+/* ============================================================================
+   itriX · THE LEGAL INSTRUMENTS
+
+   Terms of Service · Privacy Policy · Security · Disclosure Policy.
+
+   These four pages are DOCUMENTS, not product surfaces. They are rendered by a
+   server component with no client shell around them, so that they stay readable
+   with JavaScript disabled and print correctly (Surface 1 v6.0 §1.1) — and the
+   styling follows that intent: a single measured column, generous leading, real
+   print rules, and no glass.
+
+   Creating these routes is what CLEARS THE v5.0 RELEASE BLOCKER: /privacy and
+   /security did not exist, so the sidebar footer skipped them with a development
+   warning rather than shipping two 404s.
+   ============================================================================ */
+
+.legal-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--canvas);
+}
+
+.legal-page__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.legal-page__brand { display: inline-flex; align-items: center; text-decoration: none; }
+
+.legal-page__main { flex: 1 1 auto; padding: 48px 32px 96px; }
+
+/* ONE MEASURED COLUMN. 68–72 characters, the same reading measure the transcript
+   uses (Architecture v2.7 §21.12) — a contract is not more readable at full
+   viewport width than a conversation is. */
+.legal-doc {
+  width: 100%;
+  max-width: 72ch;
+  margin: 0 auto;
+}
+.legal-doc__title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(30px, 3.4vw, 40px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ink-primary);
+}
+.legal-doc__standfirst {
+  margin: 14px 0 0;
+  color: var(--ink-secondary);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.legal-version {
+  margin: 12px 0 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+}
+
+/* The draft banner. Deliberately conspicuous: an unreviewed instrument that looks
+   finished is worse than one that looks unfinished. */
+.legal-draft {
+  margin: 28px 0 0;
+  padding: 18px 20px;
+  border: 1px solid var(--border-medium);
+  border-left: 3px solid var(--ink-primary);
+  border-radius: 12px;
+  background: var(--soft);
+}
+.legal-draft__label {
+  margin: 0 0 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-primary);
+}
+.legal-draft p { margin: 0; color: var(--ink-secondary); font-size: 14px; line-height: 1.6; }
+.legal-draft p + p { margin-top: 8px; }
+
+.legal-doc__section { margin-top: 40px; }
+.legal-doc__section h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display, inherit);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink-primary);
+}
+.legal-doc__section p,
+.legal-doc__section li {
+  color: var(--ink-primary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.legal-doc__section p { margin: 0 0 14px; }
+.legal-doc__section ul { margin: 0 0 14px; padding-left: 22px; }
+.legal-doc__section li { margin-bottom: 8px; }
+
+/* ── Navigation between the four ──────────────────────────────────────────── */
+.legal-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.legal-nav__link {
+  color: var(--ink-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+.legal-nav__link:hover { color: var(--ink-primary); text-decoration: underline; text-underline-offset: 3px; }
+.legal-nav__link[aria-current='page'] { color: var(--ink-primary); font-weight: 600; }
+
+@media (max-width: 767px) {
+  .legal-page__bar { padding: 16px 20px; }
+  .legal-page__main { padding: 32px 20px 64px; }
+  .legal-doc__section p,
+  .legal-doc__section li { font-size: 15px; }
+}
+
+/* Print: these will be printed, filed and attached to emails. */
+@media print {
+  .legal-page__bar,
+  .legal-nav { display: none; }
+  .legal-page__main { padding: 0; }
+  .legal-doc { max-width: none; }
+  .legal-doc__section { page-break-inside: avoid; }
+  .legal-draft { border-left-width: 2px; }
+}

@@ -5,7 +5,12 @@ import { TurnGroup } from './TurnGroup';
 import { ScrollAnchor } from './ScrollAnchor';
 import { NewMessagesPill } from './NewMessagesPill';
 import { ArtifactBlock } from '@/components/artifacts/ArtifactBlock';
+import { ArtifactReferenceCard } from './ArtifactReferenceCard';
+import { PendingTransferIndicator } from './PendingTransferIndicator';
 import { InlineCard } from '@/components/cards/InlineCard';
+import { useThreadContext } from '@/context/ThreadContext';
+import { usePendingStage } from '@/hooks/usePendingStage';
+import { useScrollMemory } from '@/hooks/useScrollMemory';
 import { isPinnedArtifact } from '@/lib/journey/artifactTypes';
 import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
 import type { TranscriptItem } from '@/hooks/useTranscript';
@@ -35,6 +40,29 @@ import type { TranscriptItem } from '@/hooks/useTranscript';
  *
  * SCROLL: auto-follow only while the visitor is at the bottom. Otherwise a pill
  * offers the jump and they decide. Streaming never steals focus.
+ *
+ * ── v6.0 PHASE 2 ADDS THREE THINGS ──────────────────────────────────────────
+ *
+ * 1. ARTIFACTS BECOME REFERENCE CARDS. An artifact renders in the content pane now,
+ *    but a card recording that it was delivered — and WHEN — stays in the transcript
+ *    permanently (R35). Without that, a thread becomes a list of the visitor's
+ *    questions with the answers living somewhere else. `ArtifactReferenceCard` expands
+ *    the artifact inline wherever the pane is unavailable, so nothing is unreachable
+ *    at any width.
+ *
+ *    The PINNED artifact is deliberately NOT a reference card. `success_overview` is
+ *    standing context above the scrolling record; a card pointing at it would be a
+ *    pointer to something already on screen.
+ *
+ * 2. THE PENDING INDICATOR. Between submit and the first token, the assistant slot
+ *    shows a conserved-transfer lattice and an HONEST stage label — driven by the
+ *    backend's real pipeline transitions, never a timer (R42). It sits after the last
+ *    item and inside the live region, because its arrival is exactly the kind of
+ *    addition the region exists to announce.
+ *
+ * 3. PER-THREAD SCROLL MEMORY. A returned-to thread opens where the visitor left it
+ *    (R37). Restoration runs after paint, because the container's real scrollHeight is
+ *    not known until the browser has laid the new thread out.
  */
 const AT_BOTTOM_TOLERANCE_PX = 64;
 
@@ -47,6 +75,14 @@ export function Transcript({ items }: TranscriptProps) {
   const [atBottom, setAtBottom] = useState(true);
   const [unseen, setUnseen] = useState(false);
   const lastCount = useRef(items.length);
+
+  const { activeThreadId } = useThreadContext();
+  const { pending, waiting, slow } = usePendingStage(activeThreadId);
+  const { save: saveScroll } = useScrollMemory({
+    threadId: activeThreadId,
+    ref: scrollRef,
+    itemCount: items.length,
+  });
 
   /* The pinned artifact is lifted out of the flow, keeping the latest version. */
   const { pinned, flow } = useMemo(() => {
@@ -71,7 +107,10 @@ export function Transcript({ items }: TranscriptProps) {
     const bottom = distance <= AT_BOTTOM_TOLERANCE_PX;
     setAtBottom(bottom);
     if (bottom) setUnseen(false);
-  }, []);
+    /* Throttled inside the hook — a scroll handler that writes to a store on every
+       event makes scrolling feel heavy. */
+    saveScroll();
+  }, [saveScroll]);
 
   useEffect(() => {
     if (flow.length > lastCount.current && !atBottom) setUnseen(true);
@@ -84,8 +123,6 @@ export function Transcript({ items }: TranscriptProps) {
     el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
     setUnseen(false);
   }, []);
-
-  const lastArtifactId = [...flow].reverse().find((i) => i.kind === 'artifact')?.id ?? null;
 
   return (
     <div className="transcript" ref={scrollRef} onScroll={checkPosition}>
@@ -106,16 +143,18 @@ export function Transcript({ items }: TranscriptProps) {
         {flow.map((item) => {
           if (item.kind === 'turn') return <TurnGroup key={item.id} turn={item.turn} />;
           if (item.kind === 'artifact') {
-            return (
-              <ArtifactBlock
-                key={item.id}
-                artifact={item.artifact}
-                defaultOpen={item.id === lastArtifactId}
-              />
-            );
+            return <ArtifactReferenceCard key={item.id} artifact={item.artifact} />;
           }
           return <InlineCard key={item.id} card={item.card} />;
         })}
+        {waiting ? (
+          <PendingTransferIndicator
+            stage={pending?.stage ?? null}
+            slow={slow}
+            onRetry={() => window.location.reload()}
+          />
+        ) : null}
+
         <ScrollAnchor active={atBottom} dependency={flow.length} />
       </section>
 

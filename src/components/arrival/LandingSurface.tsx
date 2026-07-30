@@ -1,33 +1,41 @@
 'use client';
 
-import { ArrivalLanding } from './ArrivalLanding';
 import { ArrivalCenter } from './ArrivalCenter';
 import { ConversationColumn } from '@/components/shell/ConversationColumn';
 import { useArrivalMode } from '@/hooks/useArrivalMode';
+import { useShellContext } from '@/context/ShellContext';
 
 /**
- * The switch between the two surfaces.
+ * The CONTENTS of the front door — never the shell around it.
  *
- * EXACTLY ONE COMPONENT MOUNTS THE CONVERSATION SHELL, and it is SiteChrome.
+ * EXACTLY ONE COMPONENT MOUNTS A SHELL, and it is ShellModeGate.
  *
- * This used to mount its own, which produced two sidebars: submitting rewrites
- * the URL to /review/<id> with history.replaceState, Next's usePathname reacts
- * to that, SiteChrome stopped treating the route as chromeless and mounted a
- * shell — while this component, still the rendered page because replaceState
- * does not change the route segment, mounted a second one inside it.
+ * That is a hard rule this surface learned the expensive way. When two components
+ * could each mount one, submitting rewrote the URL to /review/<id> with
+ * history.replaceState, usePathname reacted, the gate stopped treating the route as
+ * chromeless and mounted a shell — while this component, still the rendered page
+ * because replaceState does not change the route segment, mounted a second one
+ * inside it. Two rails, one visitor.
  *
- * The rule that prevents it recurring: a component may render EITHER the shell
- * OR its contents, never both. SiteChrome owns the shell; everything below it
- * renders contents only.
+ * So: a component renders EITHER a shell OR its contents, never both. This one
+ * renders contents.
  *
- * The fallback passed to ConversationColumn is the bare CENTRE, not the full
- * arrival screen — if it ever renders it will be inside the shell, and a second
- * header and footer in there would be the same class of mistake.
+ * ── v6.0 ────────────────────────────────────────────────────────────────────
+ * In arrival mode it renders the CENTRE ALONE. The wordmark, Sign in and the legal
+ * strip belong to ArrivalShell, which the gate mounts around this. In working mode
+ * it renders the conversation column, whose empty state is the same centre — so a
+ * visitor whose thread turns out to be empty sees the front door rather than an
+ * error page.
+ *
+ * The mode is read the same way the gate reads it: the backend's `shell_mode` when
+ * it has answered, and the local threshold until then.
  */
 export function LandingSurface() {
-  const arrival = useArrivalMode();
+  const backendMode = useShellContext().shellMode;
+  const localArrival = useArrivalMode();
+  const arrival = backendMode ? backendMode === 'arrival' : localArrival;
 
-  if (arrival) return <ArrivalLanding />;
+  if (arrival) return <ArrivalCenter />;
 
   return <ConversationColumn emptyState={<ArrivalCenter />} />;
 }

@@ -9,20 +9,21 @@ interface DataLayerWindow extends Window {
 /**
  * Known event names.
  *
- * ALL OF THIS IS INTERNAL TELEMETRY (Surface 1 v4.0 §7.5). Rail actions, pitch
- * engagement and customer-health signals are handled under the privacy policy
- * and are never surfaced back to the visitor or customer.
+ * ALL OF THIS IS INTERNAL TELEMETRY (Surface 1 v6.0 §7.5). Rail actions, prompt
+ * selections and customer-health signals are handled under the Privacy Policy — which
+ * from v6.0 is a document on this surface rather than a promise about one — and are
+ * never surfaced back to the visitor or customer.
  *
  * Two rules the payloads must keep, because the type system cannot enforce them:
  *
- *   · No persona_id, tier, score or commercial probability is ever a payload
- *     field. Those live on the team plane and nowhere else.
- *   · No satisfaction SCORE is ever sent. `success.pulse_submitted` records that
- *     a pulse happened and whether follow-up was asked for — the score itself
- *     goes to the customer-success owner through the API, not through analytics.
+ *   · No persona_id, tier, score or commercial probability is ever a payload field.
+ *     Those live on the team plane and nowhere else.
+ *   · No satisfaction SCORE is ever sent. `success.pulse_submitted` records that a
+ *     pulse happened and whether follow-up was asked for — the score itself goes to
+ *     the customer-success owner through the API, not through analytics.
  *
- * Any string is still accepted; this union is documentation and autocomplete,
- * not a hard gate.
+ * Any string is still accepted; this union is documentation and autocomplete, not a
+ * hard gate.
  */
 export type KnownEvent =
   /* v5.0 — the conversation surface. All internal telemetry. */
@@ -31,13 +32,30 @@ export type KnownEvent =
   | 'thread.selected'
   | 'shell.new_review'
   | 'sidebar.section_opened'
-  /* Phase 2 — attachments, suggestions, artifacts, cards. */
+  /* v6.0 — the two-mode shell, the X control, the rotating prompts, legal. */
+  | 'shell.mode_changed'
+  | 'prompt_carousel.selected'
+  | 'composer.send_via_keyboard'
+  | 'new_chat.created'
+  | 'legal.viewed'
+  /* v6.0 Phase 2 — the content pane, reference cards, thread switching. */
+  | 'thread.switched'
+  | 'artifact.reference_opened'
+  | 'pane.opened'
+  | 'pane.section_viewed'
+  | 'pending.timeout'
+  /* v6.0 Phase 3 — legal assent and the completed pane. NEVER carries the instrument
+     bodies, an email, or anything identifying: only how many instruments were accepted
+     and by which transport. */
+  | 'assent.recorded'
+  | 'assent.blocked'
+  /* Attachments, suggestions, artifacts, cards. */
   | 'attachment.uploaded'
   | 'suggestion.selected'
   | 'artifact.delivered'
   | 'artifact.opened'
   | 'card.action_taken'
-  /* Phase 3 — State 10. NEVER carries a satisfaction score. */
+  /* State 10. NEVER carries a satisfaction score. */
   | 'success.improvement_submitted'
   | 'review.prompt_started'
   | 'review.diagnosed'
@@ -52,12 +70,12 @@ export type KnownEvent =
   | 'portal.document_opened'
   | 'portal.data_room_locked_view'
   | 'portal.nda_requested'
-  // ── Phase 2 · the relationship shell ──────────────────────────────────────
+  // ── The relationship shell ────────────────────────────────────────────────
   | 'center.example_selected'
   | 'rail.section_opened'
   | 'rail.sheet_opened'
   | 'shell.state_morphed'
-  // ── Phase 3 · paid workspaces and customer success ────────────────────────
+  // ── Paid workspaces and customer success ──────────────────────────────────
   | 'workspace.assessment_viewed'
   | 'workspace.boundary_map_viewed'
   | 'workspace.poc_evidence_viewed'
@@ -69,7 +87,6 @@ export type KnownEvent =
   | 'success.changes_acknowledged'
   | 'success.knowledge_opened'
   | 'success.pulse_submitted'
-  | 'success.improvement_submitted'
   | (string & {});
 
 export function trackEvent(name: KnownEvent, payload: AnalyticsPayload = {}): void {
@@ -80,7 +97,6 @@ export function trackEvent(name: KnownEvent, payload: AnalyticsPayload = {}): vo
     if (!Array.isArray(w.dataLayer)) w.dataLayer = [];
     w.dataLayer.push(event);
     if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
       console.debug('[analytics]', name, payload);
     }
   } catch {

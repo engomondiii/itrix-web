@@ -7,6 +7,7 @@ import { useComposerStore } from '@/store/composerStore';
 import { useThreadStore } from '@/store/threadStore';
 import { useShellContext } from '@/context/ShellContext';
 import { useTranscriptStore } from '@/store/transcriptStore';
+import { usePendingStore } from '@/store/pendingStore';
 import { setThreadUrl } from '@/hooks/useThread';
 import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { familyForPrompt } from '@/lib/content/examplePrompts';
@@ -91,6 +92,11 @@ export function useComposer(): UseComposerResult {
 
   const append = useTranscriptStore((s) => s.append);
   const update = useTranscriptStore((s) => s.update);
+  /* v6.0 PHASE 2. The wait BEGINS when the visitor submits — not when the first
+     socket event arrives, because between those two moments the visitor is already
+     waiting and deserves to be told so (Surface 1 v6.0 §3.10). */
+  const beginPending = usePendingStore((s) => s.begin);
+  const endPending = usePendingStore((s) => s.end);
 
   /** Reconcile the optimistic turn with whatever the server actually said. */
   const reconcile = useCallback(
@@ -169,6 +175,7 @@ export function useComposer(): UseComposerResult {
 
     append(threadId, optimistic);
     clear();
+    beginPending(threadId);
 
     trackEvent(isFirstTurn ? 'thread.started' : 'thread.turn_submitted', {
       fromCenter: isFirstTurn,
@@ -203,6 +210,13 @@ export function useComposer(): UseComposerResult {
 
         reconcile(serverThreadId, optimistic.id, result.data);
         setThreadUrl(serverThreadId);
+
+        /* Non-streaming path: the POST already carried the answer, so the wait is
+           over the moment we reconcile. With streaming on, `useStreamingTurn` ends it
+           on the first delta instead — whichever happens first, it ends exactly once
+           because ending an absent wait is a no-op. */
+        endPending(serverThreadId);
+        if (serverThreadId !== threadId) endPending(threadId);
       } else {
         /* Honest degradation. The sentence is kept and shown; we say plainly
            that it has not been reviewed. No fabricated answer, ever. */
@@ -212,6 +226,10 @@ export function useComposer(): UseComposerResult {
         });
         setError(result.error ? COMPOSER_COPY.unreachable : COMPOSER_COPY.unreachable);
         setThreadUrl(threadId);
+        /* Honest degradation ends the wait too. Leaving the indicator spinning over a
+           turn we have already told the visitor was not reviewed would be the surface
+           contradicting itself. */
+        endPending(threadId);
       }
     } finally {
       setSubmitting(false);
@@ -219,6 +237,7 @@ export function useComposer(): UseComposerResult {
   }, [
     value, activeThreadId, familyPrior, journeyState,
     setError, setSubmitting, setActive, upsertThread, append, clear, update, reconcile,
+    beginPending, endPending,
   ]);
 
   return {

@@ -6,6 +6,7 @@ import { wsUrls } from '@/lib/realtime/wsUrls';
 import { siteConfig } from '@/config/site.config';
 import { threadsApi } from '@/lib/api/threadsApi';
 import { trackEvent } from '@/lib/analytics/trackEvent';
+import { useContentPaneStore } from '@/store/contentPaneStore';
 import type { Artifact, InlineCard } from '@/types/artifact.types';
 
 /**
@@ -49,6 +50,10 @@ const EMPTY: ArtifactState = { threadId: null, artifacts: [], cards: [] };
 
 export function useArtifacts(threadId: string | null): UseArtifactsResult {
   const [state, setState] = useState<ArtifactState>(EMPTY);
+  /* Written directly rather than through useContentPane, which CALLS THIS HOOK — a
+     mutual import would be a cycle. The store is the shared surface between them,
+     which is what stores are for. */
+  const setActiveArtifact = useContentPaneStore((s) => s.setActiveArtifact);
 
   const refresh = useCallback(() => {
     if (!threadId) return;
@@ -80,6 +85,15 @@ export function useArtifacts(threadId: string | null): UseArtifactsResult {
            bypassed the disclosure check. */
         trackEvent('artifact.delivered', { type: p.type });
         refresh();
+
+        /* v6.0 PHASE 2: make it the pane's focused artifact so a visitor who has the
+           pane open reads the new brief rather than the previous one.
+           WHAT THIS DELIBERATELY DOES NOT DO is open anything. It sets which artifact
+           is focused; it does not un-collapse the pane and it does not open the
+           mobile sheet. A reveal must never force a panel open on a narrow breakpoint
+           (Architecture v2.7 §11.5) — the reference card in the transcript is what
+           makes the artifact reachable there, and it is appended regardless (R35). */
+        if (threadId && p.artifactId) setActiveArtifact(threadId, p.artifactId);
       },
     },
   });

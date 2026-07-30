@@ -12,6 +12,8 @@
  * Surface 1 v5.0 §3 · Architecture v2.6 §2.5
  */
 
+import type { Artifact, InlineCard } from '@/types/artifact.types';
+
 /** Who produced a turn. Deliberately not "user"/"assistant" — this is not a chatbot. */
 export type TurnRole = 'visitor' | 'itrix';
 
@@ -71,6 +73,19 @@ export interface ThreadSummary {
 
 export interface Thread extends ThreadSummary {
   turns: Turn[];
+  /**
+   * ARTIFACTS AND CARDS TRAVEL WITH THE THREAD.
+   *
+   * They were absent from this type until v6.0 Phase 2, and `normalizeWire.toThread`
+   * dropped them — so `useArtifacts` read `data.artifacts` through an
+   * `as unknown as` cast and always received undefined. Nothing rendered, and
+   * nothing complained, because the cast silenced the one thing that would have.
+   *
+   * That is fixed here and in normalizeWire. The content pane's entire input is
+   * artifacts, so the pane could not have worked without it.
+   */
+  artifacts: Artifact[];
+  cards: InlineCard[];
 }
 
 /** POST /api/threads — the payload the surface sends to open a conversation. */
