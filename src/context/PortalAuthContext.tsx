@@ -7,6 +7,7 @@ import { usePortalStore } from '@/store/portalStore';
 import { portalApi } from '@/lib/api/portalApi';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
+import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
 import type { ClientIdentity } from '@/types/portal.types';
 
 interface PortalAuthValue {
@@ -84,7 +85,12 @@ export function PortalAuthProvider({
       if (data?.client) {
         setClient(data.client);
         trackEvent('portal.signed_in', { clientId: data.client.id });
-        router.push(next && next.startsWith('/workspace') ? next : routes.workspaceOverview);
+        /* HARD navigation, not router.push(). The cookie this login just created is
+           httpOnly and therefore invisible to Next's client router cache, which may still
+           hold the pre-login entry for /workspace -- the middleware redirect back to
+           /sign-in. A soft push replays it and lands the visitor on sign-in holding a
+           valid session. See lib/navigation/afterAuth.ts. */
+        navigateAfterAuth(next);
         return true;
       }
       /* ONE message for a wrong password and for an address we have never seen (R54).
@@ -93,7 +99,7 @@ export function PortalAuthProvider({
       setError('Those details did not match. Please check your email and password.');
       return false;
     },
-    [router, setClient],
+    [setClient],
   );
 
   const signOut = useCallback(async () => {

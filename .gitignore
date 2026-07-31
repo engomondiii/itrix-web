@@ -200,3 +200,7 @@ itrix-web-fixes-v1/
 # itrix-web-redirect-fix-v1
 itrix-web-redirect-fix-v1/
 .web-redirect-fix-backup-*
+
+# itrix-web-login-nav-v1
+itrix-web-login-nav-v1/
+.web-login-nav-backup-*

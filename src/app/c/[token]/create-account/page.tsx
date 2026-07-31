@@ -23,6 +23,7 @@ import { siteConfig } from '@/config/site.config';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
 
 /**
  * The account-creation page (reveal ②→③). Gated by RevealGate so only a holder of an
@@ -141,7 +142,10 @@ function CreateAccountInner({ token }: { token: string }) {
       if (res.data.requiresPasswordSet) {
         router.push(`${routes.portalSetPassword}?token=${encodeURIComponent(token)}`);
       } else {
-        router.push(routes.workspaceOverview);
+        /* HARD navigation. This request created a session cookie, and Next's client
+           router cache cannot see an httpOnly cookie -- a soft push can replay a
+           pre-login middleware redirect. See lib/navigation/afterAuth.ts. */
+        navigateAfterAuth();
       }
       return;
     }

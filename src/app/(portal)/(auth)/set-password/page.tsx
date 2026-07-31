@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { AuthPanel } from '@/components/auth/AuthPanel';
 import { AuthHeading } from '@/components/auth/AuthHeading';
@@ -12,6 +12,7 @@ import { PasswordRules } from '@/components/auth/PasswordRules';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
 import { AUTH_COPY } from '@/lib/content/authCopy';
 import { routes } from '@/constants/routes';
+import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
 
 /**
  * FIRST-TIME PASSWORD, from an invitation.
@@ -33,7 +34,6 @@ import { routes } from '@/constants/routes';
  * inside a `null` fallback the static HTML had no heading and no fields in it.
  */
 function SetPasswordInner() {
-  const router = useRouter();
   const params = useSearchParams();
   const token = params.get('token') ?? '';
 
@@ -60,7 +60,10 @@ function SetPasswordInner() {
         body: JSON.stringify({ token, password }),
       });
       if (res.ok) {
-        router.push(routes.workspaceOverview);
+        /* HARD navigation. This request created a session cookie, and Next's client
+           router cache cannot see an httpOnly cookie -- a soft push can replay a
+           pre-login middleware redirect. See lib/navigation/afterAuth.ts. */
+        navigateAfterAuth();
         return;
       }
       /* One message for expired, consumed and unknown, and it offers a way forward. */
