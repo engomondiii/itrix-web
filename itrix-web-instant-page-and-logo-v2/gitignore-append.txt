@@ -1,3 +1,0 @@
-
-# itrix-web install backups (safe to delete)
-.instant-page-and-logo-v2-backup-*/
