@@ -430,19 +430,6 @@
   text-transform: uppercase;
   color: var(--ink-secondary);
 }
-/* The itriX speaker label renders the wordmark itself, so it must NOT be
-   uppercased into "ITRIX" — the mark is `itriX`. This modifier drops the
-   transform and lets the inline logo sit on the label baseline. */
-.turn__label--brand {
-  text-transform: none;
-  letter-spacing: 0;
-  display: inline-flex;
-  align-items: center;
-}
-.turn__label--brand .turn__brand {
-  display: inline-block;
-  vertical-align: middle;
-}
 .turn__body {
   font-size: 16px;
   line-height: 1.55;
@@ -504,16 +491,6 @@
   backdrop-filter: blur(var(--blur-glass-md, 18px));
 }
 .composer { width: 100%; max-width: var(--composer-max-w); margin-inline: auto; }
-/* The "View your page" affordance sits above the composer once the client page is
-   revealed, centred on the same measure as the composer. */
-.view-your-page {
-  width: 100%;
-  max-width: var(--composer-max-w);
-  margin-inline: auto;
-  margin-bottom: 12px;
-  display: flex;
-  justify-content: center;
-}
 .composer__label {
   margin-bottom: 8px;
   font-size: 14px;

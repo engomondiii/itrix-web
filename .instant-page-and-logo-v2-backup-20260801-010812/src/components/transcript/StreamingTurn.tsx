@@ -2,7 +2,6 @@
 
 import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
 import { StreamCaret } from './StreamCaret';
-import { ItrixTurnLabel } from './ItrixTurnLabel';
 import { UnderReviewNotice } from './UnderReviewNotice';
 import { HaltedTurnNotice } from './HaltedTurnNotice';
 import { CitationChip } from './CitationChip';
@@ -55,9 +54,7 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
       aria-label={TRANSCRIPT_COPY.itrixTurn}
       aria-busy={provisional || undefined}
     >
-      <p className="turn__label turn__label--brand">
-        <ItrixTurnLabel />
-      </p>
+      <p className="turn__label">{TRANSCRIPT_COPY.itrixTurn}</p>
 
       {turn.status === 'under_review' ? (
         <UnderReviewNotice />

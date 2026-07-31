@@ -10,8 +10,6 @@ import { useThreadContext } from '@/context/ThreadContext';
 import { useTranscript } from '@/hooks/useTranscript';
 import { useStreamingTurn } from '@/hooks/useStreamingTurn';
 import { useSuggestions } from '@/hooks/useSuggestions';
-import { useClientPageReveal } from '@/hooks/useClientPageReveal';
-import { ViewYourPageButton } from './ViewYourPageButton';
 
 /**
  * The conversation column — the working half of the surface.
@@ -49,13 +47,6 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
 
   const suggestions = useSuggestions(activeThreadId);
 
-  // When the backend reveals the personalised client page for this thread, surface a
-  // "View your page" button so the visitor can open /c/<token> when they are ready.
-  // This is a shell-level reaction to an explicit server reveal event and navigates
-  // only on the button click — so it does not touch the transcript's no-navigation
-  // invariant. The link in the reply remains the fallback if realtime is off.
-  const clientPage = useClientPageReveal(activeThreadId);
-
   const started = Boolean(activeThreadId) && items.length > 0;
 
   if (!started) {
@@ -68,7 +59,6 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
       <Transcript items={items} />
 
       <div className="conversation-column__composer">
-        {clientPage.ready ? <ViewYourPageButton onOpen={clientPage.open} /> : null}
         {suggestions.visible ? (
           <SuggestedQuestions chips={suggestions.chips} onChoose={suggestions.choose} />
         ) : null}

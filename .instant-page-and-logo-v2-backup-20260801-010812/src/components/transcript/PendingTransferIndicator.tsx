@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { PENDING_COPY } from '@/lib/content/pendingCopy';
 import { PendingStageLabel } from './PendingStageLabel';
-import { ItrixTurnLabel } from './ItrixTurnLabel';
 import type { PendingStage } from '@/lib/content/pendingCopy';
 
 /**
@@ -65,9 +64,7 @@ export function PendingTransferIndicator({ stage, slow, onRetry }: PendingTransf
 
   return (
     <article className="turn turn--itrix pending" aria-busy="true">
-      <p className="turn__label turn__label--brand">
-        <ItrixTurnLabel />
-      </p>
+      <p className="turn__label">itriX</p>
 
       <div className="pending__row">
         {/* aria-hidden: the label carries the meaning. A lattice of squares has

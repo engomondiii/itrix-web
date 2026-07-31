@@ -49,19 +49,10 @@ export function WorkingShell({ children }: { children: ReactNode }) {
   const openSheet = useRailStore((s) => s.openSheet);
   const pane = useContentPaneContext();
 
-  /* THE CONTENT PANE IS SUPPRESSED ON THE CLIENT PAGE (/c/<token>). The personalised
-     page is itself the delivered content — it renders its own hero, slide deck and
-     "discuss your review" panel — so the right content pane popping in beside it is
-     redundant and was appearing unbidden every time a section arrived. We keep the
-     LEFT conversation rail (the visitor still needs "New chat" and their history) and
-     drop only the right pane here. This is presentation scope, not authorization:
-     nothing about what the backend authorized changes. */
-  const isClientPage = pathname === '/c' || pathname.startsWith('/c/');
-
   /* The third column is present when the pane is available and not folded away. On a
      sheet breakpoint it is never a column — PaneSheet renders it as an overlay
      instead, and rendering both would put two copies of the panel in the tree. */
-  const paneColumn = !isClientPage && pane.available && !pane.collapsed && !pane.isSheetBreakpoint;
+  const paneColumn = pane.available && !pane.collapsed && !pane.isSheetBreakpoint;
 
   return (
     <div
@@ -102,14 +93,11 @@ export function WorkingShell({ children }: { children: ReactNode }) {
           confidentiality notice, no quick help, no specialist or scheduling card, no
           satisfaction pulse. Architecture v2.6 §11.6A re-homed all six when the old
           right value rail was retired, and v2.7 §2.7 restates that as a prohibition.
-          The pane is a new zone, not the old rail returning.
-
-          Suppressed on the client page (see isClientPage above): the personalised page
-          is its own content surface, so the pane beside it is redundant. */}
-      {!isClientPage ? <ContentPane /> : null}
+          The pane is a new zone, not the old rail returning. */}
+      <ContentPane />
 
       <RailSheet />
-      {!isClientPage ? <PaneSheet /> : null}
+      <PaneSheet />
     </div>
   );
 }
