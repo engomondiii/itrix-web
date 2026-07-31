@@ -45,10 +45,6 @@ export const CENTER_COPY = {
    */
   mainQuestion: 'What would you like computation to do better?',
 
-  /** The supporting line beneath the question. */
-  supportingLine:
-    'Start with the workload, system constraint, or strategic opportunity you came to itriX to examine.',
-
   /** Placeholder inside the composer. Grey hint text, never a label. */
   promptPlaceholder: 'Describe the bottleneck or opportunity in one non-confidential sentence…',
 

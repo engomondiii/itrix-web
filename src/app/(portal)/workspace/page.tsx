@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { ConversationColumn } from '@/components/shell/ConversationColumn';
 import { Composer } from '@/components/composer/Composer';
 import { MainQuestion } from '@/components/center/MainQuestion';
-import { SupportingLine } from '@/components/center/SupportingLine';
 import { PathwayHint } from '@/components/center/PathwayHint';
 import { useThreadStore } from '@/store/threadStore';
 
@@ -44,7 +43,6 @@ export default function WorkspaceIndex() {
       emptyState={
         <section className="arrival-center" aria-labelledby="main-question">
           <MainQuestion id="main-question" />
-          <SupportingLine />
           <Composer variant="arrival" labelledBy="main-question" />
           <PathwayHint />
         </section>

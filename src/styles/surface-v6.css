@@ -291,11 +291,13 @@
 }
 .composer-keyhint__secondary { color: var(--ink-muted); }
 
-/* The X leans like the wordmark's, not like a 45° close glyph. Sized a touch
-   smaller than the retired arrow because two diagonal strokes read heavier than
-   one horizontal one at the same box. */
-.composer-send__icon--x { width: 22px; height: 22px; }
-.composer[data-variant='docked'] .composer-send__icon--x { width: 19px; height: 19px; }
+/* The supplied itriX X letterform. It is not square (≈1.21:1), so it is sized by
+   width with height following the aspect ratio — never forced to a square box,
+   which would stretch it. object-fit keeps it exact if any ancestor rule sets a
+   height. Sized a touch smaller than the retired arrow because the X reads heavier
+   at the same box. */
+.composer-send__icon--x { width: 22px; height: auto; object-fit: contain; }
+.composer[data-variant='docked'] .composer-send__icon--x { width: 19px; height: auto; }
 
 /* ── 7 · The rail's account footer ────────────────────────────────────────── */
 .rail-account { display: flex; flex-direction: column; gap: 10px; }

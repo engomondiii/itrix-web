@@ -1,7 +1,6 @@
 'use client';
 
 import { MainQuestion } from '@/components/center/MainQuestion';
-import { SupportingLine } from '@/components/center/SupportingLine';
 import { RotatingQuestionCarousel } from '@/components/center/RotatingQuestionCarousel';
 import { PathwayHint } from '@/components/center/PathwayHint';
 import { Composer } from '@/components/composer/Composer';
@@ -13,11 +12,15 @@ import { Composer } from '@/components/composer/Composer';
  * legal strip are the shell's, not the centre's):
  *
  *   3  main question    "What would you like computation to do better?" — the H1
- *   4  supporting line
  *   5  composer         attach + the itriX X, NO counter, NO "Begin review"
  *   6  safety notice    (inside the composer footer)
  *   7  rotating prompts one at a time, five in the cycle, one per family
  *   8  pathway hint
+ *
+ * The supporting line ("Start with the workload, system constraint, or strategic
+ * opportunity you came to itriX to examine.") that sat at element 4 was removed at
+ * the client's request — the arrival centre now goes straight from the question to
+ * the composer.
  *
  * ── WHAT LEFT ───────────────────────────────────────────────────────────────
  * `SituationFraming` is gone. "You already know computation is holding you back."
@@ -39,7 +42,6 @@ export function ArrivalCenter() {
   return (
     <section className="arrival-center" aria-labelledby="main-question">
       <MainQuestion id="main-question" />
-      <SupportingLine />
       <Composer variant="arrival" labelledBy="main-question" />
       <RotatingQuestionCarousel />
       <PathwayHint />

@@ -36,7 +36,16 @@ import type { SubmitResult, Turn } from '@/types/thread.types';
  * never silently drop what someone typed.
  */
 
-const MIN_LENGTH = 8;
+/**
+ * The Ask itriX (X) control activates the moment the visitor starts typing — a
+ * single non-whitespace character is enough (client request, 2026-07-31). This
+ * value gates BOTH the button's enabled state (`canSubmit`, consumed by
+ * AskItrixButton via Composer) AND the submit guard below, so they can never
+ * disagree: the button never lights up on input that the guard would then reject
+ * as "too short". A turn with no text but a staged attachment is still allowed —
+ * that path does not depend on this length at all.
+ */
+const MIN_LENGTH = 1;
 
 /** A locally-minted id, used only while the backend has not issued a real one. */
 function localId(prefix: string): string {
