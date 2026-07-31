@@ -196,3 +196,7 @@ itrix-web-surface1-v7-phase*.zip
 # itrix-web-fixes-v1
 itrix-web-fixes-v1/
 .web-fixes-v1-backup-*
+
+# itrix-web-redirect-fix-v1
+itrix-web-redirect-fix-v1/
+.web-redirect-fix-backup-*

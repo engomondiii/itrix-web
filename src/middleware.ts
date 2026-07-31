@@ -58,12 +58,31 @@ export function middleware(req: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Bare /workspace → the state-appropriate sub-route.
+    /* Bare /workspace -> the state-appropriate sub-route.
+
+       ONLY WHEN THE DESTINATION ACTUALLY DIFFERS. This guard is not defensive
+       tidiness; without it this block is an unconditional infinite redirect.
+
+       v5.0 Phase 3 retired the workspace sub-routes and made /workspace itself the
+       thread. STATE_ROUTE was rewritten to match, so every hint except `poc` now
+       resolves to '/workspace' — and so does the `?? '/workspace'` fallback that
+       covers a missing, empty or unrecognised cookie. The redirect therefore sent
+       /workspace to /workspace: a 307 loop until the browser gave up with
+       ERR_TOO_MANY_REDIRECTS.
+
+       It stayed hidden because reaching it requires a client-JWT cookie. Nobody
+       could sign in until outbound email started working, so the first successful
+       login was also the first request that ever took this branch. */
     if (pathname === '/workspace' || pathname === '/workspace/') {
       const hint = req.cookies.get(STATE_HINT_COOKIE)?.value ?? '';
-      const url = req.nextUrl.clone();
-      url.pathname = STATE_ROUTE[hint] ?? '/workspace';
-      return NextResponse.redirect(url);
+      const target = STATE_ROUTE[hint] ?? '/workspace';
+      const here = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+      if (target !== here) {
+        const url = req.nextUrl.clone();
+        url.pathname = target;
+        return NextResponse.redirect(url);
+      }
+      // Same destination: fall through and render the workspace.
     }
   }
 
