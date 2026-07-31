@@ -9,14 +9,14 @@
 export const PORTAL_COPY = {
   signIn: {
     title: 'Sign in to your itriX workspace',
-    emailLabel: 'Work email',
+    emailLabel: 'Email address',
     passwordLabel: 'Password',
     button: 'Sign in',
     forgot: 'Forgot your password?',
     needAccess: 'Need access? Continue with an itriX Specialist',
   },
   forgotPassword: {
-    intro: 'Enter your work email and we will send a link to reset your password.',
+    intro: 'Enter the email address for your workspace and we will send a link to reset your password.',
     button: 'Send reset link',
     confirmation: 'If that email is registered, a reset link is on its way.',
   },
@@ -128,7 +128,7 @@ export const PORTAL_COPY = {
   },
   settings: {
     profileHeader: 'Your profile',
-    profileFields: { fullName: 'Full name', email: 'Work email', organization: 'Organization', role: 'Role', password: 'Password' },
+    profileFields: { fullName: 'Full name', email: 'Email address', organization: 'Organization', role: 'Role', password: 'Password' },
     saveProfile: 'Save changes',
     teamHeader: 'Your team',
     teamIntro:

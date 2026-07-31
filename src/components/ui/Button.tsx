@@ -2,27 +2,51 @@ import { forwardRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/lib/cn';
 
+/**
+ * The button primitive.
+ *
+ * ── WHY THIS DOES NOT USE TAILWIND UTILITIES FOR ITS APPEARANCE ─────────────
+ * It used to: `bg-ink-primary text-white shadow-1 h-12 px-6 text-web-body`. Of those,
+ * only `text-white` and the spacing utilities compiled. This project runs Tailwind v4,
+ * which does not read `tailwind.config.ts` unless a stylesheet opts in with `@config` —
+ * and none does. So every custom colour, shadow and type-scale name in that config
+ * produces no CSS at all.
+ *
+ * The visible result was a TRANSPARENT button with WHITE text on a near-white glass
+ * panel. It rendered, it was 48px tall, it took focus and it fired its onClick. It just
+ * could not be seen. That is the whole of the "create account button is not visible"
+ * report, and it affected every Button on every screen — the sign-up form is simply
+ * where somebody finally needed one.
+ *
+ * The appearance now comes from token-driven classes in `src/styles/base.css`, the same
+ * way the rest of this surface is styled (auth.css, arrival.css, shell.css). Two
+ * consequences worth stating:
+ *
+ *   1. it cannot silently lose its styling again — a missing `.btn--primary` rule is a
+ *      visible regression in one stylesheet, not an invisible no-op in a config file;
+ *   2. enabling `@config` later cannot conflict with it, because these are plain classes
+ *      rather than utilities, appended OUTSIDE `@layer base` so they win regardless.
+ *
+ * The public API is unchanged: same variants, same sizes, same `fullWidth`, same icon
+ * slots, same `className` passthrough. No call site needs editing.
+ */
+
 type Variant = 'primary' | 'secondary' | 'dark' | 'gold' | 'destructive' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
 
-const base =
-  'inline-flex items-center justify-center gap-2 rounded-sm font-medium transition-colors duration-fast ease-out select-none ' +
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-2 focus-visible:ring-offset-canvas ' +
-  'disabled:opacity-50 disabled:pointer-events-none';
-
-const variants: Record<Variant, string> = {
-  primary: 'bg-ink-primary text-white shadow-1 hover:bg-structure-600 active:bg-ink-primary',
-  secondary: 'bg-transparent text-ink-secondary border border-border-strong hover:bg-surface hover:border-ink-secondary',
-  dark: 'bg-structure-600 text-ink-inverse hover:bg-structure-700 focus-visible:ring-accent-soft',
-  gold: 'bg-accent text-structure-900 font-semibold shadow-signature hover:bg-accent-soft',
-  destructive: 'bg-error text-white hover:brightness-95 active:brightness-90',
-  ghost: 'bg-transparent text-ink-primary hover:bg-soft',
+const variantClass: Record<Variant, string> = {
+  primary: 'btn--primary',
+  secondary: 'btn--secondary',
+  dark: 'btn--dark',
+  gold: 'btn--gold',
+  destructive: 'btn--destructive',
+  ghost: 'btn--ghost',
 };
 
-const sizes: Record<Size, string> = {
-  sm: 'h-8 px-3 text-secondary',
-  md: 'h-10 px-4 text-body',
-  lg: 'h-12 px-6 text-web-body',
+const sizeClass: Record<Size, string> = {
+  sm: 'btn--sm',
+  md: 'btn--md',
+  lg: 'btn--lg',
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -34,14 +58,30 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size = 'md', leadingIcon, trailingIcon, fullWidth, className, children, type = 'button', ...rest },
+  {
+    variant = 'primary',
+    size = 'md',
+    leadingIcon,
+    trailingIcon,
+    fullWidth,
+    className,
+    children,
+    type = 'button',
+    ...rest
+  },
   ref,
 ) {
   return (
     <button
       ref={ref}
       type={type}
-      className={cn(base, variants[variant], sizes[size], fullWidth && 'w-full', className)}
+      className={cn(
+        'btn',
+        variantClass[variant],
+        sizeClass[size],
+        fullWidth && 'btn--block',
+        className,
+      )}
       {...rest}
     >
       {leadingIcon}

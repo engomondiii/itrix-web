@@ -84,7 +84,7 @@ function CreateAccountInner({ token }: { token: string }) {
     const next: Record<string, string> = {};
     if (!fullName.trim()) next.fullName = 'Tell us who to address in the workspace.';
     if (!organization.trim()) next.organization = 'Add your company or organization.';
-    if (!/.+@.+\..+/.test(email.trim())) next.email = 'Enter a valid work email.';
+    if (!/.+@.+\..+/.test(email.trim())) next.email = 'Enter a valid email address.';
     if (policy.tooShort) next.password = AUTH_COPY.reset.tooShort;
     else if (!policy.matches) next.confirm = AUTH_COPY.reset.mismatch;
     setErrors(next);
@@ -218,7 +218,7 @@ function CreateAccountInner({ token }: { token: string }) {
                   onChange={(e) => setRole(e.target.value)}
                 />
                 <Input
-                  label="Work email"
+                  label="Email address"
                   type="email"
                   value={email}
                   autoComplete="email"

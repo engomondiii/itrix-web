@@ -10,6 +10,7 @@ import { RateLimitNotice } from '@/components/auth/RateLimitNotice';
 import { AssentCheckbox } from '@/components/legal/AssentCheckbox';
 import { AssentSummary } from '@/components/legal/AssentSummary';
 import { useSignUp } from '@/hooks/useSignUp';
+import { isValidEmail } from '@/lib/validation/emailValidator';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
 import { useLegalAssent } from '@/hooks/useLegalAssent';
 import { AUTH_COPY } from '@/lib/content/authCopy';
@@ -75,12 +76,25 @@ export function RegistrationForm() {
    * (R64). That collapse is only safe if everything the backend would reject for a
    * fixable reason has already been caught HERE — required fields, address shape,
    * length, match, assent. Keep the two in step.
+   *
+   * ── ANY DOMAIN. THERE IS NO WORK-EMAIL RULE, AND THERE NEVER WAS ──────────
+   * The backend serializer is a plain `EmailField()` and `register_client()` performs no
+   * domain check, so a personal address has always been accepted. The label said "Work
+   * email" and the error said "Enter your work email", which read as a restriction that
+   * did not exist — both are now domain-neutral (Playbook v1.9 SS18C needs the same edit
+   * so the copy source and the build do not drift).
+   *
+   * The shape check uses the shared `isValidEmail` rather than an inline regex. The
+   * inline `/.+@.+\..+/` accepted `a b@c.d` — spaces and all — which DRF's EmailField
+   * then rejects with a 400 that the proxy collapses into the same 202 as success. That
+   * is a visitor told to check their email for a message nobody sent. Sharing the
+   * validator is what keeps the two ends of the parity contract from drifting apart.
    */
   function validate(): Record<string, string> {
     const next: Record<string, string> = {};
     if (!fullName.trim()) next.fullName = AUTH_COPY.signUp.missingName;
     if (!organization.trim()) next.organization = AUTH_COPY.signUp.missingOrganization;
-    if (!/.+@.+\..+/.test(email.trim())) next.email = AUTH_COPY.signUp.missingEmail;
+    if (!isValidEmail(email)) next.email = AUTH_COPY.signUp.missingEmail;
     if (policy.tooShort) next.password = AUTH_COPY.reset.tooShort;
     else if (!policy.matches) next.confirm = AUTH_COPY.reset.mismatch;
     if (!assent.accepted) next.assent = ASSENT_COPY.blocked;

@@ -46,7 +46,7 @@ export const AUTH_COPY = {
   signIn: {
     title: 'Sign in to your workspace',
     standfirst: 'Your conversation, your documents and your team are where you left them.',
-    emailLabel: 'Work email',
+    emailLabel: 'Email address',
     passwordLabel: 'Password',
     submit: 'Sign in',
     submitting: 'Signing you in…',
@@ -89,7 +89,7 @@ export const AUTH_COPY = {
     nameLabel: 'Full name',
     organizationLabel: 'Company or organization',
     roleLabel: 'Role (optional)',
-    emailLabel: 'Work email',
+    emailLabel: 'Email address',
     /**
      * Playbook v1.9 SS18C names these 'Password' and 'Confirm password'.
      *
@@ -105,7 +105,7 @@ export const AUTH_COPY = {
 
     missingName: 'Tell us who to address in the workspace.',
     missingOrganization: 'Add your company or organization.',
-    missingEmail: 'Enter your work email.',
+    missingEmail: 'Enter your email address.',
 
     /**
      * SECURITY CONTROL — the fourth one, and new in v8.0.
@@ -192,7 +192,7 @@ export const AUTH_COPY = {
   forgot: {
     title: 'Reset your password',
     standfirst: 'Enter the email you use for your workspace and we will send you a link.',
-    emailLabel: 'Work email',
+    emailLabel: 'Email address',
     submit: 'Send the reset link',
     submitting: 'Sending…',
 

@@ -80,3 +80,128 @@
     }
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTONS — real CSS, deliberately not Tailwind utilities
+
+   ── WHY THIS BLOCK EXISTS ───────────────────────────────────────────────
+   `Button.tsx` styled itself with `bg-ink-primary text-white shadow-1`. None of
+   those three utilities exist in the compiled stylesheet: this project runs
+   Tailwind v4, which does NOT read `tailwind.config.ts` unless a stylesheet
+   opts in with `@config`, and no stylesheet does. So the whole custom theme —
+   every ink-*, structure-*, accent-*, shadow-N and text-web-* name — compiles
+   to nothing.
+
+   `text-white` survived because it ships with Tailwind. The result was a
+   transparent button with white text sitting on a near-white glass panel:
+   present in the DOM, 48px tall, focusable, clickable, and invisible. That is
+   what "the create account button is not visible" was.
+
+   The fix is deliberately scoped to real CSS driven by the brand tokens rather
+   than to enabling `@config`. Turning the config on would switch ~150 utilities
+   back on across 160 files whose appearance was only ever reviewed with them
+   off — `rounded-sm` would move 2px -> 10px, the body type scale would shift,
+   shadows would appear. That is a change worth making, with a visual pass; it
+   is not a change to make while fixing a button.
+
+   Because these are token-driven classes and NOT utilities, enabling `@config`
+   later cannot conflict with them.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.btn {
+  /* Layout utilities from Tailwind's own core still work; these do not depend on
+     them, so the button is correct whether or not the theme is ever enabled. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-button, 14px);
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 160ms ease-out, border-color 160ms ease-out,
+    color 160ms ease-out, box-shadow 160ms ease-out;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ink-primary);
+  outline-offset: 2px;
+}
+
+/* Disabled must READ as disabled, not merely behave that way. */
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Sizes. Every one clears the 44px touch target except `sm`, which is
+      never the only way to do anything (§25). ──────────────────────────── */
+.btn--sm { min-height: 36px; padding: 0 12px; font-size: 14px; }
+.btn--md { min-height: 44px; padding: 0 16px; font-size: 16px; }
+.btn--lg { min-height: 48px; padding: 0 24px; font-size: 16px; }
+
+.btn--block { width: 100%; }
+
+/* ── Variants. Contrast ratios are from the brand.css accessibility contract:
+      ink-primary #1F2937 on white is ~14:1, and white on ink-primary is the
+      same ratio inverted. ─────────────────────────────────────────────── */
+.btn--primary {
+  background: var(--ink-primary);
+  color: var(--ink-inverse);
+  box-shadow: var(--shadow-1);
+}
+.btn--primary:hover { background: var(--structure-600); }
+.btn--primary:active { background: var(--ink-primary); }
+
+.btn--secondary {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--ink-secondary);
+}
+.btn--secondary:hover {
+  background: var(--surface);
+  border-color: var(--ink-secondary);
+  color: var(--ink-primary);
+}
+
+.btn--dark {
+  background: var(--structure-600);
+  color: var(--ink-inverse);
+}
+.btn--dark:hover { background: var(--structure-700); }
+.btn--dark:focus-visible { outline-color: var(--accent-soft); }
+
+/* Gold is retired as a colour; the name survives as the SIGNATURE treatment —
+   restrained holographic soft-blue, under 5% of a screen (Brand Manual §5). */
+.btn--gold {
+  background: var(--accent);
+  color: var(--structure-900, #1F2937);
+  font-weight: 600;
+  box-shadow: var(--shadow-signature);
+}
+.btn--gold:hover { background: var(--accent-soft); }
+
+.btn--destructive {
+  background: var(--error, #B42318);
+  color: #FFFFFF;
+}
+.btn--destructive:hover { filter: brightness(0.95); }
+.btn--destructive:active { filter: brightness(0.9); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ink-primary);
+}
+.btn--ghost:hover { background: var(--soft); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
