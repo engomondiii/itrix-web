@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useThreadStore } from '@/store/threadStore';
 import { useTranscriptStore } from '@/store/transcriptStore';
 
 /**
- * Has the visitor spoken yet?
+ * Has the visitor spoken yet — in this conversation, or any earlier one?
  *
  * This single predicate decides which of the two surfaces renders:
  *
@@ -16,15 +17,25 @@ import { useTranscriptStore } from '@/store/transcriptStore';
  * visitor's own first sentence is the honest threshold, and it is the one they
  * will remember crossing.
  *
+ * A visitor with EXISTING conversations never goes back to the front door: with
+ * no active thread (New chat, or a return visit) they get the working shell with
+ * the rail and a fresh centre, the way every conversation product behaves. The
+ * front door is for a visitor who has never spoken at all.
+ *
  * HYDRATION NOTE, and it is why `activeThreadId` is not persisted: on a fresh
  * load the store starts empty, so the server and the first client render agree
- * on arrival. The persisted thread LIST rehydrates afterwards and does not feed
- * this predicate, so there is no mismatch to warn about.
+ * on arrival. The persisted thread LIST is only consulted after mount (the
+ * `hydrated` flag), so however the store rehydrates, the first client render
+ * still matches the server and there is no mismatch to warn about.
  */
 export function useArrivalMode(): boolean {
   const activeThreadId = useThreadStore((s) => s.activeThreadId);
+  const hasThreads = useThreadStore((s) => s.threads.length > 0);
   const turnsByThread = useTranscriptStore((s) => s.turnsByThread);
 
-  if (!activeThreadId) return true;
-  return (turnsByThread[activeThreadId] ?? []).length === 0;
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
+  const spokenHere = activeThreadId ? (turnsByThread[activeThreadId] ?? []).length > 0 : false;
+  return !spokenHere && !(hydrated && hasThreads);
 }

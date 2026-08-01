@@ -25,11 +25,16 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  *
  * IT DOES NAVIGATE, and that is correct. R21 forbids a route transition on
  * SUBMIT — the visitor must never be thrown to a new page for describing their
- * problem. Deliberately starting over is the opposite: they are asking for the
- * front door. It has to be a real navigation because the arrival shell only
+ * problem. Deliberately starting over is the opposite: they are asking for a
+ * fresh conversation. It has to be a real navigation because the centre only
  * renders from the `/` route segment; clearing the thread and rewriting the URL
  * with replaceState left /review/[threadId] rendered, which produced a bare
  * centre with no shell around it.
+ *
+ * WHAT `/` RENDERS IS NOT THE FRONT DOOR for this visitor: with conversations in
+ * the rail, useArrivalMode keeps the WORKING shell, so a new chat is the fresh
+ * centre composer with their history still beside it — never a bounce back to
+ * the marketing arrival screen.
  */
 export function NewChatButton() {
   const { startNew } = useThreadContext();

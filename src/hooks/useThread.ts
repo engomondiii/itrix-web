@@ -77,13 +77,16 @@ export function useThread(): UseThreadResult {
 
   const startNew = useCallback(() => {
     /* Clears the active thread and nothing else.
-       It deliberately does NOT rewrite the URL. Starting a new review has to
-       return the visitor to the ARRIVAL SCREEN, and that screen only renders
+       It deliberately does NOT rewrite the URL. Starting a new chat has to
+       return the visitor to the fresh centre, and that centre only renders
        from the `/` route segment — a replaceState leaves the /review/[threadId]
        segment rendered, which is how "New review" ended up showing a blank
        centre with no header, rails or footer.
-       NewReviewButton performs a real navigation instead. R21 is not in play:
-       it forbids routing on SUBMIT, not on starting over. */
+       NewChatButton performs a real navigation instead. R21 is not in play:
+       it forbids routing on SUBMIT, not on starting over. Which shell wraps
+       that centre is useArrivalMode's call: front door for a first-time
+       visitor, the working shell (rail + fresh composer) once conversations
+       exist. */
     setActive(null);
   }, [setActive]);
 
