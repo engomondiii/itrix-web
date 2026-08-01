@@ -273,3 +273,85 @@ svg { height: auto; }
     min-height: 44px;
   }
 }
+
+/* ============================================================================
+   PHASE 6.1 — TWO LAYOUT FIXES (composer grid on mobile; wordmark on desktop)
+
+   Reported after Phase 6 shipped, with screenshots:
+     · MOBILE: the arrival composer collapsed the textarea to a one-character
+       sliver on the right, with the send X pushed out of place.
+     · DESKTOP: the wordmark descriptor broke mid-word ("Computationa" / "l").
+   Both are column/measure bugs, fixed here because mobile.css is imported last.
+   ============================================================================ */
+
+/* ── FIX 1 · The composer keeps THREE columns on a phone ──────────────────────
+   The base composer-shell is a 3-column grid — attach (paperclip) | textarea |
+   send — because the composer renders three children when attachments are on
+   (the default): <AttachControl>, <PromptTextarea>, <AskItrixButton>.
+
+   The <=767px rule in shell.css reset it to TWO columns (`minmax(0,1fr) 44px`)
+   and hid `.composer-shell__icon`. But `.composer-shell__icon` is the fallback
+   glyph that only renders when attachments are OFF; with attachments ON the
+   first child is `.composer-attach`, which nothing hid. Result: three children
+   in a two-column grid — the paperclip took column 1, the textarea was crushed
+   into the 44px column 2, and the send button wrapped. That is the vertical
+   sliver in the screenshot.
+
+   The paperclip is a real control and stays. The grid is restored to three
+   tracks at every width: a `auto` column for the leading glyph/paperclip, the
+   flexible middle for the textarea, and the send button. The three children are
+   then PINNED to their tracks by explicit grid-column, so the layout is correct
+   whether the first child is the paperclip (attachments on) or the decorative
+   icon (attachments off) — a missing or hidden first child can no longer shift
+   the textarea or send out of place. `minmax(0,1fr)` on the middle is what lets
+   the textarea shrink WITHOUT overflowing rather than being starved to nothing. */
+@media (max-width: 767px) {
+  .composer-shell {
+    grid-template-columns: auto minmax(0, 1fr) 44px;
+    column-gap: 10px;
+  }
+  /* Pin each child to its track so the row cannot re-flow. */
+  .composer-shell > .composer-attach,
+  .composer-shell > .composer-shell__icon { grid-column: 1; }
+  .composer-shell > .composer-textarea { grid-column: 2; }
+  .composer-shell > .composer-send { grid-column: 3; }
+  /* The textarea must be free to take the middle column's full width. */
+  .composer-textarea { width: 100%; min-width: 0; }
+  /* Keep the paperclip compact so the textarea gets the room. */
+  .composer-attach { width: 36px; }
+}
+
+/* Very small phones: the paperclip may cost more than it earns. Drop to two
+   tracks and move the textarea into the first, so children and tracks stay
+   matched (textarea in col 1, send in col 2). The attach affordance is still
+   reachable — paste and drag-drop remain, and the tray still appears when a file
+   is added — but the icon does not compete for a 320px row. */
+@media (max-width: 380px) {
+  .composer-shell {
+    grid-template-columns: minmax(0, 1fr) 44px;
+  }
+  .composer-shell > .composer-attach,
+  .composer-shell > .composer-shell__icon { display: none; }
+  .composer-shell > .composer-textarea { grid-column: 1; }
+  .composer-shell > .composer-send { grid-column: 2; }
+}
+
+/* ── FIX 2 · The wordmark descriptor does not break mid-word ──────────────────
+   "Computational Infrastructure company" was capped at 13ch. "Computational"
+   is itself 13 characters, so at the 11px face the last letter wrapped to its
+   own line ("Computationa" / "l"). Two changes: widen the measure enough for
+   the longest word to sit whole, and forbid breaking inside a word so the wrap
+   can only ever fall between words. Scoped to the arrival variant (the rail
+   variant already sets its own measure and casing). */
+.wordmark[data-variant='arrival'] .wordmark__descriptor {
+  max-width: 18ch;
+  overflow-wrap: normal;
+  word-break: keep-all;
+  hyphens: none;
+}
+/* Between the tablet breakpoint and roughly 900px the bar is tight; let the
+   descriptor use a touch more room rather than wrap awkwardly, still well
+   inside the bar's max-width. */
+@media (min-width: 768px) and (max-width: 900px) {
+  .wordmark[data-variant='arrival'] .wordmark__descriptor { max-width: 16ch; }
+}
