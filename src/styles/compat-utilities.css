@@ -1,0 +1,213 @@
+/* ============================================================================
+   itriX · COMPAT UTILITIES — the custom-token utility bridge
+
+   ── WHY THIS FILE EXISTS ────────────────────────────────────────────────────
+   This project runs Tailwind v4 with `@import 'tailwindcss'`, but its theme
+   (colours, type scale, radii, shadows, max-widths) lives in
+   `tailwind.config.ts`. Tailwind v4 does NOT read a JS config unless a
+   stylesheet opts in with the `@config` directive — and no stylesheet here
+   does. The result: every CUSTOM utility the components reference compiles to
+   nothing. Tailwind's built-in utilities (flex, grid, gap-3, px-4, mx-auto,
+   max-w-3xl, md:grid-cols-3, hidden, …) still work, because those come from
+   core — but the Brand-Manual vocabulary does not:
+
+       bg-canvas · bg-surface · bg-soft · bg-tier-1 · bg-ink-primary
+       text-ink-primary / -secondary / -muted / -inverse · text-structure-900
+       border-border-soft / -medium / -strong · border-accent-soft
+       text-caption / -micro / -secondary / -body / -card-title / -section
+       text-web-h1 / -h2 / -h3 / -body / -lead / -question · text-kpi(-hero)
+       rounded-sm / -md / -lg / -panel / -pill · shadow-1 / -2
+       max-w-reading · font-display / -mono · ring-ink-primary · animate-*
+
+   Measured on this repo: 59 distinct dead utilities, 1,208 references across
+   ~160 component files. With them dead, panels have no background, hairlines
+   are invisible, the type hierarchy is gone, and reading columns lose their
+   width cap — which on a phone reads as "nothing is styled and everything has
+   collapsed." (On a laptop the same breakage is present but far less obvious,
+   which is why it was reported as a mobile problem.)
+
+   ── WHY NOT JUST ADD `@config`? ─────────────────────────────────────────────
+   Turning the JS config on would switch ~150 utilities from "off" to "on" in a
+   single step — including spacing, radii and the whole type scale — on 160
+   screens that were only ever visually reviewed with those utilities OFF.
+   rounded-sm would jump 2px→10px, body type would shift, shadows would appear.
+   That is a large, unreviewed visual change and the wrong tool for "make it
+   render on mobile."
+
+   This file is the narrow alternative: it defines EXACTLY the custom utilities
+   the components actually use, as plain CSS that resolves through the SAME token
+   variables (src/styles/tokens/*.css) the config mirrors. So a class named
+   `bg-surface` finally paints `var(--surface)`, `text-web-h1` finally sizes to
+   `var(--web-h1)`, and nothing that already worked changes.
+
+   ── WHY IT IS UNLAYERED, AND IMPORTED LAST ──────────────────────────────────
+   It sits OUTSIDE `@layer`. Unlayered rules beat layered ones regardless of
+   source order, so these definitions win over Tailwind's utility layer and can
+   never be purged. It is imported after `@import 'tailwindcss'` (see
+   globals.css) so that, class-for-class, the bridge is what the browser
+   resolves. Specificity is a single class throughout, matching how the
+   utilities would have behaved, so a component's own longhand overrides still
+   win exactly as before.
+
+   Every value below is a token variable or the literal from tailwind.config.ts
+   (`fontSize`, `boxShadow`, `borderRadius`, `maxWidth`). No new colours are
+   introduced.
+   ============================================================================ */
+
+/* ── Backgrounds ──────────────────────────────────────────────────────────── */
+.bg-canvas { background-color: var(--canvas); }
+.bg-soft { background-color: var(--soft); }
+.bg-tint { background-color: var(--tint); }
+.bg-surface { background-color: var(--surface); }
+.bg-surface-glass { background-color: var(--surface-glass); }
+.bg-surface-glass-strong { background-color: var(--surface-glass-strong); }
+.bg-surface-glass-soft { background-color: var(--surface-glass-soft); }
+.bg-surface-dark-glass { background-color: var(--surface-dark-glass); }
+.bg-ink-primary { background-color: var(--ink-primary); }
+.bg-ink-inverse { background-color: var(--ink-inverse); }
+.bg-structure-600 { background-color: var(--structure-600); }
+.bg-structure-700 { background-color: var(--structure-700); }
+.bg-structure-800 { background-color: var(--structure-800); }
+.bg-structure-900 { background-color: var(--structure-900); }
+.bg-accent { background-color: var(--accent); }
+.bg-accent-soft { background-color: var(--accent-soft); }
+.bg-success { background-color: var(--success); }
+.bg-success-surface { background-color: var(--success-surface); }
+.bg-warning { background-color: var(--warning); }
+.bg-warning-surface { background-color: var(--warning-surface); }
+.bg-error { background-color: var(--error); }
+.bg-error-surface { background-color: var(--error-surface); }
+.bg-tier-1 { background-color: var(--tier-1); }
+.bg-tier-2 { background-color: var(--tier-2); }
+.bg-tier-3 { background-color: var(--tier-3); }
+.bg-tier-4 { background-color: var(--tier-4); }
+/* Used as thin fills/dividers in a few places (bg-border-*). */
+.bg-border-soft { background-color: var(--border-soft); }
+.bg-border-medium { background-color: var(--border-medium); }
+
+/* ── Text colour ──────────────────────────────────────────────────────────── */
+.text-ink-primary { color: var(--ink-primary); }
+.text-ink-secondary { color: var(--ink-secondary); }
+.text-ink-muted { color: var(--ink-muted); }
+.text-ink-inverse { color: var(--ink-inverse); }
+.text-structure-600 { color: var(--structure-600); }
+.text-structure-700 { color: var(--structure-700); }
+.text-structure-800 { color: var(--structure-800); }
+.text-structure-900 { color: var(--structure-900); }
+.text-accent { color: var(--accent); }
+.text-accent-soft { color: var(--accent-soft); }
+.text-success { color: var(--success); }
+.text-warning { color: var(--warning); }
+.text-error { color: var(--error); }
+
+/* ── Borders (colour only; width/style come from Tailwind `border`) ───────── */
+.border-border-glass { border-color: var(--border-glass); }
+.border-border-soft { border-color: var(--border-soft); }
+.border-border-medium { border-color: var(--border-medium); }
+.border-border-strong { border-color: var(--border-strong); }
+.border-accent { border-color: var(--accent); }
+.border-accent-soft { border-color: var(--accent-soft); }
+.border-ink-primary { border-color: var(--ink-primary); }
+.border-structure-600 { border-color: var(--structure-600); }
+.border-success { border-color: var(--success); }
+.border-warning { border-color: var(--warning); }
+.border-error { border-color: var(--error); }
+.border-error-border { border-color: var(--error-border); }
+/* divide-* colour for stacked lists (divide-border-soft). */
+.divide-border-soft > :not([hidden]) ~ :not([hidden]) { border-color: var(--border-soft); }
+
+/* ── Type scale (Brand Manual §4.2 — literals mirror tailwind.config.ts) ──────
+   Each utility carries the same line-height / letter-spacing / weight the
+   config attached, so a heading keeps its metrics, not just its size. Font
+   FAMILY is set separately by font-display / font-mono where components ask. */
+.text-micro { font-size: 12px; line-height: 1.4; letter-spacing: 0.04em; }
+.text-caption { font-size: 14px; line-height: 1.4; }
+.text-secondary { font-size: 14px; line-height: 1.55; }
+.text-body { font-size: 16px; line-height: 1.55; }
+.text-card-title { font-size: 18px; line-height: 1.3; font-weight: 600; }
+.text-section { font-size: 24px; line-height: 1.2; font-weight: 600; }
+.text-page-title { font-size: 32px; line-height: 1.2; font-weight: 600; }
+.text-kpi { font-size: 32px; line-height: 1.12; font-weight: 600; }
+.text-kpi-hero { font-size: 44px; line-height: 1.12; font-weight: 700; }
+/* Web display scale — the clamp()s are the responsive heart of the marketing
+   pages; they resolve through the token vars so they track the source of truth. */
+.text-web-h1 { font-size: var(--web-h1); line-height: 1.12; letter-spacing: -0.03em; font-weight: 700; }
+.text-web-h2 { font-size: var(--web-h2); line-height: 1.2; letter-spacing: -0.03em; font-weight: 600; }
+.text-web-h3 { font-size: var(--web-h3); line-height: 1.2; font-weight: 600; }
+.text-web-body { font-size: 1rem; line-height: 1.55; }
+.text-web-lead { font-size: var(--web-lead); line-height: 1.55; }
+.text-web-question { font-size: clamp(1.25rem, 0.95rem + 1.3vw, 1.75rem); line-height: 1.3; font-weight: 500; }
+
+/* ── Font family ──────────────────────────────────────────────────────────── */
+.font-display { font-family: var(--font-display); }
+.font-sans { font-family: var(--font-sans); }
+.font-mono { font-family: var(--font-mono); }
+.font-korean { font-family: var(--font-korean, 'Pretendard', 'Noto Sans KR', sans-serif); }
+
+/* ── Radius (tailwind.config.ts borderRadius) ─────────────────────────────── */
+.rounded-sm { border-radius: 10px; }
+.rounded-md { border-radius: 14px; }
+.rounded-lg { border-radius: 20px; }
+.rounded-panel { border-radius: 28px; }
+.rounded-pill { border-radius: 999px; }
+
+/* ── Shadow (tailwind.config.ts boxShadow) ────────────────────────────────── */
+.shadow-1 { box-shadow: 0 18px 48px rgba(31, 41, 55, 0.08); }
+.shadow-2 { box-shadow: 0 24px 72px rgba(31, 41, 55, 0.12); }
+.shadow-3 { box-shadow: 0 28px 80px rgba(31, 41, 55, 0.16); }
+.shadow-glass { box-shadow: 0 18px 48px rgba(31, 41, 55, 0.08); }
+.shadow-signature { box-shadow: 0 0 0 1px rgba(143, 168, 234, 0.35), 0 2px 12px rgba(143, 168, 234, 0.18); }
+
+/* ── Max-width (tailwind.config.ts maxWidth) ──────────────────────────────────
+   `max-w-reading` is the one that matters on mobile: without it, body columns
+   meant to cap at a comfortable measure ran the full width of their parent. */
+.max-w-container { max-width: 1120px; }
+.max-w-container-xl { max-width: 1280px; }
+.max-w-reading { max-width: 68ch; }
+
+/* ── Rings / focus (used with focus-visible: in components) ───────────────── */
+.ring-ink-primary { --tw-ring-color: var(--ink-primary); box-shadow: 0 0 0 2px var(--ink-primary); }
+
+/* ── Backdrop blur (tailwind.config.ts backdropBlur) ──────────────────────── */
+.backdrop-blur-glass { -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+.backdrop-blur-glass-sm { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.backdrop-blur-glass-lg { -webkit-backdrop-filter: blur(28px); backdrop-filter: blur(28px); }
+
+/* ── Keyframes + animation utilities (tailwind.config.ts animation/keyframes) ─ */
+@keyframes itrix-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes itrix-fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes itrix-scale-in { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+@keyframes itrix-slide-down { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: itrix-fade-in 200ms ease-out both; }
+.animate-fade-up { animation: itrix-fade-up 320ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-scale-in { animation: itrix-scale-in 200ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slide-down { animation: itrix-slide-down 160ms ease-out both; }
+
+/* ── Duration / easing utilities (used on transition-* elements) ──────────── */
+.duration-fast { transition-duration: 160ms; }
+.duration-base { transition-duration: 180ms; }
+.duration-rail { transition-duration: 240ms; }
+.duration-slow { transition-duration: 320ms; }
+.ease-out { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* ── Variant pairs the components actually use ────────────────────────────────
+   Tailwind would have generated these from the base utility + variant; since the
+   base utilities are ours here, the variant forms are declared explicitly. Only
+   the pairs found in the codebase are included. */
+.hover\:bg-soft:hover { background-color: var(--soft); }
+.hover\:bg-surface:hover { background-color: var(--surface); }
+.hover\:text-ink-primary:hover { color: var(--ink-primary); }
+.hover\:text-ink-secondary:hover { color: var(--ink-secondary); }
+.hover\:border-accent-soft:hover { border-color: var(--accent-soft); }
+.group:hover .group-hover\:text-ink-primary { color: var(--ink-primary); }
+.focus-visible\:ring-ink-primary:focus-visible { box-shadow: 0 0 0 2px var(--ink-primary); }
+.focus-visible\:border-accent-soft:focus-visible { border-color: var(--accent-soft); }
+
+/* Reduced-motion: the animation utilities convey nothing that their end-state
+   does not, so they stop rather than distract. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-fade-up,
+  .animate-scale-in,
+  .animate-slide-down { animation: none; }
+}

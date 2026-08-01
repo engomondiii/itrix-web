@@ -160,3 +160,116 @@
   .transcript { overflow: visible; height: auto; }
   .artifact-ref__inline { display: block; }
 }
+
+/* ============================================================================
+   PHASE 6 — MOBILE HARDENING (added with the compat-utilities bridge)
+
+   The five GUARANTEES above cover the CONVERSATION shell. This block covers the
+   two things that were still breaking a phone once the custom utilities render
+   again: (a) global overflow safety, so a single wide child can never set the
+   whole page scrolling sideways, and (b) the front door and the marketing pages
+   at true phone widths (<=390px), where fixed desktop gutters and hero scale
+   were the remaining rough edges. Filed here because mobile.css is imported LAST
+   and, like the rest of this file, is organised by what it guarantees rather
+   than by breakpoint.
+   ============================================================================ */
+
+/* ── G6.1 · No horizontal page scroll, ever ───────────────────────────────────
+   The layout is built to fit, but one overflowing element (a long unbroken URL,
+   a wide embed, an image without a cap) should degrade to a contained state, not
+   drag the viewport. `overflow-x: clip` stops sideways scroll without creating a
+   scroll container the way `hidden` can, and without touching vertical scroll. */
+html { overflow-x: clip; }
+body { overflow-x: clip; width: 100%; max-width: 100%; }
+
+/* Media never exceeds its column. There is no global img rule in base.css, so a
+   full-width asset on a phone would otherwise push the page out. */
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+}
+svg { height: auto; }
+
+/* Long unbroken strings (IDs, arXiv refs, URLs, code spans in prose) wrap
+   instead of forcing width. Scoped to prose/labels so it cannot affect layout
+   primitives. */
+.reading, .prose, .turn__text, .composer-footer__note, .wordmark__descriptor {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ── G6.2 · Container gutter follows the screen ───────────────────────────────
+   --container-gutter is a fixed 32px in spacing.css. On a 360-390px phone that
+   is 64px of every row spent on air. Step it down so the content column keeps
+   its width; the desktop value is unchanged above the tablet breakpoint. */
+@media (max-width: 767px) {
+  :root { --container-gutter: 20px; }
+}
+@media (max-width: 389px) {
+  :root { --container-gutter: 16px; }
+}
+
+/* ── G6.3 · The marketing hero at phone width ─────────────────────────────────
+   PageWrapper / TechnologyHero render an h1 with `text-web-h1`, whose clamp
+   floor is ~36px. That is fine to ~360px; below that it is allowed to ease down
+   one step so a two- or three-word title does not wrap awkwardly against a 16px
+   gutter. The reading lead already caps at 68ch and now wraps long tokens. */
+@media (max-width: 389px) {
+  .text-web-h1 { font-size: clamp(1.875rem, 8vw, 2.25rem); }
+  .container-page.section { padding-block: clamp(40px, 12vw, 64px); }
+}
+
+/* ── G6.4 · The front door at phone width ─────────────────────────────────────
+   arrival.css already stacks the centre and shrinks the composer at <=767px.
+   These are the <=390px refinements: the decorative geometry and the big X
+   motifs are gone (they were absolute-positioned and only ever ornamental), the
+   question eases to the mobile end of its scale, and the pathway hint is allowed
+   to center-wrap rather than sit on one crowded line. */
+@media (max-width: 767px) {
+  .arrival-x, .arrival__geometry { display: none; }
+}
+@media (max-width: 389px) {
+  .arrival-hero { padding: 32px 0 28px; }
+  .arrival-stage { padding: 0 16px; }
+  /* --arrival-question-size drives both the arrival.css and shell.css question.
+     Easing the variable keeps the two composition paths identical in scale. */
+  :root { --arrival-question-size: clamp(1.75rem, 8.5vw, 2.25rem); }
+  .arrival-center .arrival__support { font-size: 1rem; margin: 16px auto 24px; }
+  .arrival__pathway { gap: 6px 10px; font-size: 13px; }
+  .arrival-center .composer-shell { padding: 16px; border-radius: 18px; }
+}
+
+/* ── G6.5 · Cards and grids do not get cramped ────────────────────────────────
+   shell.css collapses .example-grid to one column at <=767px; the generic
+   marketing grids use Tailwind's md:grid-cols-* and already stack below 768px.
+   What is left is padding: an 18-24px card padding against a 16px gutter is
+   tight on a 360px screen, so interior padding eases in step. */
+@media (max-width: 389px) {
+  .example-card { padding: 16px; }
+  .prompt-card { padding: 14px 14px; gap: 10px; }
+  .keep-work { padding: 14px 14px; }
+}
+
+/* ── G6.6 · Wide tables announce their scroll ─────────────────────────────────
+   The comparison tables (min-w-[600-680px]) are correctly wrapped in
+   overflow-x-auto, so they scroll inside their box rather than moving the page.
+   On touch, momentum scrolling makes that discoverable and smooth. */
+@media (any-pointer: coarse) {
+  .overflow-x-auto { -webkit-overflow-scrolling: touch; }
+}
+
+/* ── G6.7 · Tap targets on the marketing surface ──────────────────────────────
+   mobile.css already lifts the conversation controls to 44px on coarse
+   pointers. The marketing pages have their own link/button set; the primary
+   nav and CTA links get the same floor so a thumb is not asked to hit a 32px
+   target. Scoped to coarse pointers so a desktop with a small window is
+   unaffected. */
+@media (any-pointer: coarse) {
+  .sign-in-link,
+  .sign-up-link,
+  .arrival-button-primary,
+  .arrival-button-secondary,
+  .wordmark {
+    min-height: 44px;
+  }
+}

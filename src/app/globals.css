@@ -17,6 +17,18 @@
 
 @import 'tailwindcss';
 
+/* Custom-token utility bridge. Tailwind v4 does not read tailwind.config.ts (no
+   stylesheet opts in with @config), so every Brand-Manual utility — bg-surface,
+   text-ink-primary, text-web-h1, rounded-lg, shadow-1, max-w-reading, … —
+   compiles to nothing from core. This file defines exactly the custom utilities
+   the components use, backed by the same token variables. It sits here, right
+   after Tailwind, for the SAME reason the surface stylesheets do: so that the
+   hand-written CSS below (shell, arrival, mobile, …) can still override a bridged
+   utility wherever it intends to, precisely as it overrides a Tailwind utility
+   today. It is unlayered, so it also beats Tailwind's own (empty) utility layer
+   and can never be purged. See the file header for the full rationale. */
+@import '../styles/compat-utilities.css';
+
 /* Surface stylesheets. Order matters: shell.css owns the geometry contract and the
    type scale, arrival.css scopes the centre to the front door, and surface-v6.css
    comes last so what Phase 1 added can refine either without !important. */
