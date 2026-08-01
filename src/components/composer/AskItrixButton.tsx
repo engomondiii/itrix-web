@@ -52,8 +52,8 @@ export function AskItrixButton({ disabled = false, submitting = false }: AskItri
           src="/brand/itrix-x-inverse.png"
           alt=""
           aria-hidden="true"
-          width={22}
-          height={18}
+          width={18}
+          height={22}
           priority
           className="composer-send__icon composer-send__icon--x"
         />

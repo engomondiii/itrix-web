@@ -19,7 +19,7 @@ import Image from 'next/image';
  * equal to the lowercase "i" height. The caller's padding enforces the clear space
  * so a neighbouring nav item cannot encroach on it.
  *
- * The source PNGs are ≈1446×446 (≈3.24:1); the height follows the width from that
+ * The source PNGs are 752×343 (≈2.19:1); the height follows the width from that
  * exact ratio so the lockup is never stretched.
  */
 export interface ItrixLogoProps {
@@ -32,7 +32,7 @@ export interface ItrixLogoProps {
 }
 
 /** Exact aspect ratio of the supplied wordmark assets (both cuts share it). */
-const ASPECT = 1446 / 446;
+const ASPECT = 752 / 343;
 
 const SOURCES: Record<'light' | 'dark', string> = {
   light: '/brand/itrix-logo-primary.png',

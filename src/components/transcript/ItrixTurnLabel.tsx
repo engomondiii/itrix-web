@@ -14,8 +14,9 @@ import { ItrixLogo } from '@/components/brand/ItrixLogo';
  * settled turn and the pending ("working") indicator that shares the same label.
  *
  * SIZING
- * The wordmark is ≈3.24:1. At 44px wide it stands ≈14px tall — the visual weight of
- * the 12px mono label it replaces — so it reads as a label, not a banner. The
+ * The wordmark is ≈2.19:1. At 44px wide it stands ≈20px tall, but the X carries the
+ * extra height above and below the lowercase row, so the letters themselves keep the
+ * visual weight of the 12px mono label this replaces — a label, not a banner. The
  * surrounding `.turn__label` spacing is preserved by keeping this inline in the same
  * <p>. The logo's own `alt="itriX"` carries the accessible name; the wrapping element
  * is aria-hidden-free so screen readers still announce the brand.
