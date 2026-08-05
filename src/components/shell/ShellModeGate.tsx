@@ -82,7 +82,10 @@ export function ShellModeGate({ children }: { children: ReactNode }) {
   if (isSelfChromed(pathname)) return <>{children}</>;
   if (LEGAL_PATHS.includes(pathname)) return <>{children}</>;
 
-  const mode = backendMode ?? (localArrival ? 'arrival' : 'working');
+  /* Arrival requires BOTH to agree. The backend can still promote a visitor to the
+     working shell, but it can no longer send someone who has conversations back to a
+     screen that has nowhere to list them (see useArrivalMode). */
+  const mode = localArrival && (backendMode ?? 'arrival') === 'arrival' ? 'arrival' : 'working';
 
   /* The approved front door owns the whole page. */
   if (pathname === '/' && mode === 'arrival') return <ArrivalShell>{children}</ArrivalShell>;

@@ -65,6 +65,28 @@ export interface UseContentPaneResult {
   isSheetBreakpoint: boolean;
 }
 
+/**
+ * THE CONTENT PANE IS DISABLED (change request, 2026-08).
+ *
+ * The right-hand panel was appearing unbidden the moment a visitor left the
+ * arrival screen, explaining itriX beside a conversation they had only just
+ * started. It is switched off here rather than deleted: every component, style
+ * and section below remains in the tree and compiles, so turning it back on is
+ * this one constant.
+ *
+ * `available` is the single chokepoint the whole pane hangs from —
+ * WorkingShell's third column, ContentPane, PaneSheet and the header's
+ * open/hide control all read it, so nothing else needs to change. The artifact
+ * reference card in the transcript reads `visible`, which is derived from
+ * `available`; with the pane off it expands artifacts INLINE instead, which is
+ * the same fallback it already uses at narrow widths. Nothing becomes
+ * unreachable.
+ *
+ * Authorization is untouched. This is presentation only: the backend still
+ * decides what a subject may see, and this build simply does not draw it.
+ */
+const CONTENT_PANE_ENABLED = false;
+
 export function useContentPane(): UseContentPaneResult {
   const { contentPaneSections, contentPaneDefaultArtifactId } = useShellContext();
   const { activeThreadId } = useThreadContext();
@@ -144,7 +166,8 @@ export function useContentPane(): UseContentPaneResult {
     [authorized, artifacts, successOn],
   );
 
-  const available = siteConfig.featureFlags.contentPane && sections.length > 0;
+  const available =
+    CONTENT_PANE_ENABLED && siteConfig.featureFlags.contentPane && sections.length > 0;
   const collapsed = activeThreadId ? Boolean(collapsedByThread[activeThreadId]) : false;
   const visible = available && !collapsed && !isSheetBreakpoint;
 

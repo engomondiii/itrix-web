@@ -37,7 +37,7 @@ export const PENDING_COPY = {
    * announced — narrating three transitions per turn would make the surface
    * unusable with a screen reader.
    */
-  announcement: 'Working on your answer',
+  announcement: 'Processing your request',
 
   /**
    * After PENDING_TIMEOUT_MS with neither a delta nor a stage event. It says what
@@ -48,7 +48,7 @@ export const PENDING_COPY = {
   retry: 'Try again',
 
   /** Fallback while no stage has been reported yet. */
-  waiting: 'Working on your answer',
+  waiting: 'Processing…',
 } as const;
 
 /** Default 20s, overridable per environment. */

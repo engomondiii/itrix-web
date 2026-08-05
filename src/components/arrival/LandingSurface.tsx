@@ -33,7 +33,10 @@ import { useShellContext } from '@/context/ShellContext';
 export function LandingSurface() {
   const backendMode = useShellContext().shellMode;
   const localArrival = useArrivalMode();
-  const arrival = backendMode ? backendMode === 'arrival' : localArrival;
+  /* Same precedence as ShellModeGate: arrival only when both agree, so a visitor
+     with conversations lands on the working column (with the rail) and sees the
+     arrival centre as its empty state rather than losing their history. */
+  const arrival = localArrival && (backendMode ?? 'arrival') === 'arrival';
 
   if (arrival) return <ArrivalCenter />;
 

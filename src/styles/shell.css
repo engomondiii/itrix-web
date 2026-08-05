@@ -494,6 +494,38 @@
 }
 .turn__action:hover { background: var(--soft); color: var(--ink-primary); }
 
+/* ── Editing a prompt that has already been sent ──────────────────────────── */
+/* The editor stands in for the turn's own body, so it borrows its measure and
+   type rather than introducing a second reading width inside the transcript. */
+.turn--editing { display: flex; flex-direction: column; gap: 8px; }
+.turn__edit-input {
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm, 10px);
+  background: var(--surface);
+  color: var(--ink-primary);
+  font: inherit;
+  line-height: 1.55;
+  resize: none;
+  overflow: hidden;
+}
+.turn__edit-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.turn__edit-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.turn__edit-cancel,
+.turn__edit-save {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+.turn__edit-cancel { color: var(--ink-secondary); border: 1px solid var(--border-soft); }
+.turn__edit-cancel:hover { background: var(--soft); color: var(--ink-primary); }
+.turn__edit-save { background: var(--ink-primary); color: var(--ink-inverse); }
+.turn__edit-save:hover { opacity: 0.9; }
+.turn__edit-save:disabled { opacity: 0.45; cursor: not-allowed; }
+
 /* ── The composer ─────────────────────────────────────────────────────────── */
 .conversation-column__composer {
   flex: 0 0 auto;

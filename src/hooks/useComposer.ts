@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { threadsApi } from '@/lib/api/threadsApi';
 import { turnsApi } from '@/lib/api/turnsApi';
 import { useComposerStore } from '@/store/composerStore';
+import type { QueuedPrompt } from '@/store/composerStore';
 import { useThreadStore } from '@/store/threadStore';
 import { useShellContext } from '@/context/ShellContext';
 import { useTranscriptStore } from '@/store/transcriptStore';
@@ -82,6 +83,19 @@ export interface UseComposerResult {
    */
   submit: (attachmentIds?: string[]) => Promise<void>;
   canSubmit: boolean;
+
+  /**
+   * REPLACE AN ALREADY-SENT PROMPT AND ASK AGAIN (change request, 2026-08).
+   *
+   * Rewrites the visitor's turn in place, DISCARDS EVERY TURN AFTER IT, and
+   * re-sends. Discarding is the honest part: the answers below were replies to
+   * a question that no longer exists, and leaving them there would show a
+   * conversation that never happened.
+   */
+  resubmitEdited: (turnId: string, nextBody: string) => Promise<void>;
+
+  /** How many prompts are waiting behind the turn in flight. */
+  queuedCount: number;
 }
 
 export function useComposer(): UseComposerResult {
@@ -93,6 +107,8 @@ export function useComposer(): UseComposerResult {
   const setSubmitting = useComposerStore((s) => s.setSubmitting);
   const setError = useComposerStore((s) => s.setError);
   const clear = useComposerStore((s) => s.clear);
+  const enqueue = useComposerStore((s) => s.enqueue);
+  const queue = useComposerStore((s) => s.queue);
 
   const activeThreadId = useThreadStore((s) => s.activeThreadId);
   const journeyState = useShellContext().journeyState;
@@ -123,16 +139,23 @@ export function useComposer(): UseComposerResult {
     [update, append, upsertThread],
   );
 
-  const submit = useCallback(async (attachmentIds: string[] = []) => {
-    const text = value.trim();
-
-    /* A turn is substantive if it has words OR files. Someone who drags in an
-       architecture document and writes "have a look" has said enough. */
-    if (text.length < MIN_LENGTH && attachmentIds.length === 0) {
-      setError(COMPOSER_COPY.tooShort);
-      return;
-    }
-
+  /**
+   * The one submission pipeline. Three callers reach it:
+   *
+   *   submit()          the visitor pressed send with nothing in flight
+   *   the drain effect  a QUEUED prompt, once the turn ahead of it settled
+   *   resubmitEdited()  an edited prompt, replacing what was there
+   *
+   * `existing` is the optimistic turn already on screen. When it is given this
+   * does not append another one — the queued and edited paths put their turn in
+   * the transcript before they get here, so the visitor sees their words the
+   * instant they press send rather than whenever the queue reaches them.
+   */
+  const runSubmit = useCallback(async (
+    text: string,
+    attachmentIds: string[],
+    existing: { threadId: string; optimisticId: string } | null = null,
+  ) => {
     setError(null);
     setSubmitting(true);
 
@@ -151,9 +174,11 @@ export function useComposer(): UseComposerResult {
 
     /* The visitor's turn appears immediately. Nothing about this depends on the
        network — the sentence they typed is on screen before we ask anyone. */
-    const isFirstTurn = !activeThreadId;
+    /* A queued or edited prompt always belongs to a thread that already exists —
+       something was in flight for it — so it is never the first turn. */
+    const isFirstTurn = !existing && !activeThreadId;
     const now = new Date().toISOString();
-    const threadId = activeThreadId ?? localId('thr');
+    const threadId = existing?.threadId ?? activeThreadId ?? localId('thr');
     const nextSeq =
       (useTranscriptStore.getState().turnsByThread[threadId] ?? []).reduce(
         (max, t) => Math.max(max, t.seq),
@@ -161,7 +186,7 @@ export function useComposer(): UseComposerResult {
       ) + 1;
 
     const optimistic: Turn = {
-      id: localId('turn'),
+      id: existing?.optimisticId ?? localId('turn'),
       threadId,
       role: 'visitor',
       body: text,
@@ -182,8 +207,12 @@ export function useComposer(): UseComposerResult {
       });
     }
 
-    append(threadId, optimistic);
-    clear();
+    /* Already on screen for the queued and edited paths — appending again would
+       show the same sentence twice. */
+    if (!existing) {
+      append(threadId, optimistic);
+      clear();
+    }
     beginPending(threadId);
 
     trackEvent(isFirstTurn ? 'thread.started' : 'thread.turn_submitted', {
@@ -244,10 +273,138 @@ export function useComposer(): UseComposerResult {
       setSubmitting(false);
     }
   }, [
-    value, activeThreadId, familyPrior, journeyState,
+    activeThreadId, familyPrior, journeyState,
     setError, setSubmitting, setActive, upsertThread, append, clear, update, reconcile,
     beginPending, endPending,
   ]);
+
+  /** Put a visitor turn on screen right now, before anything is sent. */
+  const appendOptimistic = useCallback((threadId: string, text: string): Turn => {
+    const seq =
+      (useTranscriptStore.getState().turnsByThread[threadId] ?? []).reduce(
+        (max, t) => Math.max(max, t.seq),
+        0,
+      ) + 1;
+    const turn: Turn = {
+      id: localId('turn'),
+      threadId,
+      role: 'visitor',
+      body: text,
+      seq,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+    append(threadId, turn);
+    return turn;
+  }, [append]);
+
+  /**
+   * SEND, OR TAKE A NUMBER.
+   *
+   * With nothing in flight this behaves exactly as before. With a turn already
+   * being answered the prompt is appended to the transcript and queued, and the
+   * composer clears — so the visitor can keep typing instead of waiting, which
+   * is the whole point of the change.
+   */
+  const submit = useCallback(async (attachmentIds: string[] = []) => {
+    const text = value.trim();
+
+    /* A turn is substantive if it has words OR files. Someone who drags in an
+       architecture document and writes "have a look" has said enough. */
+    if (text.length < MIN_LENGTH && attachmentIds.length === 0) {
+      setError(COMPOSER_COPY.tooShort);
+      return;
+    }
+
+    if (submitting && activeThreadId) {
+      const optimistic = appendOptimistic(activeThreadId, text);
+      enqueue({
+        optimisticId: optimistic.id,
+        threadId: activeThreadId,
+        body: text,
+        attachmentIds,
+      });
+      clear();
+      trackEvent('thread.turn_submitted', {
+        fromCenter: false,
+        length: text.length,
+        usedExample: familyForPrompt(text) !== null,
+        attachments: attachmentIds.length,
+      });
+      return;
+    }
+
+    await runSubmit(text, attachmentIds);
+  }, [
+    value, submitting, activeThreadId, appendOptimistic, enqueue, clear, setError, runSubmit,
+  ]);
+
+  /**
+   * DRAIN THE QUEUE, ONE AT A TIME.
+   *
+   * Runs when a submit finishes. The ref guard matters: `submitting` flips false
+   * before React re-renders every subscriber, and without it two mounted
+   * composers — or one composer and a fast second effect pass — could both take
+   * the same prompt and send it twice.
+   *
+   * The thread id is read fresh rather than taken from the queue entry. A prompt
+   * queued behind the very FIRST turn was appended against a local thread id
+   * that the backend has since replaced; the turn moved with it, keeping its id,
+   * but the id stored at enqueue time is stale.
+   */
+  const draining = useRef(false);
+
+  useEffect(() => {
+    if (submitting || draining.current) return;
+    const next: QueuedPrompt | null = useComposerStore.getState().dequeue();
+    if (!next) return;
+
+    draining.current = true;
+    const threadId = useThreadStore.getState().activeThreadId ?? next.threadId;
+    void runSubmit(next.body, next.attachmentIds, {
+      threadId,
+      optimisticId: next.optimisticId,
+    }).finally(() => {
+      draining.current = false;
+    });
+  }, [submitting, queue, runSubmit]);
+
+  /**
+   * EDIT A PROMPT AND ASK AGAIN.
+   *
+   * Everything below the edited turn is dropped before the new one is sent. Those
+   * turns answered a question the visitor has just withdrawn, and keeping them
+   * would leave replies attached to words nobody wrote.
+   */
+  const resubmitEdited = useCallback(async (turnId: string, nextBody: string) => {
+    const text = nextBody.trim();
+    const threadId = useThreadStore.getState().activeThreadId;
+    if (!threadId || text.length < MIN_LENGTH) return;
+
+    const turns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+    const index = turns.findIndex((t) => t.id === turnId);
+    if (index < 0) return;
+
+    /* Anything the visitor had queued behind this was written against the old
+       question too. Dropping it is the same judgement as dropping the answers. */
+    useComposerStore.getState().clearQueue();
+
+    useTranscriptStore.getState().replace(
+      threadId,
+      turns.slice(0, index + 1).map((t, i) =>
+        i === index ? { ...t, body: text, status: 'pending' as const, contextNote: undefined } : t,
+      ),
+    );
+
+    trackEvent('thread.turn_submitted', {
+      fromCenter: false,
+      length: text.length,
+      usedExample: familyForPrompt(text) !== null,
+      attachments: 0,
+    });
+
+    await runSubmit(text, [], { threadId, optimisticId: turnId });
+  }, [runSubmit]);
 
   return {
     value,
@@ -255,6 +412,10 @@ export function useComposer(): UseComposerResult {
     error,
     setValue,
     submit,
-    canSubmit: value.trim().length >= MIN_LENGTH && !submitting,
+    /* No longer gated on `submitting`: sending while itriX is answering is now a
+       supported action, and it queues rather than being refused. */
+    canSubmit: value.trim().length >= MIN_LENGTH,
+    resubmitEdited,
+    queuedCount: queue.length,
   };
 }

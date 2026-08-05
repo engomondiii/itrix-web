@@ -204,3 +204,17 @@ itrix-web-redirect-fix-v1/
 # itrix-web-login-nav-v1
 itrix-web-login-nav-v1/
 .web-login-nav-backup-*
+
+# itriX mobile-responsive fix -- local install artifacts
+.mobile-responsive-v1-backup-*/
+itrix-web-mobile-responsive-v1/
+itrix-web-mobile-responsive-v1.zip
+
+# itriX mobile layout fixes v2 - local install artifacts
+.mobile-fix-v2-backup-*/
+itrix-web-mobile-fix-v2/
+itrix-web-mobile-fix-v2.zip
+
+# ux-changes-v1
+.ux-changes-v1-backup-*/
+itrix-web-ux-changes-v1*

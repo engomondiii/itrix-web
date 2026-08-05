@@ -28,7 +28,7 @@ export const COMPOSER_COPY = {
   placeholder: CENTER_COPY.promptPlaceholder,
 
   /** Placeholder once the conversation is under way. */
-  placeholderContinuing: 'Reply to itriX, or add anything else that would help.',
+  placeholderContinuing: 'Type your message here, then press Enter to send.',
 
   /** Accessible name for the textarea (visually hidden). */
   textareaLabel: CENTER_COPY.promptAriaLabel,

@@ -11,13 +11,37 @@ import type { Turn } from '@/types/thread.types';
  * with them. Nothing here can act on the CONVERSATION (no retry, no regenerate);
  * those are backend-authorized operations and arrive with streaming in Phase 2.
  */
-export function TurnActions({ turn }: { turn: Turn }) {
+export interface TurnActionsProps {
+  turn: Turn;
+  /**
+   * Supplied for visitor turns that can be rewritten. Absent means no Edit
+   * control — which is how assistant turns, and a visitor turn still in flight,
+   * end up with Copy alone.
+   */
+  onEdit?: () => void;
+}
+
+export function TurnActions({ turn, onEdit }: TurnActionsProps) {
   const [copied, setCopied] = useState(false);
 
   if (!turn.body) return null;
 
   return (
     <div className="turn__actions">
+      {onEdit ? (
+        <button
+          type="button"
+          className="turn__action"
+          aria-label="Edit this message and ask again"
+          onClick={onEdit}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
+          </svg>
+          <span>Edit</span>
+        </button>
+      ) : null}
+
       <button
         type="button"
         className="turn__action"

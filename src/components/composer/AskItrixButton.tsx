@@ -39,7 +39,10 @@ export function AskItrixButton({ disabled = false, submitting = false }: AskItri
       type="submit"
       className="composer-send"
       aria-label={COMPOSER_COPY.sendLabel}
-      disabled={disabled || submitting}
+      /* NOT disabled while submitting. A second send no longer double-posts — it
+         queues behind the turn in flight (useComposer) — so refusing the press
+         would block a supported action. The spinner still says work is happening. */
+      disabled={disabled}
       data-submitting={submitting || undefined}
     >
       {submitting ? (

@@ -69,15 +69,12 @@ export const SIDEBAR_EXPLORE: ShellNavGroup[] = [
       { label: 'Exclusive', href: routes.licensingExclusive },
     ],
   },
-  {
-    title: 'More',
-    items: [
-      { label: 'Use cases', href: '/use-cases' },
-      { label: 'Visitor rooms', href: routes.rooms },
-      { label: 'About itriX', href: routes.about },
-      { label: 'Resources', href: routes.resources },
-    ],
-  },
+  /* THE "More" GROUP IS REMOVED (change request, 2026-08).
+     It was the pop-out menu inside Explore, and it is the last place the label
+     appeared anywhere in the interface. The four routes it linked - /use-cases,
+     the visitor rooms, /about and /resources - are all still live, still
+     rendered by their own pages and still in the sitemap; only this menu entry
+     is gone. Restoring it means restoring this one array element. */
 ];
 
 /**

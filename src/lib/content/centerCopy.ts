@@ -46,7 +46,7 @@ export const CENTER_COPY = {
   mainQuestion: 'What would you like computation to do better?',
 
   /** Placeholder inside the composer. Grey hint text, never a label. */
-  promptPlaceholder: 'Describe the bottleneck or opportunity in one non-confidential sentence…',
+  promptPlaceholder: 'Type your message here, then press Enter to send.',
 
   /** Accessible name for the composer textarea (visually hidden). */
   promptAriaLabel: 'Describe your compute challenge',

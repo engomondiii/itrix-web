@@ -13,9 +13,10 @@ import type { ThreadSummary } from '@/types/thread.types';
  * (Architecture v2.6 §10.3). On reload the transcript is re-fetched, never
  * restored from the browser.
  *
- * The list is a CONVENIENCE mirror. The backend's list wins whenever it answers:
- * `mergeFromServer` replaces rather than merges, so a thread the backend has
- * dropped disappears here too.
+ * The list is a CONVENIENCE mirror. The backend wins on CONTENT — `mergeFromServer`
+ * overwrites any thread it returns, field for field — but NOT on ABSENCE. An answer
+ * that arrives short or empty no longer erases names the visitor can see; removal is
+ * explicit, through `remove`.
  *
  * Surface 1 v5.0 §3.2, §7.5
  */
@@ -59,7 +60,24 @@ export const useThreadStore = create<ThreadState>()(
           activeThreadId: s.activeThreadId === id ? null : s.activeThreadId,
         })),
 
-      mergeFromServer: (threads) => set({ threads: [...threads].sort(byRecency) }),
+      /* MERGE, NOT REPLACE (change request, 2026-08).
+         This used to overwrite the list outright, which meant any answer the
+         backend could not fully give — a dropped visitor-session cookie, a cold
+         start, a 5xx that read as an empty list — silently erased every chat
+         name the visitor could see. The names came back on the next good
+         refresh, but by then the sidebar had already looked broken.
+
+         The server still wins on CONTENT: a thread it returns replaces the local
+         copy field for field, so a renamed or re-titled conversation updates as
+         before. It just no longer wins on ABSENCE. Deletion is explicit and
+         local (`remove`), so nothing here can resurrect a conversation the
+         visitor asked us to forget. */
+      mergeFromServer: (incoming) =>
+        set((s) => {
+          const byId = new Map(s.threads.map((t) => [t.id, t]));
+          for (const t of incoming) byId.set(t.id, t);
+          return { threads: [...byId.values()].sort(byRecency) };
+        }),
 
       reset: () => set({ threads: [], activeThreadId: null }),
     }),

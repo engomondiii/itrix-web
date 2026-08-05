@@ -158,7 +158,10 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
           placeholder={docked ? COMPOSER_COPY.placeholderContinuing : COMPOSER_COPY.placeholder}
           invalid={Boolean(error)}
           minRows={docked ? 2 : 3}
-          busy={submitting}
+          /* `busy` suppressed Enter so a second press could not double-post. A
+             second press now QUEUES, so suppressing it would disable the feature.
+             The spinner on the send button carries the in-flight state instead. */
+          busy={false}
         />
 
         <AskItrixButton
