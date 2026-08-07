@@ -46,7 +46,19 @@ export interface ComposerFooterProps {
 export function ComposerFooter({ noteId, statusId, error = null }: ComposerFooterProps) {
   return (
     <div className="composer-footer">
-      <ConfidentialityNote id={noteId} variant="full" className="composer-footer__note" />
+      {/* THE CONFIDENTIALITY NOTE IS HIDDEN BELOW THE COMPOSER (change request).
+          "Please do not submit confidential technical information before an NDA…"
+          no longer sits under every message box. The component is untouched and is
+          STILL SHOWN where it carries real weight — the client page, the concierge
+          panel, the account-creation step and the use-case CTA all render it — so
+          the disclosure statement has not been removed from the product, only from
+          the one place it was repeating on every turn.
+
+          `noteId` is deliberately still referenced: the textarea's aria-describedby
+          points at it, and dropping it silently would leave a dangling id. */}
+      <span id={noteId} hidden>
+        <ConfidentialityNote variant="full" />
+      </span>
 
       <ComposerKeyHint />
 

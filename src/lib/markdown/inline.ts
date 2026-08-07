@@ -109,6 +109,55 @@ export function parseInline(src: string): InlineNode[] {
       continue;
     }
 
+    /*
+     * BARE AUTOLINK: a URL written straight into prose, with no angle brackets and
+     * no [](). Added because a bare URL used to render as PLAIN TEXT — the visitor
+     * had to select it by hand to open it, and the selection picked up whatever
+     * punctuation followed.
+     *
+     * That was not a cosmetic problem. A capability token is
+     * `<payload>.<signature>`, so it CONTAINS a period; a sentence's full stop
+     * landing against the signature broke the token and the visitor was told their
+     * review link had expired. TRAILING PUNCTUATION IS THEREFORE EXCLUDED FROM THE
+     * HREF and pushed back as text, which is also what every other Markdown
+     * renderer does with a sentence-final URL.
+     */
+    if ((ch === 'h' || ch === 'H') && /^https?:\/\//i.test(src.slice(i, i + 8))) {
+      let end = i;
+      while (end < src.length && !/[\s<>"']/.test(src[end])) end += 1;
+
+      /* Give back sentence punctuation, and any closing bracket that has no opener
+         inside the URL — `(https://x/a)` should not keep the `)`. */
+      while (end > i) {
+        const last = src[end - 1];
+        if ('.,;:!?\u201d\u2019'.includes(last)) {
+          end -= 1;
+          continue;
+        }
+        if (last === ')' || last === ']' || last === '}') {
+          const open = last === ')' ? '(' : last === ']' ? '[' : '{';
+          const slice = src.slice(i, end - 1);
+          if (slice.split(open).length <= slice.split(last).length) {
+            end -= 1;
+            continue;
+          }
+        }
+        break;
+      }
+
+      const href = src.slice(i, end);
+      if (href.length > 'https://'.length) {
+        out.push({
+          kind: 'link',
+          href,
+          allowed: isAllowedLink(href),
+          children: [{ kind: 'text', value: href }],
+        });
+        i = end;
+        continue;
+      }
+    }
+
     /* Autolink: <https://…> */
     if (ch === '<') {
       const close = src.indexOf('>', i + 1);
