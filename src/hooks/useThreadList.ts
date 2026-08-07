@@ -49,8 +49,33 @@ export function useThreadList(activeThreadId: string | null): UseThreadListResul
     url: activeThreadId ? wsUrls.review(activeThreadId) : null,
     enabled: siteConfig.featureFlags.realtime && Boolean(activeThreadId),
     handlers: {
+      /*
+       * The backend sends this FLAT — {threadId, title, state, claimed} — so the
+       * old `p.thread?.id` read never matched and every frame was discarded. That
+       * is what left a new conversation showing a bare "4m ago" in the rail: the
+       * generated title arrived on the socket and was dropped.
+       *
+       * Merged into the EXISTING row rather than replacing it: the frame carries no
+       * timestamps, so upserting it whole would blank `lastActivityAt` and throw the
+       * rail's ordering out.
+       */
       'thread.updated': (p) => {
-        if (p.thread?.id) upsert(p.thread);
+        if (p.thread?.id) {
+          upsert(p.thread);
+          return;
+        }
+        const id = p.threadId;
+        if (!id) return;
+
+        const known = useThreadStore.getState().threads.find((t) => t.id === id);
+        const now = new Date().toISOString();
+        upsert({
+          ...(known ?? { id, createdAt: now, lastActivityAt: now }),
+          id,
+          /* An empty title must not erase a title we already show. */
+          title: p.title || known?.title || '',
+          lastActivityAt: known?.lastActivityAt ?? now,
+        });
       },
     },
   });

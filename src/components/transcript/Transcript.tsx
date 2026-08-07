@@ -8,7 +8,6 @@ import { ArtifactBlock } from '@/components/artifacts/ArtifactBlock';
 import { ArtifactReferenceCard } from './ArtifactReferenceCard';
 import { PendingTransferIndicator } from './PendingTransferIndicator';
 import { InlineCard } from '@/components/cards/InlineCard';
-import { KeepThisWorkCard } from '@/components/center/KeepThisWorkCard';
 import { useThreadContext } from '@/context/ThreadContext';
 import { usePendingStage } from '@/hooks/usePendingStage';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
@@ -86,14 +85,6 @@ export function Transcript({ items }: TranscriptProps) {
   });
 
   /* The pinned artifact is lifted out of the flow, keeping the latest version. */
-  /* v8.0 — the "keep this conversation" offer appears only AFTER an answer has settled
-     (Playbook v1.9 §18H). Offering to save a conversation that has not produced anything yet
-     asks somebody to value work they have not seen. */
-  const hasSettledAnswer = useMemo(
-    () => items.some((i) => i.kind === 'turn' && i.turn.role === 'itrix' && i.turn.status === 'settled'),
-    [items],
-  );
-
   const { pinned, flow } = useMemo(() => {
     let found: TranscriptItem | null = null;
     const rest: TranscriptItem[] = [];
@@ -167,11 +158,15 @@ export function Transcript({ items }: TranscriptProps) {
         <ScrollAnchor active={atBottom} dependency={flow.length} />
       </section>
 
-      {/* OUTSIDE the log region on purpose. Inside it, aria-live="polite" would announce this
-          card as new conversation content to a screen-reader user — it is an offer about their
-          work, not something itriX said. It is also never inside the content pane: §2.7 keeps
-          the pane a reading surface, and this card has an action in it. */}
-      <KeepThisWorkCard threadId={activeThreadId} hasSettledAnswer={hasSettledAnswer} />
+      {/* The "keep this work" card USED TO SIT HERE and has moved to the composer
+          area (ConversationColumn). It is still outside the log region for the same
+          reason it always was — aria-live would announce an offer about the
+          visitor's work as though itriX had said it — but rendering it as a sibling
+          of the scroll container meant it appeared the moment the first answer
+          settled, changed the container's height mid-scroll, and yanked the
+          transcript under the reader. That was the reported snapping. Anchored above
+          the composer it can appear and be dismissed without touching the scroll
+          position at all. */}
 
       {unseen ? <NewMessagesPill onJump={jump} /> : null}
     </div>

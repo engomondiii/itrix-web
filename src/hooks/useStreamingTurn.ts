@@ -104,6 +104,43 @@ export function useStreamingTurn(
     [threadId, append, update],
   );
 
+  /**
+   * Put a turn into a terminal non-delivered state — and CREATE it if we have
+   * never seen it.
+   *
+   * ── WHY CREATING MATTERS ──────────────────────────────────────────────────
+   * These two frames used to `update()` by message id and stop there. An update
+   * for an id the transcript does not hold is a silent no-op, and that is the
+   * common case rather than the rare one: a reply that never streamed — a team
+   * member answering from the cockpit, or an agent turn held by the guard before
+   * a single token went out — has no turn on screen to update.
+   *
+   * So the visitor saw NOTHING. Not the answer, not "a specialist is reviewing
+   * this", not an error. The conversation simply stopped, while the message sat
+   * approved-pending in the cockpit. Appending means the honest state is always
+   * on screen: the transcript says a specialist is reviewing, because one is.
+   */
+  const markStatus = useCallback(
+    (messageId: string, status: 'under_review' | 'halted') => {
+      if (!threadId) return;
+      const existing = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+      if (existing.some((t) => t.id === messageId)) {
+        update(threadId, messageId, { body: '', status });
+        return;
+      }
+      append(threadId, {
+        id: messageId,
+        threadId,
+        role: 'itrix',
+        body: '',
+        seq: existing.reduce((max, t) => Math.max(max, t.seq), 0) + 1,
+        status,
+        createdAt: new Date().toISOString(),
+      });
+    },
+    [threadId, append, update],
+  );
+
   const { status, send } = useSocket({
     url: threadId ? wsUrls.review(threadId) : null,
     enabled,
@@ -174,7 +211,7 @@ export function useStreamingTurn(
            the status and renders the approved wording instead of the body. */
         registry.release(p.messageId);
         setActiveMessageId(null);
-        update(threadId, p.messageId, { body: '', status: 'under_review' });
+        markStatus(p.messageId, 'under_review');
       },
 
       'message.halted': (p) => {
@@ -184,7 +221,7 @@ export function useStreamingTurn(
            be read, so it is not kept for context either. */
         registry.release(p.messageId);
         setActiveMessageId(null);
-        update(threadId, p.messageId, { body: '', status: 'halted' });
+        markStatus(p.messageId, 'halted');
       },
     },
   });

@@ -513,6 +513,26 @@
 .turn__cta-button:hover { opacity: 0.9; }
 .turn__cta-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+/* ── No horizontal scrolling inside a conversation ────────────────────────── */
+/* A capability-token URL is one ~300-character word with no break opportunity, so
+   the transcript grew a horizontal scrollbar and the reader could no longer tell
+   whether they were scrolling the conversation or something inside it. Long words
+   now break instead of widening the column.
+
+   `overflow-wrap: anywhere` rather than `break-all`: ordinary prose still breaks
+   at spaces, and only an unbreakable run is split. */
+.turn__body,
+.turn__body p,
+.turn__body li,
+.turn__cta { min-width: 0; overflow-wrap: anywhere; }
+
+.turn__body a { overflow-wrap: anywhere; }
+
+/* Belt and braces: nothing inside may widen the scrolling column. `.transcript` is
+   the scroll container; `.transcript__log` is the list inside it. */
+.transcript { overflow-x: hidden; }
+.transcript__log { overflow-x: hidden; min-width: 0; }
+
 /* ── Editing a prompt that has already been sent ──────────────────────────── */
 /* The editor stands in for the turn's own body, so it borrows its measure and
    type rather than introducing a second reading width inside the transcript. */

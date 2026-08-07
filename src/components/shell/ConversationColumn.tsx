@@ -12,6 +12,7 @@ import { useStreamingTurn } from '@/hooks/useStreamingTurn';
 import { useSuggestions } from '@/hooks/useSuggestions';
 import { useClientPageReveal } from '@/hooks/useClientPageReveal';
 import { ViewYourPageButton } from './ViewYourPageButton';
+import { KeepThisWorkCard } from '@/components/center/KeepThisWorkCard';
 
 /**
  * The conversation column — the working half of the surface.
@@ -58,6 +59,11 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
 
   const started = Boolean(activeThreadId) && items.length > 0;
 
+  /* Computed here now that the card lives here. Same test the transcript used. */
+  const hasSettledAnswer = items.some(
+    (i) => i.kind === 'turn' && i.turn.role === 'itrix' && i.turn.status === 'settled',
+  );
+
   if (!started) {
     return <div className="conversation-column conversation-column--arrival">{emptyState}</div>;
   }
@@ -68,6 +74,12 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
       <Transcript items={items} />
 
       <div className="conversation-column__composer">
+        {/* Moved out of the transcript (see the note there): appearing inside the
+            scroll container changed its height mid-read and snapped the view. Here it
+            is anchored above the composer, so showing or dismissing it never moves
+            the conversation. */}
+        <KeepThisWorkCard threadId={activeThreadId} hasSettledAnswer={hasSettledAnswer} />
+
         {clientPage.ready ? <ViewYourPageButton onOpen={clientPage.open} /> : null}
         {suggestions.visible ? (
           <SuggestedQuestions chips={suggestions.chips} onChoose={suggestions.choose} />

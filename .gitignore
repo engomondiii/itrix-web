@@ -222,3 +222,7 @@ itrix-web-ux-changes-v1*
 # review-link-v1
 .review-link-v1-backup-*/
 itrix-web-review-link-v1*
+
+# realtime-v2
+.realtime-v2-backup-*/
+itrix-web-realtime-v2*

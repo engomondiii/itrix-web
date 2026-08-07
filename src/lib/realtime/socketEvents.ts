@@ -181,9 +181,24 @@ export interface AttachmentStatusPayload {
   error?: string | null;
 }
 
-/** A thread was created, renamed or touched — the sidebar list re-orders. */
+/**
+ * A thread was created, renamed or touched — the sidebar list re-orders.
+ *
+ * THE WIRE SHAPE IS FLAT. `fan_out.broadcast_thread_updated` sends
+ * `{threadId, title, state, claimed}` at the top level, NOT a nested `thread`
+ * object. This interface used to declare the nested shape, so the handler read
+ * `p.thread?.id`, found undefined, and dropped every frame — which is why a
+ * newly-created conversation showed only "4m ago" in the rail until a full
+ * reload: the generated title was broadcast and then thrown away.
+ *
+ * `thread` is kept as an optional field so a future nested sender still works.
+ */
 export interface ThreadUpdatedPayload {
-  thread: ThreadSummary;
+  threadId?: string;
+  title?: string;
+  state?: string;
+  claimed?: boolean;
+  thread?: ThreadSummary;
 }
 
 /** A support request changed state (Architecture v2.6 Appendix A). */
