@@ -142,6 +142,9 @@
     animation: none !important;
   }
   .prompt-carousel__stage[data-view='single'] .prompt-card { animation: none !important; }
+  /* The dwell bar is motion for its own sake — it goes entirely, not just still. */
+  .prompt-carousel__dwell { display: none !important; }
+  .prompt-carousel__dot { transition: none !important; }
   .prompt-card:hover,
   .composer-shell:focus-within { transform: none; }
   html { scroll-behavior: auto; }

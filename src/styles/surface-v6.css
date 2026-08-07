@@ -198,13 +198,61 @@
 .prompt-carousel__stage[data-view='list'] { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 
 /* One prompt, as a card. The single-item view animates in; the static list does
-   not, because five cards fading at once is noise rather than motion. */
+   not, because five cards fading at once is noise rather than motion.
+
+   The movement is now HORIZONTAL. A 4px rise is the same gesture a card uses when
+   it simply appears, so nothing about it said "there is another one after this".
+   Sliding in from the side is the motion a carousel makes, and that is the whole
+   job of this animation: telling a visitor there are four more examples without
+   making them read a control to find out. */
 .prompt-carousel__stage[data-view='single'] .prompt-card {
-  animation: prompt-rise 240ms ease both;
+  animation: prompt-slide-in 320ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
-@keyframes prompt-rise {
-  from { opacity: 0; transform: translateY(4px); }
+@keyframes prompt-slide-in {
+  from { opacity: 0; transform: translateX(18px); }
   to { opacity: 1; transform: none; }
+}
+
+/* ── The dot indicators ─────────────────────────────────────────────────── */
+/* "1 / 5" in 12px mono is accurate and easy to miss. Dots show the size of the set
+   at a glance and give each example a direct target. */
+.prompt-carousel__dots { display: inline-flex; align-items: center; gap: 6px; }
+.prompt-carousel__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--border-medium);
+  transition: width 200ms ease, background-color 200ms ease;
+}
+.prompt-carousel__dot:hover { background: var(--ink-secondary); }
+.prompt-carousel__dot[data-active] { width: 18px; background: var(--ink-primary); }
+.prompt-carousel__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ── The dwell bar ──────────────────────────────────────────────────────── */
+/* Shows that the thing is going to move on its own, and roughly when. Keyed on the
+   index in the markup so it restarts with each example. Pauses with the rotation —
+   a bar that kept running while hover held the carousel would be lying. */
+.prompt-carousel__dwell {
+  margin-top: 10px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--border-soft);
+  overflow: hidden;
+}
+.prompt-carousel__dwell-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ink-muted);
+  transform-origin: left center;
+  animation: prompt-dwell 4500ms linear both;
+}
+.prompt-carousel__dwell[data-paused] .prompt-carousel__dwell-fill { animation-play-state: paused; }
+@keyframes prompt-dwell {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 .prompt-card {

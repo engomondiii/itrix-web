@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useThreadContext } from '@/context/ThreadContext';
 import { useRailStore } from '@/store/railStore';
 import { RAIL_COPY } from '@/lib/content/composerCopy';
 import { trackEvent } from '@/lib/analytics/trackEvent';
+import { RenameThreadDialog } from './RenameThreadDialog';
 import type { ThreadSummary } from '@/types/thread.types';
 
 /** Relative time, dependency-free and stable enough for a list label. */
@@ -39,47 +40,13 @@ function relativeTime(iso: string): string {
 export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
   const { activeThreadId, switchTo, rename, remove } = useThreadContext();
   const closeSheet = useRailStore((s) => s.closeSheet);
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(thread.title);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  /* Renaming opens a dialog rather than replacing this row with an input. The rail
+     is a narrow fixed column and a generated title is drawn from the visitor's own
+     opening sentence, so it is routinely 60-80 characters — the inline field could
+     not show the name being edited. See RenameThreadDialog. */
+  const [renaming, setRenaming] = useState(false);
 
   const active = activeThreadId === thread.id;
-
-  useEffect(() => {
-    if (editing) inputRef.current?.select();
-  }, [editing]);
-
-  function commit() {
-    const next = draft.trim();
-    if (next && next !== thread.title) rename(thread.id, next);
-    else setDraft(thread.title);
-    setEditing(false);
-  }
-
-  if (editing) {
-    return (
-      <li className="rail-thread rail-thread--editing">
-        <input
-          ref={inputRef}
-          value={draft}
-          aria-label="Rename this conversation"
-          className="rail-thread__input"
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              commit();
-            }
-            if (e.key === 'Escape') {
-              setDraft(thread.title);
-              setEditing(false);
-            }
-          }}
-        />
-      </li>
-    );
-  }
 
   return (
     <li className="rail-thread" data-active={active || undefined}>
@@ -108,7 +75,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
           type="button"
           className="rail-thread__action"
           aria-label={`${RAIL_COPY.rename} “${thread.title}”`}
-          onClick={() => setEditing(true)}
+          onClick={() => setRenaming(true)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
@@ -125,6 +92,17 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
           </svg>
         </button>
       </span>
+
+      {/* Mounted only while open, so the draft is seeded from the current title on
+          every open without an effect to keep it in step. */}
+      {renaming ? (
+        <RenameThreadDialog
+          open
+          currentTitle={thread.title}
+          onClose={() => setRenaming(false)}
+          onSave={(title) => rename(thread.id, title)}
+        />
+      ) : null}
     </li>
   );
 }

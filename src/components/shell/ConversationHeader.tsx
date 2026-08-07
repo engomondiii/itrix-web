@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useShellContext } from '@/context/ShellContext';
 import { useRailStore } from '@/store/railStore';
+import { useComposerStore } from '@/store/composerStore';
+import { trackEvent } from '@/lib/analytics/trackEvent';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { HEADER_COPY, RAIL_COPY } from '@/lib/content/composerCopy';
 
@@ -41,6 +43,8 @@ export function ConversationHeader() {
   const openSheet = useRailStore((s) => s.openSheet);
   const pane = useContentPaneContext();
   const [helpOpen, setHelpOpen] = useState(false);
+  const populate = useComposerStore((st) => st.populate);
+  const requestFocus = useComposerStore((st) => st.requestFocus);
 
   if (!conversationHeader) return null;
   const { title, stateLabel, humanOwner, supportSla, quickHelp } = conversationHeader;
@@ -103,10 +107,27 @@ export function ConversationHeader() {
             >
               {HEADER_COPY.quickHelp}
             </button>
+            {/* Each item now DOES something: it puts an opening sentence in the
+                composer and returns focus there, so the request goes down the same
+                governed path as any other turn rather than into a dead menu. */}
             <ul id="quick-help" hidden={!helpOpen} className="conversation-header__help-menu">
-              {HEADER_COPY.quickHelpExpanded.map((item) => (
-                <li key={item}>{item}</li>
+              {HEADER_COPY.quickHelpExpanded.map((item, i) => (
+                <li key={item}>
+                  <button
+                    type="button"
+                    className="conversation-header__help-item"
+                    onClick={() => {
+                      populate(HEADER_COPY.quickHelpPrompts[i] ?? item);
+                      requestFocus();
+                      setHelpOpen(false);
+                      trackEvent('help.action_chosen', { action: item });
+                    }}
+                  >
+                    {item}
+                  </button>
+                </li>
               ))}
+              <li className="conversation-header__help-hint">{HEADER_COPY.quickHelpHint}</li>
             </ul>
           </div>
         ) : null}

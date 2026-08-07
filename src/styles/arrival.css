@@ -94,8 +94,13 @@
   flex: 1 1 auto;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  padding: 56px 0 40px;
+  /* Centres the stage horizontally as well as vertically. Without this the stage's
+     `margin-inline: auto` is the only thing centring it, which fails the moment a
+     child sets its own width. */
+  justify-content: center;
+  overflow-x: hidden;
+  /* Vertical pad scales too, so a short viewport does not clip the question. */
+  padding: clamp(32px, 6vh, 56px) 0 clamp(28px, 4vh, 40px);
   background:
     radial-gradient(circle at 50% 20%, rgba(214, 230, 255, 0.44), transparent 34%),
     linear-gradient(180deg, var(--canvas) 0%, rgba(234, 240, 255, 0.34) 100%);
@@ -135,8 +140,17 @@
   z-index: 2;
   width: 100%;
   max-width: 940px;
-  margin: 0 auto;
-  padding: 0 48px;
+  margin-inline: auto;
+  /* FLUID, NOT STEPPED. This was a flat 48px overridden to 20px under 767px, so
+     every width between 768px and ~1000px got 48px of gutter on a column that had
+     no room to spare — the question and composer read as off-centre and cramped at
+     exactly the widths a laptop uses. A clamp scales the gutter with the viewport
+     and needs no breakpoint to be correct in between.
+
+     `min-width: 0` because this is a flex child: without it a long unbroken string
+     inside can push the stage wider than its parent and take the centring with it. */
+  min-width: 0;
+  padding-inline: clamp(20px, 5vw, 48px);
 }
 .arrival-center { text-align: center; }
 
@@ -201,8 +215,9 @@
 }
 
 @media (max-width: 767px) {
-  .arrival-hero { padding: 40px 0 32px; }
-  .arrival-stage { padding: 0 20px; }
+  /* The bottom pad respects the home-bar / gesture area, so the composer is not
+     sitting under it on an iPhone. */
+  .arrival-hero { padding: 40px 0 max(32px, env(safe-area-inset-bottom)); }
   .arrival-center .composer-shell { padding: 20px; border-radius: 20px; }
   .arrival-center .composer-textarea { min-height: 104px; }
 }

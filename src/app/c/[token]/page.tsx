@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 import { buildMetadata } from '@/components/seo/PageMeta';
 import { JourneyProvider } from '@/context/JourneyContext';
 import { ClientPageLive } from '@/components/client-page/ClientPageLive';
-import { Composer } from '@/components/composer/Composer';
+import { ClientPageConversation } from '@/components/client-page/ClientPageConversation';
 import type { ClientPage } from '@/types/client.types';
 import type { Metadata } from 'next';
 
@@ -55,9 +55,12 @@ export default async function ClientPageRoute({ params }: { params: Promise<{ to
           <ClientPageLive token={token} initialPage={page} />
         </div>
 
-        <div className="token-page__composer">
-          <Composer variant="docked" />
-        </div>
+        {/* The composer used to stand here alone. It posts to the visitor's review
+            thread, so messages sent from this page were delivered and answered and
+            the visitor saw neither — there was no transcript to render them into.
+            The panel supplies one, with the same Markdown, streaming and pending
+            behaviour as the review surface. */}
+        <ClientPageConversation />
       </div>
     </JourneyProvider>
   );

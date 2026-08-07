@@ -46,7 +46,7 @@ export function RotatingQuestionCarousel() {
   const populate = useComposerStore((s) => s.populate);
 
   const typed = value.trim().length > 0;
-  const { index, count, reducedMotion, showAll, toggleShowAll, next, previous, pauseHandlers } =
+  const { index, count, reducedMotion, showAll, toggleShowAll, next, previous, goTo, paused, pauseHandlers } =
     useRotatingPrompts({ stopped: typed });
 
   const uid = useId();
@@ -78,7 +78,13 @@ export function RotatingQuestionCarousel() {
 
         <div className="prompt-carousel__tools">
           {!staticList ? (
-            <CarouselControls index={index} count={count} onPrevious={previous} onNext={next} />
+            <CarouselControls
+              index={index}
+              count={count}
+              onPrevious={previous}
+              onNext={next}
+              onSelect={goTo}
+            />
           ) : null}
           <ShowAllPromptsDisclosure showAll={showAll} onToggle={toggleShowAll} controls={listId} />
         </div>
@@ -88,6 +94,11 @@ export function RotatingQuestionCarousel() {
         id={listId}
         className="prompt-carousel__stage"
         data-view={staticList ? 'list' : 'single'}
+        /* The rotation is what tells a visitor there is more than one example. It
+           was previously a bare swap with no motion, which reads as a static line of
+           text — so nobody knew to look for the others. `data-paused` lets the
+           dwell bar stop with the rotation instead of running on regardless. */
+        data-paused={paused ? 'true' : undefined}
         aria-label={CENTER_COPY.promptGroupLabel}
       >
         {staticList
@@ -114,6 +125,16 @@ export function RotatingQuestionCarousel() {
               );
             })()}
       </div>
+
+      {/* The dwell indicator. Decorative and aria-hidden: the position is already
+          announced by the controls, and a screen reader does not need a progress
+          bar for something that moves on its own. Hidden entirely under reduced
+          motion, where nothing is rotating to indicate. */}
+      {!staticList ? (
+        <div className="prompt-carousel__dwell" aria-hidden="true" data-paused={paused ? 'true' : undefined}>
+          <span key={index} className="prompt-carousel__dwell-fill" />
+        </div>
+      ) : null}
     </section>
   );
 }

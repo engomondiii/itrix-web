@@ -313,8 +313,28 @@
 }
 
 /* ── Conversation column ──────────────────────────────────────────────────── */
-.conversation-column { display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+/* `min-width: 0` on both: they are grid/flex children, and a long unbreakable
+   string (a capability token, a stack trace) inside a child without it widens the
+   column past the viewport and produces the page-level horizontal scroll. */
+.conversation-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
 .conversation-column--active { height: 100dvh; }
+
+/* The arrival centre, when it renders inside the working shell for a returning
+   visitor. Centred and gutter-matched to the arrival route so "New chat" does not
+   shift the question sideways. */
+.conversation-column--arrival {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding-inline: clamp(20px, 5vw, 48px);
+}
 
 .conversation-header {
   flex: 0 0 auto;
@@ -568,7 +588,9 @@
 /* ── The composer ─────────────────────────────────────────────────────────── */
 .conversation-column__composer {
   flex: 0 0 auto;
-  padding: 12px clamp(16px, 3vw, 32px) 20px;
+  min-width: 0;
+  /* Bottom pad clears the home-bar / gesture area on a phone. */
+  padding: 12px clamp(16px, 3vw, 32px) max(20px, env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-soft);
   background: var(--surface-glass);
   -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
@@ -1200,12 +1222,98 @@ a.citation-chip:hover { border-color: var(--border-medium); color: var(--ink-pri
   flex-direction: column;
   min-height: 100dvh;
 }
-.token-page > #pitch-room { flex: 1 1 auto; padding: 32px clamp(16px, 4vw, 32px); }
-.token-page__composer {
+/* THE PAGE CONTENT SCROLLS ITSELF, so it cannot drag the conversation with it.
+   Previously the whole route was one scroll region with a composer pinned under it,
+   and a drag anywhere moved the same thing — which is why it was unclear whether you
+   were scrolling the review or the chat. */
+.token-page > #pitch-room {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px clamp(16px, 4vw, 32px);
+}
+
+/* ── The conversation panel on the personalised page ─────────────────────── */
+.client-conversation {
   flex: 0 0 auto;
-  padding: 12px clamp(16px, 3vw, 32px) 20px;
+  display: flex;
+  flex-direction: column;
+  /* Capped so the review stays the main event: the conversation is a place to ask
+     about it, not the page itself. It grows to fit a short exchange and scrolls
+     beyond that. */
+  max-height: min(46dvh, 480px);
   border-top: 1px solid var(--border-soft);
   background: var(--surface-glass);
   -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
   backdrop-filter: blur(var(--blur-glass-md, 18px));
+}
+.client-conversation__log {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+}
+.client-conversation__log > .transcript { flex: 1 1 auto; min-height: 0; }
+.client-conversation__empty {
+  padding: 14px clamp(16px, 3vw, 32px) 0;
+  font-size: 13px;
+  color: var(--ink-secondary);
+}
+.client-conversation__composer {
+  flex: 0 0 auto;
+  padding: 12px clamp(16px, 3vw, 32px) max(20px, env(safe-area-inset-bottom));
+}
+
+/* Kept: the old class is still referenced by the create-account step. */
+.token-page__composer {
+  flex: 0 0 auto;
+  padding: 12px clamp(16px, 3vw, 32px) max(20px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-soft);
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
+  backdrop-filter: blur(var(--blur-glass-md, 18px));
+}
+
+/* ── The rename dialog (#3) ──────────────────────────────────────────────── */
+.rename-dialog { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px 20px; }
+.rename-dialog__label { font-size: 13px; color: var(--ink-secondary); }
+.rename-dialog__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm, 10px);
+  background: var(--surface);
+  color: var(--ink-primary);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.rename-dialog__input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.rename-dialog__hint { font-size: 12px; color: var(--ink-secondary); }
+.rename-dialog__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+.rename-dialog__cancel,
+.rename-dialog__save { padding: 8px 16px; border-radius: 999px; font-size: 13px; }
+.rename-dialog__cancel { color: var(--ink-secondary); border: 1px solid var(--border-soft); }
+.rename-dialog__cancel:hover { background: var(--soft); color: var(--ink-primary); }
+.rename-dialog__save { background: var(--ink-primary); color: var(--ink-inverse); }
+.rename-dialog__save:hover { opacity: 0.9; }
+.rename-dialog__save:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Get help, now a real menu (#14) ────────────────────────────────────── */
+.conversation-header__help-item {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 13px;
+  color: var(--ink-primary);
+}
+.conversation-header__help-item:hover { background: var(--soft); }
+.conversation-header__help-hint {
+  padding: 6px 10px 2px;
+  font-size: 12px;
+  color: var(--ink-secondary);
 }

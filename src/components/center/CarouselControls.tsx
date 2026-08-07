@@ -18,9 +18,11 @@ export interface CarouselControlsProps {
   count: number;
   onPrevious: () => void;
   onNext: () => void;
+  /** Jump to one example. Supplied by the carousel; dots render only when present. */
+  onSelect?: (index: number) => void;
 }
 
-export function CarouselControls({ index, count, onPrevious, onNext }: CarouselControlsProps) {
+export function CarouselControls({ index, count, onPrevious, onNext, onSelect }: CarouselControlsProps) {
   return (
     <div className="prompt-carousel__controls">
       <button
@@ -34,9 +36,33 @@ export function CarouselControls({ index, count, onPrevious, onNext }: CarouselC
         </svg>
       </button>
 
-      <span aria-hidden="true" className="prompt-carousel__position">
-        {index + 1} / {count}
-      </span>
+      {/* DOTS INSTEAD OF "1 / 5" ALONE. The count was there before, but a fraction in
+          small type does not read as "there are four more of these you can look at" —
+          which is the thing a visitor needs to notice. Dots make the set visible at a
+          glance and give each example a direct target.
+
+          The position stays as the accessible name on the group, so nothing is lost
+          for a screen reader. */}
+      {onSelect ? (
+        <span className="prompt-carousel__dots" role="tablist" aria-label={`${index + 1} of ${count}`}>
+          {Array.from({ length: count }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`Example ${i + 1} of ${count}`}
+              className="prompt-carousel__dot"
+              data-active={i === index ? 'true' : undefined}
+              onClick={() => onSelect(i)}
+            />
+          ))}
+        </span>
+      ) : (
+        <span aria-hidden="true" className="prompt-carousel__position">
+          {index + 1} / {count}
+        </span>
+      )}
 
       <button
         type="button"

@@ -40,6 +40,10 @@ export interface UseRotatingPromptsResult {
   toggleShowAll: () => void;
   next: () => void;
   previous: () => void;
+  /** Jump straight to one example. Used by the dot indicators. */
+  goTo: (index: number) => void;
+  /** True while rotation is paused (hover, focus, hidden tab, or stopped). */
+  paused: boolean;
   /** Spread onto the group element. */
   pauseHandlers: {
     onMouseEnter: () => void;
@@ -64,6 +68,13 @@ export function useRotatingPrompts(
   const next = useCallback(() => setIndex((i) => (i + 1) % count), [count]);
   const previous = useCallback(() => setIndex((i) => (i - 1 + count) % count), [count]);
   const toggleShowAll = useCallback(() => setShowAll((v) => !v), []);
+  /* Used by the dot indicators. Clamped rather than trusted: the dots are derived
+     from `count`, but a stale render could hand over an index that no longer
+     exists. */
+  const goTo = useCallback(
+    (i: number) => setIndex(Math.max(0, Math.min(count - 1, i))),
+    [count],
+  );
 
   useEffect(() => {
     const onVisibility = () => setTabHidden(document.hidden);
@@ -90,6 +101,8 @@ export function useRotatingPrompts(
     toggleShowAll,
     next,
     previous,
+    goTo,
+    paused,
     pauseHandlers: {
       onMouseEnter: () => setHovered(true),
       onMouseLeave: () => setHovered(false),

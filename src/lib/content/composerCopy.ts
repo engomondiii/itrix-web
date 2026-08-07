@@ -123,11 +123,32 @@ export const SIDEBAR_COPY = RAIL_COPY;
 /** Conversation header strings (Playbook v1.7 §16F). */
 export const HEADER_COPY = {
   quickHelp: 'Get help',
+  /**
+   * THE THREE HELP ACTIONS, AND WHAT EACH ONE ACTUALLY DOES.
+   *
+   * These were a list of three plain `<li>` strings — no handler, no href, nothing
+   * happened when you clicked them. They now populate the composer with an opening
+   * sentence and hand focus back to it, so the request travels the SAME governed
+   * path as every other turn: persisted, routed, and answered or escalated by the
+   * backend that already knows how to route a support request
+   * (`qualification.py` detects one and assigns a human).
+   *
+   * That is deliberately not a separate contact form. A second channel would be a
+   * second place for a request to be lost, and it would arrive without the
+   * conversation that produced it.
+   */
   quickHelpExpanded: [
     'Message your specialist',
     'Ask for a call',
     'Open a support request',
   ],
+  /** The sentence each action puts in the composer. Indexes match the labels above. */
+  quickHelpPrompts: [
+    'I would like to speak to the specialist who is looking at this.',
+    'Could we arrange a call about this review?',
+    'I would like to open a support request about this.',
+  ],
+  quickHelpHint: 'Each one starts a message you can edit before sending.',
   threadActions: 'Conversation options',
   untitled: 'New chat',
   /** Phase 2 mounts the content pane. The control is declared now, inert. */
