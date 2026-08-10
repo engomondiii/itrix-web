@@ -7,6 +7,7 @@ import { useContentPaneStore } from '@/store/contentPaneStore';
 import { useScrollMemoryStore } from '@/store/scrollMemoryStore';
 import { useThreadList } from '@/hooks/useThreadList';
 import { useThreadSwitch } from '@/hooks/useThreadSwitch';
+import { threadsApi } from '@/lib/api/threadsApi';
 import type { ThreadSummary } from '@/types/thread.types';
 
 /**
@@ -117,8 +118,18 @@ export function useThread(): UseThreadResult {
       forgetPane(threadId);
       forgetScroll(threadId);
       if (threadId === activeThreadId) setThreadUrl(null);
+      /* THE SERVER HALF OF DELETION (fix, 2026-08-10). This used to stop at the
+         local removal above, so the backend still held the thread and the next
+         list fetch merged it straight back into the rail — "delete" looked broken
+         because it was only ever half done. The DELETE is fire-and-forget for the
+         UI (the row is already gone), but a FAILURE is answered honestly: we
+         refresh the list, the thread reappears, and the visitor can try again —
+         never a row that silently returns hours later. */
+      void threadsApi.remove(threadId).then((res) => {
+        if (res.error) refresh();
+      });
     },
-    [removeLocal, clearThread, forgetPane, forgetScroll, activeThreadId],
+    [removeLocal, clearThread, forgetPane, forgetScroll, activeThreadId, refresh],
   );
 
   return {

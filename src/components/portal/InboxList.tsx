@@ -109,7 +109,7 @@ export function InboxList({
                   {c.unread > 0 ? (
                     <span
                       aria-label={copy.unreadLabel(c.unread)}
-                      className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-pill bg-ink-primary px-1.5 text-micro font-semibold text-white"
+                      className="inline-flex min-w-5 shrink-0 items-center justify-center rounded-pill bg-error px-1.5 text-micro font-semibold text-white"
                     >
                       {c.unread}
                     </span>

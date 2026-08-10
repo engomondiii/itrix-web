@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { portalApi } from '@/lib/api/portalApi';
 import { useChatStore } from '@/store/chatStore';
+import { usePortalStore } from '@/store/portalStore';
 import type { PortalConversation, PortalThread } from '@/types/portal.types';
 import type { ChatMessage } from '@/types/chat.types';
 
@@ -23,13 +24,19 @@ export function useConversations(activeConversationId?: string | null) {
   const ensureThread = useChatStore((s) => s.ensureThread);
   const appendMessage = useChatStore((s) => s.appendMessage);
   const setUnderReview = useChatStore((s) => s.setUnderReview);
+  const setUnread = usePortalStore((s) => s.setUnread);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadList = useCallback(async () => {
     const res = await portalApi.conversations();
-    if (res.data) setConversations(res.data);
+    if (res.data) {
+      setConversations(res.data);
+      /* Keep the sidebar's Messaging badge on the same numbers this screen shows
+         (unread badges, 2026-08-10). One source, so the two can never disagree. */
+      setUnread(res.data.reduce((sum, c) => sum + (c.unread > 0 ? c.unread : 0), 0));
+    }
     setLoading(false);
-  }, []);
+  }, [setUnread]);
 
   const loadThread = useCallback(
     async (id: string) => {
@@ -48,13 +55,17 @@ export function useConversations(activeConversationId?: string | null) {
 
   useEffect(() => {
     if (!activeConversationId) return;
-    void loadThread(activeConversationId);
+    /* Opening a thread marks it read server-side (the messages GET calls
+       mark_read), so the list is refetched right after the FIRST load — the row's
+       unread pill and the sidebar badge clear as soon as the messages are on
+       screen. The poll below deliberately does not re-list on every tick. */
+    void loadThread(activeConversationId).then(() => loadList());
     timer.current = setInterval(() => void loadThread(activeConversationId), POLL_MS);
     return () => {
       if (timer.current) clearInterval(timer.current);
       timer.current = null;
     };
-  }, [activeConversationId, loadThread]);
+  }, [activeConversationId, loadThread, loadList]);
 
   const send = useCallback(
     async (body: string, attachmentIds: string[] = []) => {

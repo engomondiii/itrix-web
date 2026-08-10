@@ -90,4 +90,30 @@ export const threadsApi = {
       return { data: null, error: e instanceof Error ? e.message : 'thread unreachable' };
     }
   },
+
+  /**
+   * Delete a thread on the SERVER, session-authorized by Django.
+   *
+   * This is the missing half of "delete a chat": the rail removed the row locally
+   * but nothing ever told the backend, so the next list fetch merged the thread
+   * straight back in — deletion appeared not to work. A `thr_local_…` id is
+   * answered by the proxy with 204 without a round trip (nothing exists upstream).
+   */
+  async remove(threadId: string): Promise<ApiResult<null>> {
+    try {
+      const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}`, {
+        method: 'DELETE',
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok || res.status === 204 || res.status === 404) {
+        /* 404 counts as success: the thread is already gone server-side, which is
+           the state the visitor asked for. */
+        return { data: null, error: null };
+      }
+      return { data: null, error: `thread delete ${res.status}` };
+    } catch (e) {
+      return { data: null, error: e instanceof Error ? e.message : 'thread unreachable' };
+    }
+  },
 };

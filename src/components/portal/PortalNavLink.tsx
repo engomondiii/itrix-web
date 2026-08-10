@@ -34,7 +34,7 @@ export function PortalNavLink({
         <span className="truncate">{label}</span>
       </span>
       {badge && badge > 0 ? (
-        <span className="inline-flex min-w-5 items-center justify-center rounded-pill bg-ink-primary px-1.5 text-micro font-semibold text-white">
+        <span className="inline-flex min-w-5 items-center justify-center rounded-pill bg-error px-1.5 text-micro font-semibold text-white">
           {badge}
         </span>
       ) : null}

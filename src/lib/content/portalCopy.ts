@@ -85,7 +85,7 @@ export const PORTAL_COPY = {
     /* The inbox chrome (2026-08-10). 'Briefing' is no longer a nav label; this
        screen is where messages are read and answered. */
     inbox: {
-      header: 'Inbox',
+      header: 'Messaging',
       listLabel: 'Conversations',
       threadFallbackSubject: 'Conversation with the itriX team',
       empty: 'Nothing here yet. Write to the itriX team below and your conversation will appear in this list.',

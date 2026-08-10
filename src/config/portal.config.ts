@@ -39,7 +39,7 @@ export const PORTAL_NAV: PortalNavItem[] = [
      The /workspace/briefing route is deliberately NOT deleted: it still renders,
      so a bookmark or an emailed link keeps working. It is simply no longer a
      second door to the same content. */
-  { key: 'messages', label: 'Inbox', href: '/workspace/messages' },
+  { key: 'messages', label: 'Messaging', href: '/workspace/messages' },
   { key: 'documents', label: 'Documents', href: '/workspace/documents' },
   { key: 'evaluation', label: 'Evaluation', href: '/workspace/evaluation' },
   { key: 'assessment', label: 'Assessment', href: '/workspace/assessment', minJourneyNumber: 7 },

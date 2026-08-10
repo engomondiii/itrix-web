@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { portalNav } from '@/config/navigation.config';
 import { usePortalStore } from '@/store/portalStore';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
+import { usePortalUnread } from '@/hooks/usePortalUnread';
 import { useJourneyContext } from '@/context/JourneyContext';
 import { useThreadContext } from '@/context/ThreadContext';
 import { useComposerStore } from '@/store/composerStore';
@@ -98,6 +99,10 @@ const GROUPS: readonly (readonly string[])[] = [
 
 export function PortalSidebar() {
   const unread = usePortalStore((s) => s.unreadMessages);
+  /* The badge's data supply (fix, 2026-08-10): nothing mounted the old overview
+     hook, so `unreadMessages` was never written and the Messaging badge never
+     showed. The sidebar is on every workspace screen, so the poll lives here. */
+  usePortalUnread();
   const { signOut } = usePortalAuth();
   const { journeyNumber } = useJourneyContext();
   const { startNew } = useThreadContext();

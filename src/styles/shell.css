@@ -74,12 +74,25 @@
   min-height: 100dvh;
   width: 100%;
   background: var(--canvas);
+  /* CLEAN COLLAPSE (fix, 2026-08-10). The rail used to snap between 280px and
+     64px in a single frame. Track counts match across every state pair below
+     (2↔2, 3↔3), so the columns interpolate; browsers without animatable
+     grid-template-columns simply keep the old snap — nothing breaks. */
+  transition: grid-template-columns 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
 .working-shell[data-pane='true'] {
   grid-template-columns: var(--shell-rail-w) minmax(0, 1fr) var(--shell-pane-w);
 }
 .working-shell[data-collapsed='true'] {
   grid-template-columns: var(--shell-sidebar-collapsed-w) minmax(0, 1fr);
+}
+/* COLLAPSED *WITH* THE PANE OPEN (fix, 2026-08-10). Both single-attribute rules
+   above tie on specificity, so source order let the collapsed rule win and the
+   grid was declared with TWO columns while THREE children rendered — the content
+   pane fell into an implicit auto track and the layout came apart the moment the
+   rail was collapsed with a pane showing. The combined state needs its own rule. */
+.working-shell[data-collapsed='true'][data-pane='true'] {
+  grid-template-columns: var(--shell-sidebar-collapsed-w) minmax(0, 1fr) var(--shell-pane-w);
 }
 
 .conversation-main {
@@ -119,6 +132,9 @@
   background: var(--surface-glass-soft);
   -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
   backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  /* While the column width animates, nothing may spill past it. */
+  overflow: hidden;
+  min-width: 0;
 }
 .conversation-rail__inner {
   position: relative;
@@ -126,6 +142,13 @@
   flex-direction: column;
   height: 100%;
   padding: 20px 14px 12px;
+}
+/* NO MID-ANIMATION REWRAP (fix, 2026-08-10). During expand the labels reappear at
+   t=0 while the column is still animating 64→280px; without this they lay out at
+   the narrow width and visibly rewrap as it grows. Pinning the inner to the final
+   content width lays text out once; the animating rail simply clips it. */
+.conversation-rail__inner:not([data-collapsed='true']) {
+  min-width: calc(var(--shell-rail-w) - 28px);
 }
 .conversation-rail__body {
   flex: 1 1 auto;
@@ -162,6 +185,18 @@
 .conversation-rail__inner[data-collapsed='true'] .sidebar-legal,
 .conversation-rail__inner[data-collapsed='true'] .rail-new-chat span,
 .conversation-rail__inner[data-collapsed='true'] nav { display: none; }
+/* The wordmark cannot render inside 64px, and the account footer's nav is hidden
+   above — leaving a bare border-top box. Hide both whole, so the collapsed rail is
+   exactly: the new-review icon on top, the expand control at the bottom (fix,
+   2026-08-10). */
+.conversation-rail__inner[data-collapsed='true'] .conversation-rail__brand,
+.conversation-rail__inner[data-collapsed='true'] .conversation-rail__foot { display: none; }
+/* The surviving icon button centres in the narrow column instead of hugging the
+   old label gap. */
+.conversation-rail__inner[data-collapsed='true'] .rail-new-chat {
+  justify-content: center;
+  padding: 10px;
+}
 
 .rail-group { display: flex; flex-direction: column; gap: 8px; }
 .rail-group__label {
@@ -853,6 +888,25 @@
   .working-shell[data-pane='true'] {
     grid-template-columns: var(--shell-rail-collapsed-w) minmax(0, 1fr) minmax(300px, 340px);
   }
+  /* THE RAIL MUST KNOW IT IS NARROW HERE (fix, 2026-08-10). The rule above forces
+     the collapsed COLUMN width whenever the pane is open at this breakpoint, but the
+     rail's contents were still laid out full-size — labels, threads and the wordmark
+     crammed and wrapped inside 64px. Mirror the collapsed-state content rules for
+     this layout so the rail renders icon-only, exactly as if it had been collapsed. */
+  .working-shell[data-pane='true'] .conversation-rail__inner { min-width: 0; }
+  .working-shell[data-pane='true'] .conversation-rail__inner .rail-group__label,
+  .working-shell[data-pane='true'] .conversation-rail__inner .rail-group__empty,
+  .working-shell[data-pane='true'] .conversation-rail__inner .rail-threads,
+  .working-shell[data-pane='true'] .conversation-rail__inner .sidebar-explore,
+  .working-shell[data-pane='true'] .conversation-rail__inner .sidebar-legal,
+  .working-shell[data-pane='true'] .conversation-rail__inner .rail-new-chat span,
+  .working-shell[data-pane='true'] .conversation-rail__inner nav,
+  .working-shell[data-pane='true'] .conversation-rail__inner .conversation-rail__brand,
+  .working-shell[data-pane='true'] .conversation-rail__inner .conversation-rail__foot { display: none; }
+  .working-shell[data-pane='true'] .conversation-rail__inner .rail-new-chat {
+    justify-content: center;
+    padding: 10px;
+  }
 }
 
 @media (max-width: 1023px) {
@@ -887,6 +941,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .working-shell,
   .composer-shell,
   .composer-send,
   .example-card,
