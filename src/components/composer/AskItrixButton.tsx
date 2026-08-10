@@ -55,9 +55,9 @@ export function AskItrixButton({ disabled = false, submitting = false }: AskItri
           src="/brand/itrix-x-inverse.png"
           alt=""
           aria-hidden="true"
-          /* Intrinsic size of the refreshed cut (554×457 ≈ 1.21:1 — the new X is
-             WIDER than tall, where the old cut was taller than wide). The CSS
-             class sets the display width and derives the height from this ratio. */
+          /* Intrinsic size of the official cut (663×548 ≈ 1.21:1 — the X is
+             WIDER than tall, where the pre-refresh cut was taller than wide). The
+             CSS class sets the display width and derives the height from this ratio. */
           width={20}
           height={17}
           priority

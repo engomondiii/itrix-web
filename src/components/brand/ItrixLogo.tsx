@@ -20,15 +20,16 @@ import Image from 'next/image';
  * so a neighbouring nav item cannot encroach on it.
  *
  * ── LOGO REFRESH (2026-08, Brand Manual v2.0) ───────────────────────────────
- * The assets under /brand are cut from the supplied `1__ITRIX_Logo.ai` — the
- * current mark. It is a WIDER lockup than the one it replaces (≈3.24:1 against
- * ≈2.19:1), so the ratio below changed with the files; at the same rendered
- * width the mark now stands shorter, which is the mark's own geometry, not a
- * squeeze. SVG cuts of the same artwork sit beside the PNGs in /brand for any
+ * The assets under /brand are the OFFICIAL supplied cuts — light and dark mode
+ * each shipped as its own file, used exactly as delivered (the earlier assets
+ * were derived from a draft .ai whose X was not the final letterform). The
+ * lockup is ≈3.24:1; at the same rendered width it stands shorter than the old
+ * ≈2.19:1 mark, which is the mark's own geometry, not a squeeze. SVG cuts
+ * traced from the same official artwork sit beside the PNGs in /brand for any
  * consumer that wants vectors.
  *
- * The source PNGs are 1504×464 (≈3.24:1); the height follows the width from that
- * exact ratio so the lockup is never stretched.
+ * The primary source PNG is 1446×446 (≈3.24:1); the height follows the width
+ * from that exact ratio so the lockup is never stretched.
  */
 export interface ItrixLogoProps {
   /** Rendered width in px. The approved header uses 120 desktop / 96 mobile. */
@@ -40,7 +41,7 @@ export interface ItrixLogoProps {
 }
 
 /** Exact aspect ratio of the supplied wordmark assets (both cuts share it). */
-const ASPECT = 1504 / 464;
+const ASPECT = 1446 / 446;
 
 const SOURCES: Record<'light' | 'dark', string> = {
   light: '/brand/itrix-logo-primary.png',
