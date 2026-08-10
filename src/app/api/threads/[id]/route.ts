@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 import { toThread } from '@/lib/api/normalizeWire';
 
 export const runtime = 'nodejs';
@@ -36,12 +37,17 @@ function isLocalId(id: string): boolean {
   return id.startsWith('thr_local_');
 }
 
-function headers(req: Request): HeadersInit {
+/* CLIENT PLANE (2026-08-10): the workspace reaches this proxy too; the Bearer
+   client-JWT (httpOnly on this host) is attached server-side. Anonymous
+   visitors keep the cookie path unchanged. */
+async function headers(req: Request): Promise<HeadersInit> {
   const cookie = req.headers.get('cookie');
+  const token = await getClientAccessToken();
   return {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     ...(cookie ? { cookie } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
@@ -62,7 +68,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   try {
     const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
       method: 'GET',
-      headers: headers(req),
+      headers: await headers(req),
       cache: 'no-store',
     });
     if (!res.ok) {
@@ -87,7 +93,7 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   try {
     const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
       method: 'PATCH',
-      headers: headers(req),
+      headers: await headers(req),
       body: JSON.stringify(body),
       cache: 'no-store',
     });
@@ -106,7 +112,7 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }
   try {
     const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
       method: 'DELETE',
-      headers: headers(req),
+      headers: await headers(req),
       cache: 'no-store',
     });
     return new NextResponse(null, { status: res.status === 204 ? 204 : res.status });

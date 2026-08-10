@@ -44,10 +44,26 @@ export interface UseThreadResult {
   refresh: () => void;
 }
 
-/** Update the address bar without a route transition. */
+/**
+ * Update the address bar without a route transition.
+ *
+ * ── ZONE-AWARE (2026-08-10) ─────────────────────────────────────────────────
+ * This helper used to write the PUBLIC path unconditionally, so activating or
+ * submitting inside the signed-in workspace rewrote the URL to /review/<id> —
+ * and the next reconciliation (reload, Back, a router transition) landed the
+ * customer on the public surface, where the conversation rail mounts beside
+ * the portal they just left. That is the "second sidebar" a customer saw when
+ * continuing a chat. Inside /workspace the address now stays inside
+ * /workspace, where the same thread renders in the portal's own chrome.
+ */
 export function setThreadUrl(threadId: string | null): void {
   if (typeof window === 'undefined') return;
-  const next = threadId ? `/review/${encodeURIComponent(threadId)}` : '/';
+  const inWorkspace = window.location.pathname.startsWith('/workspace');
+  const next = threadId
+    ? `${inWorkspace ? '/workspace/review' : '/review'}/${encodeURIComponent(threadId)}`
+    : inWorkspace
+      ? '/workspace'
+      : '/';
   if (window.location.pathname === next) return;
   window.history.replaceState(null, '', next);
 }

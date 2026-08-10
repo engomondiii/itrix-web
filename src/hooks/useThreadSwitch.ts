@@ -34,9 +34,13 @@ export interface UseThreadSwitchResult {
   switchTo: (threadId: string) => void;
 }
 
-/** The address for a thread, without navigating to it. */
+/** The address for a thread, without navigating to it. Zone-aware: inside the
+    signed-in workspace the thread's address is the portal route, so a switch
+    never carries the customer out to the public surface (see setThreadUrl). */
 function threadPath(threadId: string): string {
-  return `/review/${encodeURIComponent(threadId)}`;
+  const inWorkspace =
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/workspace');
+  return `${inWorkspace ? '/workspace/review' : '/review'}/${encodeURIComponent(threadId)}`;
 }
 
 export function useThreadSwitch(): UseThreadSwitchResult {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 import { toTurnSubmitResult } from '@/lib/api/normalizeWire';
 
 export const runtime = 'nodejs';
@@ -21,6 +22,9 @@ const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const cookie = req.headers.get('cookie');
+  /* CLIENT PLANE (2026-08-10): see the sibling routes — the Bearer token lets a
+     signed-in customer speak on their own thread from any device. */
+  const token = await getClientAccessToken();
 
   let body: unknown;
   try {
@@ -36,6 +40,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
         'Content-Type': 'application/json',
         Accept: 'application/json',
         ...(cookie ? { cookie } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(body),
       cache: 'no-store',

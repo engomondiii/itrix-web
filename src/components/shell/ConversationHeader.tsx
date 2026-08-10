@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useShellContext } from '@/context/ShellContext';
 import { useRailStore } from '@/store/railStore';
@@ -41,6 +42,11 @@ import { HEADER_COPY, RAIL_COPY } from '@/lib/content/composerCopy';
 export function ConversationHeader() {
   const { conversationHeader } = useShellContext();
   const openSheet = useRailStore((s) => s.openSheet);
+  /* Inside the signed-in workspace the conversation list lives in the portal
+     sidebar itself, and no RailSheet is mounted — a burger here would open
+     nothing. Presentation only; it hides a control, never a capability. */
+  const pathname = usePathname();
+  const inWorkspace = pathname.startsWith('/workspace');
   const pane = useContentPaneContext();
   const [helpOpen, setHelpOpen] = useState(false);
   const populate = useComposerStore((st) => st.populate);
@@ -51,6 +57,7 @@ export function ConversationHeader() {
 
   return (
     <header className="conversation-header">
+      {inWorkspace ? null : (
       <button
         type="button"
         className="conversation-header__nav"
@@ -61,6 +68,7 @@ export function ConversationHeader() {
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
       </button>
+      )}
 
       <div className="conversation-header__identity">
         {/*

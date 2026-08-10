@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -136,6 +137,9 @@ function normaliseShell(raw: Raw): Raw {
 
 export async function GET(req: Request) {
   const cookie = req.headers.get('cookie');
+  /* CLIENT PLANE (2026-08-10): the workspace thread asks for its shell through
+     this proxy too; the Bearer token identifies the customer server-side. */
+  const token = await getClientAccessToken();
   const thread = new URL(req.url).searchParams.get('thread');
 
   // No thread, or a thread the backend has not issued yet. Either way there is
@@ -147,7 +151,11 @@ export async function GET(req: Request) {
   try {
     const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(thread)}/shell/`, {
       method: 'GET',
-      headers: { Accept: 'application/json', ...(cookie ? { cookie } : {}) },
+      headers: {
+        Accept: 'application/json',
+        ...(cookie ? { cookie } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       cache: 'no-store',
     });
     if (!res.ok) return NextResponse.json({}, { status: res.status });

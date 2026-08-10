@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 import { toSubmitResult, toThreadList } from '@/lib/api/normalizeWire';
 
 export const runtime = 'nodejs';
@@ -32,12 +33,17 @@ const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http
  *
  * Normalising here fixes all of them at once, because they all had one cause.
  */
-function forwardHeaders(req: Request): HeadersInit {
+/* CLIENT PLANE (2026-08-10): the workspace reaches this proxy too, and Django
+   authenticates the customer with a Bearer client-JWT (httpOnly on this host) —
+   attached server-side. Anonymous visitors keep the cookie path unchanged. */
+async function forwardHeaders(req: Request): Promise<HeadersInit> {
   const cookie = req.headers.get('cookie');
+  const token = await getClientAccessToken();
   return {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     ...(cookie ? { cookie } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
@@ -53,7 +59,7 @@ export async function POST(req: Request) {
   try {
     const res = await fetch(`${API_BASE}/threads/`, {
       method: 'POST',
-      headers: forwardHeaders(req),
+      headers: await forwardHeaders(req),
       body: JSON.stringify(body),
       cache: 'no-store',
     });
@@ -86,7 +92,7 @@ export async function GET(req: Request) {
   try {
     const res = await fetch(`${API_BASE}/threads/`, {
       method: 'GET',
-      headers: forwardHeaders(req),
+      headers: await forwardHeaders(req),
       cache: 'no-store',
     });
     if (!res.ok) return NextResponse.json({ threads: [] }, { status: res.status });
