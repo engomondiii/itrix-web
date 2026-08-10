@@ -139,6 +139,9 @@ export interface PortalSettings {
 /** A full portal messages thread (reuses the governed ChatMessage shape). */
 export interface PortalThread {
   conversationId: string;
+  /** The conversation's spine id — attachments stage against it. Null only for
+      threads that predate the spine; the backend creates it on first GET. */
+  threadId: string | null;
   messages: ChatMessage[];
   teamJoined: boolean;
   teamMemberName: string | null;

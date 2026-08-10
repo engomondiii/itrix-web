@@ -52,7 +52,10 @@ export function DataRoom({ data }: { data: PortalDataRoom }) {
       <section className="flex flex-col gap-3">
         <SectionLabel>Available now</SectionLabel>
         <div className="grid gap-3 sm:grid-cols-2">
-          {data.openFolders.map((f) => (
+          {/* `?? []` on both folder lists: the payload shape is the backend's
+              contract, and a missing key must degrade to an empty section, not
+              take the whole Documents screen down with it. */}
+          {(data.openFolders ?? []).map((f) => (
             <DocumentFolder key={f.folder} folder={f.folder} documents={f.documents} />
           ))}
         </div>
@@ -67,7 +70,7 @@ export function DataRoom({ data }: { data: PortalDataRoom }) {
             </div>
             {data.dataRoomFolders.length > 0 ? (
               <div className="grid gap-3 sm:grid-cols-2">
-                {data.dataRoomFolders.map((f) => (
+                {(data.dataRoomFolders ?? []).map((f) => (
                   <DocumentFolder key={f.folder} folder={f.folder} documents={f.documents} />
                 ))}
               </div>

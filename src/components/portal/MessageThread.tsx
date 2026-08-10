@@ -5,6 +5,7 @@ import { TeamJoinedNotice } from './TeamJoinedNotice';
 import { UnderReviewState } from './UnderReviewState';
 import { PresenceBar } from './PresenceBar';
 import { CitationChip } from '@/components/chat/CitationChip';
+import { attachmentsApi } from '@/lib/api/attachmentsApi';
 import { StreamingCursor } from '@/components/chat/StreamingCursor';
 import { PORTAL_COPY } from '@/lib/content/portalCopy';
 import { cn } from '@/lib/cn';
@@ -55,6 +56,26 @@ export function MessageThread({
             {m.body}
             {m.streaming ? <StreamingCursor /> : null}
           </p>
+          {m.attachments && m.attachments.length > 0 ? (
+            <ul className="mt-2 flex flex-wrap gap-1.5">
+              {m.attachments.map((a) => (
+                <li key={a.attachmentId}>
+                  {a.downloadable ? (
+                    <a
+                      href={attachmentsApi.downloadUrl(a.attachmentId)}
+                      className="inline-flex items-center gap-1 rounded-pill border border-border-medium bg-surface px-2.5 py-1 text-caption text-ink-primary underline-offset-2 hover:underline"
+                    >
+                      {a.filename}
+                    </a>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-pill border border-border-medium bg-surface px-2.5 py-1 text-caption text-ink-secondary">
+                      {a.filename}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {m.citations.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {m.citations.map((c) => (

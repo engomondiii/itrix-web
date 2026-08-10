@@ -20,19 +20,20 @@ export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> 
 
 interface SendBody {
   body?: string;
+  attachmentIds?: string[];
 }
 
 /**
- * POST — send a client message on this conversation. Django runs the governed reply
- * (agent or team) and returns it; a held reply carries governance_status='pending'
- * so the UI shows the "under review" state. Never fabricates a reply locally.
+ * POST — send a client message on this conversation. The response is the client's
+ * own PERSISTED message (with its attachment chips); the team's reply arrives via
+ * the same polling that refreshes the thread. Never fabricates a reply locally.
  */
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const body = (await req.json().catch(() => ({}))) as SendBody;
   const res = await djangoFetch<ChatMessage>(apiRoutes.portalConversationSend(id), {
     method: 'POST',
-    body: { body: body.body ?? '' },
+    body: { body: body.body ?? '', attachmentIds: body.attachmentIds ?? [] },
   });
   if (res.status === 401) return NextResponse.json({ error: { detail: 'not_authenticated' } }, { status: 401 });
   if (!res.ok || res.data === null) return NextResponse.json({ error: { detail: `send ${res.status}` } }, { status: 502 });

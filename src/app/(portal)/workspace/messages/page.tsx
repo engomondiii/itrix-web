@@ -60,9 +60,13 @@ export default function MessagesPage() {
 
           <AgentTeamComposer
             disabled={sending || !activeId}
-            onSend={(b) => {
-              trackEvent('portal.message_sent', { conversationId: activeId });
-              void send(b);
+            threadId={thread?.threadId ?? null}
+            onSend={(b, attachmentIds) => {
+              trackEvent('portal.message_sent', {
+                conversationId: activeId,
+                attachments: attachmentIds.length,
+              });
+              void send(b, attachmentIds);
             }}
           />
         </Card>

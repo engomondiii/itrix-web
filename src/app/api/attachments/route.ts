@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,11 @@ const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http
 export async function POST(req: Request) {
   const cookie = req.headers.get('cookie');
   const contentType = req.headers.get('content-type');
+  /* CLIENT PLANE (2026-08-10): the workspace uploads through this same proxy, and
+   Django authenticates the client with a Bearer JWT, not a cookie — the token is
+   httpOnly on THIS host, so only the server can attach it. Absent for anonymous
+   visitors, whose signed session cookie is forwarded below as before. */
+  const token = await getClientAccessToken();
 
   try {
     const res = await fetch(`${API_BASE}/attachments/`, {
@@ -29,6 +35,7 @@ export async function POST(req: Request) {
         Accept: 'application/json',
         ...(contentType ? { 'content-type': contentType } : {}),
         ...(cookie ? { cookie } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: req.body,
       /* Required by undici when streaming a request body. */

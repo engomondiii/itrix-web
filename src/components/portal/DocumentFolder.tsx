@@ -11,7 +11,7 @@ export function DocumentFolder({ folder, documents }: { folder: string; document
         <p className="text-secondary text-ink-secondary">Nothing here yet.</p>
       ) : (
         <ul className="flex flex-col divide-y divide-border-soft">
-          {documents.map((doc) => (
+          {(documents ?? []).map((doc) => (
             <li key={doc.id} className="flex items-center justify-between gap-4 py-2.5">
               <span className="text-body text-ink-primary">{doc.title}</span>
               {doc.href ? (

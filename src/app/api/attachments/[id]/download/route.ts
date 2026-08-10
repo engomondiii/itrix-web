@@ -1,3 +1,5 @@
+import { getClientAccessToken } from '@/lib/server/session';
+
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -23,11 +25,14 @@ const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const cookie = req.headers.get('cookie');
+  /* CLIENT PLANE (2026-08-10): see the sibling route — the Bearer token is what
+     authorizes a workspace download; the cookie path serves anonymous visitors. */
+  const token = await getClientAccessToken();
 
   try {
     const upstream = await fetch(`${API_BASE}/attachments/${encodeURIComponent(id)}/download/`, {
       method: 'GET',
-      headers: { ...(cookie ? { cookie } : {}) },
+      headers: { ...(cookie ? { cookie } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       cache: 'no-store',
     });
 

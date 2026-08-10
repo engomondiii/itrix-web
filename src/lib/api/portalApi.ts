@@ -78,8 +78,8 @@ export const portalApi = {
   conversations: () => getJson<PortalConversation[]>(`/api/portal/conversations`),
   conversationMessages: (id: string) =>
     getJson<PortalThread>(`/api/portal/conversations/${encodeURIComponent(id)}/messages`),
-  sendMessage: (id: string, body: string) =>
-    sendJson<ChatMessage>(`/api/portal/conversations/${encodeURIComponent(id)}/messages`, { body }),
+  sendMessage: (id: string, body: string, attachmentIds: string[] = []) =>
+    sendJson<ChatMessage>(`/api/portal/conversations/${encodeURIComponent(id)}/messages`, { body, attachmentIds }),
   documents: () => getJson<PortalDataRoom>(`/api/portal/documents`),
   evaluation: () => getJson<PortalEvaluation>(`/api/portal/evaluation`),
   poc: () => getJson<PortalPoC>(`/api/portal/poc`),

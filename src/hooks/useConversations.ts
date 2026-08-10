@@ -57,9 +57,9 @@ export function useConversations(activeConversationId?: string | null) {
   }, [activeConversationId, loadThread]);
 
   const send = useCallback(
-    async (body: string) => {
+    async (body: string, attachmentIds: string[] = []) => {
       const text = body.trim();
-      if (!text || !activeConversationId) return;
+      if ((!text && attachmentIds.length === 0) || !activeConversationId) return;
       setSending(true);
 
       const optimistic: ChatMessage = {
@@ -74,13 +74,20 @@ export function useConversations(activeConversationId?: string | null) {
       setThread((prev) => (prev ? { ...prev, messages: [...prev.messages, optimistic] } : prev));
       appendMessage(activeConversationId, optimistic);
 
-      const res = await portalApi.sendMessage(activeConversationId, text);
+      const res = await portalApi.sendMessage(activeConversationId, text, attachmentIds);
       if (res.data) {
-        if (res.data.governanceStatus === 'pending' || res.data.governanceStatus === 'blocked') {
+        /* The response is the client's own PERSISTED message (carrying its
+           attachment chips) — not a reply. RECONCILE the optimistic entry with
+           it instead of appending it as a second bubble; the team's answer
+           arrives through the polling that already refreshes this thread. */
+        const persisted = res.data;
+        setThread((prev) =>
+          prev
+            ? { ...prev, messages: prev.messages.map((m) => (m.id === optimistic.id ? persisted : m)) }
+            : prev,
+        );
+        if (persisted.governanceStatus === 'pending' || persisted.governanceStatus === 'blocked') {
           setUnderReview(activeConversationId, true);
-        } else {
-          setThread((prev) => (prev ? { ...prev, messages: [...prev.messages, res.data as ChatMessage] } : prev));
-          appendMessage(activeConversationId, res.data);
         }
       } else {
         setError(res.error ?? 'Your message could not be delivered right now.');

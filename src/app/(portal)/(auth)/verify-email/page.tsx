@@ -75,7 +75,17 @@ export default function VerifyEmailPage() {
           <p className="verify-status" role="status">
             {AUTH_COPY.verify.success}
           </p>
-          <Link href={routes.workspaceOverview} className="auth-door__action">
+          {/* THROUGH SIGN-IN, DELIBERATELY. A just-verified visitor holds no
+              session (verification is not a login), so a direct /workspace link
+              is always intercepted by the middleware's cross-route redirect —
+              which, during a client-side navigation, is exactly the failure
+              that rendered the raw RSC payload as a page. Landing on sign-in
+              with `next` set is the same destination without the redirect: they
+              sign in once and arrive in the workspace. */}
+          <Link
+            href={`${routes.portalSignIn}?next=${encodeURIComponent(routes.workspace)}`}
+            className="auth-door__action"
+          >
             {AUTH_COPY.verify.continueToWorkspace}
           </Link>
         </>

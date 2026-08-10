@@ -54,7 +54,17 @@ function localId(): string {
   return `att_local_${rand}`;
 }
 
-export function useAttachments(threadId: string | null): UseAttachmentsResult {
+export function useAttachments(
+  threadId: string | null,
+  opts: {
+    /** The review socket that streams scan/extract outcomes. The PORTAL thread is
+        not a review thread — that channel would only reject it — so the workspace
+        composer turns this off and relies on the upload response, which already
+        carries the final status when processing runs inline (Celery off). */
+    statusSocket?: boolean;
+  } = {},
+): UseAttachmentsResult {
+  const statusSocket = opts.statusSocket ?? true;
   const items = useAttachmentStore((s) => s.items);
   const rejected = useAttachmentStore((s) => s.rejected);
   const noticeShown = useAttachmentStore((s) => s.noticeShown);
@@ -72,7 +82,8 @@ export function useAttachments(threadId: string | null): UseAttachmentsResult {
   /* The backend reports scan and extraction outcomes asynchronously. */
   useSocket({
     url: threadId ? wsUrls.review(threadId) : null,
-    enabled: siteConfig.featureFlags.attachments && siteConfig.featureFlags.realtime && Boolean(threadId),
+    enabled:
+      statusSocket && siteConfig.featureFlags.attachments && siteConfig.featureFlags.realtime && Boolean(threadId),
     handlers: {
       'attachment.status': (p) => {
         update(p.attachmentId, {

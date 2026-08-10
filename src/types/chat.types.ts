@@ -17,6 +17,14 @@ export interface Citation {
   label?: string;
 }
 
+/** A file sent with a message, in the shape the thread renders. */
+export interface MessageAttachmentChip {
+  attachmentId: string;
+  filename: string;
+  sizeBytes: number;
+  downloadable: boolean;
+}
+
 export interface ChatMessage {
   id: string;
   conversationId: string;
@@ -29,6 +37,8 @@ export interface ChatMessage {
   /** True while tokens are still streaming into this message (Phase 3). */
   streaming?: boolean;
   createdAt: string;
+  /** Files sent with this turn (portal messaging). Absent on older payloads. */
+  attachments?: MessageAttachmentChip[];
 }
 
 /** Local thread state held in the chat store, keyed by conversationId. */

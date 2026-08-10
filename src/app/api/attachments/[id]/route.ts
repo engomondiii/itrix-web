@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server';
+import { getClientAccessToken } from '@/lib/server/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
-function headersFor(req: Request): HeadersInit {
+/* CLIENT PLANE (2026-08-10): the workspace reaches these proxies too, and Django
+   authenticates the client with a Bearer JWT (httpOnly on this host) — attached
+   here server-side. Anonymous visitors keep their cookie path unchanged. */
+async function headersFor(req: Request): Promise<HeadersInit> {
   const cookie = req.headers.get('cookie');
-  return { Accept: 'application/json', ...(cookie ? { cookie } : {}) };
+  const token = await getClientAccessToken();
+  return {
+    Accept: 'application/json',
+    ...(cookie ? { cookie } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 }
 
 /** GET — status and metadata. Never the contents. */
@@ -16,7 +25,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   try {
     const res = await fetch(`${API_BASE}/attachments/${encodeURIComponent(id)}/`, {
       method: 'GET',
-      headers: headersFor(req),
+      headers: await headersFor(req),
       cache: 'no-store',
     });
     if (!res.ok) return NextResponse.json({ detail: `attachment ${res.status}` }, { status: res.status });
@@ -38,7 +47,7 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }
   try {
     const res = await fetch(`${API_BASE}/attachments/${encodeURIComponent(id)}/`, {
       method: 'DELETE',
-      headers: headersFor(req),
+      headers: await headersFor(req),
       cache: 'no-store',
     });
     if (!res.ok) return NextResponse.json({ detail: `attachment ${res.status}` }, { status: res.status });

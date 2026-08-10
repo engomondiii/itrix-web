@@ -40,7 +40,7 @@ export function TeamAccessForm({
 
       {team.length > 0 ? (
         <ul className="flex flex-col divide-y divide-border-soft">
-          {team.map((member) => (
+          {(team ?? []).map((member) => (
             <li key={member.email} className="flex items-center justify-between gap-4 py-2.5">
               <span className="text-body text-ink-primary">{member.email}</span>
               <span className="rounded-pill bg-surface px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em] text-ink-secondary">

@@ -7,6 +7,13 @@ import { SectionLabel } from '@/components/ui/SectionLabel';
 import { PORTAL_COPY } from '@/lib/content/portalCopy';
 import type { PortalNotificationPrefs } from '@/types/portal.types';
 
+const DEFAULT_PREFS: PortalNotificationPrefs = {
+  newTeamMessage: true,
+  reviewUpdated: true,
+  evalOrPocStatus: true,
+  documentShared: true,
+};
+
 /** Notification preferences (§68). */
 export function NotificationPrefsForm({
   prefs,
@@ -17,7 +24,13 @@ export function NotificationPrefsForm({
   saving: boolean;
   onSave: (p: PortalNotificationPrefs) => void;
 }) {
-  const [state, setState] = useState<PortalNotificationPrefs>(prefs);
+  /* Defaults mirror the backend's: every switch ON. Spreading `prefs` over them
+     means a missing or partial payload renders a working form instead of
+     crashing on an undefined key. */
+  const [state, setState] = useState<PortalNotificationPrefs>(() => ({
+    ...DEFAULT_PREFS,
+    ...(prefs ?? {}),
+  }));
   const labels = PORTAL_COPY.settings.notificationLabels;
   const keys = Object.keys(labels) as (keyof PortalNotificationPrefs)[];
 
