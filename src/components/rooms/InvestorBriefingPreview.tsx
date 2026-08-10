@@ -6,7 +6,7 @@ import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
 const POINTS = [
   { h: 'Thesis', d: 'Computational AI infrastructure for sustainable AI — make computation worth scaling before scaling it.' },
   { h: 'Model', d: 'Asset-light and IP-led: patented methods, licensed across hardware, cloud, and enterprise R&D.' },
-  { h: 'Participation', d: 'iTrix participates in the value its methods create, rather than selling commodity compute.' },
+  { h: 'Participation', d: 'itriX participates in the value its methods create, rather than selling commodity compute.' },
 ];
 
 export function InvestorBriefingPreview() {

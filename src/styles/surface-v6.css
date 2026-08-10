@@ -344,7 +344,9 @@
    which would stretch it. object-fit keeps it exact if any ancestor rule sets a
    height. Sized a touch smaller than the retired arrow because the X reads heavier
    at the same box. */
-.composer-send__icon--x { width: 18px; height: auto; object-fit: contain; }
+/* 18px suited the old tall X; the refreshed X is wider than tall, so 20px keeps
+   the same visual weight inside the 25px disc (height follows the asset ratio). */
+.composer-send__icon--x { width: 20px; height: auto; object-fit: contain; }
 .composer[data-variant='docked'] .composer-send__icon--x { width: 16px; height: auto; }
 
 /* ── 7 · The rail's account footer ────────────────────────────────────────── */

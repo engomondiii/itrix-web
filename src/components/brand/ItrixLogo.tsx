@@ -19,7 +19,15 @@ import Image from 'next/image';
  * equal to the lowercase "i" height. The caller's padding enforces the clear space
  * so a neighbouring nav item cannot encroach on it.
  *
- * The source PNGs are 752×343 (≈2.19:1); the height follows the width from that
+ * ── LOGO REFRESH (2026-08, Brand Manual v2.0) ───────────────────────────────
+ * The assets under /brand are cut from the supplied `1__ITRIX_Logo.ai` — the
+ * current mark. It is a WIDER lockup than the one it replaces (≈3.24:1 against
+ * ≈2.19:1), so the ratio below changed with the files; at the same rendered
+ * width the mark now stands shorter, which is the mark's own geometry, not a
+ * squeeze. SVG cuts of the same artwork sit beside the PNGs in /brand for any
+ * consumer that wants vectors.
+ *
+ * The source PNGs are 1504×464 (≈3.24:1); the height follows the width from that
  * exact ratio so the lockup is never stretched.
  */
 export interface ItrixLogoProps {
@@ -32,7 +40,7 @@ export interface ItrixLogoProps {
 }
 
 /** Exact aspect ratio of the supplied wordmark assets (both cuts share it). */
-const ASPECT = 752 / 343;
+const ASPECT = 1504 / 464;
 
 const SOURCES: Record<'light' | 'dark', string> = {
   light: '/brand/itrix-logo-primary.png',

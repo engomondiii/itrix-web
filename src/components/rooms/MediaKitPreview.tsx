@@ -21,7 +21,7 @@ export function MediaKitPreview() {
         <Card variant="sunken" className="mt-4">
           <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">Paragraph</span>
           <p className="mt-2 text-secondary text-ink-secondary">
-            iTrix works at the representation layer: it diagnoses how a workload is expressed in algebra and
+            itriX works at the representation layer: it diagnoses how a workload is expressed in algebra and
             structure, proposes a transformed representation, and validates whether that form can run on real
             hardware. Its methods — AXIOM, CRE, and FQNM — are patented, and its numerical method is published.
           </p>

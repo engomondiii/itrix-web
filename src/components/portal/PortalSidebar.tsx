@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ItrixLogo } from '@/components/brand/ItrixLogo';
 import { PortalNavLink } from './PortalNavLink';
 import { Button } from '@/components/ui/Button';
 import { portalNav } from '@/config/navigation.config';
@@ -33,9 +34,15 @@ export function PortalSidebar() {
 
   return (
     <aside className="flex h-full w-60 shrink-0 flex-col gap-6 border-r border-border-medium bg-surface px-4 py-6">
-      <Link href={routes.workspaceOverview} className="px-3 text-lg font-bold tracking-tight text-structure-900">
-        iTri<span className="text-accent">X</span>
-        <span className="ml-2 align-middle text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
+      {/* THE MARK, NOT A TYPESET APPROXIMATION. This slot used to draw the brand
+          with styled text ("iTri" + an accent "X"), which was both the wrong
+          letterforms and the wrong casing — and it was the one shell without the
+          real logo, reported as "the logo is missing from the workspace". It now
+          renders the same supplied wordmark as every other shell, top-left, with
+          the workspace tag beneath it so the surface still names itself. */}
+      <Link href={routes.workspaceOverview} className="flex flex-col gap-1 px-3">
+        <ItrixLogo width={112} priority />
+        <span className="text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
           Workspace
         </span>
       </Link>

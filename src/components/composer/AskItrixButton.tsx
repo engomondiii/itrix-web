@@ -55,8 +55,11 @@ export function AskItrixButton({ disabled = false, submitting = false }: AskItri
           src="/brand/itrix-x-inverse.png"
           alt=""
           aria-hidden="true"
-          width={18}
-          height={22}
+          /* Intrinsic size of the refreshed cut (554×457 ≈ 1.21:1 — the new X is
+             WIDER than tall, where the old cut was taller than wide). The CSS
+             class sets the display width and derives the height from this ratio. */
+          width={20}
+          height={17}
           priority
           className="composer-send__icon composer-send__icon--x"
         />
