@@ -6,7 +6,6 @@ import { AttachControl } from '@/components/composer/AttachControl';
 import { AttachmentTray } from '@/components/composer/AttachmentTray';
 import { Button } from '@/components/ui/Button';
 import { useAttachments } from '@/hooks/useAttachments';
-import { siteConfig } from '@/config/site.config';
 import { PORTAL_COPY } from '@/lib/content/portalCopy';
 
 /**
@@ -14,11 +13,24 @@ import { PORTAL_COPY } from '@/lib/content/portalCopy';
  *
  * ── ATTACHMENTS (2026-08-10) ──────────────────────────────────────────────────
  * Reuses the approved composer family (AttachControl + AttachmentTray +
- * useAttachments) rather than inventing a portal-only variant, gated by the same
- * flag. `threadId` is the conversation's spine id from the thread payload —
- * attachments stage against it, and the send carries the staged ids. The status
- * socket is off here: the portal thread is not a review channel, and with inline
- * processing the upload response already carries the final status.
+ * useAttachments) rather than inventing a portal-only variant. `threadId` is the
+ * conversation's spine id from the thread payload — attachments stage against
+ * it, and the send carries the staged ids. The status socket is off here: the
+ * portal thread is not a review channel, and with inline processing the upload
+ * response already carries the final status.
+ *
+ * ── WHY THE FLAG NO LONGER HIDES THE CONTROL HERE ────────────────────────────
+ * The control was gated on NEXT_PUBLIC_ENABLE_ATTACHMENTS, which is off in this
+ * deployment — so the workspace had no attach button at all. Inside the portal
+ * the control is now ALWAYS rendered: a signed-in customer sending documents to
+ * the team is the case attachments exist for, and hiding it behind an
+ * environment variable made the feature invisible rather than optional. The
+ * PUBLIC composer keeps its flag exactly as it was.
+ *
+ * The trade this accepts, stated plainly: the backend has its own
+ * ENABLE_ATTACHMENTS switch. While that is off, uploads are refused, and
+ * useAttachments reports the failure beside the tray WITHOUT blocking the
+ * message — the customer can always still send their words.
  */
 export function AgentTeamComposer({
   onSend,
@@ -30,8 +42,7 @@ export function AgentTeamComposer({
   threadId?: string | null;
 }) {
   const [value, setValue] = useState('');
-  const attachOn = siteConfig.featureFlags.attachments;
-  const attachments = useAttachments(attachOn ? threadId : null, { statusSocket: false });
+  const attachments = useAttachments(threadId, { statusSocket: false });
 
   function submit() {
     const text = value.trim();
@@ -50,20 +61,16 @@ export function AgentTeamComposer({
 
   return (
     <div className="flex flex-col gap-2 border-t border-border-medium pt-3">
-      {attachOn ? (
-        <AttachmentTray
-          items={attachments.items}
-          rejected={attachments.rejected}
-          showNotice={attachments.noticeShown}
-          onRemove={attachments.remove}
-          onRetry={attachments.retry}
-          onDismissRejected={attachments.dismissRejected}
-        />
-      ) : null}
+      <AttachmentTray
+        items={attachments.items}
+        rejected={attachments.rejected}
+        showNotice={attachments.noticeShown}
+        onRemove={attachments.remove}
+        onRetry={attachments.retry}
+        onDismissRejected={attachments.dismissRejected}
+      />
       <div className="flex items-end gap-2">
-        {attachOn ? (
-          <AttachControl onFiles={attachments.addFiles} disabled={disabled || !threadId} />
-        ) : null}
+        <AttachControl onFiles={attachments.addFiles} disabled={disabled || !threadId} />
         <textarea
           value={value}
           onChange={(e) => setValue(e.target.value)}

@@ -16,6 +16,7 @@ import type {
   PortalDataRoom,
   PortalEvaluation,
   PortalPoC,
+  PortalNdaRequestResult,
   PortalSettings,
   PortalNotificationPrefs,
 } from '@/types/portal.types';
@@ -83,6 +84,7 @@ export const portalApi = {
   documents: () => getJson<PortalDataRoom>(`/api/portal/documents`),
   evaluation: () => getJson<PortalEvaluation>(`/api/portal/evaluation`),
   poc: () => getJson<PortalPoC>(`/api/portal/poc`),
+  requestNda: () => sendJson<PortalNdaRequestResult>(`/api/portal/nda-request`, {}),
   settings: () => getJson<PortalSettings>(`/api/portal/settings`),
   saveProfile: (profile: Partial<PortalSettings['profile']>) =>
     sendJson<PortalSettings>(`/api/portal/settings`, { profile }, 'PATCH'),

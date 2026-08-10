@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useThreadContext } from '@/context/ThreadContext';
@@ -24,8 +25,20 @@ import { cn } from '@/lib/cn';
  * route re-authorizes on fetch.
  */
 export function PortalConversationList() {
-  const { threads, activeThreadId } = useThreadContext();
+  const { threads, activeThreadId, refresh } = useThreadContext();
   const pathname = usePathname();
+
+  /* ── WHY THIS REFETCHES (2026-08-10) ──────────────────────────────────────
+     The thread list is fetched once, when ThreadProvider mounts — which on a
+     client-side sign-in happens BEFORE the customer has a client session. That
+     first response is the anonymous one (their client-owned conversations are
+     invisible to it), and nothing refetched afterwards, so the workspace showed
+     an empty list for an account that had conversations. Mounting this list is
+     the honest trigger: it happens exactly when the signed-in workspace needs
+     the signed-in answer. */
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-1.5">

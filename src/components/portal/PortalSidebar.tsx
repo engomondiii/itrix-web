@@ -121,32 +121,6 @@ export function PortalSidebar() {
         </span>
       </Link>
 
-      {/* New chat — the rail's promise, kept natively. Clearing the active thread
-          and routing to the workspace root gives the fresh centre composer inside
-          THIS chrome; nothing navigates to the public surface. */}
-      <button
-        type="button"
-        className="flex items-center gap-2 rounded-md border border-border-medium bg-canvas px-3 py-2 text-body font-medium text-ink-primary transition-colors hover:bg-soft"
-        onClick={() => {
-          startNew();
-          clearComposer();
-          router.push(routes.workspace);
-        }}
-      >
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="h-[18px] w-[18px]"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-        {RAIL_COPY.newChat}
-      </button>
-
       <nav className="flex flex-col gap-4" aria-label="Workspace">
         {groups.map((group, gi) => (
           <div
@@ -168,12 +142,43 @@ export function PortalSidebar() {
         ))}
       </nav>
 
+      {/* ── ORDER, AS REQUESTED (2026-08-10) ───────────────────────────────────
+          New chat sits directly beneath the nav (so immediately under Settings,
+          its last item) and directly above the conversation list it starts a new
+          member of. The thesis line then closes the sidebar under the
+          conversations, where it reads as a signature rather than a caption on
+          the navigation. */}
+      <div className="border-t border-border-soft pt-4">
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-md border border-border-medium bg-canvas px-3 py-2 text-body font-medium text-ink-primary transition-colors hover:bg-soft"
+          onClick={() => {
+            startNew();
+            clearComposer();
+            router.push(routes.workspace);
+          }}
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-[18px] w-[18px]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          >
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          {RAIL_COPY.newChat}
+        </button>
+      </div>
+
       {/* Your conversations — visible the moment the workspace opens. */}
-      <div className="min-h-0 flex-1 border-t border-border-soft pt-4">
+      <div className="min-h-0 flex-1">
         <PortalConversationList />
       </div>
 
-      <div className="flex flex-col gap-3 px-3">
+      <div className="flex flex-col gap-3 border-t border-border-soft px-3 pt-4">
         <p className="text-caption italic text-ink-secondary">“{brand.thesis}”</p>
         <Button variant="ghost" size="sm" onClick={() => void signOut()} className="self-start">
           {PORTAL_COPY.settings.signOut}

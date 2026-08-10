@@ -28,8 +28,18 @@ export interface PortalNavItem {
 export const PORTAL_NAV: PortalNavItem[] = [
   { key: 'overview', label: 'Home', href: '/workspace' },
   { key: 'success', label: 'Your workspace', href: '/workspace/success', minJourneyNumber: 7 },
-  { key: 'messages', label: 'Messages', href: '/workspace/messages' },
-  { key: 'briefing', label: 'Briefing', href: '/workspace/briefing' },
+  /* ── 'Briefing' RETIRED AS A NAV LABEL (2026-08-10) ───────────────────────
+     'Briefing' described a document, not a place to do something, and the screen
+     behind it was a read-only panel that spent most of its life saying "your
+     briefing is being prepared". The messaging destination is now called INBOX
+     and behaves like one — a list of conversations, a reading pane, a reply box —
+     and the briefing itself is a pinned item inside it, so nothing is lost and
+     there is exactly ONE place where messages are read.
+
+     The /workspace/briefing route is deliberately NOT deleted: it still renders,
+     so a bookmark or an emailed link keeps working. It is simply no longer a
+     second door to the same content. */
+  { key: 'messages', label: 'Inbox', href: '/workspace/messages' },
   { key: 'documents', label: 'Documents', href: '/workspace/documents' },
   { key: 'evaluation', label: 'Evaluation', href: '/workspace/evaluation' },
   { key: 'assessment', label: 'Assessment', href: '/workspace/assessment', minJourneyNumber: 7 },

@@ -90,6 +90,15 @@ export interface PortalDocument {
   updatedAt: string;
 }
 
+/** The answer to an in-place NDA request (2026-08-10). */
+export interface PortalNdaRequestResult {
+  ndaRequested: boolean;
+  /** The sentence to show the customer — authored by the backend so the screen
+      and the inbox note can never promise different things. */
+  message?: string;
+  detail?: string;
+}
+
 export interface PortalDataRoom {
   ndaSigned: boolean;
   openFolders: { folder: string; documents: PortalDocument[] }[];

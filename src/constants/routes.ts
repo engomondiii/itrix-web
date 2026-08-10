@@ -106,5 +106,7 @@ export const apiRoutes = {
   portalEvaluation: '/portal/evaluation/',
   portalPoc: '/portal/poc/',
   portalSettings: '/portal/settings/',
+  /** POST — ask the team to arrange an NDA (2026-08-10). */
+  portalNdaRequest: '/portal/nda/request/',
   portalTeamInvite: '/portal/settings/team/invite/',
 } as const;

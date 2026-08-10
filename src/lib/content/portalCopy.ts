@@ -82,6 +82,19 @@ export const PORTAL_COPY = {
     inputPlaceholder: 'Write a message to the itriX team…',
     sendButton: 'Send',
     inputNote: 'Non-confidential descriptions only until an NDA is in place.',
+    /* The inbox chrome (2026-08-10). 'Briefing' is no longer a nav label; this
+       screen is where messages are read and answered. */
+    inbox: {
+      header: 'Inbox',
+      listLabel: 'Conversations',
+      threadFallbackSubject: 'Conversation with the itriX team',
+      empty: 'Nothing here yet. Write to the itriX team below and your conversation will appear in this list.',
+      briefingRow: 'Your itriX briefing',
+      briefingPreview: 'The living review of what we heard, kept up to date by the team.',
+      briefingNotReady: 'Your briefing is being prepared. When it is ready it will appear here.',
+      unreadLabel: (n: number) => `${n} unread`,
+      teamJoinedTag: 'itriX team',
+    },
   },
   briefing: {
     header: 'Your itriX review',
