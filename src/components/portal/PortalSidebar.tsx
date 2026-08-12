@@ -1,14 +1,16 @@
 'use client';
 
+import { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ItrixLogo } from '@/components/brand/ItrixLogo';
 import { PortalConversationList } from './PortalConversationList';
 import { PortalNavLink } from './PortalNavLink';
 import { Button } from '@/components/ui/Button';
 import { portalNav } from '@/config/navigation.config';
 import { usePortalStore } from '@/store/portalStore';
+import { usePortalNavStore } from '@/store/portalNavStore';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
 import { usePortalUnread } from '@/hooks/usePortalUnread';
 import { useJourneyContext } from '@/context/JourneyContext';
@@ -108,6 +110,9 @@ export function PortalSidebar() {
   const { startNew } = useThreadContext();
   const clearComposer = useComposerStore((s) => s.clear);
   const router = useRouter();
+  const pathname = usePathname();
+  const navOpen = usePortalNavStore((s) => s.open);
+  const closeNav = usePortalNavStore((s) => s.closeNav);
 
   const visible = portalNav.filter(
     (item) => item.minJourneyNumber === undefined || (journeyNumber ?? 0) >= item.minJourneyNumber,
@@ -116,8 +121,36 @@ export function PortalSidebar() {
     (g) => g.length > 0,
   );
 
+  /* ── DRAWER BEHAVIOUR, MOBILE ONLY (2026-08-12) ────────────────────────────
+     `data-open` drives the transform in mobile.css. Above `lg` that stylesheet does
+     not apply the drawer rules at all, so on desktop this attribute is inert and the
+     sidebar renders exactly as it did before.
+
+     Closing on navigation is not a nicety: a drawer that stays open covers the screen
+     the customer just chose, so the tap appears to have done nothing. `pathname` is
+     the trigger rather than the click handler, so it also closes for a back/forward
+     navigation and for anything else that changes route. */
+  useEffect(() => {
+    closeNav();
+  }, [pathname, closeNav]);
+
+  /* Escape closes it — the same affordance as the backdrop, for a keyboard on a
+     tablet. Bound only while open so there is no idle listener. */
+  useEffect(() => {
+    if (!navOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeNav();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [navOpen, closeNav]);
+
   return (
-    <aside className="sticky top-0 flex h-dvh w-60 shrink-0 flex-col gap-5 overflow-hidden border-r border-border-medium bg-surface px-4 py-6">
+    <aside
+      id="portal-sidebar"
+      data-open={navOpen ? 'true' : undefined}
+      className="portal-sidebar sticky top-0 flex h-dvh w-60 shrink-0 flex-col gap-5 overflow-hidden border-r border-border-medium bg-surface px-4 py-6"
+    >
       {/* THE MARK, NOT A TYPESET APPROXIMATION (see the logo refresh note). */}
       <Link href={routes.workspaceOverview} className="flex flex-col gap-1 px-3">
         <ItrixLogo width={112} priority />

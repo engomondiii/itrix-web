@@ -44,7 +44,9 @@ export function InboxList({
   const copy = PORTAL_COPY.messages.inbox;
 
   return (
-    <aside className="w-full shrink-0 lg:w-72" aria-label={copy.listLabel}>
+    /* `inbox-list` is the hook mobile.css uses to cap this list's height in portrait,
+       so the conversation and its reply box are not pushed below the fold. */
+    <aside className="inbox-list w-full shrink-0 lg:w-72" aria-label={copy.listLabel}>
       <h2 className="px-1 pb-2 text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
         {copy.listLabel}
       </h2>

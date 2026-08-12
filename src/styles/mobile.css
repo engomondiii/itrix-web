@@ -358,3 +358,162 @@ svg { height: auto; }
 @media (min-width: 768px) and (max-width: 900px) {
   .wordmark[data-variant='arrival'] .wordmark__descriptor { max-width: 16ch; }
 }
+
+/* ============================================================================
+   G7 · THE WORKSPACE IN PORTRAIT (2026-08-12)
+
+   PortalSidebar was a fixed `w-60 h-dvh` column with NO responsive rule at all.
+   On a 390px phone that is 240px of navigation, permanently, on every workspace
+   screen — leaving roughly 150px for the content beside it. That is why
+   messaging, documents and settings were all reported as unusable in portrait
+   rather than any single one of them: the screens were fine, the column was
+   eating them.
+
+   Below `lg` (1024px) the sidebar becomes an off-canvas drawer and PortalMobileBar
+   carries the menu button. Every rule here is inside a max-width query, so the
+   desktop workspace is byte-for-byte unaffected.
+   ============================================================================ */
+
+/* ── G7.1 · The top bar ───────────────────────────────────────────────────── */
+.portal-topbar {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .portal-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-medium);
+  }
+
+  .portal-topbar__menu {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* 44px, the coarse-pointer floor this file applies everywhere else. */
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    color: var(--ink-primary);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .portal-topbar__menu:hover { background: var(--soft); }
+  .portal-topbar__menu:focus-visible {
+    outline: 2px solid var(--ink-primary);
+    outline-offset: 2px;
+  }
+  .portal-topbar__menu svg { width: 22px; height: 22px; }
+
+  /* The unread marker, on the control that opens the nav — with the nav closed
+     there is nowhere else for an unread reply to announce itself. */
+  .portal-topbar__dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--error-text, #B42318);
+    box-shadow: 0 0 0 2px var(--surface);
+  }
+
+  .portal-topbar__mark { display: inline-flex; justify-content: center; }
+  .portal-topbar__count { width: 44px; }
+}
+
+/* ── G7.2 · The sidebar as a drawer ───────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .portal-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    height: 100dvh;
+    /* Never the full width: a sliver of the page stays visible so it is obvious
+       the drawer is over the screen rather than a new one. */
+    width: min(84vw, 320px);
+    transform: translateX(-100%);
+    transition: transform 180ms ease-out;
+    box-shadow: 0 12px 32px rgb(15 23 42 / 18%);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .portal-sidebar[data-open='true'] { transform: translateX(0); }
+
+  /* Closed, it must be unreachable — not merely off-screen. A translated element
+     still takes focus and is still read out, so a customer tabbing through the
+     page would land in a menu they cannot see. */
+  .portal-sidebar:not([data-open='true']) { visibility: hidden; }
+  .portal-sidebar[data-open='true'] { visibility: visible; }
+
+  .portal-shell__main {
+    /* The drawer is out of flow, so the content column is full width. */
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* ── G7.3 · The scrim ─────────────────────────────────────────────────────── */
+.portal-nav-backdrop { display: none; }
+
+@media (max-width: 1023px) {
+  .portal-nav-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: block;
+    width: 100%;
+    background: rgb(15 23 42 / 40%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease-out;
+    border: 0;
+  }
+  .portal-nav-backdrop[data-open='true'] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* ── G7.4 · Workspace content at phone width ──────────────────────────────── */
+/* The workspace screens use `px-6 py-8` (24/32px) inside what was already a
+   narrow column. With the drawer freeing the full width, the gutter steps down
+   in line with G6.2 so the content — not the padding — gets the space. */
+@media (max-width: 767px) {
+  .portal-shell__main > div,
+  .portal-shell__main > section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+@media (max-width: 389px) {
+  .portal-shell__main > div,
+  .portal-shell__main > section {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Messaging is a three-part screen (list / reading pane / reply). It already
+   stacks with `lg:flex-row`, so in portrait the list sits above the thread. Cap
+   the list so it cannot push the conversation itself below the fold — the reply
+   box is what the customer came for. */
+@media (max-width: 1023px) {
+  .inbox-list { max-height: 40vh; overflow-y: auto; }
+}
+
+/* ── G7.5 · Motion ────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .portal-sidebar,
+  .portal-nav-backdrop { transition: none; }
+}

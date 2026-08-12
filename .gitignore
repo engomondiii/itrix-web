@@ -230,3 +230,5 @@ itrix-web-realtime-v2*
 # ux-v3
 .ux-v3-backup-*/
 itrix-web-ux-v3*
+.web-round2-backup-*
+itrix-web-round2/

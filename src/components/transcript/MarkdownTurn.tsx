@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { BlockNode, InlineNode, ListItem } from '@/lib/markdown/allowedNodes';
 import { parseMarkdown } from '@/lib/markdown/parse';
 import { markerEvasionSuspected } from '@/lib/markdown/normalizeMarkers';
+import { segmentText } from '@/lib/markdown/autolink';
 import { siteConfig } from '@/config/site.config';
 import { CodeBlock } from './CodeBlock';
 import { TurnTable } from './TurnTable';
@@ -119,11 +120,19 @@ export function MarkdownTurn({ body, provisional = false }: MarkdownTurnProps) {
     );
   }, [body]);
 
-  /* Flag off: the v5.0 behaviour, unchanged. Newline-split paragraphs. */
+  /* Flag off: newline-split paragraphs, now WITH clickable links.
+     Previously this rendered raw strings, so every URL the platform sent — including a
+     visitor's own personalised-page link — arrived as dead text. Markdown stays gated
+     (its precondition is the backend marker-normalised guard pass); linkifying the
+     plain path is the narrow fix. See lib/markdown/autolink.ts. */
   if (!blocks) {
     return (
       <>
-        {body ? body.split('\n').map((line, i) => <p key={i}>{line || '\u00A0'}</p>) : null}
+        {body
+          ? body.split('\n').map((line, i) => (
+              <p key={i}>{line ? <AutoLinkedText line={line} /> : '\u00A0'}</p>
+            ))
+          : null}
       </>
     );
   }
@@ -134,6 +143,36 @@ export function MarkdownTurn({ body, provisional = false }: MarkdownTurnProps) {
         <Block key={i} node={block} />
       ))}
     </div>
+  );
+}
+
+/**
+ * One line of plain text with its URLs rendered as anchors.
+ *
+ * Reuses `ExternalLink`, so a link in a flag-off turn behaves exactly like a link in a
+ * markdown turn: internal routes go through next/link, permitted external hosts open in
+ * a new tab with their host shown, and a disallowed URL renders as visible text rather
+ * than being deleted or made clickable.
+ */
+function AutoLinkedText({ line }: { line: string }) {
+  const segments = useMemo(() => segmentText(line), [line]);
+
+  /* No links: return the string itself, so the overwhelmingly common case adds no
+     wrapper elements to the transcript. */
+  if (segments.length === 1 && segments[0].kind === 'text') return <>{segments[0].value}</>;
+
+  return (
+    <>
+      {segments.map((segment, i) =>
+        segment.kind === 'text' ? (
+          <span key={i}>{segment.value}</span>
+        ) : (
+          <ExternalLink key={i} href={segment.href} allowed={segment.allowed}>
+            {segment.label}
+          </ExternalLink>
+        ),
+      )}
+    </>
   );
 }
 

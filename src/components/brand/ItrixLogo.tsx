@@ -19,17 +19,29 @@ import Image from 'next/image';
  * equal to the lowercase "i" height. The caller's padding enforces the clear space
  * so a neighbouring nav item cannot encroach on it.
  *
- * ── LOGO REFRESH (2026-08, Brand Manual v2.0) ───────────────────────────────
- * The assets under /brand are the OFFICIAL supplied cuts — light and dark mode
- * each shipped as its own file, used exactly as delivered (the earlier assets
- * were derived from a draft .ai whose X was not the final letterform). The
- * lockup is ≈3.24:1; at the same rendered width it stands shorter than the old
- * ≈2.19:1 mark, which is the mark's own geometry, not a squeeze. SVG cuts
- * traced from the same official artwork sit beside the PNGs in /brand for any
- * consumer that wants vectors.
+ * ── LOGO REFRESH (2026-08-12, supplied vector) ──────────────────────────────
+ * Every asset under /brand is now generated from the supplied VECTOR wordmark
+ * (929×286, ten paths: six letterforms plus the four-piece split X). Previous
+ * generations were raster cuts, and the one before that was traced from a draft
+ * .ai whose X was not the final letterform — this is the first generation where
+ * the vector IS the source, so the SVGs are exact and the PNGs are renders of
+ * them rather than the other way round.
  *
- * The primary source PNG is 1446×446 (≈3.24:1); the height follows the width
- * from that exact ratio so the lockup is never stretched.
+ * TWO DELIBERATE CHANGES TO THE SUPPLIED FILE:
+ *   * `fill="black"` became the brand ink `#1F2937`. Pure black is not a token
+ *     in Brand Manual v3.1, and the mark has to sit beside body text set in the
+ *     same ink without reading as a different weight of dark.
+ *   * `<title>` was added, so a screen reader announces "itriX" rather than
+ *     falling back to a filename. The supplied file had neither title nor desc.
+ *
+ * The X is also emitted on its own (itrix-x.svg / itrix-x-inverse.svg), split
+ * out by GEOMETRY — the four paths whose origin sits right of x=560 — rather
+ * than by path order, so a future re-export cannot silently reorder it into the
+ * wrong asset. The checklist in Brand Manual §2 requires the symbol as its own
+ * asset and the supplied file did not include one.
+ *
+ * The lockup is 929:286 ≈ 3.25:1. The height follows the width from that exact
+ * ratio so it is never stretched.
  */
 export interface ItrixLogoProps {
   /** Rendered width in px. The approved header uses 120 desktop / 96 mobile. */
@@ -40,8 +52,8 @@ export interface ItrixLogoProps {
   variant?: 'light' | 'dark';
 }
 
-/** Exact aspect ratio of the supplied wordmark assets (both cuts share it). */
-const ASPECT = 1446 / 446;
+/** Exact aspect ratio of the supplied vector wordmark (both cuts share it). */
+const ASPECT = 929 / 286;
 
 const SOURCES: Record<'light' | 'dark', string> = {
   light: '/brand/itrix-logo-primary.png',

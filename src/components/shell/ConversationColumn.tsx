@@ -59,10 +59,26 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
 
   const started = Boolean(activeThreadId) && items.length > 0;
 
-  /* Computed here now that the card lives here. Same test the transcript used. */
-  const hasSettledAnswer = items.some(
+  /* ── WHEN THE "KEEP THIS CONVERSATION" OFFER IS DUE (fix, 2026-08-12) ───────
+     It used to appear after the FIRST settled answer, which lands while the visitor is
+     still describing their problem — so an offer about keeping their work arrived
+     before there was any work to keep, and read as an interruption.
+
+     The rule is now "there is something worth keeping": at least three of the
+     visitor's own turns AND at least two settled answers. Counting the VISITOR's
+     turns is the part that matters — a single long problem statement can draw several
+     answers, and answers are ours, not theirs. §18H's own justification is that this
+     is an offer about their work; that is only true once the work exists.
+
+     Deliberately NOT gated on journey state. State can lag a turn behind, and a
+     visitor who has clearly settled in should get the offer even if the backend has
+     not advanced them yet — while a visitor who has said one thing should not, whatever
+     the state says. */
+  const visitorTurns = items.filter((i) => i.kind === 'turn' && i.turn.role === 'visitor').length;
+  const settledAnswers = items.filter(
     (i) => i.kind === 'turn' && i.turn.role === 'itrix' && i.turn.status === 'settled',
-  );
+  ).length;
+  const hasSettledAnswer = visitorTurns >= 3 && settledAnswers >= 2;
 
   if (!started) {
     return <div className="conversation-column conversation-column--arrival">{emptyState}</div>;
