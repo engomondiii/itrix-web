@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getClientAccessToken } from '@/lib/server/session';
+import { toAttachment } from '@/lib/api/normalizeWire';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,7 +30,9 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
       cache: 'no-store',
     });
     if (!res.ok) return NextResponse.json({ detail: `attachment ${res.status}` }, { status: res.status });
-    return NextResponse.json((await res.json()) as unknown, { status: 200 });
+    /* Same normalisation as the upload route — the poller and the uploader must agree on
+       the field names, or a status read would blank the row it was meant to update. */
+    return NextResponse.json(toAttachment((await res.json()) as unknown), { status: 200 });
   } catch {
     return NextResponse.json({ detail: 'Attachment service unavailable.' }, { status: 503 });
   }

@@ -105,9 +105,24 @@ export function useAttachments(
       );
 
       if (data) {
-        /* Swap the local placeholder for the server's record, keeping the same
-           row so the visitor does not see it disappear and reappear. */
-        update(tempId, { ...data.attachment, id: tempId, progress: null });
+        /* ── THE ROW TAKES THE SERVER'S ID (2026-08-13) ────────────────────
+           This used to keep `id: tempId` to avoid a React remount. For a TURN that is
+           right — the server id travels on the thread record. For an attachment there is
+           no second carrier: `sendableIds()` reads `a.id` and sends it with the turn,
+           `remove()` and the status poller call `/api/attachments/{a.id}`. Keeping the
+           local `att_local_…` id meant every one of those named something the backend had
+           never issued, so the file was staged and then unreachable.
+
+           A chip remounting is invisible. Sending the wrong id is fatal, so the server id
+           wins. */
+        update(tempId, {
+          ...data.attachment,
+          /* The browser's guess survives only until the server detects the real type;
+             `detectedType` is empty until the scan runs, and an empty string here would
+             blank the icon the visitor is already looking at. */
+          mimeType: data.attachment.mimeType || file.type || 'application/octet-stream',
+        });
+        /* Nothing to retry once the server has it, so the File reference goes. */
         fileCache.current.delete(tempId);
         trackEvent('attachment.uploaded', { bytes: file.size, mime: file.type || 'unknown' });
         return;

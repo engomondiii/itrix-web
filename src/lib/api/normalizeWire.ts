@@ -34,6 +34,11 @@
 
 import type { Artifact, InlineCard } from '@/types/artifact.types';
 import type {
+  Attachment,
+  AttachmentStatus,
+  AttachmentUploadResult,
+} from '@/types/attachment.types';
+import type {
   SubmitResult,
   Thread,
   ThreadSummary,
@@ -232,4 +237,114 @@ export function toThreadList(raw: unknown): ThreadSummary[] {
   const r = (raw ?? {}) as Raw;
   const list = Array.isArray(r.threads) ? r.threads : [];
   return list.map(toThreadSummary).filter((t) => t.id);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ATTACHMENTS (2026-08-13)
+
+   The same class of bug this file was created for, on a second endpoint.
+   `AttachmentSerializer` is a deliberate ALLOW-LIST (`risk_flags`, `blob_key`,
+   `sha256` and `uploaded_by_id` are absent by design), and it emits
+   `attachmentId` / `sizeBytes` / `detectedType` flat — not `{ attachment: … }`.
+   `useAttachments` read `data.attachment`, got `undefined`, and spread nothing:
+
+       update(tempId, { ...undefined, id: tempId, progress: null })
+
+   so a SUCCESSFUL upload never left `status: 'uploading'`. `hasPendingUpload`
+   stayed true and the send button blocked forever — and because the row kept the
+   local `att_local_…` id, the server id was thrown away, so `remove()`, `get()`
+   and the ids sent with the turn all named something the backend never issued.
+
+   Normalising here rather than renaming the serializer's fields keeps the
+   audited allow-list — and the team-plane serializer that shares its vocabulary —
+   untouched.
+
+       Django                    frontend
+       ───────────────────────   ──────────────────
+       attachmentId              id
+       sizeBytes                 bytes
+       detectedType              mimeType
+       visitorNote               errorMessage (opaque/quarantined only)
+       at                        createdAt
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Django `AttachmentStatus` → the union the chip renders.
+ *
+ * Two shapes differ, and both matter:
+ *
+ *   `scanned`  is a backend-only step between scan and extraction. It is mapped to
+ *              `extracting`, which is both what happens next and — unlike an
+ *              unrecognised value — inside `sendableIds`, so a file that has passed
+ *              its scan does not silently drop out of the turn.
+ *   `staged`   means the bytes are ON THE SERVER and processing is queued (Celery is
+ *              on in production, so this is what a successful upload returns). The
+ *              frontend's own `staged` means the opposite — chosen locally, not yet
+ *              uploaded — and `hasPendingUpload` blocks the send button on it. Mapping
+ *              it to `scanning` is therefore both accurate and what unblocks sending.
+ */
+function toAttachmentStatus(raw: unknown): AttachmentStatus {
+  switch (str(raw)) {
+    case 'staged':
+    case 'scanning':
+      return 'scanning';
+    case 'scanned':
+    case 'extracting':
+      return 'extracting';
+    case 'ready':
+      return 'ready';
+    case 'quarantined':
+      return 'quarantined';
+    case 'purged':
+      return 'deleted';
+    case 'failed':
+      return 'failed';
+    default:
+      /* An unknown status is NOT reported as a failure. The file was accepted; we
+         simply do not recognise the state, and §13.4 forbids calling an accepted
+         file worthless. `scanning` degrades to "Checking this file…". */
+      return 'scanning';
+  }
+}
+
+/**
+ * One attachment, as the visitor plane sees it.
+ *
+ * `threadId` is null for a file staged on the arrival screen — the backend binds it
+ * when the first turn creates the thread, and the visitor-facing serializer does not
+ * carry a thread id at all.
+ */
+export function toAttachment(raw: unknown): Attachment {
+  const r = (raw ?? {}) as Raw;
+  const note = str(r.visitorNote);
+  const base = toAttachmentStatus(r.status);
+
+  /* ── `ready` + A NOTE IS `opaque`, NOT AN ERROR (§13.4) ──────────────────
+     The backend stores a file it cannot text-extract as READY and explains itself in
+     `visitor_note` — there is no `opaque` status on the server side. The frontend has
+     one, styled as a NORMAL state, and its copy is that same explanation. Mapping to it
+     is what keeps the promise never to call an accepted file a failure. */
+  const status: AttachmentStatus = base === 'ready' && note ? 'opaque' : base;
+
+  return {
+    id: str(r.attachmentId) || str(r.id),
+    threadId: str(r.threadId) || null,
+    filename: str(r.filename, 'file'),
+    bytes: num(r.sizeBytes),
+    mimeType: str(r.detectedType),
+    status,
+    /* The server owns the lifecycle from here; the local progress bar is done. */
+    progress: null,
+    errorCode: status === 'quarantined' ? 'quarantined' : null,
+    /* Only for states where a sentence of our own beats the generic label. `opaque`
+       and `ready` take their wording from ATTACHMENT_COPY, so overriding it here would
+       replace approved copy with a server string. */
+    errorMessage: status === 'quarantined' && note ? note : null,
+    createdAt: str(r.at, new Date().toISOString()),
+  };
+}
+
+/** POST /attachments/ → the shape `useAttachments` expects. */
+export function toAttachmentUploadResult(raw: unknown): AttachmentUploadResult {
+  return { attachment: toAttachment(raw) };
 }
