@@ -8,6 +8,21 @@ export const dynamic = 'force-dynamic';
 const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
+ * Surface code uses camelCase; Django's serializer contract uses snake_case.
+ * Keep that translation at the BFF/proxy boundary so neither side has to carry
+ * two spellings of the same field. All unrelated request fields pass through.
+ */
+function toDjangoAttachmentPayload(body: unknown): unknown {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+
+  const record = body as Record<string, unknown>;
+  if (!Array.isArray(record.attachmentIds)) return body;
+
+  const { attachmentIds, ...rest } = record;
+  return { ...rest, attachment_ids: attachmentIds };
+}
+
+/**
  * POST /api/threads/[id]/turns — a subsequent turn in an open thread.
  *
  * Django persists the visitor's words BEFORE attempting any generation, so a
@@ -42,7 +57,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
         ...(cookie ? { cookie } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(toDjangoAttachmentPayload(body)),
       cache: 'no-store',
     });
 

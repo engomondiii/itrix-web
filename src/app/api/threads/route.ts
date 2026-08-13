@@ -8,6 +8,21 @@ export const dynamic = 'force-dynamic';
 const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
+ * Surface code uses camelCase; Django's serializer contract uses snake_case.
+ * Keep that translation at the BFF/proxy boundary so neither side has to carry
+ * two spellings of the same field. All unrelated request fields pass through.
+ */
+function toDjangoAttachmentPayload(body: unknown): unknown {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+
+  const record = body as Record<string, unknown>;
+  if (!Array.isArray(record.attachmentIds)) return body;
+
+  const { attachmentIds, ...rest } = record;
+  return { ...rest, attachment_ids: attachmentIds };
+}
+
+/**
  * Server-only proxy for the conversation spine (Backend v6.0 §7.1).
  *
  * Surface 1 holds no secrets and no business logic. This handler forwards the
@@ -60,7 +75,7 @@ export async function POST(req: Request) {
     const res = await fetch(`${API_BASE}/threads/`, {
       method: 'POST',
       headers: await forwardHeaders(req),
-      body: JSON.stringify(body),
+      body: JSON.stringify(toDjangoAttachmentPayload(body)),
       cache: 'no-store',
     });
 
