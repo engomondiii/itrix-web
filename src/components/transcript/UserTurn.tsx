@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
 import { TurnActions } from './TurnActions';
+import { TurnAttachmentList } from './TurnAttachmentList';
 import { useComposer } from '@/hooks/useComposer';
 import type { Turn } from '@/types/thread.types';
 
@@ -106,6 +107,8 @@ export function UserTurn({ turn }: { turn: Turn }) {
           <p key={i}>{line || '\u00A0'}</p>
         ))}
       </div>
+
+      <TurnAttachmentList attachments={turn.attachments ?? []} />
 
       {unavailable && turn.contextNote ? (
         <p className="turn__note" role="status">

@@ -43,6 +43,7 @@ import type {
   Thread,
   ThreadSummary,
   Turn,
+  TurnAttachment,
   TurnRole,
   TurnStatus,
 } from '@/types/thread.types';
@@ -77,6 +78,21 @@ function toStatus(raw: Raw): TurnStatus {
   return (known as string[]).includes(s) ? (s as TurnStatus) : 'settled';
 }
 
+function toTurnAttachments(raw: unknown): TurnAttachment[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      const r = (item ?? {}) as Raw;
+      return {
+        id: str(r.attachmentId) || str(r.id),
+        filename: str(r.filename, 'file'),
+        bytes: num(r.sizeBytes),
+        mimeType: str(r.detectedType),
+      };
+    })
+    .filter((item) => Boolean(item.id));
+}
+
 export function toTurn(raw: unknown, threadId: string): Turn {
   const r = (raw ?? {}) as Raw;
   return {
@@ -90,6 +106,8 @@ export function toTurn(raw: unknown, threadId: string): Turn {
     // Never dropped: if material content could not be considered, the turn says
     // so plainly rather than presenting a partial answer as complete (§2.4).
     contextNote: str(r.contextNote) || null,
+    attachments: toTurnAttachments(r.attachments),
+    canContinue: r.canContinue === true,
   };
 }
 

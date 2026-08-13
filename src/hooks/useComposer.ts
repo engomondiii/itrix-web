@@ -9,12 +9,13 @@ import { useThreadStore } from '@/store/threadStore';
 import { useShellContext } from '@/context/ShellContext';
 import { useTranscriptStore } from '@/store/transcriptStore';
 import { usePendingStore } from '@/store/pendingStore';
+import { useAttachmentStore } from '@/store/attachmentStore';
 import { setThreadUrl } from '@/hooks/useThread';
 import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { familyForPrompt } from '@/lib/content/examplePrompts';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { successApi } from '@/lib/api/successApi';
-import type { SubmitResult, Turn } from '@/types/thread.types';
+import type { SubmitResult, Turn, TurnAttachment } from '@/types/thread.types';
 
 /**
  * THE NO-NAVIGATION CONTRACT (R21, Surface 1 v5.0 §2.3).
@@ -55,6 +56,21 @@ function localId(prefix: string): string {
       ? crypto.randomUUID()
       : Math.random().toString(36).slice(2);
   return `${prefix}_local_${rand}`;
+}
+
+/** Snapshot display metadata before the composer tray is cleared after send. */
+function sentAttachmentSnapshot(ids: readonly string[]): TurnAttachment[] {
+  if (ids.length === 0) return [];
+  const wanted = new Set(ids);
+  return useAttachmentStore
+    .getState()
+    .items.filter((item) => wanted.has(item.id))
+    .map((item) => ({
+      id: item.id,
+      filename: item.filename,
+      bytes: item.bytes,
+      mimeType: item.mimeType,
+    }));
 }
 
 /**
@@ -193,6 +209,7 @@ export function useComposer(): UseComposerResult {
       seq: nextSeq,
       status: 'pending',
       createdAt: now,
+      attachments: sentAttachmentSnapshot(attachmentIds),
     };
 
     if (isFirstTurn) {
@@ -279,7 +296,9 @@ export function useComposer(): UseComposerResult {
   ]);
 
   /** Put a visitor turn on screen right now, before anything is sent. */
-  const appendOptimistic = useCallback((threadId: string, text: string): Turn => {
+  const appendOptimistic = useCallback((
+    threadId: string, text: string, attachmentIds: string[] = [],
+  ): Turn => {
     const seq =
       (useTranscriptStore.getState().turnsByThread[threadId] ?? []).reduce(
         (max, t) => Math.max(max, t.seq),
@@ -293,6 +312,7 @@ export function useComposer(): UseComposerResult {
       seq,
       status: 'pending',
       createdAt: new Date().toISOString(),
+      attachments: sentAttachmentSnapshot(attachmentIds),
     };
     append(threadId, turn);
     return turn;
@@ -317,7 +337,7 @@ export function useComposer(): UseComposerResult {
     }
 
     if (submitting && activeThreadId) {
-      const optimistic = appendOptimistic(activeThreadId, text);
+      const optimistic = appendOptimistic(activeThreadId, text, attachmentIds);
       enqueue({
         optimisticId: optimistic.id,
         threadId: activeThreadId,

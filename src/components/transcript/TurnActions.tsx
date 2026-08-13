@@ -19,9 +19,12 @@ export interface TurnActionsProps {
    * end up with Copy alone.
    */
   onEdit?: () => void;
+  /** Present only for assistant turns explicitly marked incomplete by the backend. */
+  onContinue?: () => void;
+  continuing?: boolean;
 }
 
-export function TurnActions({ turn, onEdit }: TurnActionsProps) {
+export function TurnActions({ turn, onEdit, onContinue, continuing = false }: TurnActionsProps) {
   const [copied, setCopied] = useState(false);
 
   if (!turn.body) return null;
@@ -39,6 +42,21 @@ export function TurnActions({ turn, onEdit }: TurnActionsProps) {
             <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
           </svg>
           <span>Edit</span>
+        </button>
+      ) : null}
+
+      {onContinue ? (
+        <button
+          type="button"
+          className="turn__action turn__action--continue"
+          aria-label="Continue this response"
+          disabled={continuing}
+          onClick={onContinue}
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h13M14 8l4 4-4 4" />
+          </svg>
+          <span>{continuing ? 'Continuing…' : 'Continue'}</span>
         </button>
       ) : null}
 

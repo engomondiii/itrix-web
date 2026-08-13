@@ -538,6 +538,39 @@
 
 .turn__actions { display: flex; gap: 8px; opacity: 0; transition: opacity 180ms; }
 .turn:hover .turn__actions, .turn:focus-within .turn__actions { opacity: 1; }
+
+.turn__action:disabled { opacity: 0.55; cursor: wait; }
+.turn__action--continue { color: var(--ink-primary); }
+
+.turn-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.turn-attachment {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: min(100%, 340px);
+  padding: 8px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm, 10px);
+  background: var(--surface);
+  color: var(--ink-primary);
+  text-decoration: none;
+}
+.turn-attachment:hover { background: var(--soft); }
+.turn-attachment__icon { width: 18px; height: 18px; flex: 0 0 auto; color: var(--ink-secondary); }
+.turn-attachment__text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.turn-attachment__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.turn-attachment__meta { font-size: 11px; color: var(--ink-secondary); }
 .turn__action {
   display: inline-flex;
   align-items: center;
@@ -1001,6 +1034,20 @@
 }
 .composer-shell { position: relative; }
 
+.composer-shell__attachments {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+}
+.composer-shell__attachments .attachment-tray { margin-top: 0; }
+.composer-shell__attachments .attachment-tray__list {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.composer-shell__attachments .attachment-chip {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
 .attachment-tray { margin-top: 10px; }
 .attachment-tray__label {
   font-family: var(--font-mono, monospace);

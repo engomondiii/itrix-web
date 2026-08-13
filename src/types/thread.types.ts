@@ -39,6 +39,13 @@ export type TurnStatus =
   | 'halted'
   | 'unavailable';
 
+export interface TurnAttachment {
+  id: string;
+  filename: string;
+  bytes: number;
+  mimeType: string;
+}
+
 export interface Turn {
   id: string;
   threadId: string;
@@ -57,6 +64,10 @@ export interface Turn {
    * Rendered plainly rather than hidden: the visitor is told what was left out.
    */
   contextNote?: string | null;
+  /** Files sent with this visitor turn, safe display metadata only. */
+  attachments?: TurnAttachment[];
+  /** True only when the provider stopped this assistant turn at its output ceiling. */
+  canContinue?: boolean;
 }
 
 /** What the sidebar's conversation list needs. Never carries transcript text. */

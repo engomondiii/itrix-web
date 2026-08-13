@@ -129,6 +129,19 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
         onDrop={handleDrop}
         onPaste={handlePaste}
       >
+        {attachOn && (attachments.items.length > 0 || attachments.rejected.length > 0) ? (
+          <div className="composer-shell__attachments">
+            <AttachmentTray
+              items={attachments.items}
+              rejected={attachments.rejected}
+              showNotice={attachments.noticeShown}
+              onRemove={attachments.remove}
+              onRetry={attachments.retry}
+              onDismissRejected={attachments.dismissRejected}
+            />
+          </div>
+        ) : null}
+
         {attachOn ? (
           <AttachControl onFiles={attachments.addFiles} disabled={submitting} />
         ) : (
@@ -175,17 +188,6 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
           </p>
         ) : null}
       </div>
-
-      {attachOn ? (
-        <AttachmentTray
-          items={attachments.items}
-          rejected={attachments.rejected}
-          showNotice={attachments.noticeShown}
-          onRemove={attachments.remove}
-          onRetry={attachments.retry}
-          onDismissRejected={attachments.dismissRejected}
-        />
-      ) : null}
 
       <ComposerFooter
         noteId={noteId}

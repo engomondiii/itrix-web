@@ -9,6 +9,7 @@ import { CitationChip } from './CitationChip';
 import { MarkdownTurn } from './MarkdownTurn';
 import { TurnActions } from './TurnActions';
 import { ClientPageCta } from './ClientPageCta';
+import { useContinueGeneration } from '@/hooks/useContinueGeneration';
 import type { Turn } from '@/types/thread.types';
 
 /**
@@ -48,6 +49,7 @@ export interface StreamingTurnProps {
 
 export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
   const provisional = turn.status === 'streaming' || turn.status === 'pending';
+  const { continueGeneration, continuing } = useContinueGeneration(turn);
 
   return (
     <article
@@ -95,7 +97,13 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
         <p className="turn__note">{turn.contextNote}</p>
       ) : null}
 
-      {turn.status === 'settled' ? <TurnActions turn={turn} /> : null}
+      {turn.status === 'settled' ? (
+        <TurnActions
+          turn={turn}
+          onContinue={turn.canContinue ? () => void continueGeneration() : undefined}
+          continuing={continuing}
+        />
+      ) : null}
     </article>
   );
 }
