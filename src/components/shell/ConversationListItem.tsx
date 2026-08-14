@@ -47,6 +47,10 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
   const [renaming, setRenaming] = useState(false);
 
   const active = activeThreadId === thread.id;
+  // The store preserves the real title across partial updates. This is the final
+  // rendering guard: even a malformed/legacy row may never leave the timestamp as the
+  // only visible text, where it looks like the conversation name.
+  const visibleTitle = thread.title.trim() || RAIL_COPY.newChat;
 
   return (
     <li className="rail-thread" data-active={active || undefined}>
@@ -64,7 +68,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
           trackEvent('thread.selected', { fromRail: true });
         }}
       >
-        <span className="rail-thread__title">{thread.title}</span>
+        <span className="rail-thread__title">{visibleTitle}</span>
         <span className="rail-thread__time">{relativeTime(thread.lastActivityAt)}</span>
       </button>
 
@@ -74,7 +78,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         <button
           type="button"
           className="rail-thread__action"
-          aria-label={`${RAIL_COPY.rename} “${thread.title}”`}
+          aria-label={`${RAIL_COPY.rename} “${visibleTitle}”`}
           onClick={() => setRenaming(true)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -84,7 +88,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         <button
           type="button"
           className="rail-thread__action"
-          aria-label={`${RAIL_COPY.delete} “${thread.title}”`}
+          aria-label={`${RAIL_COPY.delete} “${visibleTitle}”`}
           onClick={() => remove(thread.id)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -98,7 +102,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
       {renaming ? (
         <RenameThreadDialog
           open
-          currentTitle={thread.title}
+          currentTitle={visibleTitle}
           onClose={() => setRenaming(false)}
           onSave={(title) => rename(thread.id, title)}
         />

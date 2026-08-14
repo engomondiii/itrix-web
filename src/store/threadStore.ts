@@ -37,6 +37,28 @@ function byRecency(a: ThreadSummary, b: ThreadSummary): number {
   return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime();
 }
 
+/**
+ * Merge a metadata update without ever erasing the visible conversation name.
+ *
+ * `POST /threads/{id}/turns/` intentionally returns only `{threadId, turn,
+ * assistantTurn}`. The frontend normaliser therefore has no title for that response.
+ * Before this guard, the resulting empty `title` replaced the existing sidebar row on
+ * every follow-up turn, leaving only "4m ago"/"9m ago" visible and making the time look
+ * like the conversation's name. A partial transport update may advance activity time,
+ * but it may never blank stable metadata it did not carry.
+ */
+function mergeSummary(existing: ThreadSummary | undefined, incoming: ThreadSummary): ThreadSummary {
+  if (!existing) return incoming;
+
+  return {
+    ...existing,
+    ...incoming,
+    title: incoming.title.trim() || existing.title,
+    createdAt: existing.createdAt || incoming.createdAt,
+    lastActivityAt: incoming.lastActivityAt || existing.lastActivityAt,
+  };
+}
+
 export const useThreadStore = create<ThreadState>()(
   persist(
     (set) => ({
@@ -47,8 +69,10 @@ export const useThreadStore = create<ThreadState>()(
 
       upsert: (thread) =>
         set((s) => {
+          const existing = s.threads.find((t) => t.id === thread.id);
+          const merged = mergeSummary(existing, thread);
           const rest = s.threads.filter((t) => t.id !== thread.id);
-          return { threads: [thread, ...rest].sort(byRecency) };
+          return { threads: [merged, ...rest].sort(byRecency) };
         }),
 
       rename: (id, title) =>
@@ -75,7 +99,7 @@ export const useThreadStore = create<ThreadState>()(
       mergeFromServer: (incoming) =>
         set((s) => {
           const byId = new Map(s.threads.map((t) => [t.id, t]));
-          for (const t of incoming) byId.set(t.id, t);
+          for (const t of incoming) byId.set(t.id, mergeSummary(byId.get(t.id), t));
           return { threads: [...byId.values()].sort(byRecency) };
         }),
 
