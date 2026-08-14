@@ -76,7 +76,7 @@ export function MessageThread({
               ))}
             </ul>
           ) : null}
-          {m.citations.length > 0 ? (
+          {Array.isArray(m.citations) && m.citations.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {m.citations.map((c) => (
                 <CitationChip key={c.chunkId} citation={c} />

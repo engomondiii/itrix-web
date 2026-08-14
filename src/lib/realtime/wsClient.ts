@@ -3,9 +3,9 @@
  *
  * Auth model: the access token is passed in the WS subprotocol (Sec-WebSocket-Protocol),
  * NOT the query string — query strings leak into logs. For the anonymous review /
- * client-page sockets the "token" is the capability token; for the portal socket the
- * page has already authenticated via the httpOnly cookie and the server upgrades the
- * connection, so no token is needed in-band there.
+ * client-page sockets the "token" is the capability token. For the portal socket it is
+ * a short-lived WS-only ticket minted through the authenticated same-origin HTTP route;
+ * the long-lived httpOnly client JWT never enters browser JavaScript.
  *
  * Responsibilities: connect, JSON encode/decode, heartbeat ping, reconnect with
  * backoff, and SEQUENCE TRACKING. It is transport only — it knows nothing about

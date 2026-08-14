@@ -5,7 +5,6 @@ import { PitchSlideDeck } from './PitchSlideDeck';
 import { AccountCreateGate } from './AccountCreateGate';
 import { Card } from '@/components/ui/Card';
 import { SectionLabel } from '@/components/ui/SectionLabel';
-import { AgentChatPanel } from '@/components/chat/AgentChatPanel';
 import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
 import { routeLabel, licenseLabel } from '@/lib/formatting/formatRoute';
 import { cn } from '@/lib/cn';
@@ -16,7 +15,8 @@ import type { ClientPage, DiagnosisRelevanceRow, KpiPreviewRow, ProofPreviewRow 
  * payload. This is the relocation home for the old result-card content — the
  * structural diagnosis, product route, ALPHA fit, KPI preview, proof preview, and
  * recommended next step — now presented as a personalized, earned pitch surface with
- * embedded governed agent chat and the (gated) account-creation reveal.
+ * the (gated) account-creation reveal. The conversation itself is rendered once, outside
+ * this shell, by ClientPageConversation so it stays the original active thread.
  *
  * DEFENSIVE (v4.0.2): every list is coerced to an array and every row is read through a
  * safe accessor, so a missing/renamed field from the backend degrades to a skipped row
@@ -130,23 +130,11 @@ export function ClientPageShell({ page }: { page: ClientPage }) {
           </Card>
         </div>
 
-        {/* Right — embedded governed chat + the (gated) account-creation reveal */}
+        {/* Right — account/disclosure actions only. Chat is deliberately NOT duplicated
+            here: the single ClientPageConversation below the review owns the exact active
+            thread from the first sentence onward. */}
         <aside className="flex flex-col gap-6 lg:sticky lg:top-6">
-          <AgentChatPanel
-            context="client_page"
-            conversationId={page.conversationId ?? `client-page-${page.token}`}
-            token={page.token}
-            title="Discuss your review"
-            intro="Ask about the diagnosis, the recommended pathway, or what a next step would involve."
-            suggestions={[
-              'What would an assessment involve?',
-              'Which ALPHA product fits us best?',
-              'What can we discuss before an NDA?',
-            ]}
-          />
-
           <AccountCreateGate token={page.token} />
-
           <ConfidentialityNote />
         </aside>
       </div>

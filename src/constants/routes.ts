@@ -98,6 +98,7 @@ export const apiRoutes = {
   clientMe: '/client/me/',
 
   /** Phase 2 — portal data (client-JWT, disclosure-gated). */
+  portalWsTicket: '/portal/ws-ticket/',
   portalOverview: '/portal/overview/',
   portalConversations: '/portal/conversations/',
   portalConversationMessages: (id: string) => `/portal/conversations/${id}/messages/`,

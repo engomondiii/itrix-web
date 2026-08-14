@@ -100,6 +100,7 @@ export default function InboxPage() {
                 </div>
               ) : thread ? (
                 <MessageThread
+                  conversationId={thread.conversationId}
                   messages={thread.messages}
                   teamJoined={thread.teamJoined}
                   teamMemberName={thread.teamMemberName}

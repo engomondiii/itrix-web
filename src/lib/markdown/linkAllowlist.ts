@@ -26,9 +26,27 @@ function configuredHosts(): string[] {
     .filter(Boolean);
 }
 
+/**
+ * Return a root-relative target for an itriX route, including an absolute URL on the
+ * configured site origin. The backend deliberately emits an absolute personalised-page
+ * URL so the same value is usable in email and chat; treating our own absolute URL as an
+ * outbound host made that link non-clickable whenever the outbound allow-list was empty.
+ */
+export function internalHref(href: string): string | null {
+  if ((href.startsWith('/') && !href.startsWith('//')) || href.startsWith('#')) return href;
+  try {
+    const site = new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000');
+    const target = new URL(href);
+    if (target.origin === site.origin) return `${target.pathname}${target.search}${target.hash}`;
+  } catch {
+    /* Not an absolute URL. */
+  }
+  return null;
+}
+
 /** An itriX route: same-origin, and not a protocol-relative URL in disguise. */
 export function isInternalHref(href: string): boolean {
-  return (href.startsWith('/') && !href.startsWith('//')) || href.startsWith('#');
+  return internalHref(href) !== null;
 }
 
 export function isAllowedLink(href: string): boolean {

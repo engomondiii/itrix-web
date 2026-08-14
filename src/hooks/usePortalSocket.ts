@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSocket } from '@/lib/realtime/useSocket';
 import { wsUrls } from '@/lib/realtime/wsUrls';
 import { useChatStore } from '@/store/chatStore';
@@ -15,14 +15,24 @@ import type {
   TeamTypingPayload,
 } from '@/lib/realtime/socketEvents';
 
+interface PortalWsTicket {
+  ticket: string;
+  expiresIn: number;
+}
+
+/** Refresh before the 30-minute backend ticket expires, leaving a generous margin. */
+const TICKET_REFRESH_MS = 25 * 60 * 1000;
+
 /**
  * Authenticated portal socket (presence + team typing + live message stream).
  *
- * The portal page has already authenticated via the httpOnly client-JWT cookie, so
- * the WS upgrade is authorized server-side (no in-band token). Streams agent/team
- * message deltas into the chat store, flips the under-review state, and keeps
- * presence in the portal store. When realtime is off, this is inert and the portal
- * keeps polling (useConversations) unchanged.
+ * The client JWT stays in an httpOnly cookie. A WebSocket upgrade cannot be proxied
+ * through the Next route handler that owns that cookie, so this hook first exchanges
+ * the authenticated HTTP session for a short-lived WS-only ticket. The ticket rides in
+ * Sec-WebSocket-Protocol; the long-lived client JWT never reaches browser JS.
+ *
+ * If ticket minting or realtime itself is unavailable, the workspace remains usable via
+ * the existing HTTP/polling path.
  */
 export function usePortalSocket(activeConversationId?: string | null) {
   const upsertStreaming = useChatStore((s) => s.upsertStreaming);
@@ -30,12 +40,49 @@ export function usePortalSocket(activeConversationId?: string | null) {
   const setUnderReview = useChatStore((s) => s.setUnderReview);
   const setPending = useChatStore((s) => s.setPending);
   const setPresentTeam = usePortalStore((s) => s.setPresentTeam);
+  const [wsTicket, setWsTicket] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!siteConfig.featureFlags.realtime) {
+      setWsTicket(null);
+      return;
+    }
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const mint = async () => {
+      try {
+        const res = await fetch('/api/portal/ws-ticket', {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          cache: 'no-store',
+        });
+        if (!res.ok) {
+          if (!cancelled) setWsTicket(null);
+          return;
+        }
+        const data = (await res.json()) as PortalWsTicket;
+        if (!cancelled) setWsTicket(typeof data.ticket === 'string' && data.ticket ? data.ticket : null);
+      } catch {
+        if (!cancelled) setWsTicket(null);
+      }
+    };
+
+    void mint();
+    timer = setInterval(() => void mint(), TICKET_REFRESH_MS);
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+    };
+  }, []);
 
   const streamBuffers = useCallback(() => useChatStore.getState().threads, []);
 
   const { status, connected, send } = useSocket({
-    url: wsUrls.portal(),
-    enabled: siteConfig.featureFlags.realtime,
+    url: wsTicket ? wsUrls.portal() : null,
+    token: wsTicket,
+    enabled: siteConfig.featureFlags.realtime && Boolean(wsTicket),
     handlers: {
       'message.delta': (p: MessageDeltaPayload) => {
         const threads = streamBuffers();

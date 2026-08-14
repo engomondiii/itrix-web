@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { isInternalHref, linkHostLabel } from '@/lib/markdown/linkAllowlist';
+import { internalHref, linkHostLabel } from '@/lib/markdown/linkAllowlist';
 
 /**
  * A link inside an assistant turn.
@@ -35,9 +35,10 @@ export function ExternalLink({ href, allowed, children }: ExternalLinkProps) {
     );
   }
 
-  if (isInternalHref(href)) {
+  const internal = internalHref(href);
+  if (internal) {
     return (
-      <Link href={href} className="turn-link">
+      <Link href={internal} className="turn-link">
         {children}
       </Link>
     );
