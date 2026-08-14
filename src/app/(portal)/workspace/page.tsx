@@ -1,11 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
 import { ConversationColumn } from '@/components/shell/ConversationColumn';
 import { Composer } from '@/components/composer/Composer';
 import { MainQuestion } from '@/components/center/MainQuestion';
 import { PathwayHint } from '@/components/center/PathwayHint';
-import { useThreadStore } from '@/store/threadStore';
 
 /**
  * The customer's workspace — THE THREAD.
@@ -28,16 +26,6 @@ import { useThreadStore } from '@/store/threadStore';
  * the h1 here as everywhere else.
  */
 export default function WorkspaceIndex() {
-  const threads = useThreadStore((s) => s.threads);
-  const activeThreadId = useThreadStore((s) => s.activeThreadId);
-  const setActive = useThreadStore((s) => s.setActive);
-
-  useEffect(() => {
-    if (activeThreadId) return;
-    const latest = threads[0];
-    if (latest) setActive(latest.id);
-  }, [activeThreadId, threads, setActive]);
-
   return (
     <ConversationColumn
       emptyState={

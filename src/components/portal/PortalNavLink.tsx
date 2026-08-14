@@ -11,10 +11,12 @@ export function PortalNavLink({
   label,
   badge,
   icon,
+  onClick,
 }: {
   href: string;
   label: string;
   badge?: number;
+  onClick?: () => void;
   /** The 18px house glyph rendered before the label (2026-08-10). */
   icon?: ReactNode;
 }) {
@@ -23,6 +25,7 @@ export function PortalNavLink({
   return (
     <Link
       href={href}
+      onClick={onClick}
       aria-current={active ? 'page' : undefined}
       className={cn(
         'flex items-center justify-between gap-2 rounded-md px-3 py-2 text-body transition-colors',

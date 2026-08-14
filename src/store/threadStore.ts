@@ -59,6 +59,13 @@ function mergeSummary(existing: ThreadSummary | undefined, incoming: ThreadSumma
   };
 }
 
+function isMessagingOnlyThread(thread: ThreadSummary): boolean {
+  if (thread.context === 'portal' || thread.context === 'customer_success') return true;
+  // Compatibility cleanup for metadata persisted before `context` was kept client-side.
+  // That generated title was reserved for the portal inbox thread.
+  return !thread.context && thread.title === 'Portal conversation';
+}
+
 export const useThreadStore = create<ThreadState>()(
   persist(
     (set) => ({
@@ -98,9 +105,20 @@ export const useThreadStore = create<ThreadState>()(
          visitor asked us to forget. */
       mergeFromServer: (incoming) =>
         set((s) => {
-          const byId = new Map(s.threads.map((t) => [t.id, t]));
-          for (const t of incoming) byId.set(t.id, mergeSummary(byId.get(t.id), t));
-          return { threads: [...byId.values()].sort(byRecency) };
+          // The AI rail and the client↔itriX inbox are separate products. Drop any
+          // legacy portal row that older builds persisted in localStorage, then merge
+          // only AI conversation metadata returned by /threads/.
+          const byId = new Map(
+            s.threads.filter((t) => !isMessagingOnlyThread(t)).map((t) => [t.id, t]),
+          );
+          for (const t of incoming) {
+            if (!isMessagingOnlyThread(t)) byId.set(t.id, mergeSummary(byId.get(t.id), t));
+          }
+          const activeStillExists = !s.activeThreadId || byId.has(s.activeThreadId);
+          return {
+            threads: [...byId.values()].sort(byRecency),
+            activeThreadId: activeStillExists ? s.activeThreadId : null,
+          };
         }),
 
       reset: () => set({ threads: [], activeThreadId: null }),

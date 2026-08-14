@@ -78,6 +78,8 @@ export interface ThreadSummary {
    * rule: a title may never name an inferred company, department or persona.
    */
   title: string;
+  /** Backend context; used only to keep Messaging threads out of the AI rail. */
+  context?: string;
   createdAt: string;
   lastActivityAt: string;
 }

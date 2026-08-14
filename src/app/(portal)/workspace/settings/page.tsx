@@ -24,7 +24,7 @@ export default function SettingsPage() {
         ) : (
           <>
             <ProfileForm profile={data.profile} saving={saving} onSave={(p) => void saveProfile(p)} />
-            <TeamAccessForm team={data.team} saving={saving} onInvite={(e) => void inviteTeammate(e)} />
+            <TeamAccessForm team={data.team} saving={saving} onInvite={inviteTeammate} />
             <NotificationPrefsForm prefs={data.notifications} saving={saving} onSave={(p) => void saveNotifications(p)} />
 
             <div className="border-t border-border-soft pt-5">

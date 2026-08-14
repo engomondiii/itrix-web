@@ -117,6 +117,7 @@ export function toThreadSummary(raw: unknown): ThreadSummary {
   return {
     id: str(r.threadId) || str(r.id),
     title: str(r.title, 'New review'),
+    context: str(r.context) || undefined,
     // Django's summary carries no createdAt. Falling back to lastActivityAt
     // keeps the sidebar's ordering sane rather than leaving it undefined.
     createdAt: str(r.createdAt) || activity,

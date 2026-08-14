@@ -173,6 +173,14 @@ export function PortalSidebar() {
                   label={item.label}
                   icon={<NavGlyph itemKey={item.key} />}
                   badge={item.key === 'messages' ? unread : undefined}
+                  onClick={
+                    item.key === 'overview'
+                      ? () => {
+                          startNew();
+                          clearComposer();
+                        }
+                      : undefined
+                  }
                 />
               ))}
             </div>

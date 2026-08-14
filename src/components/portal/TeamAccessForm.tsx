@@ -16,19 +16,20 @@ export function TeamAccessForm({
 }: {
   team: PortalSettings['team'];
   saving: boolean;
-  onInvite: (email: string) => void;
+  onInvite: (email: string) => Promise<boolean>;
 }) {
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
 
-  function submit() {
+  async function submit() {
     if (!/.+@.+\..+/.test(email.trim())) {
       setError('Enter a valid email address.');
       return;
     }
     setError(null);
-    onInvite(email.trim());
-    setEmail('');
+    const sent = await onInvite(email.trim());
+    if (sent) setEmail('');
+    else setError('We could not send that invitation. Please try again.');
   }
 
   return (
@@ -61,7 +62,7 @@ export function TeamAccessForm({
             className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary placeholder:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
         </label>
-        <Button variant="secondary" size="md" disabled={saving} onClick={submit}>
+        <Button variant="secondary" size="md" disabled={saving} onClick={() => void submit()}>
           {PORTAL_COPY.settings.sendInvite}
         </Button>
       </div>
