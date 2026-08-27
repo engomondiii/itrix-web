@@ -1,0 +1,48 @@
+import type { AppLocale } from '@/store/localeStore';
+
+const STRINGS = {
+  en: {
+    language: 'Language', english: 'English', korean: '한국어',
+    preparingTitle: 'Preparing your review', preparing: 'Preparing your personalized analysis.',
+    preparingDetail: 'We are validating the complete review before making it available.',
+    slow: 'This is taking longer than usual. Your review is still being prepared.',
+    failed: 'We could not finish the review. Your answers are preserved and you can retry safely.',
+    retry: 'Try again', retrying: 'Retrying…', viewReview: 'View My Review', ready: 'Your review is ready.',
+    accessUnavailable: 'Review access is unavailable or has expired.', returnToReview: 'Return to review',
+    accessOpenError: 'Review access could not be opened right now.', accessExpired: 'Review access is no longer available. Return to the conversation to request it again.',
+    reviewTitle: 'My Review', reviewOpen: 'Review open', reviewMinimized: 'Review minimised — conversation stays active',
+    showReview: 'Show review', minimizeReview: 'Minimise review',
+    whatHeard: 'What we heard from you', statedFacts: 'Stated facts', affectedDecision: 'Affected decision',
+    consequence: 'Consequence', boundedHypothesis: 'Bounded hypothesis', unknowns: 'Unknowns', confirmCorrect: 'Confirm or correct',
+    structuralRead: 'Structural read', alphaFit: 'itriX interpretation', measures: 'Evaluation measures', proof: 'Evidence / proof', nextStep: 'Practical next step',
+    evidenceGeneral: 'General', evidenceConversation: 'Conversation-specific',
+    conversationLabel: 'Your conversation about this review', conversationEmpty: 'Ask anything about this review and it will be answered here.',
+    artifactFamily: 'Artifact', generated: 'Generated', version: 'Version',
+    stageLabel: 'Evaluation progress', stages: ['Understanding your challenge','Reflecting your situation','Evaluating structural eligibility','Defining proof requirements','Recommending next steps'],
+    keepTitle: 'Keep this conversation', keepBody: 'Open a free workspace to keep this conversation, your documents and your work in one place.', keepAction: 'Open a workspace', notNow: 'Not now',
+    mirrorControlsLabel: 'Problem Mirror controls', mirrorConfirm: 'This reflects my situation', mirrorRefine: 'Refine this', mirrorRestart: 'Start again',
+  },
+  ko: {
+    language: '언어', english: 'English', korean: '한국어',
+    preparingTitle: '리뷰를 준비하고 있습니다', preparing: '개인화된 분석을 준비하고 있습니다.',
+    preparingDetail: '전체 리뷰가 완성되고 검증된 뒤에만 열람할 수 있습니다.',
+    slow: '평소보다 시간이 더 걸리고 있습니다. 리뷰는 계속 준비 중입니다.',
+    failed: '리뷰 생성을 완료하지 못했습니다. 답변은 보존되어 있으며 안전하게 다시 시도할 수 있습니다.',
+    retry: '다시 시도', retrying: '다시 시도 중…', viewReview: '내 리뷰 보기', ready: '리뷰가 준비되었습니다.',
+    accessUnavailable: '리뷰 접근 권한을 사용할 수 없거나 만료되었습니다.', returnToReview: '리뷰로 돌아가기',
+    accessOpenError: '지금은 리뷰를 열 수 없습니다.', accessExpired: '리뷰 접근 권한이 더 이상 유효하지 않습니다. 대화로 돌아가 다시 요청해 주세요.',
+    reviewTitle: '내 리뷰', reviewOpen: '리뷰 열림', reviewMinimized: '리뷰 최소화됨 — 대화는 계속 활성화됩니다',
+    showReview: '리뷰 보기', minimizeReview: '리뷰 최소화',
+    whatHeard: '고객님께 들은 내용', statedFacts: '명시된 사실', affectedDecision: '영향받는 의사결정',
+    consequence: '영향', boundedHypothesis: '제한된 가설', unknowns: '아직 모르는 점', confirmCorrect: '확인 또는 수정',
+    structuralRead: '구조적 해석', alphaFit: 'itriX 해석', measures: '평가 측정 항목', proof: '증거 / 검증 자료', nextStep: '실질적인 다음 단계',
+    evidenceGeneral: '일반', evidenceConversation: '대화 기반',
+    conversationLabel: '이 리뷰에 대한 대화', conversationEmpty: '이 리뷰에 대해 무엇이든 질문하면 여기에서 답변을 확인할 수 있습니다.',
+    artifactFamily: '아티팩트', generated: '생성 시각', version: '버전',
+    stageLabel: '평가 진행', stages: ['과제 이해','상황 반영','구조적 적합성 평가','검증 요건 정의','다음 단계 권고'],
+    keepTitle: '이 대화를 보관하세요', keepBody: '무료 워크스페이스를 열어 이 대화와 문서, 작업을 한곳에 보관할 수 있습니다.', keepAction: '워크스페이스 열기', notNow: '나중에',
+    mirrorControlsLabel: '문제 미러 확인', mirrorConfirm: '이 내용이 제 상황을 반영합니다', mirrorRefine: '수정하기', mirrorRestart: '처음부터 다시 시작',
+  },
+} as const;
+
+export function reviewCopy(locale: AppLocale) { return STRINGS[locale] ?? STRINGS.en; }

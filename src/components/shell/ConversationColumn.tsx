@@ -13,6 +13,7 @@ import { useSuggestions } from '@/hooks/useSuggestions';
 import { useClientPageReveal } from '@/hooks/useClientPageReveal';
 import { ViewYourPageButton } from './ViewYourPageButton';
 import { KeepThisWorkCard } from '@/components/center/KeepThisWorkCard';
+import { CustomerStageIndicator } from '@/components/journey/CustomerStageIndicator';
 
 /**
  * The conversation column — the working half of the surface.
@@ -50,11 +51,10 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
 
   const suggestions = useSuggestions(activeThreadId);
 
-  // When the backend reveals the personalised client page for this thread, surface a
-  // "View your page" button so the visitor can open /c/<token> when they are ready.
-  // This is a shell-level reaction to an explicit server reveal event and navigates
-  // only on the button click — so it does not touch the transcript's no-navigation
-  // invariant. The link in the reply remains the fallback if realtime is off.
+  // When the backend reveals a READY My Review for this thread, surface an explicit
+  // "View My Review" action. The reveal carries only a short-lived one-time accessCode;
+  // clicking exchanges it into an httpOnly BFF session and then opens tokenless /c.
+  // Nothing is appended to assistant prose and no credential enters the URL.
   const clientPage = useClientPageReveal(activeThreadId);
 
   const started = Boolean(activeThreadId) && items.length > 0;
@@ -87,6 +87,7 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
   return (
     <div className="conversation-column conversation-column--active">
       <ConversationHeader />
+      <CustomerStageIndicator />
       <Transcript items={items} />
 
       <div className="conversation-column__composer">
@@ -96,7 +97,8 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
             the conversation. */}
         <KeepThisWorkCard threadId={activeThreadId} hasSettledAnswer={hasSettledAnswer} />
 
-        {clientPage.ready ? <ViewYourPageButton onOpen={clientPage.open} /> : null}
+        {clientPage.error ? <p className="text-caption text-error-text">{clientPage.error}</p> : null}
+        {clientPage.ready ? <ViewYourPageButton onOpen={() => void clientPage.open()} disabled={clientPage.opening} /> : null}
         {suggestions.visible ? (
           <SuggestedQuestions chips={suggestions.chips} onChoose={suggestions.choose} />
         ) : null}

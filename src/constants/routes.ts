@@ -33,9 +33,12 @@ export const routes = {
   reviewResult: '/review/preparing',
   reviewConfirmation: '/review/preparing',
 
-  /** Customized client page (reveal ①) + the hidden account-creation reveal (②). */
-  clientPage: (token: string) => `/c/${token}`,
-  clientAccountCreate: (token: string) => `/c/${token}/create-account`,
+  /** Tokenless My Review. Access is an httpOnly BFF cookie after one-time exchange. */
+  clientPage: '/c',
+  clientPageCurrent: '/c',
+  /** Personalized review token deep-links are retired. Invitation tokens use a distinct route. */
+  clientAccountCreate: '/sign-up',
+  inviteAccountCreate: (token: string) => `/invite/${encodeURIComponent(token)}/create-account`,
 
   /** (portal) route group — the private client workspace (Phase 2, reveal ③). */
   portalSignIn: '/sign-in',
@@ -81,6 +84,7 @@ export const apiRoutes = {
   reviewSession: '/review/sessions/',
   reviewPrompt: (id: string) => `/review/sessions/${id}/prompt/`,
   reviewQualify: (id: string) => `/review/sessions/${id}/qualify/`,
+  reviewResultStatus: (id: string) => `/review/sessions/${id}/result-status/`,
   reviewChat: (id: string) => `/review/sessions/${id}/chat/`,
   generateResult: '/ai/generate-result/',
   resultPage: (leadId: string) => `/result-page/${leadId}/`,
@@ -88,8 +92,9 @@ export const apiRoutes = {
 
   /** v3.0 — journey, client page, and account invite (Backend v4.0). */
   journeyState: (token: string) => `/journey/${token}/`,
-  clientPage: (token: string) => `/client-page/${token}/`,
-  clientPageChat: (token: string) => `/client-page/${token}/chat/`,
+  clientPageAccessExchange: '/client-page/access/exchange/',
+  clientPageCurrent: '/client-page/current/',
+  clientPageCurrentChat: '/client-page/current/chat/',
   accountInviteClaim: (token: string) => `/accounts/invite/${token}/claim/`,
 
   /** Phase 2 — client auth plane (client-JWT). */

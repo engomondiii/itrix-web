@@ -10,6 +10,7 @@ import { PendingTransferIndicator } from './PendingTransferIndicator';
 import { InlineCard } from '@/components/cards/InlineCard';
 import { useThreadContext } from '@/context/ThreadContext';
 import { usePendingStage } from '@/hooks/usePendingStage';
+import { useComposer } from '@/hooks/useComposer';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
 import { isPinnedArtifact } from '@/lib/journey/artifactTypes';
 import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
@@ -78,6 +79,7 @@ export function Transcript({ items }: TranscriptProps) {
 
   const { activeThreadId } = useThreadContext();
   const { pending, waiting, slow } = usePendingStage(activeThreadId);
+  const { retryLatest } = useComposer();
   const { save: saveScroll } = useScrollMemory({
     threadId: activeThreadId,
     ref: scrollRef,
@@ -151,7 +153,7 @@ export function Transcript({ items }: TranscriptProps) {
           <PendingTransferIndicator
             stage={pending?.stage ?? null}
             slow={slow}
-            onRetry={() => window.location.reload()}
+            onRetry={() => void retryLatest()}
           />
         ) : null}
 

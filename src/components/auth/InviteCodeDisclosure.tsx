@@ -21,7 +21,7 @@ import { AUTH_COPY } from '@/lib/content/authCopy';
  *
  * ── AND IT HANDS OFF RATHER THAN DUPLICATING ────────────────────────────────
  * A usable code resolves to the capability URL and navigates to
- * `/c/[token]/create-account`, which already collects the details, takes assent, records
+ * `/invite/[token]/create-account`, which already collects the details, takes assent, records
  * it before the claim and mints the JWT. Rebuilding that here would create a second
  * account-creation path — and therefore a second place for the assent gate to be
  * forgotten (Architecture v2.9 §19.10).

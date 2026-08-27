@@ -8,7 +8,6 @@ import { HaltedTurnNotice } from './HaltedTurnNotice';
 import { CitationChip } from './CitationChip';
 import { MarkdownTurn } from './MarkdownTurn';
 import { TurnActions } from './TurnActions';
-import { ClientPageCta } from './ClientPageCta';
 import { useContinueGeneration } from '@/hooks/useContinueGeneration';
 import type { Turn } from '@/types/thread.types';
 
@@ -77,13 +76,6 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
           ) : null}
         </div>
       )}
-
-      {/* THE PERSONALISED-PAGE BUTTON, DIRECTLY BELOW THE LINK THAT CARRIES IT.
-          Renders only when this turn actually contains a /c/<token> URL, and reads
-          the token from the persisted body rather than from a live socket frame —
-          so it is still here after a reload, in a second tab, and when the reveal
-          event was missed. Returns null for every other turn. */}
-      {turn.status === 'settled' ? <ClientPageCta body={turn.body} /> : null}
 
       {turn.status === 'settled' && citations.length > 0 ? (
         <div className="turn__citations">

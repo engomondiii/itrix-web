@@ -131,6 +131,19 @@ function normaliseShell(raw: Raw): Raw {
        with the new key here, because deciding precedence is the client's job and
        it does it in railSectionsFromContract. */
     sidebarSections: strArray(raw.sidebar_sections ?? raw.sidebarSections),
+    relationshipState: str(raw.relationship_state) ?? str(raw.relationshipState) ?? 'visitor',
+    engagementStage: str(raw.engagement_stage) ?? str(raw.engagementStage) ?? 'exploration',
+    selectedStageLabel: str(raw.selected_stage_label) ?? str(raw.selectedStageLabel) ?? '',
+    selectedAction: str(raw.selected_action) ?? str(raw.selectedAction) ?? '',
+    modeChangeStatus: str(raw.mode_change_status) ?? str(raw.modeChangeStatus) ?? 'none',
+    modeChangeTarget: str(raw.mode_change_target) ?? str(raw.modeChangeTarget) ?? '',
+    mirrorStatus: str(raw.mirror_status) ?? str(raw.mirrorStatus) ?? 'not_required',
+    identityNeededAction: str(raw.identity_needed_action) ?? str(raw.identityNeededAction) ?? '',
+    ctaDeclined: bool(raw.cta_declined ?? raw.ctaDeclined),
+    evaluationType: str(raw.evaluation_type) ?? str(raw.evaluationType) ?? '',
+    contractStage: str(raw.contract_stage) ?? str(raw.contractStage) ?? 'no_discussion',
+    locale: str(raw.locale) ?? 'en',
+    recommendationAllowed: bool(raw.recommendation_allowed ?? raw.recommendationAllowed),
     conversationHeader: normaliseHeader(raw.conversation_header ?? raw.conversationHeader),
   };
 }

@@ -7,9 +7,12 @@ import { QuestionProgressBar } from './QuestionProgressBar';
 import { QualificationQuestion } from './QualificationQuestion';
 import { StageHint } from './StageHint';
 import { ReviewSubmitButton } from './ReviewSubmitButton';
+import { ReviewPreparationStatus } from './ReviewPreparationStatus';
 import { useQualificationAnswers } from '@/hooks/useQualificationAnswers';
 import { useReviewFlow } from '@/hooks/useReviewFlow';
 import { useReviewStore } from '@/store/reviewStore';
+import { useLocaleStore } from '@/store/localeStore';
+import { qualificationUi } from '@/lib/i18n/qualificationLocale';
 import {
   STAGE_1,
   STAGE_2,
@@ -28,6 +31,9 @@ export function QualificationFlow() {
   const { answers, setAnswer, isAnswered } = useQualificationAnswers();
   const { submitQualification, submitting, error } = useReviewFlow();
   const setStage = useReviewStore((s) => s.setStage);
+  const step = useReviewStore((s) => s.step);
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = qualificationUi(locale);
 
   const order = STAGED_QUESTION_IDS;
   const total = order.length;
@@ -67,6 +73,8 @@ export function QualificationFlow() {
     setStage(stageOfQuestion(order[prevIndex]));
   }
 
+  if (step === 'preparing' || step === 'diagnosed') return <ReviewPreparationStatus />;
+
   return (
     <div className="flex flex-col gap-6">
       <StageHint stage={currentStage} eyebrow={stageEyebrow} />
@@ -78,20 +86,20 @@ export function QualificationFlow() {
         onChange={(v) => setAnswer(currentId, v)}
       />
 
-      {touched && !canAdvance ? <ErrorMessage>Select an option, or choose “Not sure,” to continue.</ErrorMessage> : null}
+      {touched && !canAdvance ? <ErrorMessage>{copy.required}</ErrorMessage> : null}
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}
 
       <div className="flex items-center justify-between gap-3 border-t border-border-soft pt-5">
         <Button variant="ghost" size="md" onClick={back} disabled={index === 0 || submitting}>
-          ← Back
+          {copy.back}
         </Button>
         {isLast ? (
           <ReviewSubmitButton onClick={next} loading={submitting} disabled={!canAdvance}>
-            Prepare my review
+            {copy.prepare}
           </ReviewSubmitButton>
         ) : (
           <Button variant="primary" size="md" onClick={next} disabled={submitting}>
-            Continue →
+            {copy.continue}
           </Button>
         )}
       </div>

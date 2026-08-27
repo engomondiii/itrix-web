@@ -49,8 +49,8 @@ export function WorkingShell({ children }: { children: ReactNode }) {
   const openSheet = useRailStore((s) => s.openSheet);
   const pane = useContentPaneContext();
 
-  /* THE CONTENT PANE IS SUPPRESSED ON THE CLIENT PAGE (/c/<token>). The personalised
-     page is itself the delivered content — it renders its own hero, slide deck and
+  /* THE CONTENT PANE IS SUPPRESSED ON MY REVIEW (/c). The personalised
+     page is itself the delivered content — it renders its own review and
      "discuss your review" panel — so the right content pane popping in beside it is
      redundant and was appearing unbidden every time a section arrived. We keep the
      LEFT conversation rail (the visitor still needs "New chat" and their history) and

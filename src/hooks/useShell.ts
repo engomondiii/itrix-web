@@ -74,6 +74,19 @@ export function normalizeShellContract(
       ? payload.contentPaneSections.filter((s) => typeof s === 'string')
       : [],
     contentPaneDefaultArtifactId: payload?.contentPaneDefaultArtifactId ?? null,
+    relationshipState: payload?.relationshipState ?? 'visitor',
+    engagementStage: payload?.engagementStage ?? 'exploration',
+    selectedStageLabel: payload?.selectedStageLabel ?? '',
+    selectedAction: payload?.selectedAction ?? '',
+    modeChangeStatus: payload?.modeChangeStatus ?? 'none',
+    modeChangeTarget: payload?.modeChangeTarget ?? '',
+    mirrorStatus: payload?.mirrorStatus ?? 'not_required',
+    identityNeededAction: payload?.identityNeededAction ?? '',
+    ctaDeclined: Boolean(payload?.ctaDeclined),
+    evaluationType: payload?.evaluationType ?? '',
+    contractStage: payload?.contractStage ?? 'no_discussion',
+    locale: payload?.locale ?? 'en',
+    recommendationAllowed: Boolean(payload?.recommendationAllowed),
     conversationHeader:
       payload?.conversationHeader ??
       (threadId

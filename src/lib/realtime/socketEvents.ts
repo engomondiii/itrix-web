@@ -1,8 +1,8 @@
 /**
  * Typed WebSocket event map (Architecture v2.6 §14.3).
  *
- * The same event vocabulary is used across every socket context (review, client
- * page, portal). Server → client events carry a `type` discriminator and a
+ * The same event vocabulary is used across the remaining socket contexts (review and
+ * portal). My Review deliberately has no bearer-token WebSocket transport. Server → client events carry a `type` discriminator and a
  * `payload`; client → server events are the small set the UI can emit. Keeping
  * the map here means every socket consumer shares one contract.
  *
@@ -28,7 +28,6 @@ import type { ShellContractPayload } from '@/types/shell.types';
 import type { AttachmentErrorCode, AttachmentStatus } from '@/types/attachment.types';
 import type { ArtifactType } from '@/lib/journey/artifactTypes';
 import type { ThreadSummary } from '@/types/thread.types';
-import type { ClientPage } from '@/types/client.types';
 
 /** ---- Server → client payloads ---- */
 
@@ -100,10 +99,9 @@ export interface JourneyRevealPayload {
  * The section list is ABSOLUTE, not a delta: a section the backend drops must
  * disappear from the UI. Consumers replace rather than merge.
  */
-export interface ShellUpdatePayload {
-  journeyState?: JourneyState;
+export interface ShellUpdatePayload extends ShellContractPayload {
+  journeyState?: JourneyState | number | null;
   journeyNumber?: number | null;
-  shell: ShellContractPayload;
 }
 
 /**
@@ -209,18 +207,6 @@ export interface SupportUpdatePayload {
   slaDueAt?: string | null;
 }
 
-/** A streamed chunk of the client-page narrative as it generates (live). */
-export interface ClientPageDeltaPayload {
-  /** Which page field is streaming (currently "problemMirror"). */
-  field: string;
-  delta: string;
-}
-
-/** The fully-assembled client page, sent once generation completes. */
-export interface ClientPageFinalPayload {
-  page: ClientPage;
-}
-
 /** Presence in a portal conversation (who from the team is here). */
 export interface PresenceUpdatePayload {
   conversationId: string;
@@ -248,8 +234,6 @@ export type ServerEvent =
   | { type: 'message.stage'; payload: MessageStagePayload }
   | { type: 'attachment.status'; payload: AttachmentStatusPayload }
   | { type: 'support.update'; payload: SupportUpdatePayload }
-  | { type: 'clientpage.delta'; payload: ClientPageDeltaPayload }
-  | { type: 'clientpage.final'; payload: ClientPageFinalPayload }
   | { type: 'presence.update'; payload: PresenceUpdatePayload }
   | { type: 'team.typing'; payload: TeamTypingPayload }
   | { type: 'pong'; payload: Record<string, never> };

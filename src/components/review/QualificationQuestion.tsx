@@ -3,6 +3,8 @@
 import { SingleSelectGroup } from './SingleSelectGroup';
 import { MultiSelectGroup } from './MultiSelectGroup';
 import { cn } from '@/lib/cn';
+import { useLocaleStore } from '@/store/localeStore';
+import { localizedQuestion, qualificationUi } from '@/lib/i18n/qualificationLocale';
 import type { QualificationQuestion as Question } from '@/types/qualification.types';
 
 export interface QualificationQuestionProps {
@@ -20,7 +22,10 @@ const NOT_SURE_VALUE = 'unsure';
  * control that clears the answer so the visitor can move on without guessing.
  */
 export function QualificationQuestion({ question, value, onChange }: QualificationQuestionProps) {
-  const hasUnsureOption = question.options.some((o) => o.value === NOT_SURE_VALUE);
+  const locale = useLocaleStore((s) => s.locale);
+  const shown = localizedQuestion(question, locale);
+  const copy = qualificationUi(locale);
+  const hasUnsureOption = shown.options.some((o) => o.value === NOT_SURE_VALUE);
   const isSingle = question.type !== 'multi';
   const singleValue = Array.isArray(value) ? value[0] ?? null : value ?? null;
   const notSureSelected = isSingle && singleValue === NOT_SURE_VALUE;
@@ -28,20 +33,20 @@ export function QualificationQuestion({ question, value, onChange }: Qualificati
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h2 className="text-web-h3 text-structure-900">{question.prompt}</h2>
-        {question.helper ? <p className="mt-1 text-secondary text-ink-secondary">{question.helper}</p> : null}
+        <h2 className="text-web-h3 text-structure-900">{shown.prompt}</h2>
+        {shown.helper ? <p className="mt-1 text-secondary text-ink-secondary">{shown.helper}</p> : null}
       </div>
 
-      {question.type === 'multi' ? (
+      {shown.type === 'multi' ? (
         <MultiSelectGroup
-          options={question.options}
+          options={shown.options}
           values={Array.isArray(value) ? value : value ? [value] : []}
           onChange={onChange}
         />
       ) : (
         <>
           <SingleSelectGroup
-            options={question.options}
+            options={shown.options}
             value={singleValue}
             onChange={onChange}
           />
@@ -57,7 +62,7 @@ export function QualificationQuestion({ question, value, onChange }: Qualificati
                   : 'border-border-medium bg-surface text-ink-secondary hover:border-border-strong hover:text-ink-secondary',
               )}
             >
-              Not sure
+              {copy.notSure}
             </button>
           ) : null}
         </>

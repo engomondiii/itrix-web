@@ -17,15 +17,13 @@ interface LeadContextValue {
   licensePathway: LicensePathway | null;
   result: ResultPage | null;
   emailCaptured: boolean;
-  capabilityToken: string | null;
   journeyState: JourneyState | null;
   setEmailCaptured: (captured: boolean) => void;
 }
 
 const LeadContext = createContext<LeadContextValue | null>(null);
 
-/** Exposes computed lead state (score, tier, route, result) plus the v3.0
- *  capability token + journey state to the /review segment. */
+/** Exposes internal review-scoring state plus the backend-authored journey state. */
 export function LeadProvider({ children }: { children: ReactNode }) {
   const s = useLeadStore();
   const value: LeadContextValue = {
@@ -37,7 +35,6 @@ export function LeadProvider({ children }: { children: ReactNode }) {
     licensePathway: s.licensePathway,
     result: s.result,
     emailCaptured: s.emailCaptured,
-    capabilityToken: s.capabilityToken,
     journeyState: s.journeyState,
     setEmailCaptured: s.setEmailCaptured,
   };

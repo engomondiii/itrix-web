@@ -23,8 +23,6 @@ interface LeadState {
   licensePathway: LicensePathway | null;
   result: ResultPage | null;
   emailCaptured: boolean;
-  /** v3.0 — the capability token for the customized client page (/c/[token]). */
-  capabilityToken: string | null;
   /** v3.0 — the last-known journey state for this lead (mirrored from backend). */
   journeyState: JourneyState | null;
 
@@ -32,7 +30,6 @@ interface LeadState {
   setLeadId: (leadId: string | null) => void;
   setResult: (result: ResultPage | null) => void;
   setEmailCaptured: (captured: boolean) => void;
-  setCapabilityToken: (token: string | null) => void;
   setJourneyState: (state: JourneyState | null) => void;
   reset: () => void;
 }
@@ -46,7 +43,6 @@ const initial = {
   licensePathway: null,
   result: null,
   emailCaptured: false,
-  capabilityToken: null,
   journeyState: null,
 } as const;
 
@@ -66,7 +62,6 @@ export const useLeadStore = create<LeadState>()(
       setLeadId: (leadId) => set({ leadId }),
       setResult: (result) => set({ result }),
       setEmailCaptured: (emailCaptured) => set({ emailCaptured }),
-      setCapabilityToken: (capabilityToken) => set({ capabilityToken }),
       setJourneyState: (journeyState) => set({ journeyState }),
       reset: () => set({ ...initial }),
     }),

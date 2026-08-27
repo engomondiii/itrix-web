@@ -35,8 +35,8 @@ function normalizeMessage(m: Partial<ChatMessage> & { id: string; conversationId
 interface UseAgentChatArgs {
   context: ChatContext;
   conversationId: string;
-  /** For client_page context: the capability token. */
-  token?: string;
+  /** Legacy client-page bearer tokens are retired. */
+  token?: never;
   /** For review context: the review session id. */
   sessionId?: string;
 }
@@ -53,7 +53,7 @@ interface UseAgentChatArgs {
  * POST so the user always gets a reply instead of staring at "preparing a response". The
  * first streamed token cancels the watchdog and the reply streams normally.
  */
-export function useAgentChat({ context, conversationId, token, sessionId }: UseAgentChatArgs) {
+export function useAgentChat({ context, conversationId, sessionId }: UseAgentChatArgs) {
   const ensureThread = useChatStore((s) => s.ensureThread);
   const appendMessage = useChatStore((s) => s.appendMessage);
   const upsertStreaming = useChatStore((s) => s.upsertStreaming);
@@ -77,17 +77,15 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
     }
   };
 
-  const realtime = siteConfig.featureFlags.realtime && (context === 'client_page' || context === 'review');
-  const socketUrl =
-    context === 'client_page' && token
-      ? wsUrls.clientPage(token)
-      : context === 'review' && sessionId
-        ? wsUrls.review(sessionId)
-        : null;
+  // Client-page authorization is held in an httpOnly BFF cookie, so browser JS never
+  // receives a credential it could use to authenticate a WebSocket. Client-page chat
+  // therefore uses the governed REST/BFF path; review chat may still stream.
+  const realtime = siteConfig.featureFlags.realtime && context === 'review';
+  const socketUrl = context === 'review' && sessionId ? wsUrls.review(sessionId) : null;
 
   const { connected, send: socketSend } = useSocket({
     url: socketUrl,
-    token: context === 'client_page' ? token : sessionId,
+    token: context === 'review' ? sessionId : undefined,
     enabled: realtime && Boolean(socketUrl),
     handlers: {
       'message.delta': (p: MessageDeltaPayload) => {
@@ -134,8 +132,8 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
   const sendViaRest = useCallback(
     async (text: string) => {
       const res =
-        context === 'client_page' && token
-          ? await clientPageApi.sendChat(token, text, conversationId)
+        context === 'client_page'
+          ? await clientPageApi.sendChat(text, conversationId)
           : context === 'review' && sessionId
             ? await reviewChatApi.send(sessionId, text)
             : { data: null, error: 'No transport for this chat context.' };
@@ -151,7 +149,7 @@ export function useAgentChat({ context, conversationId, token, sessionId }: UseA
       }
       setPending(conversationId, false);
     },
-    [context, conversationId, token, sessionId, appendMessage, setPending, setUnderReview, setError],
+    [context, conversationId, sessionId, appendMessage, setPending, setUnderReview, setError],
   );
 
   const send = useCallback(

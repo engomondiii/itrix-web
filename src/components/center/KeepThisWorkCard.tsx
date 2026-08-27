@@ -1,70 +1,40 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useShellContext } from '@/context/ShellContext';
 import { useKeepWorkStore } from '@/store/keepWorkStore';
-import { KEEP_WORK_COPY } from '@/lib/content/authCopy';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
+import { useLocaleStore } from '@/store/localeStore';
+import { reviewCopy } from '@/lib/i18n/reviewLocale';
 
-/**
- * KEEPING AN ANONYMOUS CONVERSATION (Playbook v1.9 §18H, R65).
- *
- * ── WHY THIS IS ALLOWED BEFORE VALUE IS DELIVERED ───────────────────────────
- * It is an offer about the visitor's OWN WORK, not a commitment ask. It asks for nothing
- * and offers nothing commercial, which is exactly what puts it outside the value-first
- * gate — and exactly what it must not stop being.
- *
- * Three constraints, each load-bearing:
- *
- *   NOT IN THE CONTENT PANE   §2.7 and the §11.6A relocation list keep the pane a reading
- *                             surface. A card with an action in it belongs in the
- *                             conversation.
- *   NO COMMERCIAL CONTENT     no next step, no offer, no pathway hint, no assessment, no
- *                             PoC, no licence. The moment a sentence about our services
- *                             appears here it becomes a commitment ask and belongs at
- *                             State 5.
- *   ONCE PER THREAD           dismissible, and never again after dismissal. A second
- *                             appearance turns an offer into pressure.
- *
- * ── AND IT ONLY EXISTS FOR SOMEBODY WITH NO ACCOUNT ─────────────────────────
- * `identityState` is DERIVED by the backend and carried on the shell contract; the surface
- * does not decide it. An account holder never sees this, which is the same rule that
- * suppresses the State 5 workspace ask for them (R67).
- */
-export function KeepThisWorkCard({
-  threadId,
-  hasSettledAnswer,
-}: {
-  threadId: string | null;
-  hasSettledAnswer: boolean;
-}) {
+/** Compact, optional persistence control. It never becomes a commercial CTA. */
+export function KeepThisWorkCard({ threadId, hasSettledAnswer }: { threadId: string | null; hasSettledAnswer: boolean; }) {
   const identityState = useShellContext().identityState;
   const dismissed = useKeepWorkStore((s) => (threadId ? Boolean(s.dismissed[threadId]) : false));
   const dismiss = useKeepWorkStore((s) => s.dismiss);
-
-  if (!threadId || !hasSettledAnswer) return null;
-  if (identityState !== 'anonymous') return null;
-  if (dismissed) return null;
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = reviewCopy(locale);
+  const [expanded, setExpanded] = useState(false);
+  if (!threadId || !hasSettledAnswer || identityState !== 'anonymous' || dismissed) return null;
 
   return (
-    <aside className="keep-work" aria-labelledby={`keep-work-${threadId}`}>
-      <p id={`keep-work-${threadId}`} className="keep-work__title">
-        {KEEP_WORK_COPY.title}
-      </p>
-      <p className="keep-work__body">{KEEP_WORK_COPY.body}</p>
-      <div className="keep-work__actions">
-        <Link
-          href={routes.portalSignUp}
-          className="keep-work__action"
-          onClick={() => trackEvent('auth.signup_door_chosen', { door: 'keep_work' })}
-        >
-          {KEEP_WORK_COPY.action}
-        </Link>
-        <button type="button" className="keep-work__dismiss" onClick={() => dismiss(threadId)}>
-          {KEEP_WORK_COPY.dismiss}
+    <aside className="keep-work keep-work--compact" aria-labelledby={`keep-work-${threadId}`}>
+      <div className="keep-work__compact-row">
+        <button type="button" className="keep-work__summary" aria-expanded={expanded} onClick={() => setExpanded((v) => !v)}>
+          <span id={`keep-work-${threadId}`} className="keep-work__title">{copy.keepTitle}</span>
+          <span aria-hidden="true">{expanded ? '−' : '+'}</span>
         </button>
+        {!expanded ? <button type="button" className="keep-work__dismiss" onClick={() => dismiss(threadId)}>{copy.notNow}</button> : null}
       </div>
+      {expanded ? <div className="keep-work__details">
+        <p className="keep-work__body">{copy.keepBody}</p>
+        <div className="keep-work__actions">
+          <Link href={routes.portalSignUp} className="keep-work__action" onClick={() => trackEvent('auth.signup_door_chosen', { door: 'keep_work' })}>{copy.keepAction}</Link>
+          <button type="button" className="keep-work__dismiss" onClick={() => dismiss(threadId)}>{copy.notNow}</button>
+        </div>
+      </div> : null}
     </aside>
   );
 }

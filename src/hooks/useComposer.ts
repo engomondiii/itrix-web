@@ -98,6 +98,8 @@ export interface UseComposerResult {
    * excluding it must never block the message (Surface 1 v5.0 §3.6).
    */
   submit: (attachmentIds?: string[]) => Promise<void>;
+  /** Submit supplied text through the same pipeline (used by stateful action controls). */
+  submitText: (text: string) => Promise<void>;
   canSubmit: boolean;
 
   /**
@@ -109,6 +111,8 @@ export interface UseComposerResult {
    * conversation that never happened.
    */
   resubmitEdited: (turnId: string, nextBody: string) => Promise<void>;
+  /** Retry generation for the latest persisted visitor turn without duplicating it. */
+  retryLatest: () => Promise<void>;
 
   /** How many prompts are waiting behind the turn in flight. */
   queuedCount: number;
@@ -359,6 +363,18 @@ export function useComposer(): UseComposerResult {
     value, submitting, activeThreadId, appendOptimistic, enqueue, clear, setError, runSubmit,
   ]);
 
+
+  const submitText = useCallback(async (rawText: string) => {
+    const text = rawText.trim();
+    if (text.length < MIN_LENGTH) return;
+    if (submitting && activeThreadId) {
+      const optimistic = appendOptimistic(activeThreadId, text, []);
+      enqueue({ optimisticId: optimistic.id, threadId: activeThreadId, body: text, attachmentIds: [] });
+      return;
+    }
+    await runSubmit(text, []);
+  }, [submitting, activeThreadId, appendOptimistic, enqueue, runSubmit]);
+
   /**
    * DRAIN THE QUEUE, ONE AT A TIME.
    *
@@ -426,16 +442,32 @@ export function useComposer(): UseComposerResult {
     await runSubmit(text, [], { threadId, optimisticId: turnId });
   }, [runSubmit]);
 
+  const retryLatest = useCallback(async () => {
+    const threadId = useThreadStore.getState().activeThreadId;
+    if (!threadId || threadId.includes('_local_') || submitting) return;
+    setSubmitting(true); setError(null); beginPending(threadId);
+    try {
+      const result = await turnsApi.retry(threadId);
+      if (result.data?.assistantTurn) append(threadId, result.data.assistantTurn);
+      if (result.error) setError(COMPOSER_COPY.unreachable);
+      // A 202 means the original generation still owns the idempotency lock. Keep the
+      // pending indicator alive so realtime/poll refresh can settle it.
+      if (!result.data?.pending) endPending(threadId);
+    } finally { setSubmitting(false); }
+  }, [submitting, setSubmitting, setError, beginPending, append, endPending]);
+
   return {
     value,
     submitting,
     error,
     setValue,
     submit,
+    submitText,
     /* No longer gated on `submitting`: sending while itriX is answering is now a
        supported action, and it queues rather than being refused. */
     canSubmit: value.trim().length >= MIN_LENGTH,
     resubmitEdited,
+    retryLatest,
     queuedCount: queue.length,
   };
 }

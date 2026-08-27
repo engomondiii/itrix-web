@@ -3,7 +3,7 @@ import type { QualificationQuestion, PlatformEnvironment, QuestionId } from '@/t
 
 /**
  * Review flow config. v3.0: the funnel is a two-stage conversation ending in a
- * "preparing" hand-off to the token-gated customized page (/c/[token]). The old
+ * "preparing" hand-off to the READY-gated tokenless My Review surface (/c). The old
  * 'result'/'confirmation' steps are retired; 'preparing' + 'diagnosed' are added.
  * 'result' is kept in the union for backward-compat with persisted stores.
  */

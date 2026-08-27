@@ -7,7 +7,7 @@ import { LEGAL_INSTRUMENTS, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
  *
  * PUBLIC ONLY, by construction. This is a hand-maintained allow-list rather than a
  * crawl of the route tree, because a generated sitemap would happily publish
- * /c/[token] and the workspace the moment someone added a route. Every entry here is
+ * /c and the workspace the moment someone added a route. Every entry here is
  * a page an anonymous visitor is meant to find.
  *
  * ── v6.0: THE MARKETING ROUTES STAY, EVEN THOUGH NOTHING LINKS TO THEM ──────

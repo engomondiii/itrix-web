@@ -6,67 +6,47 @@ import { useSocket } from '@/lib/realtime/useSocket';
 import { wsUrls } from '@/lib/realtime/wsUrls';
 import { routes } from '@/constants/routes';
 import { siteConfig } from '@/config/site.config';
+import { useLocaleStore } from '@/store/localeStore';
+import { reviewCopy } from '@/lib/i18n/reviewLocale';
 
 /**
- * SURFACE THE CLIENT-PAGE REVEAL AS A "VIEW YOUR PAGE" AFFORDANCE.
- *
- * When the conversation reaches the point where the backend mints the personalised
- * client page, it broadcasts `journey.reveal` (surface `client_page`, carrying the
- * capability token) to the THREAD's socket group — the group the anonymous visitor is
- * subscribed to. This hook listens for that event and exposes the token so the
- * conversation can show a "View your page" button. It does NOT navigate on its own —
- * the visitor decides when to open the page.
- *
- * WHY IT DOES NOT AUTO-NAVIGATE
- * Jumping the visitor out of the conversation the instant the event lands is jarring
- * and takes the choice away from them. A button lets them finish reading the reply and
- * open the page when ready. (It also keeps this hook well clear of the transcript's
- * "never navigate on a turn" invariant — `useComposer`;
- * tests/e2e/no-navigation-on-submit.spec.ts — because navigation now happens only from
- * an explicit button click.)
- *
- * SAFETY
- *   · Captures the token at most once (state is only set when empty), so a duplicate or
- *     replayed reveal cannot flip it.
- *   · Only acts on the `client_page` surface with a non-empty token; any other reveal
- *     is ignored here (other surfaces have their own handling).
- *   · Reads the token defensively (camelCase or snake_case) so it does not depend on
- *     wire-casing details of this one event.
- *   · No-op when realtime is disabled or there is no thread yet.
- *
- * The link appended to the reply remains as the transport-independent fallback: if
- * realtime is off, or the event is missed, the visitor still has the link in the reply.
+ * Receives only the short-lived, browser-bound ONE-TIME exchange code from a reveal.
+ * The code is never placed in a URL and is never persisted. An explicit click exchanges
+ * it through the Next.js BFF; only the resulting httpOnly cookie can open `/c`.
  */
 export interface UseClientPageRevealResult {
-  /** The client-page token once the reveal has been seen; null until then. */
-  token: string | null;
-  /** True once a client-page reveal has arrived for this thread. */
   ready: boolean;
-  /** Navigate to the personalised page. No-op until a token has been seen. */
-  open: () => void;
+  opening: boolean;
+  error: string | null;
+  open: () => Promise<void>;
 }
 
-function readToken(reveal: unknown): string {
+function readAccessCode(reveal: unknown): string {
   if (!reveal || typeof reveal !== 'object') return '';
   const r = reveal as Record<string, unknown>;
-  const camel = typeof r.capabilityToken === 'string' ? r.capabilityToken : '';
-  const snake = typeof r.capability_token === 'string' ? r.capability_token : '';
-  return camel || snake;
+  for (const key of ['accessCode', 'access_code']) {
+    const value = r[key];
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return '';
 }
 
 function readSurface(payload: Record<string, unknown>): string {
   const reveal = payload.reveal as Record<string, unknown> | undefined;
-  const fromReveal = reveal && typeof reveal.surface === 'string' ? reveal.surface : '';
-  const fromTop = typeof payload.surface === 'string' ? (payload.surface as string) : '';
-  const fromAuthorized =
-    typeof payload.authorizedSurface === 'string' ? (payload.authorizedSurface as string) : '';
-  return fromReveal || fromTop || fromAuthorized;
+  return (
+    (reveal && typeof reveal.surface === 'string' ? reveal.surface : '') ||
+    (typeof payload.surface === 'string' ? payload.surface : '') ||
+    (typeof payload.authorizedSurface === 'string' ? payload.authorizedSurface : '')
+  );
 }
 
 export function useClientPageReveal(threadId: string | null): UseClientPageRevealResult {
   const router = useRouter();
-  const [token, setToken] = useState<string | null>(null);
-
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = reviewCopy(locale);
+  const [accessCode, setAccessCode] = useState<string | null>(null);
+  const [opening, setOpening] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const enabled = siteConfig.featureFlags.realtime && Boolean(threadId);
 
   useSocket({
@@ -74,23 +54,37 @@ export function useClientPageReveal(threadId: string | null): UseClientPageRevea
     enabled,
     handlers: {
       'journey.reveal': (p) => {
-        // Read defensively via `unknown` — the event is typed, but we also tolerate
-        // wire-casing (snake vs camel) for the token without depending on it.
         const payload = p as unknown as Record<string, unknown>;
         if (readSurface(payload) !== 'client_page') return;
-
-        const seen = readToken(payload.reveal) || readToken(payload);
-        if (!seen) return;
-
-        // Capture once — the first client-page reveal for this thread wins.
-        setToken((prev) => prev ?? seen);
+        const seen = readAccessCode(payload.reveal) || readAccessCode(payload);
+        if (seen) setAccessCode((prev) => prev ?? seen);
       },
     },
   });
 
-  const open = useCallback(() => {
-    if (token) router.push(routes.clientPage(token));
-  }, [router, token]);
+  const open = useCallback(async () => {
+    if (!accessCode || opening) return;
+    setOpening(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/client-page/access/exchange', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ code: accessCode }),
+      });
+      if (!res.ok) {
+        setError(copy.accessExpired);
+        return;
+      }
+      setAccessCode(null);
+      router.push(routes.clientPage);
+    } catch {
+      setError(copy.accessOpenError);
+    } finally {
+      setOpening(false);
+    }
+  }, [accessCode, opening, router, copy.accessExpired, copy.accessOpenError]);
 
-  return { token, ready: token !== null, open };
+  return { ready: accessCode !== null, opening, error, open };
 }

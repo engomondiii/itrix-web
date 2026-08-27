@@ -5,7 +5,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 
 /**
- * The loading state shown on /c/[token] while the personalized AI review is being
+ * The loading state shown on /c while the personalized AI review is being
  * generated. We deliberately do NOT show the deterministic stub first (which then
  * flips/reloads to the AI version) — instead we hold here until the AI page is ready and
  * reveal the finished review once. Rotating status lines make the wait feel considered

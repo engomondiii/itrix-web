@@ -2,15 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { journeyApi } from '@/lib/api/journeyApi';
-import { useSocket } from '@/lib/realtime/useSocket';
-import { wsUrls } from '@/lib/realtime/wsUrls';
-import { siteConfig } from '@/config/site.config';
 import { normalizeState, journeyNumber as numberFor, stateKey as keyFor } from '@/lib/journey/journeyStates';
 import type {
   JourneyState, JourneyReveal, RevealSurface, StateKey,
   IdentityState, DisclosureCeiling,
 } from '@/types/journey.types';
-import type { JourneyRevealPayload } from '@/lib/realtime/socketEvents';
 
 const POLL_MS = 5000;
 
@@ -48,9 +44,8 @@ interface UseJourneyResult {
  *     restrictive state. Vocabulary drift costs a visitor access they had;
  *     it never grants access they did not.
  *
- * With realtime on, pushes update state the instant the backend authorizes it.
- * The GET remains the initial fetch and the fallback poll; behaviour is
- * identical either way.
+ * Capability-bearing journey state is fetched over HTTP. My Review uses its own
+ * browser-bound BFF flow and never places an access credential in a WebSocket URL.
  */
 export function useJourney(token: string | null): UseJourneyResult {
   const [state, setState] = useState<JourneyState | null>(null);
@@ -65,8 +60,6 @@ export function useJourney(token: string | null): UseJourneyResult {
   const [loading, setLoading] = useState<boolean>(Boolean(token));
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const realtime = siteConfig.featureFlags.realtime;
 
   const fetchOnce = useCallback(async () => {
     if (!token) return;
@@ -91,42 +84,6 @@ export function useJourney(token: string | null): UseJourneyResult {
 
   const refresh = useCallback(() => void fetchOnce(), [fetchOnce]);
 
-  const { status } = useSocket({
-    url: token ? wsUrls.clientPage(token) : null,
-    token,
-    enabled: realtime && Boolean(token),
-    handlers: {
-      'journey.reveal': (p: JourneyRevealPayload) => {
-        const normalized = normalizeState(p.state);
-        setState(normalized);
-        setJourneyNumber(p.journeyNumber ?? numberFor(normalized));
-        setStateKey(p.stateKey ?? keyFor(normalized));
-        if (p.identityState) setIdentityState(p.identityState);
-        if (p.disclosureCeiling) setDisclosureCeiling(p.disclosureCeiling);
-        setAuthorizedSurface(p.authorizedSurface);
-        setReveals((prev) =>
-          prev.some((r) => r.surface === p.reveal.surface) ? prev : [...prev, p.reveal],
-        );
-        setValueDelivered(Boolean(p.valueDelivered));
-        setAccountInviteAvailable(Boolean(p.accountInviteAvailable));
-        setLoading(false);
-        setError(null);
-      },
-      // A shell re-authorization can accompany a state change. ShellContext owns
-      // the section list itself; here we only keep the number in step so the
-      // sidebar never renders State 4 sections beside a State 2 thread.
-      'shell.update': (p) => {
-        if (p.journeyNumber !== undefined && p.journeyNumber !== null) {
-          setJourneyNumber(p.journeyNumber);
-        } else if (p.journeyState) {
-          setJourneyNumber(numberFor(normalizeState(p.journeyState)));
-        }
-      },
-    },
-  });
-
-  const connected = status === 'open';
-
   useEffect(() => {
     // No token means no subscription. The result is DERIVED below rather than
     // written here — representing something already known at render time as
@@ -138,14 +95,15 @@ export function useJourney(token: string | null): UseJourneyResult {
     // callback rather than synchronously in the effect body.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void fetchOnce();
-    if (!realtime || !connected) {
-      timer.current = setInterval(() => void fetchOnce(), POLL_MS);
-    }
+    // Capability-bearing journey surfaces use HTTP polling only. My Review no longer
+    // has a token-bearing WebSocket route, and other capability tokens should not be
+    // repurposed as review credentials merely to get realtime updates.
+    timer.current = setInterval(() => void fetchOnce(), POLL_MS);
     return () => {
       if (timer.current) clearInterval(timer.current);
       timer.current = null;
     };
-  }, [token, fetchOnce, realtime, connected]);
+  }, [token, fetchOnce]);
 
   return {
     state, journeyNumber, stateKey, identityState, disclosureCeiling,

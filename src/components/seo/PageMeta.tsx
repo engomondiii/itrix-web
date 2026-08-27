@@ -30,7 +30,7 @@ export function buildMetadata({ title, description, path = '/', image, noIndex }
   };
 }
 
-/** Convenience for private, never-indexed surfaces (/c/[token], the portal). */
+/** Convenience for private, never-indexed surfaces (/c, the portal). */
 export function noIndexMetadata(title: string, path = '/'): Metadata {
   return buildMetadata({ title, path, noIndex: true });
 }

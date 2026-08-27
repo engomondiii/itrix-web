@@ -3,6 +3,9 @@
 import { ConciergePanel } from '@/components/review/ConciergePanel';
 import { QualificationFlow } from '@/components/review/QualificationFlow';
 import { useReviewStore } from '@/store/reviewStore';
+import { LocaleToggle } from '@/components/review/LocaleToggle';
+import { useLocaleStore } from '@/store/localeStore';
+import { qualificationUi } from '@/lib/i18n/qualificationLocale';
 
 /**
  * Qualification — the two-stage adaptive pain-gain conversation (State 2→3).
@@ -25,16 +28,19 @@ import { useReviewStore } from '@/store/reviewStore';
  */
 export default function QualifyPage() {
   const stage = useReviewStore((s) => s.stage);
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = qualificationUi(locale);
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
+      <div className="flex justify-end"><LocaleToggle /></div>
       <ConciergePanel>
         <QualificationFlow />
       </ConciergePanel>
 
       {/* Polite: it must not interrupt someone mid-sentence. */}
       <div role="status" aria-live="polite" className="sr-only">
-        {stage === 'stage_2' ? 'A few more questions, now that you have asked for more.' : ''}
+        {stage === 'stage_2' ? copy.liveStage2 : ''}
       </div>
     </div>
   );

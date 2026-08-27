@@ -11,8 +11,9 @@ import { CLIENT_COOKIE_NAMES } from '@/lib/server/session';
  * re-verifies signature, audience and NDA ceiling on every API call, so this is
  * a UX guard, not the security boundary.
  *
- * The customized page /c/[token] is intentionally NOT guarded — it is gated by
- * its own capability token, which Django validates on fetch.
+ * The My Review route /c is intentionally NOT guarded by portal auth. Access is held
+ * in a dedicated httpOnly BFF cookie and Django re-validates that opaque server-side
+ * access session on every review fetch.
  *
  * PHASE 2 adds one thing: a bare /workspace lands on the state-appropriate
  * sub-route. It is a CONVENIENCE redirect and deliberately not an authorization

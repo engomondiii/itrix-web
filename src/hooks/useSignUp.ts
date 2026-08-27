@@ -27,7 +27,7 @@ import type { LegalInstrumentVersion } from '@/lib/api/legalApi';
  *
  * ── WHAT DELIBERATELY DID NOT CHANGE ────────────────────────────────────────
  * `redeem()`. The lookup, the single failure message for unknown/used/expired, and the
- * hand-off to `/c/[token]/create-account` all work and are not being rewritten because
+ * hand-off to `/invite/[token]/create-account` all work and are not being rewritten because
  * the page around them moved.
  *
  * ── WHAT THIS HOOK CANNOT LEARN ─────────────────────────────────────────────

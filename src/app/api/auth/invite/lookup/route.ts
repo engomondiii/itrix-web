@@ -51,13 +51,12 @@ export async function GET(req: Request) {
 
     /* Re-shaped, not forwarded. Only these two fields can ever reach the client, whatever
        the backend decides to include later. */
-    const token = typeof payload.token === 'string' ? payload.token : null;
-    const redeemUrl =
-      typeof payload.redeemUrl === 'string'
-        ? payload.redeemUrl
-        : token
-          ? `/c/${encodeURIComponent(token)}/create-account`
-          : null;
+    const backendUrl = typeof payload.redeemUrl === 'string' ? payload.redeemUrl : '';
+    const directToken = typeof payload.token === 'string' ? payload.token : '';
+    const legacyMatch = backendUrl.match(/\/c\/([^/]+)\/create-account(?:$|[?#])/);
+    const inviteMatch = backendUrl.match(/\/invite\/([^/]+)\/create-account(?:$|[?#])/);
+    const rawToken = directToken || (inviteMatch?.[1] ? decodeURIComponent(inviteMatch[1]) : '') || (legacyMatch?.[1] ? decodeURIComponent(legacyMatch[1]) : '');
+    const redeemUrl = rawToken ? `/invite/${encodeURIComponent(rawToken)}/create-account` : null;
 
     if (!usable || !redeemUrl) return NextResponse.json({ usable: false }, { status: 200 });
     return NextResponse.json({ usable: true, redeemUrl }, { status: 200 });

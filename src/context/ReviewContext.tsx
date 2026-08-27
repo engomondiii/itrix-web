@@ -9,7 +9,6 @@ import type { ChatMessage } from '@/types/chat.types';
 
 interface ReviewContextValue {
   sessionId: string | null;
-  journeyToken: string | null;
   step: ReviewStep;
   stage: 'stage_1' | 'stage_2';
   prompt: string;
@@ -28,13 +27,11 @@ interface ReviewContextValue {
 
 const ReviewContext = createContext<ReviewContextValue | null>(null);
 
-/** Exposes the review session (zustand-backed) to the /review segment, including
- *  the journey token + Concierge transcript that carry through the conversation. */
+/** Exposes the review session and Concierge transcript to the /review segment. */
 export function ReviewProvider({ children }: { children: ReactNode }) {
   const s = useReviewStore();
   const value: ReviewContextValue = {
     sessionId: s.sessionId,
-    journeyToken: s.journeyToken,
     step: s.step,
     stage: s.stage,
     prompt: s.prompt,

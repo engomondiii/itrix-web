@@ -89,6 +89,19 @@ export interface ShellContract {
   /** Which artifact the pane opens on. Phase 2 consumes it. */
   contentPaneDefaultArtifactId: string | null;
   conversationHeader: ConversationHeaderContract | null;
+  relationshipState?: 'visitor' | 'technical_evaluator' | 'customer' | 'strategic_customer';
+  engagementStage?: string;
+  selectedStageLabel?: string;
+  selectedAction?: string;
+  modeChangeStatus?: string;
+  modeChangeTarget?: string;
+  mirrorStatus?: string;
+  identityNeededAction?: string;
+  ctaDeclined?: boolean;
+  evaluationType?: string;
+  contractStage?: string;
+  locale?: 'en' | 'ko' | string;
+  recommendationAllowed?: boolean;
 }
 
 /** GET /api/shell — the wire shape, before normalisation. */
@@ -114,4 +127,17 @@ export interface ShellContractPayload {
    */
   sidebarSections?: string[];
   conversationHeader?: ConversationHeaderContract | null;
+  relationshipState?: ShellContract['relationshipState'];
+  engagementStage?: string;
+  selectedStageLabel?: string;
+  selectedAction?: string;
+  modeChangeStatus?: string;
+  modeChangeTarget?: string;
+  mirrorStatus?: string;
+  identityNeededAction?: string;
+  ctaDeclined?: boolean;
+  evaluationType?: string;
+  contractStage?: string;
+  locale?: string;
+  recommendationAllowed?: boolean;
 }

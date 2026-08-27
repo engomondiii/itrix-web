@@ -1,16 +1,11 @@
+'use client';
 import { SectionLabel } from '@/components/ui/SectionLabel';
-import { stageLabel } from '@/lib/content/qualificationQuestions';
+import { useLocaleStore } from '@/store/localeStore';
+import { qualificationUi } from '@/lib/i18n/qualificationLocale';
 import type { ReviewStageId } from '@/lib/content/qualificationQuestions';
 
-/**
- * A calm progress hint for the two-stage flow (e.g. "Step 1 of 2"). It never shows
- * a score, a tier, or a numbered questionnaire — just gentle orientation.
- */
 export function StageHint({ stage, eyebrow }: { stage: ReviewStageId; eyebrow?: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <SectionLabel>{stageLabel(stage)}</SectionLabel>
-      {eyebrow ? <span className="text-secondary text-ink-secondary">{eyebrow}</span> : null}
-    </div>
-  );
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = qualificationUi(locale);
+  return <div className="flex flex-col gap-1"><SectionLabel>{stage === 'stage_1' ? copy.stage1 : copy.stage2}</SectionLabel><span className="text-secondary text-ink-secondary">{stage === 'stage_1' ? copy.eyebrow1 : copy.eyebrow2 || eyebrow}</span></div>;
 }

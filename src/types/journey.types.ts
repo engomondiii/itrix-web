@@ -53,6 +53,8 @@ export type DisclosureCeiling =
 export interface JourneyReveal {
   surface: RevealSurface;
   capabilityToken?: string;
+  /** Browser-bound one-time exchange code used only by the My Review surface. */
+  accessCode?: string;
   state: JourneyState;
 }
 

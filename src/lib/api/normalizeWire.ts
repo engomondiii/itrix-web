@@ -28,7 +28,7 @@
  *     underReview: true               status: 'under_review'
  *
  * This is the same boundary, and the same reasoning, as the normalisation
- * already living in `api/client-page/[token]/route.ts`. The BFF absorbs wire
+ * owned by the BFF boundary. The BFF absorbs wire
  * differences so no component ever learns the backend's field names.
  */
 

@@ -442,3 +442,16 @@
   .keep-work__dismiss,
   .auth-disclosure__trigger { min-height: 44px; display: inline-flex; align-items: center; }
 }
+
+/* 2026-08 consolidated feedback — compact persistence offer + customer-only stage rail. */
+.keep-work--compact { padding: 8px 10px; gap: 8px; }
+.keep-work__compact-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.keep-work__summary { display:flex; min-width:0; flex:1; align-items:center; justify-content:space-between; gap:12px; border:0; background:transparent; padding:2px 0; text-align:left; cursor:pointer; color:inherit; }
+.keep-work__details { display:flex; flex-direction:column; gap:8px; padding-top:4px; }
+.customer-stage { border-bottom:1px solid var(--border-soft); padding:8px 18px 10px; }
+.customer-stage__label { margin:0 0 6px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-secondary); }
+.customer-stage ol { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; list-style:none; margin:0; padding:0; }
+.customer-stage li { font-size:11px; line-height:1.3; color:var(--ink-secondary); border-top:2px solid var(--border-soft); padding-top:5px; }
+.customer-stage li[data-state='done'], .customer-stage li[data-state='current'] { border-top-color:var(--ink-primary); color:var(--ink-primary); }
+.customer-stage li[data-state='current'] { font-weight:600; }
+@media (max-width: 700px) { .customer-stage ol { grid-template-columns:1fr; gap:2px; } .customer-stage li { display:none; } .customer-stage li[data-state='current'] { display:block; } }

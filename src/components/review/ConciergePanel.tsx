@@ -7,6 +7,8 @@ import { ConfidentialityNote } from '@/components/center/ConfidentialityNote';
 import { CONVERSATION_LINES } from '@/lib/content/immediateResponses';
 import { useReview } from '@/context/ReviewContext';
 import type { ChatMessage } from '@/types/chat.types';
+import { useLocaleStore } from '@/store/localeStore';
+import { qualificationUi } from '@/lib/i18n/qualificationLocale';
 
 /**
  * The inline (never floating) review assistant surface. It shows the calm opening
@@ -17,6 +19,8 @@ import type { ChatMessage } from '@/types/chat.types';
  */
 export function ConciergePanel({ children }: { children?: React.ReactNode }) {
   const { prompt, immediateResponse, transcript } = useReview();
+  const locale = useLocaleStore((s) => s.locale);
+  const copy = qualificationUi(locale);
 
   // Compose the visible thread: opening → (visitor prompt) → acknowledge → transcript.
   const thread: ChatMessage[] = [];
@@ -59,7 +63,7 @@ export function ConciergePanel({ children }: { children?: React.ReactNode }) {
 
   return (
     <Card variant="default" className="flex flex-col gap-5">
-      <SectionLabel>Compute Bottleneck Review</SectionLabel>
+      <SectionLabel>{copy.title}</SectionLabel>
 
       <div className="flex flex-col gap-3">
         {thread.map((m) => (

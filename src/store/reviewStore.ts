@@ -6,8 +6,6 @@ import type { ChatMessage } from '@/types/chat.types';
 
 interface ReviewState {
   sessionId: string | null;
-  /** The journey capability token minted at qualify (for /c/[token]). */
-  journeyToken: string | null;
   step: ReviewStep;
   /** Which stage of the two-stage flow the visitor is on. */
   stage: 'stage_1' | 'stage_2';
@@ -20,7 +18,6 @@ interface ReviewState {
   transcript: ChatMessage[];
 
   setSession: (id: string | null) => void;
-  setJourneyToken: (token: string | null) => void;
   setStep: (step: ReviewStep) => void;
   setStage: (stage: 'stage_1' | 'stage_2') => void;
   setPrompt: (prompt: string) => void;
@@ -36,7 +33,6 @@ interface ReviewState {
 
 const initial = {
   sessionId: null,
-  journeyToken: null,
   step: 'prompt' as ReviewStep,
   stage: 'stage_1' as 'stage_1' | 'stage_2',
   prompt: '',
@@ -52,7 +48,6 @@ export const useReviewStore = create<ReviewState>()(
     (set) => ({
       ...initial,
       setSession: (sessionId) => set({ sessionId }),
-      setJourneyToken: (journeyToken) => set({ journeyToken }),
       setStep: (step) => set({ step }),
       setStage: (stage) => set({ stage }),
       setPrompt: (prompt) => set({ prompt }),

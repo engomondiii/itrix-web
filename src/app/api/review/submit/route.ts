@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server';
 import { apiRoutes } from '@/constants/routes';
 import { buildImmediateResponse } from '@/lib/content/immediateResponses';
 import { familyForPrompt } from '@/lib/content/examplePrompts';
+import { VISITOR_SESSION_COOKIE, cookieOptions, visitorBindingFromRequest } from '@/lib/server/reviewAccess';
 import type { PressureArea } from '@/types/review.types';
+import type { AppLocale } from '@/store/localeStore';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,6 +30,7 @@ interface SubmitBody {
   sessionId?: string | null;
   clientId?: string | null;
   visitorType?: string | null;
+  locale?: AppLocale;
   /**
    * The functional-family prior, when the visitor used one of the five example
    * prompts. INTERNAL routing signal only — it is never returned to the client
@@ -51,84 +54,68 @@ interface SubmitBody {
  * functional family as a routing PRIOR. It is a hypothesis, never a conclusion,
  * and it is never echoed back to the visitor.
  *
- * HARDENED (v4.0.3, retained): resolves the base URL from all known env vars,
- * follows redirects, parses the id defensively, and never silently swallows
- * failures. On any backend problem it still returns a usable body (sessionId may
- * be null so the client shows the local acknowledgement) BUT attaches a `debug`
- * object describing exactly what happened, so a null sessionId is diagnosable
- * from the response alone.
+ * Reliability rule: backend failures return a recoverable, customer-safe error. Internal
+ * URLs/status diagnostics are never serialized to the browser.
  */
 export async function POST(req: Request) {
   const API_BASE = resolveApiBase();
   const body = (await req.json().catch(() => ({}))) as SubmitBody;
-  const prompt = body.prompt ?? '';
+  const binding = visitorBindingFromRequest(req);
+  const bindingHeaders = { 'X-Itrix-Session': binding.value };
+  const prompt = (body.prompt ?? '').trim();
   const pressures = body.selectedPressures ?? [];
   const immediateResponse = buildImmediateResponse(prompt, pressures);
-
-  // Derive the family prior server-side too, so a client that omits it still
-  // gets the benefit and a client that fakes it cannot claim an unknown family.
   const family = familyForPrompt(prompt) ?? (body.family || null);
 
-  let sessionId: string | null = body.sessionId ?? null;
-  const debug: Record<string, unknown> = { apiBase: API_BASE };
+  if (!prompt) {
+    return NextResponse.json({ error: { detail: 'Tell us what you would like to explore.' } }, { status: 400 });
+  }
 
+  let sessionId: string | null = body.sessionId ?? null;
   try {
     if (!sessionId) {
-      const url = `${API_BASE}${apiRoutes.reviewSession}`;
-      debug.sessionUrl = url;
-      const created = await fetch(url, {
+      const created = await fetch(`${API_BASE}${apiRoutes.reviewSession}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...bindingHeaders },
         cache: 'no-store',
         redirect: 'follow',
-        // Backend CharFields reject null — only include these when we actually have a
-        // value, so the serializer's defaults ("" / "unknown") apply otherwise.
         body: JSON.stringify({
           ...(body.clientId ? { client_id: body.clientId } : {}),
           ...(body.visitorType ? { visitor_type: body.visitorType } : {}),
+          locale: body.locale === 'ko' ? 'ko' : 'en',
         }),
       });
-      debug.sessionStatus = created.status;
-
-      const text = await created.text();
-      let data: { id?: string; session_id?: string } | null = null;
-      try {
-        data = JSON.parse(text) as { id?: string; session_id?: string };
-      } catch {
-        debug.sessionBodySnippet = text.slice(0, 200);
+      const data = (await created.json().catch(() => ({}))) as { id?: string; session_id?: string };
+      if (!created.ok) {
+        return NextResponse.json({ error: { detail: 'We could not start this review just now. Your message is still here; please try again.' } }, { status: 502 });
       }
-
-      if (created.ok && data) {
-        sessionId = data.id ?? data.session_id ?? null;
-        if (!sessionId) debug.sessionParse = 'no id/session_id in body';
-      } else if (!created.ok) {
-        debug.sessionError = `backend returned ${created.status}`;
-        if (!data) debug.sessionBodySnippet = text.slice(0, 200);
+      sessionId = data.id ?? data.session_id ?? null;
+      if (!sessionId) {
+        return NextResponse.json({ error: { detail: 'We could not start this review just now. Your message is still here; please try again.' } }, { status: 502 });
       }
     }
 
-    if (sessionId) {
-      const purl = `${API_BASE}${apiRoutes.reviewPrompt(sessionId)}`;
-      const promptRes = await fetch(purl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        cache: 'no-store',
-        redirect: 'follow',
-        body: JSON.stringify({
-          prompt,
-          pressure_areas: pressures,
-          environment: body.environment ?? null,
-          // v4.0: this prompt IS the first review turn, not a pre-review capture.
-          first_turn: true,
-          ...(family ? { functional_family: family } : {}),
-        }),
-      });
-      debug.promptStatus = promptRes.status;
+    const promptRes = await fetch(`${API_BASE}${apiRoutes.reviewPrompt(sessionId)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...bindingHeaders },
+      cache: 'no-store',
+      redirect: 'follow',
+      body: JSON.stringify({
+        prompt,
+        pressure_areas: pressures,
+        environment: body.environment ?? null,
+        first_turn: true,
+        ...(family ? { functional_family: family } : {}),
+      }),
+    });
+    if (!promptRes.ok) {
+      return NextResponse.json({ error: { detail: 'We could not reach itriX just now. Your message is still here; please try again.' } }, { status: 502 });
     }
-  } catch (e) {
-    debug.exception = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+
+    const out = NextResponse.json({ sessionId, immediateResponse });
+    if (binding.created) out.cookies.set(VISITOR_SESSION_COOKIE, binding.value, { ...cookieOptions, maxAge: 60 * 60 * 24 * 30 });
+    return out;
+  } catch {
+    return NextResponse.json({ error: { detail: 'We could not reach itriX just now. Your message is still here; please try again.' } }, { status: 503 });
   }
-
-  // `family` is deliberately NOT returned — it is an internal routing prior.
-  return NextResponse.json({ sessionId, immediateResponse, debug });
 }
