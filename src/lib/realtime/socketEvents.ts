@@ -100,7 +100,7 @@ export interface JourneyRevealPayload {
  * disappear from the UI. Consumers replace rather than merge.
  */
 export interface ShellUpdatePayload extends ShellContractPayload {
-  journeyState?: JourneyState | number | null;
+  /** Legacy numeric alias retained for the remaining realtime consumers. */
   journeyNumber?: number | null;
 }
 

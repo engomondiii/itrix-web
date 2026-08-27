@@ -4,7 +4,7 @@ import type { AppLocale } from '@/store/localeStore';
 
 interface ApiError { detail: string; }
 interface ApiResult<T> { data: T | null; error: ApiError | null; }
-async function postJson<T>(url: string, body: unknown): Promise<ApiResult<T>> {
+export async function postJson<T>(url: string, body: unknown): Promise<ApiResult<T>> {
   try {
     const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, cache: 'no-store', body: JSON.stringify(body) });
     const data = await res.json().catch(() => null) as T | { error?: ApiError } | null;
