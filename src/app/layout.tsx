@@ -9,6 +9,8 @@ import { ThreadProvider } from '@/context/ThreadContext';
 import { ShellProvider } from '@/context/ShellContext';
 import { ContentPaneProvider } from '@/context/ContentPaneContext';
 import { ShellModeGate } from '@/components/shell/ShellModeGate';
+import { LocaleDocumentSync } from '@/components/i18n/LocaleDocumentSync';
+import { LocalizedText } from '@/components/i18n/LocalizedText';
 
 /**
  * itriX Brand Manual v1.5 EN — type system (§4.1). Unchanged in v6.0.
@@ -84,8 +86,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
       <body className="min-h-dvh bg-canvas text-ink-primary antialiased">
+        <LocaleDocumentSync />
         <a href="#content" className="skip-link">
-          Skip to the assessment
+          <LocalizedText en="Skip to the assessment" ko="평가로 건너뛰기" />
         </a>
         <ThemeProvider>
           <VisitorProvider>

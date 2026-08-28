@@ -1,7 +1,8 @@
 'use client';
 
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 import { useId } from 'react';
-import { CENTER_COPY } from '@/lib/content/centerCopy';
 import { EXAMPLE_PROMPTS } from '@/lib/content/examplePrompts';
 import type { ExamplePrompt } from '@/lib/content/examplePrompts';
 import { useComposerStore } from '@/store/composerStore';
@@ -15,16 +16,13 @@ import { ShowAllPromptsDisclosure } from './ShowAllPromptsDisclosure';
  * THE ROTATING EXAMPLE PROMPTS.
  *
  * REPLACES ExamplePromptGrid (Playbook v1.7 §00 change 2). The five prompts, their
- * copy, and their one-to-one mapping onto the functional families that organise the
- * 60-persona workbook are UNCHANGED. Only the presentation rotates.
+ * copy are optional public guidance. They are deliberately NOT mapped to the 60-persona
+ * workbook, qualification, or relationship state. Only the presentation rotates.
  *
  * ── THREE THINGS ROTATION IS NOT ALLOWED TO CHANGE ──────────────────────────
  *
- * 1. THE FAMILY PRIOR COMES FROM THE SELECTION, NEVER FROM WHAT WAS VISIBLE.
- *    A visitor who types their own sentence while prompt 03 happens to be on
- *    screen has told us nothing about silicon. This is the subtlest way a carousel
- *    could corrupt the router's input, so `populate` is called with the family of
- *    the prompt that was actually clicked and nowhere else.
+ * 1. A SELECTION IS NOT A CLASSIFICATION. It only populates the composer. No persona,
+ *    family prior, customer state or qualification signal is emitted from this control.
  *
  * 2. ALL FIVE STAY REACHABLE WITHOUT WAITING (R38). `Show all five` renders the
  *    static list, and reduced motion renders it by default.
@@ -42,6 +40,7 @@ import { ShowAllPromptsDisclosure } from './ShowAllPromptsDisclosure';
  * and no cross-fade at all.
  */
 export function RotatingQuestionCarousel() {
+  const centerCopy = useCenterCopy();
   const value = useComposerStore((s) => s.value);
   const populate = useComposerStore((s) => s.populate);
 
@@ -59,9 +58,9 @@ export function RotatingQuestionCarousel() {
   const staticList = showAll || reducedMotion;
 
   function choose(example: ExamplePrompt) {
-    populate(example.prompt, example.family);
+    populate(example.prompt);
     trackEvent('prompt_carousel.selected', {
-      family: example.family,
+      category: example.category,
       index: example.index,
       /* Which view it came from, so we can tell whether rotation is helping or
          whether everyone opens the list. */
@@ -73,7 +72,7 @@ export function RotatingQuestionCarousel() {
     <section className="prompt-carousel" aria-labelledby={`${uid}-label`} {...pauseHandlers}>
       <div className="prompt-carousel__head">
         <h2 id={`${uid}-label`} className="prompt-carousel__label">
-          {CENTER_COPY.examplesLabel}
+          {centerCopy.examplesLabel}
         </h2>
 
         <div className="prompt-carousel__tools">
@@ -99,7 +98,7 @@ export function RotatingQuestionCarousel() {
            text — so nobody knew to look for the others. `data-paused` lets the
            dwell bar stop with the rotation instead of running on regardless. */
         data-paused={paused ? 'true' : undefined}
-        aria-label={CENTER_COPY.promptGroupLabel}
+        aria-label={centerCopy.promptGroupLabel}
       >
         {staticList
           ? EXAMPLE_PROMPTS.map((example) => (

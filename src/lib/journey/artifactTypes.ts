@@ -25,6 +25,9 @@ export const ARTIFACT_TYPES = [
   'integration_readiness', // State 9
   'success_overview',      // State 10
   'document',              // any state, once authorized
+  'executive_brief',       // governed internal-champion decision support
+  'technical_brief',       // governed internal-champion technical decision support
+  'product_brief',         // governed internal-champion product decision support
 ] as const;
 
 export type ArtifactType = (typeof ARTIFACT_TYPES)[number];
@@ -50,6 +53,9 @@ export const ARTIFACT_TITLE: Record<ArtifactType, string> = {
   integration_readiness: 'Integration and commercial decisions',
   success_overview: 'Where things stand',
   document: 'Document',
+  executive_brief: 'Executive Brief',
+  technical_brief: 'Technical Brief',
+  product_brief: 'Product Brief',
 };
 
 /**
@@ -74,4 +80,22 @@ export function isPinnedArtifact(type: string): boolean {
  */
 export function isRenderableArtifact(type: string): type is ArtifactType {
   return isArtifactType(type);
+}
+
+export const ARTIFACT_TITLE_KO: Record<ArtifactType, string> = {
+  reflection: '상황에 대한 itriX의 해석',
+  pitch_room: '개인화 브리프',
+  review_summary: '리뷰 요약',
+  boundary_waste_map: 'ALPHA Compute 평가',
+  poc_evidence: '워크로드 검증 결과',
+  integration_readiness: '통합 및 상용화 의사결정',
+  success_overview: '현재 진행 상황',
+  document: '문서',
+  executive_brief: '경영진 브리프',
+  technical_brief: '기술 브리프',
+  product_brief: '제품 브리프',
+};
+
+export function artifactTitle(type: ArtifactType, locale: 'en' | 'ko' = 'en'): string {
+  return locale === 'ko' ? ARTIFACT_TITLE_KO[type] : ARTIFACT_TITLE[type];
 }

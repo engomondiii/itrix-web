@@ -1,10 +1,11 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { useSupport } from '@/hooks/useSupport';
 import { useSuccessStore } from '@/store/successStore';
 import type { SupportUrgency } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 const URGENCIES: SupportUrgency[] = ['low', 'normal', 'high', 'critical'];
 
@@ -19,6 +20,8 @@ const URGENCIES: SupportUrgency[] = ['low', 'normal', 'high', 'critical'];
  *     is not an acknowledgement, it is a deferral.
  */
 export function SupportComposer() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
   const uid = useId();
   const { open, submitting, submitError, slaHours } = useSupport();
   const draft = useSuccessStore((s) => s.supportDraft);
@@ -32,11 +35,11 @@ export function SupportComposer() {
     if (!draft.subject.trim() || !draft.body.trim()) return;
     const created = await open(draft.subject.trim(), draft.body.trim(), urgency);
     if (created) {
-      const sla = slaHours ? `${slaHours} hours` : 'the agreed response time';
+      const sla = slaHours ? (ko ? `${slaHours}시간` : `${slaHours} hours`) : (ko ? '합의된 응답 시간' : 'the agreed response time');
       setAck(
         created.owner
-          ? SUCCESS_COPY.support.acknowledgement.replace('{owner}', created.owner).replace('{sla}', sla)
-          : SUCCESS_COPY.support.acknowledgementNoOwner.replace('{sla}', sla),
+          ? successCopy.support.acknowledgement.replace('{owner}', created.owner).replace('{sla}', sla)
+          : successCopy.support.acknowledgementNoOwner.replace('{sla}', sla),
       );
       clearDraft();
     }
@@ -51,7 +54,7 @@ export function SupportComposer() {
       }}
     >
       <label htmlFor={`${uid}-subject`} className="text-caption font-semibold text-ink-primary">
-        {SUCCESS_COPY.support.subjectLabel}
+        {successCopy.support.subjectLabel}
       </label>
       <input
         id={`${uid}-subject`}
@@ -62,20 +65,20 @@ export function SupportComposer() {
       />
 
       <label htmlFor={`${uid}-body`} className="text-caption font-semibold text-ink-primary">
-        {SUCCESS_COPY.support.composerLabel}
+        {successCopy.support.composerLabel}
       </label>
       <textarea
         id={`${uid}-body`}
         rows={4}
         value={draft.body}
-        placeholder={SUCCESS_COPY.support.composerPlaceholder}
+        placeholder={successCopy.support.composerPlaceholder}
         onChange={(e) => setDraft({ body: e.target.value })}
         className="rounded-md border border-border-soft bg-soft px-3 py-2 text-web-body text-ink-primary"
       />
 
       <fieldset className="flex flex-wrap items-center gap-2">
         <legend className="mb-1 text-caption font-semibold text-ink-primary">
-          {SUCCESS_COPY.support.urgencyLabel}
+          {successCopy.support.urgencyLabel}
         </legend>
         {URGENCIES.map((u) => (
           <label key={u} className="flex items-center gap-1.5 text-caption text-ink-secondary">
@@ -86,13 +89,13 @@ export function SupportComposer() {
               checked={urgency === u}
               onChange={() => setUrgency(u)}
             />
-            {SUCCESS_COPY.support.urgency[u]}
+            {successCopy.support.urgency[u]}
           </label>
         ))}
       </fieldset>
 
       <button type="submit" className="button-primary self-start" disabled={submitting}>
-        {submitting ? 'Sending…' : SUCCESS_COPY.support.submit}
+        {submitting ? (ko ? '보내는 중…' : 'Sending…') : successCopy.support.submit}
       </button>
 
       <p role="status" aria-live="polite" className="min-h-[1.25rem] text-caption text-ink-primary">

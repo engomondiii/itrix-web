@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { InlineCard } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * Reveal 2 — "Create your workspace" (Playbook v1.6 §16F, State 5).
@@ -23,6 +24,7 @@ interface AccountPayload {
 }
 
 export function AccountCreateCard({ card }: { card: InlineCard }) {
+  const copy = useCommonCopy();
   const p = (card.payload ?? {}) as AccountPayload;
 
   return (
@@ -32,7 +34,7 @@ export function AccountCreateCard({ card }: { card: InlineCard }) {
 
       {p.whatIsSaved && p.whatIsSaved.length > 0 ? (
         <>
-          <p className="inline-card__column-title">What comes with you</p>
+          <p className="inline-card__column-title">{copy.whatComesWithYou}</p>
           <ul className="inline-card__saved">
             {p.whatIsSaved.map((i) => <li key={i}>{i}</li>)}
           </ul>

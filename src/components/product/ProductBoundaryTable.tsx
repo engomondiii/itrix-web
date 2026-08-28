@@ -1,34 +1,3 @@
-import { PRODUCTS } from '@/constants/products';
-
-const ROWS: { dim: string; compute: string; core: string }[] = [
-  { dim: 'Layer', compute: 'Representation', core: 'Runtime / execution' },
-  { dim: 'Question it answers', compute: 'What form should this computation take?', core: 'Can the transformed form actually run?' },
-  { dim: 'Output', compute: 'A transformation hypothesis', core: 'A validated proof-of-concept' },
-  { dim: 'Primary buyer', compute: PRODUCTS.alpha_compute.buyer, core: PRODUCTS.alpha_core.buyer },
-];
-
-/** The Compute/Core boundary — identical framing across every surface. */
-export function ProductBoundaryTable() {
-  return (
-    <div className="overflow-x-auto rounded-lg border border-border-medium">
-      <table className="w-full min-w-[600px] border-collapse bg-surface text-left">
-        <thead>
-          <tr className="bg-soft text-caption text-ink-secondary">
-            <th className="px-4 py-3 font-semibold"> </th>
-            <th className="px-4 py-3 font-semibold">ALPHA Compute</th>
-            <th className="px-4 py-3 font-semibold">ALPHA Core</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ROWS.map((r) => (
-            <tr key={r.dim} className="border-t border-border-soft align-top">
-              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td>
-              <td className="px-4 py-4 text-secondary text-ink-secondary">{r.compute}</td>
-              <td className="px-4 py-4 text-secondary text-ink-secondary">{r.core}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+'use client';
+import { useLocaleStore } from '@/store/localeStore'; import { productCopy } from '@/lib/i18n/productsLocale';
+export function ProductBoundaryTable(){const locale=useLocaleStore(s=>s.locale);const ko=locale==='ko';const compute=productCopy(locale,'alpha_compute'),core=productCopy(locale,'alpha_core');const rows=ko?[{dim:'계층',compute:'표현',core:'런타임 / 실행'},{dim:'답하는 질문',compute:'이 계산은 어떤 형태여야 하는가?',core:'변환된 형태가 실제로 실행될 수 있는가?'},{dim:'산출물',compute:'변환 가설',core:'검증된 표현 가설에 대한 실행 검증 근거'},{dim:'주요 대상',compute:compute.buyer,core:core.buyer}]:[{dim:'Layer',compute:'Representation',core:'Runtime / execution'},{dim:'Question it answers',compute:'What form should this computation take?',core:'Can the transformed form actually run?'},{dim:'Output',compute:'A transformation hypothesis',core:'Execution-validation evidence for a validated representation hypothesis'},{dim:'Primary buyer',compute:compute.buyer,core:core.buyer}];return <div className="overflow-x-auto rounded-lg border border-border-medium"><table className="w-full min-w-[600px] border-collapse bg-surface text-left"><thead><tr className="bg-soft text-caption text-ink-secondary"><th className="px-4 py-3 font-semibold"> </th><th className="px-4 py-3 font-semibold">ALPHA Compute</th><th className="px-4 py-3 font-semibold">ALPHA Core</th></tr></thead><tbody>{rows.map(r=><tr key={r.dim} className="border-t border-border-soft align-top"><td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td><td className="px-4 py-4 text-secondary text-ink-secondary">{r.compute}</td><td className="px-4 py-4 text-secondary text-ink-secondary">{r.core}</td></tr>)}</tbody></table></div>}

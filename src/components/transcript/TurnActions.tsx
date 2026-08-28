@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Turn } from '@/types/thread.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * Per-turn actions. Phase 1 ships one: copy.
@@ -25,6 +26,7 @@ export interface TurnActionsProps {
 }
 
 export function TurnActions({ turn, onEdit, onContinue, continuing = false }: TurnActionsProps) {
+  const copy = useCommonCopy();
   const [copied, setCopied] = useState(false);
 
   if (!turn.body) return null;
@@ -35,13 +37,13 @@ export function TurnActions({ turn, onEdit, onContinue, continuing = false }: Tu
         <button
           type="button"
           className="turn__action"
-          aria-label="Edit this message and ask again"
+          aria-label={copy.editAskAgain}
           onClick={onEdit}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             <path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3Z" />
           </svg>
-          <span>Edit</span>
+          <span>{copy.edit}</span>
         </button>
       ) : null}
 
@@ -49,21 +51,21 @@ export function TurnActions({ turn, onEdit, onContinue, continuing = false }: Tu
         <button
           type="button"
           className="turn__action turn__action--continue"
-          aria-label="Continue this response"
+          aria-label={copy.continueResponse}
           disabled={continuing}
           onClick={onContinue}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12h13M14 8l4 4-4 4" />
           </svg>
-          <span>{continuing ? 'Continuing…' : 'Continue'}</span>
+          <span>{continuing ? copy.continuing : copy.continue}</span>
         </button>
       ) : null}
 
       <button
         type="button"
         className="turn__action"
-        aria-label="Copy this message"
+        aria-label={copy.copyMessage}
         onClick={() => {
           void navigator.clipboard
             ?.writeText(turn.body)
@@ -78,7 +80,7 @@ export function TurnActions({ turn, onEdit, onContinue, continuing = false }: Tu
           <rect x="9" y="9" width="11" height="11" rx="2" />
           <path d="M5 15V5a2 2 0 0 1 2-2h8" />
         </svg>
-        <span aria-live="polite">{copied ? 'Copied' : 'Copy'}</span>
+        <span aria-live="polite">{copied ? copy.copied : copy.copy}</span>
       </button>
     </div>
   );

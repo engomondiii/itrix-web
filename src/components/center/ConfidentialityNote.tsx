@@ -1,4 +1,7 @@
-import { CENTER_COPY } from '@/lib/content/centerCopy';
+'use client';
+
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 import { CONFIDENTIALITY_NOTICE } from '@/lib/content/ctaCopy';
 
 export interface ConfidentialityNoteProps {
@@ -30,8 +33,9 @@ export interface ConfidentialityNoteProps {
  * one place each so a reword is impossible to do by accident.
  */
 export function ConfidentialityNote({ id, variant = 'full', className = '' }: ConfidentialityNoteProps) {
+  const centerCopy = useCenterCopy();
   const short = variant === 'short' || variant === 'hint';
-  const text = short ? CENTER_COPY.safetyNote : CONFIDENTIALITY_NOTICE;
+  const text = short ? centerCopy.safetyNote : CONFIDENTIALITY_NOTICE;
 
   return (
     <p id={id} className={`flex items-start gap-2 text-caption text-ink-secondary ${className}`}>

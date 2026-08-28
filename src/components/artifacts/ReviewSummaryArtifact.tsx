@@ -1,6 +1,7 @@
 'use client';
 
 import type { Artifact } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * State 5 — the Compute Bottleneck Review Summary.
@@ -22,6 +23,7 @@ interface ReviewSummaryPayload {
 }
 
 export function ReviewSummaryArtifact({ artifact }: { artifact: Artifact }) {
+  const copy = useCommonCopy();
   const p = artifact.payload as ReviewSummaryPayload;
 
   return (
@@ -30,7 +32,7 @@ export function ReviewSummaryArtifact({ artifact }: { artifact: Artifact }) {
 
       {p.whatWeHeard && p.whatWeHeard.length > 0 ? (
         <section>
-          <h3 className="artifact__section-title">What we heard</h3>
+          <h3 className="artifact__section-title">{copy.whatWeHeard}</h3>
           <ul className="artifact__list">
             {p.whatWeHeard.map((i) => <li key={i}>{i}</li>)}
           </ul>
@@ -39,7 +41,7 @@ export function ReviewSummaryArtifact({ artifact }: { artifact: Artifact }) {
 
       {p.whatWeWouldExamine && p.whatWeWouldExamine.length > 0 ? (
         <section>
-          <h3 className="artifact__section-title">What we would examine</h3>
+          <h3 className="artifact__section-title">{copy.whatWeWouldExamine}</h3>
           <ul className="artifact__list">
             {p.whatWeWouldExamine.map((i) => <li key={i}>{i}</li>)}
           </ul>
@@ -48,7 +50,7 @@ export function ReviewSummaryArtifact({ artifact }: { artifact: Artifact }) {
 
       {p.recommendedNext ? (
         <section>
-          <h3 className="artifact__section-title">Where we would go next</h3>
+          <h3 className="artifact__section-title">{copy.whereWeWouldGoNext}</h3>
           <p>{p.recommendedNext}</p>
         </section>
       ) : null}

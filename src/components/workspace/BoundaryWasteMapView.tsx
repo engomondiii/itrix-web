@@ -1,4 +1,6 @@
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { BoundaryWasteSection } from '@/types/workspace.types';
 
 /**
@@ -14,16 +16,17 @@ import type { BoundaryWasteSection } from '@/types/workspace.types';
  * a bar invites the reader to infer a magnitude we have not measured.
  */
 export function BoundaryWasteMapView({ sections }: { sections: readonly BoundaryWasteSection[] }) {
+  const workspaceCopy = useWorkspaceCopy();
   if (sections.length === 0) return null;
 
   return (
     <section aria-labelledby="bwm-title" className="flex flex-col gap-4">
       <div>
         <h2 id="bwm-title" className="font-display text-web-h3 text-ink-primary">
-          {WORKSPACE_COPY.assessment.boundaryMapTitle}
+          {workspaceCopy.assessment.boundaryMapTitle}
         </h2>
         <p className="mt-2 max-w-reading text-web-body text-ink-secondary">
-          {WORKSPACE_COPY.assessment.boundaryMapIntro}
+          {workspaceCopy.assessment.boundaryMapIntro}
         </p>
       </div>
 
@@ -38,9 +41,9 @@ export function BoundaryWasteMapView({ sections }: { sections: readonly Boundary
                 {s.title}
               </h3>
               <p className="flex items-center gap-3 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-                <span>{WORKSPACE_COPY.assessment.significanceLabel[s.significance]}</span>
+                <span>{workspaceCopy.assessment.significanceLabel[s.significance]}</span>
                 <span aria-hidden="true" className="text-ink-muted">·</span>
-                <span>{WORKSPACE_COPY.assessment.confidenceLabel[s.confidence]}</span>
+                <span>{workspaceCopy.assessment.confidenceLabel[s.confidence]}</span>
               </p>
             </div>
             <p className="mt-2 max-w-reading text-web-body leading-relaxed text-ink-secondary">{s.finding}</p>

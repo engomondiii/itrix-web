@@ -27,14 +27,14 @@ export const INFO_DRAWERS: InfoDrawer[] = [
     title: 'What is ALPHA Core?',
     disclosure: 'public',
     body:
-      'ALPHA Core is the part that executes the rewritten computation. Once ALPHA Compute has reshaped a workload, ALPHA Core runs it on the target hardware. The two are used together or separately, depending on the case.',
+      'ALPHA Core is the execution-validation layer considered after ALPHA Compute has established a representation hypothesis. It tests whether that reconstructed form can run usefully in the target environment. It is not an automatic destination and may be unnecessary.',
   },
   {
     id: 'what-is-an-assessment',
     title: 'What is an Alpha Compute Assessment?',
     disclosure: 'public',
     body:
-      'An Alpha Compute Assessment is a focused, paid engineering study of one of your workloads. We look at where your computation crosses unnecessary boundaries and produce a Boundary Waste Map, a prioritised view of where Alpha Compute may help, and a recommendation for a proof of concept. You receive a clear engineering result even if you choose not to go further. It is arranged after an NDA; details are discussed privately.',
+      'An ALPHA Compute Assessment is a focused engineering study of one workload. We look at where computation crosses unnecessary boundaries and produce a Boundary Waste Map, an applicability view, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A controlled evaluation is not a PoC, and either may end with a negative result or no further action.',
   },
   {
     id: 'what-is-a-boundary-waste-map',
@@ -48,21 +48,21 @@ export const INFO_DRAWERS: InfoDrawer[] = [
     title: 'What can be discussed before an NDA?',
     disclosure: 'controlled_public',
     body:
-      'Before an NDA we can talk about your problem in general terms, the kind of bottleneck involved, which itriX direction may be relevant, and what an evaluation could measure. We ask that you share only non-confidential descriptions until an NDA is in place.',
+      'Before the appropriate confidentiality protection is in place, we can discuss public material and non-confidential descriptions of your problem. We ask that you do not submit confidential technical information. Access to restricted itriX material is separately authorized; signing an NDA does not create that authorization.',
   },
   {
     id: 'after-an-nda',
     title: 'What happens after an NDA?',
     disclosure: 'controlled_public',
     body:
-      'With an NDA in place, the conversation can go deeper: a confidential technical briefing, a scoped Alpha Compute Assessment on your workload, and access to a private data room. The path typically continues toward a proof of concept and, where it fits, a license.',
+      'An NDA protects disclosures that are made under it. It does not automatically unlock a data room, authorize technical material, start an assessment, create a PoC, or imply licensing. Those are separate decisions governed by explicit authorization, journey state, and any applicable written agreement.',
   },
   {
     id: 'commercial-pathway',
     title: 'How does the commercial pathway work?',
     disclosure: 'public',
     body:
-      'itriX licenses its technology to partners rather than selling a finished product. A typical path runs: free Compute Bottleneck Review → confidential conversation and NDA → paid Alpha Compute Assessment (a Boundary Waste Map of one workload) → paid proof of concept → integration → license. Exclusive arrangements exist for selected strategic partners and are discussed privately.',
+      'Licensing is a possible later outcome, not a prescribed funnel. A conversation may remain public, move into a controlled evaluation, stop with a negative result, or—only when explicitly selected—progress to a PoC or commercial scoping. An NDA protects an authorized disclosure; it does not itself create access or consent to the next stage. Commercial rights exist only in the applicable written agreement.',
   },
 ];
 

@@ -11,8 +11,9 @@ import { ChangesSinceLastVisit } from '@/components/success/ChangesSinceLastVisi
 import { RelationshipTeamCard } from '@/components/success/RelationshipTeamCard';
 import { ImprovementComposer } from '@/components/success/ImprovementComposer';
 import { useSuccessOverview } from '@/hooks/useSuccessOverview';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { siteConfig } from '@/config/site.config';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * State 10 — the customer-success home.
@@ -35,6 +36,8 @@ import { siteConfig } from '@/config/site.config';
  * ranked primary; this surface simply has nowhere to put one.
  */
 export default function SuccessHomePage() {
+  const successCopy = useSuccessCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { data, loading } = useSuccessOverview();
 
   if (!siteConfig.featureFlags.customerSuccess) {
@@ -42,7 +45,7 @@ export default function SuccessHomePage() {
       <>
         <PortalTopbar title="Your workspace" />
         <div className="mx-auto max-w-3xl px-6 py-8">
-          <EmptyState>Customer success is not enabled for this workspace yet.</EmptyState>
+          <EmptyState>{ko ? '이 워크스페이스에는 아직 고객 성공 기능이 활성화되지 않았습니다.' : 'Customer success is not enabled for this workspace yet.'}</EmptyState>
         </div>
       </>
     );
@@ -58,14 +61,14 @@ export default function SuccessHomePage() {
           <>
             <div className="flex flex-col gap-10">
               <header>
-                <h1 className="font-display text-web-h2 text-ink-primary">{SUCCESS_COPY.home.welcome}</h1>
+                <h1 className="font-display text-web-h2 text-ink-primary">{successCopy.home.welcome}</h1>
               </header>
 
-              <Block title={SUCCESS_COPY.changes.title} intro={SUCCESS_COPY.changes.intro} href="/workspace/success/feedback" hideLink>
+              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.changes.title} intro={successCopy.changes.intro} href="/workspace/success/feedback" hideLink>
                 <ChangesSinceLastVisit />
               </Block>
 
-              <Block title={SUCCESS_COPY.outcomes.title} intro={SUCCESS_COPY.outcomes.intro} href="/workspace/success/outcomes">
+              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.outcomes.title} intro={successCopy.outcomes.intro} href="/workspace/success/outcomes">
                 {data.outcomes.length > 0 ? (
                   <div className="flex flex-col gap-3">
                     {data.outcomes.slice(0, 3).map((o) => (
@@ -73,30 +76,30 @@ export default function SuccessHomePage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.outcomes.empty}</p>
+                  <p className="text-web-body text-ink-secondary">{successCopy.outcomes.empty}</p>
                 )}
               </Block>
 
-              <Block title={SUCCESS_COPY.support.title} intro={SUCCESS_COPY.support.intro} href="/workspace/success/support">
+              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.support.title} intro={successCopy.support.intro} href="/workspace/success/support">
                 <SupportRequestList requests={data.openSupport} />
               </Block>
 
-              <Block title={SUCCESS_COPY.deployments.title} intro={SUCCESS_COPY.deployments.intro} href="/workspace/success/deployments">
+              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.deployments.title} intro={successCopy.deployments.intro} href="/workspace/success/deployments">
                 <DeploymentHealthPanel deployments={data.deployments.slice(0, 2)} />
               </Block>
 
-              <Block title={SUCCESS_COPY.team.title} intro={SUCCESS_COPY.team.intro} href="/workspace/success/feedback" hideLink>
+              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.team.title} intro={successCopy.team.intro} href="/workspace/success/feedback" hideLink>
                 <RelationshipTeamCard team={data.team} />
               </Block>
 
               <section aria-labelledby="improve-title" className="rounded-panel border border-border-soft bg-surface-glass-soft p-5">
-                <h2 id="improve-title" className="sr-only">Tell us what to improve</h2>
+                <h2 id="improve-title" className="sr-only">{ko ? '개선할 점을 알려주세요' : 'Tell us what to improve'}</h2>
                 <ImprovementComposer />
               </section>
             </div>
           </>
         ) : (
-          <EmptyState>{SUCCESS_COPY.outcomes.empty}</EmptyState>
+          <EmptyState>{successCopy.outcomes.empty}</EmptyState>
         )}
       </div>
     </>
@@ -104,9 +107,9 @@ export default function SuccessHomePage() {
 }
 
 function Block({
-  title, intro, href, hideLink = false, children,
+  title, intro, href, hideLink = false, seeAllLabel, children,
 }: {
-  title: string; intro: string; href: string; hideLink?: boolean; children: React.ReactNode;
+  title: string; intro: string; href: string; hideLink?: boolean; seeAllLabel: string; children: React.ReactNode;
 }) {
   const id = title.toLowerCase().replace(/[^a-z]+/g, '-');
   return (
@@ -115,7 +118,7 @@ function Block({
         <h2 id={id} className="font-display text-web-h3 text-ink-primary">{title}</h2>
         {hideLink ? null : (
           <Link href={href} className="text-caption text-ink-primary underline underline-offset-2">
-            See all
+            {seeAllLabel}
           </Link>
         )}
       </div>

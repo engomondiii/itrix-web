@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { SupportStatus } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Support status and SLA.
@@ -18,6 +19,8 @@ import type { SupportStatus } from '@/types/success.types';
  * fact, and lateness is an observation about it.
  */
 export function SlaBadge({ status, slaDueAt }: { status: SupportStatus; slaDueAt: string | null }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
   const [breached, setBreached] = useState(false);
 
   useEffect(() => {
@@ -43,11 +46,11 @@ export function SlaBadge({ status, slaDueAt }: { status: SupportStatus; slaDueAt
   return (
     <span className="flex flex-wrap items-center gap-2 font-mono text-micro uppercase tracking-[0.08em]">
       <span className={status === 'resolved' ? 'text-success' : 'text-ink-secondary'}>
-        {SUCCESS_COPY.support.status[status]}
+        {successCopy.support.status[status]}
       </span>
       {due ? (
         <span className={breached ? 'text-error' : 'text-ink-muted'}>
-          {breached ? 'Response overdue' : `Response by ${due.toLocaleString()}`}
+          {breached ? (ko ? '응답 기한 지남' : 'Response overdue') : (ko ? `${due.toLocaleString('ko-KR')}까지 응답` : `Response by ${due.toLocaleString()}`)}
         </span>
       ) : null}
     </span>

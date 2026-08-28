@@ -41,7 +41,7 @@ export const PANE_COPY = {
   feedbackNote: 'Anything you tell us is answered in your conversation, by the person who owns it.',
 
   /** PHASE 3. What an NDA opens up, in the approved framing. */
-  ndaNote: 'An NDA lets us look at your actual workload structure, share validation boundaries, and prepare a scoped assessment. Protection is here to make a real conversation possible, not to slow it down.',
+  ndaNote: 'An NDA can protect an authorized confidential disclosure, but it does not itself authorize access. Restricted material is shared only when the current stage, any required agreement, and an explicit content authorization all permit it.',
 } as const;
 
 /**
@@ -115,4 +115,48 @@ export const PANE_SECTION_EMPTY: Partial<Record<ContentPaneSection, string>> = {
   support: 'You have no open requests.',
   knowledge: 'Training and documentation will appear here.',
   meetings: 'Nothing is scheduled yet.',
+};
+
+/** Korean public/client-plane copy. Protected identifiers remain canonical English. */
+export const PANE_COPY_KO = {
+  header: 'itriX가 준비한 내용',
+  empty: '아직 준비된 내용이 없습니다. 병목을 설명하면 여기에서 시작합니다.',
+  notYet: '곧 여기에서 열립니다.',
+  close: '내용 숨기기',
+  open: '내용 열기',
+  collapse: '읽기 패널 접기',
+  expand: '읽기 패널 펼치기',
+  regionLabel: 'itriX가 귀하를 위해 준비한 내용',
+  artifactSwitcherLabel: '준비된 자료',
+  feedbackNote: '전해 주신 내용에는 대화에서 담당자가 직접 답변합니다.',
+  ndaNote: 'NDA는 승인된 공개를 보호할 수 있지만 그 자체로 자료 접근을 승인하지 않습니다. 제한 자료는 현재 단계, 필요한 계약, 명시적 콘텐츠 권한이 모두 허용할 때만 공유됩니다.',
+} as const;
+
+export const PANE_SECTION_LABEL_KO: Record<ContentPaneSection, string> = {
+  artifacts: '준비된 자료', documents: '문서', pathway: '현재 경로', nda: 'NDA',
+  workspace_assessment: '평가', workspace_poc: 'PoC', workspace_integration: '통합',
+  decisions: '결정 사항', governance: '의사결정 기록', outcomes: '성과', deployments: '배포',
+  support: '지원', knowledge: '학습', meetings: '미팅', feedback: '피드백', explore: '탐색', legal: '법률',
+};
+
+export const PANE_SECTION_INTRO_KO: Partial<Record<ContentPaneSection, string>> = {
+  documents: '공유된 자료와 확인 상태입니다.',
+  pathway: '현재 위치와 지금까지 결정된 내용입니다.',
+  nda: '완료된 내용과 남아 있는 항목입니다.',
+  workspace_assessment: '접수, 기준선, Boundary Waste Map, 기술적 가능성, 벤치마크 설계와 다음 검증 권고입니다.',
+  workspace_poc: '기준선, 합의한 측정 항목과 각 마일스톤의 상태입니다.',
+  workspace_integration: '준비도, 수용된 근거, 거버넌스 및 상업 문서입니다.',
+  decisions: '합의된 내용과 시점입니다.',
+  governance: '무엇을 누가 결정했는지에 대한 공유 기록입니다.',
+  outcomes: '합의한 성과와 상태입니다.', deployments: '환경, 버전 및 상태입니다.', support: '열려 있는 지원 요청입니다.',
+  knowledge: '교육, 문서 및 릴리스 노트입니다.', meetings: '이전 메모와 예정된 미팅입니다.',
+  feedback: '전해 주신 내용과 그에 대한 조치입니다.',
+};
+
+export const PANE_SECTION_EMPTY_KO: Partial<Record<ContentPaneSection, string>> = {
+  documents: '아직 공유된 자료가 없습니다.', pathway: '아직 준비된 내용이 없습니다. 준비되는 대로 표시됩니다.',
+  nda: '비기밀 설명만으로도 상당한 범위까지 진행할 수 있습니다.', workspace_assessment: '평가가 시작되면 여기에 표시됩니다.',
+  workspace_poc: '근거가 생성되는 대로 여기에 표시됩니다.', workspace_integration: '통합 자료가 준비되면 여기에 표시됩니다.',
+  decisions: '아직 합의된 결정이 없습니다.', governance: '아직 의사결정 기록이 없습니다.', outcomes: '합의된 성과가 여기에 표시됩니다.',
+  deployments: '아직 배포된 항목이 없습니다.', support: '열려 있는 요청이 없습니다.', knowledge: '교육 및 문서가 여기에 표시됩니다.', meetings: '예정된 미팅이 없습니다.',
 };

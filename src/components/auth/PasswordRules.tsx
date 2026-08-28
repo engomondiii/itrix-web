@@ -1,6 +1,6 @@
 'use client';
 
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import type { PasswordAssessment } from '@/lib/validation/password';
 
 /**
@@ -31,11 +31,12 @@ export function PasswordRules({
   assessment: PasswordAssessment;
   showMeter?: boolean;
 }) {
-  const label = AUTH_COPY.strength[assessment.strength];
+  const authCopy = useAuthCopy();
+  const label = authCopy.strength[assessment.strength];
 
   return (
     <div className="password-rules">
-      <p className="password-rules__text">{AUTH_COPY.reset.rules}</p>
+      <p className="password-rules__text">{authCopy.reset.rules}</p>
 
       {showMeter ? (
         <div className="password-rules__meter" data-strength={assessment.strength}>
@@ -47,7 +48,7 @@ export function PasswordRules({
           {/* The word carries the meaning. Announced politely so it does not interrupt
               typing on every keystroke. */}
           <p role="status" aria-live="polite" className="password-rules__label">
-            <span className="sr-only">{AUTH_COPY.strength.label}: </span>
+            <span className="sr-only">{authCopy.strength.label}: </span>
             {label}
           </p>
         </div>

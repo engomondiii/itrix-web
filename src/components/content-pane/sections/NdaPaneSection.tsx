@@ -9,13 +9,13 @@ import { PaneSectionFrame } from './_shared';
 const CEILING_LABEL: Record<string, string> = {
   public: 'Public information only',
   controlled_public: 'Your situation, reflected back — no confidential material yet',
-  nda_only: 'Under NDA — we can look at your workload structure',
+  nda_only: 'Agreement-gated — only explicitly authorized material may be discussed',
   customer_contract: 'Under contract — your assessment, evidence and deployment material',
   internal: 'Internal',
 };
 
 /**
- * NDA — what can be shared now, and what an NDA unlocks.
+ * NDA — protection state and the separate disclosure boundary.
  *
  * ── APPROVED COPY, NOT A CHECKLIST ──────────────────────────────────────────
  * The body is `NDA_DRAWER`, which is legally-signed-off controlled-public wording and
@@ -29,10 +29,11 @@ const CEILING_LABEL: Record<string, string> = {
  * ── AND THE CEILING IS STATED IN PLAIN LANGUAGE ─────────────────────────────
  * `disclosureCeiling` arrives as an internal-looking token (`nda_only`,
  * `customer_contract`). It is translated here, because a visitor should be able to read
- * what they are entitled to see without learning our vocabulary — and because showing
+ * what the current server-computed boundary permits without learning our vocabulary — and because showing
  * the raw token would be showing an internal field on a client plane.
  */
 export function NdaPaneSection() {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   const { disclosureCeiling } = useShellContext();
 
   return (
@@ -48,7 +49,7 @@ export function NdaPaneSection() {
           <p className="pane__boundary-body">{NDA_DRAWER.body}</p>
         </div>
 
-        <p className="pane__note">{PANE_COPY.ndaNote}</p>
+        <p className="pane__note">{paneCopy.ndaNote}</p>
       </div>
     </PaneSectionFrame>
   );

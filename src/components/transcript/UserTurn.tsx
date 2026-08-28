@@ -1,11 +1,13 @@
 'use client';
 
+import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
+
 import { useEffect, useRef, useState } from 'react';
-import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
 import { TurnActions } from './TurnActions';
 import { TurnAttachmentList } from './TurnAttachmentList';
 import { useComposer } from '@/hooks/useComposer';
 import type { Turn } from '@/types/thread.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * The visitor's turn.
@@ -19,8 +21,10 @@ import type { Turn } from '@/types/thread.types';
  * visitor's own words. Their sentence is never lost and never silently dropped.
  */
 export function UserTurn({ turn }: { turn: Turn }) {
+  const transcriptCopy = useTranscriptCopy();
+  const commonCopy = useCommonCopy();
   const unavailable = turn.status === 'unavailable';
-  const { resubmitEdited } = useComposer();
+  const { resubmitEdited, retryLatest } = useComposer();
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(turn.body);
@@ -57,14 +61,14 @@ export function UserTurn({ turn }: { turn: Turn }) {
 
   if (editing) {
     return (
-      <article className="turn turn--visitor turn--editing" aria-label={TRANSCRIPT_COPY.visitorTurn}>
-        <p className="turn__label">{TRANSCRIPT_COPY.visitorTurn}</p>
+      <article className="turn turn--visitor turn--editing" aria-label={transcriptCopy.visitorTurn}>
+        <p className="turn__label">{transcriptCopy.visitorTurn}</p>
 
         <textarea
           ref={ref}
           className="turn__edit-input"
           value={draft}
-          aria-label="Edit your message"
+          aria-label={commonCopy.editYourMessage}
           onChange={(e) => {
             setDraft(e.target.value);
             e.currentTarget.style.height = 'auto';
@@ -84,7 +88,7 @@ export function UserTurn({ turn }: { turn: Turn }) {
 
         <div className="turn__edit-actions">
           <button type="button" className="turn__edit-cancel" onClick={cancel}>
-            Cancel
+            {commonCopy.cancel}
           </button>
           <button
             type="button"
@@ -92,7 +96,7 @@ export function UserTurn({ turn }: { turn: Turn }) {
             disabled={!draft.trim()}
             onClick={save}
           >
-            Send
+            {commonCopy.send}
           </button>
         </div>
       </article>
@@ -100,8 +104,8 @@ export function UserTurn({ turn }: { turn: Turn }) {
   }
 
   return (
-    <article className="turn turn--visitor" data-status={turn.status} aria-label={TRANSCRIPT_COPY.visitorTurn}>
-      <p className="turn__label">{TRANSCRIPT_COPY.visitorTurn}</p>
+    <article className="turn turn--visitor" data-status={turn.status} aria-label={transcriptCopy.visitorTurn}>
+      <p className="turn__label">{transcriptCopy.visitorTurn}</p>
       <div className="turn__body">
         {turn.body.split('\n').map((line, i) => (
           <p key={i}>{line || '\u00A0'}</p>
@@ -111,9 +115,12 @@ export function UserTurn({ turn }: { turn: Turn }) {
       <TurnAttachmentList attachments={turn.attachments ?? []} />
 
       {unavailable && turn.contextNote ? (
-        <p className="turn__note" role="status">
-          {turn.contextNote}
-        </p>
+        <div className="turn__note" role="status">
+          <p>{turn.contextNote}</p>
+          <button type="button" className="pending__retry" onClick={() => void retryLatest()}>
+            {commonCopy.tryAgain}
+          </button>
+        </div>
       ) : null}
 
       <TurnActions

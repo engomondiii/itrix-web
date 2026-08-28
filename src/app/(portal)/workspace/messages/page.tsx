@@ -12,7 +12,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { useConversations } from '@/hooks/useConversations';
 import { useChatStore } from '@/store/chatStore';
 import { portalApi } from '@/lib/api/portalApi';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { PortalBriefing } from '@/types/portal.types';
 
@@ -38,6 +38,7 @@ import type { PortalBriefing } from '@/types/portal.types';
 const BRIEFING_ID = '__briefing__';
 
 export default function InboxPage() {
+  const portalCopy = usePortalCopy();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [briefing, setBriefing] = useState<PortalBriefing | null>(null);
   const { conversations, thread, loading, sending, error, send } = useConversations(
@@ -68,7 +69,7 @@ export default function InboxPage() {
 
   return (
     <>
-      <PortalTopbar title={PORTAL_COPY.messages.inbox.header} />
+      <PortalTopbar title={portalCopy.messages.inbox.header} />
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-6 py-8 lg:flex-row lg:items-start">
         <InboxList
           conversations={conversations}
@@ -83,14 +84,14 @@ export default function InboxPage() {
             briefing ? (
               <BriefingView briefing={briefing} />
             ) : (
-              <EmptyState>{PORTAL_COPY.messages.inbox.briefingNotReady}</EmptyState>
+              <EmptyState>{portalCopy.messages.inbox.briefingNotReady}</EmptyState>
             )
           ) : (
             <>
               <div>
-                <p className="reading text-ink-secondary">{PORTAL_COPY.messages.greeting}</p>
+                <p className="reading text-ink-secondary">{portalCopy.messages.greeting}</p>
                 <p className="mt-2 text-caption text-ink-secondary">
-                  {PORTAL_COPY.messages.greetingConfidentiality}
+                  {portalCopy.messages.greetingConfidentiality}
                 </p>
               </div>
 
@@ -109,9 +110,9 @@ export default function InboxPage() {
                 />
               ) : (
                 <div className="flex flex-col gap-3">
-                  <EmptyState>{PORTAL_COPY.messages.inbox.empty}</EmptyState>
+                  <EmptyState>{portalCopy.messages.inbox.empty}</EmptyState>
                   <div className="flex flex-wrap gap-2">
-                    {PORTAL_COPY.messages.suggestedFirst.map((q) => (
+                    {portalCopy.messages.suggestedFirst.map((q) => (
                       <span
                         key={q}
                         className="rounded-pill border border-border-medium bg-surface px-3 py-1.5 text-secondary text-ink-secondary"

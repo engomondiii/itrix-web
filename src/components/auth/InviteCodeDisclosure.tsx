@@ -4,7 +4,7 @@ import { useId, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { InviteCodeField } from '@/components/auth/InviteCodeField';
 import { useSignUp } from '@/hooks/useSignUp';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 
 /**
  * THE INVITATION CODE — second, and collapsed (Surface 1 v8.0 §16.7).
@@ -32,6 +32,7 @@ import { AUTH_COPY } from '@/lib/content/authCopy';
  * second option, and R47 says no route in this zone is a dead end.
  */
 export function InviteCodeDisclosure() {
+  const authCopy = useAuthCopy();
   const { redeem, submitting, error, clearError } = useSignUp();
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState('');
@@ -52,7 +53,7 @@ export function InviteCodeDisclosure() {
             <path d="M9 6l6 6-6 6" />
           </svg>
         </span>
-        {AUTH_COPY.signUp.codeDisclosure}
+        {authCopy.signUp.codeDisclosure}
       </button>
 
       <div id={panelId} className="auth-disclosure__panel" hidden={!open}>
@@ -72,7 +73,7 @@ export function InviteCodeDisclosure() {
           onClick={() => void redeem(code)}
           disabled={submitting || code.trim().length === 0}
         >
-          {submitting ? AUTH_COPY.signUp.codeChecking : AUTH_COPY.signUp.codeSubmit}
+          {submitting ? authCopy.signUp.codeChecking : authCopy.signUp.codeSubmit}
         </Button>
       </div>
     </section>

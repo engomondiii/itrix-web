@@ -1,8 +1,9 @@
 'use client';
 
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { useChangesSince } from '@/hooks/useChangesSince';
 import type { ChangeKind } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * "What changed since you were last here."
@@ -19,11 +20,13 @@ const ORDER: Record<ChangeKind, number> = {
 };
 
 export function ChangesSinceLastVisit() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
   const { changes, loading, acknowledge } = useChangesSince();
 
   if (loading) return null;
   if (changes.length === 0) {
-    return <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.changes.empty}</p>;
+    return <p className="text-web-body text-ink-secondary">{successCopy.changes.empty}</p>;
   }
 
   const ordered = [...changes].sort((a, b) => ORDER[a.kind] - ORDER[b.kind]);
@@ -38,15 +41,15 @@ export function ChangesSinceLastVisit() {
                 c.kind === 'decision_needed' ? 'text-warning' : 'text-ink-secondary'
               }`}
             >
-              {SUCCESS_COPY.changes.kind[c.kind]}
+              {successCopy.changes.kind[c.kind]}
             </span>
             <span className="text-web-body text-ink-primary">{c.summary}</span>
-            <span className="text-caption text-ink-muted">{new Date(c.occurredAt).toLocaleDateString()}</span>
+            <span className="text-caption text-ink-muted">{new Date(c.occurredAt).toLocaleDateString(ko ? 'ko-KR' : undefined)}</span>
           </li>
         ))}
       </ul>
       <button type="button" onClick={acknowledge} className="button-text self-start text-caption">
-        Mark as read
+        {ko ? '읽음으로 표시' : 'Mark as read'}
       </button>
     </div>
   );

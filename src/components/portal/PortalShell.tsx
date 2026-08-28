@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { PortalSidebar } from './PortalSidebar';
 import { PortalMobileBar } from './PortalMobileBar';
 import { PortalNavBackdrop } from './PortalNavBackdrop';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
 /**
  * The portal workspace chrome — warm-paper canvas, own left nav, no public header or
@@ -23,7 +24,7 @@ export function PortalShell({ children }: { children: ReactNode }) {
       <PortalMobileBar />
       <PortalNavBackdrop />
       <PortalSidebar />
-      <main className="portal-shell__main flex-1 overflow-x-hidden">{children}</main>
+      <main className="portal-shell__main flex-1 overflow-x-hidden"><div className="portal-shell__locale"><SiteLocaleToggle compact /></div>{children}</main>
     </div>
   );
 }

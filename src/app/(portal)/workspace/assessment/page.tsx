@@ -6,8 +6,9 @@ import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { BoundaryWasteMapArtifact } from '@/components/artifacts/BoundaryWasteMapArtifact';
 import { useAssessment } from '@/hooks/useAssessment';
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { Artifact } from '@/types/artifact.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * State 7 — the assessment, as a DEEP-LINK VIEW.
@@ -21,6 +22,8 @@ import type { Artifact } from '@/types/artifact.types';
  * the artifact into the real interface while the conversation decays behind it.
  */
 export default function AssessmentPage() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   const { data, loading } = useAssessment();
 
   /* The hook returns the payload; the artifact wrapper expects an Artifact
@@ -45,7 +48,7 @@ export default function AssessmentPage() {
       <PortalTopbar title="Assessment" />
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
         <Link href="/workspace" className="artifact-page__back">
-          Back to your conversation
+          {ko ? '대화로 돌아가기' : 'Back to your conversation'}
         </Link>
 
         {loading ? (
@@ -55,7 +58,7 @@ export default function AssessmentPage() {
             <BoundaryWasteMapArtifact artifact={artifact} />
           </div>
         ) : (
-          <EmptyState>{WORKSPACE_COPY.assessment.empty}</EmptyState>
+          <EmptyState>{workspaceCopy.assessment.empty}</EmptyState>
         )}
       </div>
     </>

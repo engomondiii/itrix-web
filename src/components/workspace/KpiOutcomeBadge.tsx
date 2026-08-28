@@ -1,5 +1,8 @@
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { KpiOutcome } from '@/types/workspace.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * A PoC outcome badge.
@@ -25,11 +28,13 @@ const TONE: Record<KpiOutcome, string> = {
 };
 
 export function KpiOutcomeBadge({ outcome }: { outcome: KpiOutcome }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   return (
     <span
       className={`inline-flex items-center rounded-pill border px-2.5 py-0.5 font-mono text-micro uppercase tracking-[0.08em] ${TONE[outcome]}`}
     >
-      {WORKSPACE_COPY.poc.outcome[outcome]}
+      {workspaceCopy.poc.outcome[outcome]}
     </span>
   );
 }

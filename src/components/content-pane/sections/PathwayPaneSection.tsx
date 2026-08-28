@@ -1,12 +1,15 @@
 'use client';
 
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { useJourneyContext } from '@/context/JourneyContext';
 import { ARTIFACT_TITLE } from '@/lib/journey/artifactTypes';
-import { CENTER_COPY } from '@/lib/content/centerCopy';
 import { stateLabelFor } from '@/lib/content/composerCopy';
 import { PANE_SECTION_EMPTY } from '@/lib/content/paneCopy';
 import { PaneSectionFrame } from './_shared';
+import { useLocaleStore } from '@/store/localeStore';
+import { PANE_SECTION_EMPTY_KO } from '@/lib/content/paneCopy';
 
 /**
  * YOUR PATHWAY — where things stand, and what has been delivered.
@@ -28,6 +31,8 @@ import { PaneSectionFrame } from './_shared';
  * are; the conversation says what happens next.
  */
 export function PathwayPaneSection() {
+  const centerCopy = useCenterCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { state, journeyNumber } = useJourneyContext();
   const { artifacts } = useContentPaneContext();
 
@@ -40,7 +45,7 @@ export function PathwayPaneSection() {
     <PaneSectionFrame section="pathway">
       <div className="pane__stack">
         <ol className="pane__pathway">
-          {CENTER_COPY.pathwayHint.map((step, i) => (
+          {centerCopy.pathwayHint.map((step, i) => (
             <li key={step} data-reached={i <= reached || undefined} data-current={i === reached || undefined}>
               <span className="pane__pathway-step">{step}</span>
             </li>
@@ -48,7 +53,7 @@ export function PathwayPaneSection() {
         </ol>
 
         <p className="pane__note">
-          Where things stand: <strong>{stateLabelFor(journeyNumber)}</strong>
+          {ko ? '현재 상태:' : 'Where things stand:'} <strong>{stateLabelFor(journeyNumber)}</strong>
           {state ? '' : ''}
         </p>
 
@@ -56,13 +61,13 @@ export function PathwayPaneSection() {
           <ul className="pane__delivered">
             {artifacts.map((a) => (
               <li key={a.id}>
-                <span className="pane__delivered-title">{ARTIFACT_TITLE[a.type] ?? 'Prepared for you'}</span>
+                <span className="pane__delivered-title">{ARTIFACT_TITLE[a.type] ?? (ko ? '준비된 자료' : 'Prepared for you')}</span>
                 <span className="pane__delivered-time">{new Date(a.createdAt).toLocaleDateString()}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="pane__note">{PANE_SECTION_EMPTY.pathway}</p>
+          <p className="pane__note">{ko ? PANE_SECTION_EMPTY_KO.pathway : PANE_SECTION_EMPTY.pathway}</p>
         )}
       </div>
     </PaneSectionFrame>

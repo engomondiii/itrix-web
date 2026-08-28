@@ -16,10 +16,11 @@ function toDjangoAttachmentPayload(body: unknown): unknown {
   if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
 
   const record = body as Record<string, unknown>;
-  if (!Array.isArray(record.attachmentIds)) return body;
-
   const { attachmentIds, ...rest } = record;
-  return { ...rest, attachment_ids: attachmentIds };
+  return {
+    ...rest,
+    ...(Array.isArray(attachmentIds) ? { attachment_ids: attachmentIds } : {}),
+  };
 }
 
 /**
@@ -54,11 +55,13 @@ function toDjangoAttachmentPayload(body: unknown): unknown {
 async function forwardHeaders(req: Request): Promise<HeadersInit> {
   const cookie = req.headers.get('cookie');
   const token = await getClientAccessToken();
+  const idempotencyKey = req.headers.get('idempotency-key');
   return {
     'Content-Type': 'application/json',
     Accept: 'application/json',
     ...(cookie ? { cookie } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
   };
 }
 

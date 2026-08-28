@@ -1,7 +1,8 @@
 'use client';
 
 import { useContentPaneContext } from '@/context/ContentPaneContext';
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Fold the pane away, and bring it back.
@@ -12,13 +13,14 @@ import { PANE_COPY } from '@/lib/content/paneCopy';
  * folding the pane in one conversation is not a statement about another.
  */
 export function PaneCollapseControl() {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   const { collapsed, toggleCollapsed } = useContentPaneContext();
 
   return (
     <button
       type="button"
       className="pane__collapse"
-      aria-label={collapsed ? PANE_COPY.expand : PANE_COPY.collapse}
+      aria-label={collapsed ? paneCopy.expand : paneCopy.collapse}
       onClick={toggleCollapsed}
     >
       <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

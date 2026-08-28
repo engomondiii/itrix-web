@@ -1,7 +1,8 @@
 'use client';
 
+import { useComposerCopy } from '@/lib/i18n/conversationLocale';
+
 import Image from 'next/image';
-import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 
 /**
  * THE SEND CONTROL — the itriX X.
@@ -34,11 +35,12 @@ export interface AskItrixButtonProps {
 }
 
 export function AskItrixButton({ disabled = false, submitting = false }: AskItrixButtonProps) {
+  const composerCopy = useComposerCopy();
   return (
     <button
       type="submit"
       className="composer-send"
-      aria-label={COMPOSER_COPY.sendLabel}
+      aria-label={composerCopy.sendLabel}
       /* NOT disabled while submitting. A second send no longer double-posts — it
          queues behind the turn in flight (useComposer) — so refusing the press
          would block a supported action. The spinner still says work is happening. */

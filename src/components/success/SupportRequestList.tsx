@@ -1,6 +1,9 @@
+'use client';
+
 import { SlaBadge } from './SlaBadge';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { SupportRequest } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Open support requests: what they are, who owns each one, when a response is due.
@@ -10,8 +13,10 @@ import type { SupportRequest } from '@/types/success.types';
  * absence here is deliberate rather than incidental.
  */
 export function SupportRequestList({ requests }: { requests: readonly SupportRequest[] }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
   if (requests.length === 0) {
-    return <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.support.empty}</p>;
+    return <p className="text-web-body text-ink-secondary">{successCopy.support.empty}</p>;
   }
 
   return (
@@ -26,15 +31,15 @@ export function SupportRequestList({ requests }: { requests: readonly SupportReq
           {r.body ? <p className="mt-1.5 max-w-reading text-caption text-ink-secondary">{r.body}</p> : null}
 
           <p className="mt-2 text-caption text-ink-secondary">
-            {r.owner ? `${r.owner} owns it` : 'Being assigned'}
-            {' · opened '}
-            {new Date(r.openedAt).toLocaleDateString()}
+            {r.owner ? (ko ? `${r.owner} 담당` : `${r.owner} owns it`) : (ko ? '담당자 지정 중' : 'Being assigned')}
+            {ko ? ' · 접수 ' : ' · opened '}
+            {new Date(r.openedAt).toLocaleDateString(ko ? 'ko-KR' : undefined)}
             {' · '}
-            {SUCCESS_COPY.support.urgency[r.urgency]}
+            {successCopy.support.urgency[r.urgency]}
           </p>
 
           {r.status === 'resolved' && !r.resolutionFeedback ? (
-            <p className="mt-2 text-caption text-ink-primary">{SUCCESS_COPY.support.resolutionPrompt}</p>
+            <p className="mt-2 text-caption text-ink-primary">{successCopy.support.resolutionPrompt}</p>
           ) : null}
         </li>
       ))}

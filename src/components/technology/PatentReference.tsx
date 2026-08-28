@@ -6,7 +6,7 @@ export interface PatentReferenceProps {
   className?: string;
 }
 
-/** Renders a patent identifier as a quiet mono reference (e.g. P253-84KR). */
+/** Legacy reference renderer. Current public technology data intentionally supplies no internal patent references. */
 export function PatentReference({ patentRef, label = 'Patent', className }: PatentReferenceProps) {
   return (
     <span className={cn('inline-flex items-center gap-2 text-caption text-ink-secondary', className)}>

@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 
 export interface ProductThesisProps {
-  label: string;
-  statement: string;
-  body: string;
+  label: ReactNode;
+  statement: ReactNode;
+  body: ReactNode;
 }
 
 export function ProductThesis({ label, statement, body }: ProductThesisProps) {
@@ -12,7 +13,7 @@ export function ProductThesis({ label, statement, body }: ProductThesisProps) {
       <div className="container-page max-w-3xl">
         <SectionLabel>{label}</SectionLabel>
         <p className="mt-4 text-web-h2 text-structure-900">{statement}</p>
-        <p className="reading mt-4">{body}</p>
+        <div className="reading mt-4">{body}</div>
       </div>
     </section>
   );

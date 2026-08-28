@@ -87,7 +87,7 @@ test('the wait is announced once, politely', async ({ page }) => {
 
   const live = page.locator('.pending [role="status"]');
   await expect(live).toHaveAttribute('aria-live', 'polite');
-  await expect(live).toHaveText('Working on your answer');
+  await expect(live).toHaveText('Processing your request');
   /* One region, not one per stage. */
   await expect(page.locator('.pending [aria-live]')).toHaveCount(1);
 });

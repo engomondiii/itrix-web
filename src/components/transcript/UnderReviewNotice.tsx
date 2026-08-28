@@ -1,4 +1,7 @@
-import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
+'use client';
+
+import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * A turn placed under review by governance.
@@ -9,12 +12,13 @@ import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
  *
  * The copy is calm and non-alarming, does not apologise excessively, and NEVER
  * explains what was blocked or why. Do not reword without Governance sign-off;
- * the string lives once, in TRANSCRIPT_COPY.
+ * the string lives once, in transcriptCopy.
  */
 export function UnderReviewNotice() {
+  const transcriptCopy = useTranscriptCopy();
   return (
     <div className="turn__governance" role="status">
-      {TRANSCRIPT_COPY.underReview}
+      {transcriptCopy.underReview}
     </div>
   );
 }

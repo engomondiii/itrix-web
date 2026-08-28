@@ -1,18 +1,3 @@
-import type { LegalInstrument } from '@/lib/content/legalCopy';
-
-/**
- * Version and effective date, beneath an instrument's title.
- *
- * IT SHOWS A VERSION, NOT A DATE ALONE. The assent record stores instrument
- * VERSIONS rather than a boolean, precisely so it can always be answered what a
- * given customer actually agreed to (Architecture v2.7 §19.10) — and a version on
- * screen that a reader can quote back is what makes that record meaningful to them
- * rather than only to us.
- */
-export function LegalVersionBadge({ instrument }: { instrument: LegalInstrument }) {
-  return (
-    <p className="legal-version">
-      Version {instrument.version} · effective {instrument.effective}
-    </p>
-  );
-}
+import { LEGAL_PUBLISHED, type LegalInstrument } from '@/lib/content/legalCopy';
+import { LocalizedText } from '@/components/i18n/LocalizedText';
+export function LegalVersionBadge({instrument}:{instrument:LegalInstrument}){return <p className="legal-version"><LocalizedText en={LEGAL_PUBLISHED?`Version ${instrument.version} · effective ${instrument.effective}`:`Version ${instrument.version} · draft for counsel review · not yet effective`} ko={LEGAL_PUBLISHED?`버전 ${instrument.version} · 효력일 ${instrument.effective}`:`버전 ${instrument.version} · 법률 검토용 초안 · 아직 효력 없음`}/></p>}

@@ -1,34 +1,7 @@
+'use client';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { brand } from '@/constants/brand';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-export function MediaKitPreview() {
-  return (
-    <section className="section border-b border-border-medium bg-surface">
-      <div className="container-page max-w-3xl">
-        <Badge tone="info">For media</Badge>
-        <h2 className="mt-4 text-web-h2 text-structure-900">Accurate framing</h2>
-
-        <Card variant="sunken" className="mt-6">
-          <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">One line</span>
-          <p className="mt-2 text-secondary text-ink-primary">
-            {brand.legalEntity} builds computational AI infrastructure that reduces the work a computation
-            requires — for eligible workloads, validated case by case — rather than only running it on more hardware.
-          </p>
-        </Card>
-
-        <Card variant="sunken" className="mt-4">
-          <span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">Paragraph</span>
-          <p className="mt-2 text-secondary text-ink-secondary">
-            itriX works at the representation layer: it diagnoses how a workload is expressed in algebra and
-            structure, proposes a transformed representation, and validates whether that form can run on real
-            hardware. Its methods — AXIOM, CRE, and FQNM — are patented, and its numerical method is published.
-          </p>
-        </Card>
-
-        <p className="mt-6 text-caption text-ink-secondary">{NDA_WARNINGS.mechanism} {NDA_WARNINGS.results}</p>
-      </div>
-    </section>
-  );
-}
+import { useNdaWarnings } from '@/lib/i18n/ndaLocale';
+import { useLocaleStore } from '@/store/localeStore';
+export function MediaKitPreview(){const locale=useLocaleStore(s=>s.locale);const w=useNdaWarnings();const ko=locale==='ko';return <section className="section border-b border-border-medium bg-surface"><div className="container-page max-w-3xl"><Badge tone="info">{ko?'미디어용':'For media'}</Badge><h2 className="mt-4 text-web-h2 text-structure-900">{ko?'정확한 공개 프레이밍':'Accurate public framing'}</h2><Card variant="sunken" className="mt-6"><span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{ko?'한 줄':'One line'}</span><p className="mt-2 text-secondary text-ink-primary">{ko?'itriX는 적합한 워크로드에서 계산을 더 많은 하드웨어에 올리기 전에 계산 자체의 표현을 검토하는 컴퓨팅 AI 인프라를 개발합니다. 모든 적용 가능성과 이점은 사례별 검증 대상입니다.':`${brand.wordmark} builds computational AI infrastructure that examines whether eligible computation can be represented more effectively before simply scaling hardware; applicability and any advantage are validated case by case.`}</p></Card><Card variant="sunken" className="mt-4"><span className="text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{ko?'문단':'Paragraph'}</span><p className="mt-2 text-secondary text-ink-secondary">{ko?'itriX는 표현 계층에서 워크로드의 대수적·구조적 형태를 진단하고, 근거가 있는 경우 변환 가설을 세우며, 실제 실행 환경에서 그 가설을 검증할 수 있습니다. AXIOM, CRE, FQNM은 서로 다른 기술 계열이며 적용 범위가 다릅니다. FQNM에는 공개 arXiv 프리프린트가 있습니다. 특허 상태는 검증된 공식 기록이 있는 범위에서만 설명합니다.':'itriX works at the representation layer: it diagnoses the algebraic and structural form of a workload, proposes a transformation hypothesis where evidence supports one, and can validate that hypothesis in a target execution environment. AXIOM, CRE and FQNM are distinct technology families with bounded applicability. A public arXiv preprint is available for FQNM. Patent status is described only from verified official records.'}</p></Card><p className="mt-6 text-caption text-ink-secondary">{w.mechanism} {w.results}</p></div></section>}

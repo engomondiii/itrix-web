@@ -1,30 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
-
-/**
- * Navigation between the four instruments.
- *
- * They cross-reference each other constantly — the Terms point at the Privacy Policy
- * for data handling and at the Security Statement for controls; the Disclosure Policy
- * is what the Terms' confidentiality clause is describing. A reader who arrives at one
- * of them usually needs a second, so all four are one click apart from all four.
- */
-export function LegalNav({ current }: { current: string }) {
-  return (
-    <nav className="legal-nav" aria-label="Legal instruments">
-      <ul>
-        {LEGAL_INSTRUMENTS.map((instrument) => (
-          <li key={instrument.slug}>
-            <Link
-              href={`/${instrument.slug}`}
-              aria-current={instrument.slug === current ? 'page' : undefined}
-              className="legal-nav__link"
-            >
-              {instrument.navLabel}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
+import { LEGAL_INSTRUMENTS_KO } from '@/lib/i18n/legalKo';
+import { LocalizedText } from '@/components/i18n/LocalizedText';
+import { useLocaleStore } from '@/store/localeStore';
+export function LegalNav({current}:{current:string}){const isKo=useLocaleStore(s=>s.locale)==='ko';return <nav className="legal-nav" aria-label={isKo ? '법률 문서' : 'Legal instruments'}><ul>{LEGAL_INSTRUMENTS.map(i=><li key={i.slug}><Link href={`/${i.slug}`} aria-current={i.slug===current?'page':undefined} className="legal-nav__link"><LocalizedText en={i.navLabel} ko={LEGAL_INSTRUMENTS_KO[i.slug].navLabel}/></Link></li>)}</ul></nav>}

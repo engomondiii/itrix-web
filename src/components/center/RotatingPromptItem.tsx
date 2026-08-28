@@ -8,15 +8,15 @@ import type { ExamplePrompt } from '@/lib/content/examplePrompts';
  *
  * Extracted so the rotating view and the `Show all five` static list render the
  * SAME control. Two copies of a chip is how one of them quietly stops recording
- * the family prior, or stops populating and starts submitting.
+ * the a hidden routing signal, or stops populating and starts submitting.
  *
  * TWO RULES, both inherited unchanged from the retired ExamplePromptGrid:
  *   · Selecting it POPULATES the composer and moves focus into it. IT NEVER
  *     SUBMITS. The visitor keeps control of when the review begins, and the
  *     generated suggestion chips behave identically so the interaction is learned
  *     once.
- *   · The family label is the VISITOR'S language. It is never the internal persona
- *     taxonomy, and the family we infer is never shown back to them.
+ *   · The label is visitor-facing guidance only. It does not imply an internal persona,
+ *     qualification result or relationship state.
  */
 export interface RotatingPromptItemProps {
   example: ExamplePrompt;
@@ -34,7 +34,7 @@ export function RotatingPromptItem({ example, active, onSelect }: RotatingPrompt
     >
       <span aria-hidden="true" className="prompt-card__glyph">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-          <path d={EXAMPLE_ICON[example.family]} />
+          <path d={EXAMPLE_ICON[example.category]} />
         </svg>
         <span className="prompt-card__index">{example.index}</span>
       </span>

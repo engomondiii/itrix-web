@@ -19,7 +19,7 @@ import { ComposerKeyHint } from './ComposerKeyHint';
  *
  * The short line said less than the full one and nothing the full one does not say,
  * so the fix is to stop switching: the full notice renders everywhere, and
- * CENTER_COPY.safetyNote is retained for reference rather than displayed. The
+ * centerCopy.safetyNote is retained for reference rather than displayed. The
  * `variant` prop stays in the signature because callers pass it and because Phase 2
  * may want a compact treatment inside the content pane — it no longer changes which
  * approved string is shown.

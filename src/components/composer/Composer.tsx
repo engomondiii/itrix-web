@@ -1,5 +1,7 @@
 'use client';
 
+import { useComposerCopy } from '@/lib/i18n/conversationLocale';
+
 import { useCallback, useId, useState } from 'react';
 import type { ClipboardEvent, DragEvent } from 'react';
 import { PromptTextarea } from './PromptTextarea';
@@ -11,7 +13,6 @@ import { useComposer } from '@/hooks/useComposer';
 import { useAttachments } from '@/hooks/useAttachments';
 import { useShellContext } from '@/context/ShellContext';
 import { useThreadContext } from '@/context/ThreadContext';
-import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { ATTACHMENT_COPY } from '@/lib/content/attachmentCopy';
 import { filesFromClipboard } from '@/lib/attachments/accept';
 import { trackEvent } from '@/lib/analytics/trackEvent';
@@ -48,6 +49,7 @@ export interface ComposerProps {
 }
 
 export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
+  const composerCopy = useComposerCopy();
   const uid = useId();
   const textareaId = `${uid}-prompt`;
   const noteId = `${uid}-note`;
@@ -168,7 +170,7 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
           onSubmit={() => void handleSubmit('keyboard')}
           describedBy={`${noteId} ${statusId}`}
           labelledBy={labelledBy}
-          placeholder={docked ? COMPOSER_COPY.placeholderContinuing : COMPOSER_COPY.placeholder}
+          placeholder={docked ? composerCopy.placeholderContinuing : composerCopy.placeholder}
           invalid={Boolean(error)}
           minRows={docked ? 2 : 3}
           /* `busy` suppressed Enter so a second press could not double-post. A

@@ -1,9 +1,10 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useEffect, useRef } from 'react';
 import { useRailStore } from '@/store/railStore';
 import { ConversationRail } from './ConversationRail';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 
 /**
  * The conversation rail as a slide-over, for tablet and mobile.
@@ -23,6 +24,7 @@ import { RAIL_COPY } from '@/lib/content/composerCopy';
  * slide-over at all.
  */
 export function RailSheet() {
+  const railCopy = useRailCopy();
   const open = useRailStore((s) => s.sheetOpen);
   const close = useRailStore((s) => s.closeSheet);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -50,14 +52,14 @@ export function RailSheet() {
       <button
         type="button"
         className="rail-sheet__scrim"
-        aria-label={RAIL_COPY.closeNavigation}
+        aria-label={railCopy.closeNavigation}
         onClick={close}
       />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={RAIL_COPY.openNavigation}
+        aria-label={railCopy.openNavigation}
         tabIndex={-1}
         className="rail-sheet__panel"
       >

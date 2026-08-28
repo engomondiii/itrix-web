@@ -1,6 +1,7 @@
 'use client';
 
 import type { Artifact } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * A document made available in the thread.
@@ -27,6 +28,7 @@ interface DocumentPayload {
 }
 
 export function DocumentArtifact({ artifact }: { artifact: Artifact }) {
+  const copy = useCommonCopy();
   const p = artifact.payload as DocumentPayload;
 
   return (
@@ -35,7 +37,7 @@ export function DocumentArtifact({ artifact }: { artifact: Artifact }) {
 
       <div className="artifact__document">
         <div>
-          <p className="artifact__document-name">{p.name ?? 'Document'}</p>
+          <p className="artifact__document-name">{p.name ?? copy.documentFallback}</p>
           <p className="artifact__document-meta">
             {p.sizeLabel ? <span>{p.sizeLabel}</span> : null}
             {p.disclosureLabel ? <span>{p.disclosureLabel}</span> : null}
@@ -44,7 +46,7 @@ export function DocumentArtifact({ artifact }: { artifact: Artifact }) {
 
         {p.downloadUrl ? (
           <a className="artifact__action" href={p.downloadUrl}>
-            Download
+            {copy.download}
           </a>
         ) : null}
       </div>

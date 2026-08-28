@@ -8,7 +8,7 @@
  * Playbook v1.7 §12, §13, §16 · Surface 1 v6.0 §2.1, §3.5, §3.6
  */
 
-import { CENTER_COPY } from '@/lib/content/centerCopy';
+import { CENTER_COPY, CENTER_COPY_KO } from '@/lib/content/centerCopy';
 
 /**
  * The composer label by journey state (Surface 1 v6.0 §3.5).
@@ -186,3 +186,14 @@ export const TRANSCRIPT_COPY = {
   halted:
     'We stopped that response before it finished. A specialist is preparing an accurate answer for you now.',
 } as const;
+
+export const COMPOSER_COPY_KO = {
+  placeholder:CENTER_COPY_KO.promptPlaceholder, placeholderContinuing:'메시지를 입력한 뒤 Enter를 눌러 보내세요.', textareaLabel:CENTER_COPY_KO.promptAriaLabel,
+  sendLabel:'itriX에 질문', attachLabel:'파일 첨부', keyHint:'Enter로 보내기 · Ctrl + X로 itriX에 질문', keyHintNewline:'Shift + Enter로 줄바꿈', tooShort:CENTER_COPY_KO.tooShort,
+  serverCap:'한 메시지에 담기에는 너무 깁니다. 두 부분으로 나눠 보내 주세요. 내용은 손실되지 않았습니다.',
+  unreachable:'현재 itriX에 연결할 수 없어 아직 검토되지 않았습니다. 메시지는 저장되어 있습니다. 잠시 후 다시 시도해 주세요.', preparing:'itriX가 응답을 준비하고 있습니다.',
+} as const;
+export const RAIL_COPY_KO = { newChat:'새 대화', conversationsLabel:'내 대화', conversationsEmpty:'대화가 여기에 표시됩니다.', signIn:CENTER_COPY_KO.signIn, signOut:'로그아웃', exploreLabel:'itriX 살펴보기', openNavigation:'탐색 메뉴 열기', closeNavigation:'탐색 메뉴 닫기', collapse:'대화 목록 접기', expand:'대화 목록 펼치기', rename:'이름 바꾸기', delete:'삭제' } as const;
+export const HEADER_COPY_KO = { quickHelp:'도움 받기', quickHelpExpanded:['전문가에게 메시지','통화 요청','지원 요청 열기'], quickHelpPrompts:['이 내용을 검토하는 전문가와 이야기하고 싶습니다.','이 리뷰에 대해 통화를 잡을 수 있을까요?','이 문제에 대한 지원 요청을 열고 싶습니다.'], quickHelpHint:'각 항목은 보내기 전에 수정할 수 있는 메시지를 입력창에 채웁니다.', threadActions:'대화 옵션', untitled:'새 대화', openContent:'콘텐츠 열기', hideContent:'콘텐츠 숨기기' } as const;
+export const STATE_LABEL_KO: Record<number,string> = {1:'리뷰',2:'리뷰',3:'상황 반영',4:'내 브리프',5:'확인됨',6:'NDA',7:'평가',8:'PoC',9:'통합',10:'고객 성공'};
+export const TRANSCRIPT_COPY_KO = { regionLabel:'itriX와의 대화', visitorTurn:'나', itrixTurn:'itriX', newMessages:'아래에 새 응답이 있습니다', jumpToLatest:'최신 응답으로 이동', underReview:'전문가가 공유 전에 이 응답을 검토하고 있습니다. 잠시 후 이 메시지가 업데이트됩니다.', halted:'정확하지 않을 수 있는 응답을 중단했습니다. 전문가가 정확한 답변을 준비하고 있습니다.' } as const;

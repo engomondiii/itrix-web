@@ -1,55 +1,7 @@
+'use client';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { cn } from '@/lib/cn';
-
-/**
- * The named staged commercial ladder (Playbook §00E). Shown publicly as the honest
- * shape of the pathway — the first paid step named is the Assessment; Optimizer/SDK
- * stay internal and no fee is shown. It is orientation, not a funnel push.
- */
-interface Rung {
-  label: string;
-  detail: string;
-  paid?: boolean;
-}
-
-const RUNGS: Rung[] = [
-  { label: 'Compute Bottleneck Review', detail: 'Free. A structural read on your workload — no quote, no sales call.' },
-  { label: 'Confidential conversation & NDA', detail: 'A private technical briefing once an NDA is in place.' },
-  { label: 'Alpha Compute Assessment', detail: 'Paid. A Boundary Waste Map of one workload.', paid: true },
-  { label: 'Proof of concept', detail: 'Paid. A hands-on test against success criteria agreed up front.', paid: true },
-  { label: 'Integration', detail: 'ALPHA Core integration where the evaluation supports it.' },
-  { label: 'License', detail: 'License-out — non-exclusive, or exclusive for selected strategic partners.' },
-];
-
-export function CommercialLadder({ className }: { className?: string }) {
-  return (
-    <div className={cn('flex flex-col gap-4', className)}>
-      <SectionLabel>The commercial pathway</SectionLabel>
-      <ol className="flex flex-col gap-3">
-        {RUNGS.map((rung, i) => (
-          <li key={rung.label} className="flex items-start gap-4">
-            <span
-              aria-hidden
-              className={cn(
-                'mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-pill text-micro font-semibold',
-                rung.paid ? 'bg-accent text-structure-900' : 'bg-soft text-ink-primary',
-              )}
-            >
-              {i + 1}
-            </span>
-            <div className="flex flex-col">
-              <span className="text-body font-medium text-ink-primary">
-                {rung.label}
-                {rung.paid ? <span className="ml-2 text-micro font-semibold uppercase tracking-[0.08em] text-structure-600">Paid</span> : null}
-              </span>
-              <span className="text-secondary text-ink-secondary">{rung.detail}</span>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <p className="text-caption text-ink-secondary">
-        Exclusive arrangements exist for selected strategic partners and are discussed privately. No fees are shown here.
-      </p>
-    </div>
-  );
-}
+import { useLocaleStore } from '@/store/localeStore';
+const EN=[['Public exploration','Understand itriX, the evidence base, and whether there is a real decision to examine.'],['Protected discussion, if needed','Put the appropriate agreement in place when confidential exchange is actually required. Protection is not content authorization.'],['Controlled evaluation, if selected','Define a bounded workload, baseline and evidence plan without relabelling the work as a PoC.'],['Proof of concept, if separately agreed','Validate a selected hypothesis only after the parties explicitly choose this distinct stage.'],['Commercial scoping, if selected','Identify the rights and obligations that would need to be negotiated and recorded in writing.']] as const;
+const KO=[['공개 탐색','itriX와 근거를 이해하고 실제로 검토할 의사결정이 있는지 확인합니다.'],['필요한 경우 보호된 논의','기밀 교환이 실제로 필요할 때 적절한 계약을 마련합니다. 보호는 콘텐츠 승인이 아닙니다.'],['선택한 경우 제어된 평가','워크로드, 기준선, 근거 계획을 정하되 이를 PoC로 바꾸어 부르지 않습니다.'],['별도 합의한 경우 PoC','양측이 이 별도 단계를 명시적으로 선택한 뒤 선택된 가설을 검증합니다.'],['선택한 경우 상업 범위 정의','협상하고 서면으로 기록해야 할 권리와 의무를 식별합니다.']] as const;
+export function CommercialLadder({className}:{className?:string}){const ko=useLocaleStore(s=>s.locale)==='ko';const items=ko?KO:EN;return <div className={cn('flex flex-col gap-4',className)}><SectionLabel>{ko?'의사결정 프레임워크':'Decision framework'}</SectionLabel><ol className="flex flex-col gap-3">{items.map(([label,detail],i)=><li key={label} className="flex items-start gap-4"><span aria-hidden className="mt-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-pill bg-soft text-micro font-semibold text-ink-primary">{i+1}</span><div className="flex flex-col"><span className="text-body font-medium text-ink-primary">{label}</span><span className="text-secondary text-ink-secondary">{detail}</span></div></li>)}</ol><p className="text-caption text-ink-secondary">{ko?'어떤 단계도 자동으로 진행되지 않으며 이 페이지는 가격, 기본 권리, 자격 또는 계약 결과를 정하지 않습니다.':'No stage above is automatic, and this page does not state a price, default right, entitlement, or contractual outcome.'}</p></div>}

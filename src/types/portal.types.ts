@@ -82,12 +82,16 @@ export interface PortalBriefing {
 export type DocumentDisclosure = 'public' | 'controlled_public' | 'nda_only';
 
 export interface PortalDocument {
-  id: string;
+  /** Server rows intentionally expose only the document-facing metadata required here. */
+  id?: string;
   title: string;
-  folder: string;
+  folder?: string;
   disclosure: DocumentDisclosure;
-  href: string | null; // null when locked (nda_only + no NDA)
-  updatedAt: string;
+  /** Blank/null until a separately authorized delivery endpoint exists. */
+  href: string | null;
+  /** Explicit server authorization state; never derive this from ndaSigned. */
+  locked: boolean;
+  updatedAt?: string;
 }
 
 /** The answer to an in-place NDA request (2026-08-10). */
@@ -100,9 +104,12 @@ export interface PortalNdaRequestResult {
 }
 
 export interface PortalDataRoom {
+  /** Agreement/protection state only; never an authorization bit. */
   ndaSigned: boolean;
+  /** Server-computed explicit content authorization for at least one restricted document. */
+  dataRoomAuthorized: boolean;
   openFolders: { folder: string; documents: PortalDocument[] }[];
-  /** Present only when NDA signed. */
+  /** Restricted rows may still be present while locked; href remains null until authorized. */
   dataRoomFolders: { folder: string; documents: PortalDocument[] }[];
 }
 

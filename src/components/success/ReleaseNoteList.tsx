@@ -1,14 +1,19 @@
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { ReleaseNote } from '@/types/success.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /** What shipped, when, and which versions it applies to. */
 export function ReleaseNoteList({ notes }: { notes: readonly ReleaseNote[] }) {
+  const successCopy = useSuccessCopy();
+  const copy = useCommonCopy();
   if (notes.length === 0) return null;
 
   return (
     <section aria-labelledby="release-notes-title" className="flex flex-col gap-3">
       <h3 id="release-notes-title" className="font-display text-web-h3 text-ink-primary">
-        {SUCCESS_COPY.knowledge.releaseNotesTitle}
+        {successCopy.knowledge.releaseNotesTitle}
       </h3>
       <ul className="flex flex-col gap-3">
         {notes.map((n) => (
@@ -22,7 +27,7 @@ export function ReleaseNoteList({ notes }: { notes: readonly ReleaseNote[] }) {
             <p className="mt-1.5 max-w-reading text-caption leading-relaxed text-ink-secondary">{n.body}</p>
             {n.appliesToVersions.length > 0 ? (
               <p className="mt-2 font-mono text-micro text-ink-muted">
-                Applies to {n.appliesToVersions.join(', ')}
+                {copy.appliesTo} {n.appliesToVersions.join(', ')}
               </p>
             ) : null}
           </li>

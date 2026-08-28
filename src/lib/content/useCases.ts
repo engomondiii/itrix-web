@@ -25,7 +25,7 @@ export const USE_CASES: UseCase[] = [
     situation:
       'Your model works, adoption is growing — and the compute bill is growing with it. Adding more hardware buys headroom, but it does not change the underlying cost of each unit of work. The pressure keeps returning.',
     approach:
-      'itriX would first ask a different question: is the work itself in the right form before it runs? Some inference cost comes not from the hardware, but from how the computation is represented and moved before execution. ALPHA Compute looks for that structure; if a change looks promising, ALPHA Core tests whether it runs in your stack.',
+      'itriX would first ask a different question: is the work itself in the right form before it runs? Some inference cost comes not from the hardware, but from how the computation is represented and moved before execution. ALPHA Compute looks for that structure and defines a representation hypothesis to validate. ALPHA Core is considered only later, if that hypothesis is validated and evidence shows that a deeper execution-layer test is relevant to your environment.',
     startsWith: 'ALPHA Compute, usually first.',
     ctaLabel: 'Map this workload',
     ctaHref: routes.review,
@@ -49,8 +49,8 @@ export const USE_CASES: UseCase[] = [
     situation:
       'You can buy more chips, but you cannot easily buy more power, cooling, or floor space. Energy has become the true ceiling on how much AI capability you can deploy.',
     approach:
-      'itriX explores whether part of the energy burden can be reduced by reconstructing computation before infrastructure is scaled — doing the same work in a form that asks less of the hardware. ALPHA Compute is the first step; ALPHA Core becomes relevant where hardware execution is part of the picture. This is the most direct expression of itriX’s mission: sustainable AI through better structure, not only more power.',
-    startsWith: 'ALPHA Compute first; ALPHA Core where hardware is involved.',
+      'itriX explores whether part of the energy burden can be reduced by reconstructing computation before infrastructure is scaled — doing the same work in a form that asks less of the hardware. ALPHA Compute is the first step; ALPHA Core becomes relevant only after a representation hypothesis has been validated and evidence supports testing a deeper execution layer. This is the most direct expression of itriX’s mission: sustainable AI through better structure, not only more power.',
+    startsWith: 'ALPHA Compute first; ALPHA Core only where validated evidence supports it.',
     ctaLabel: 'Explore sustainable AI infrastructure',
     ctaHref: routes.room('sustainable-ai'),
   },
@@ -61,8 +61,8 @@ export const USE_CASES: UseCase[] = [
     situation:
       'Your silicon is capable, but it inherits whatever form the workload arrives in. If that form is inefficient, even excellent hardware spends effort on avoidable work — and your software stack becomes a differentiator you have not fully used.',
     approach:
-      'itriX discusses how reconstructed computation could map to your CPU, GPU, NPU, edge, or custom architecture, and how a stronger, structure-preserving software layer could differentiate the hardware beneath it. This usually begins with an architecture discussion and an ALPHA Core runtime-fit assessment.',
-    startsWith: 'ALPHA Core, after an architecture discussion.',
+      'itriX discusses how reconstructed computation could map to your CPU, GPU, NPU, edge, or custom architecture, and how a stronger, structure-preserving software layer could differentiate the hardware beneath it. This begins with an architecture discussion and an ALPHA Compute representation review. ALPHA Core is a later execution-validation option only where evidence from that work supports it.',
+    startsWith: 'Architecture discussion and ALPHA Compute representation review.',
     ctaLabel: 'Request an architecture discussion',
     ctaHref: routes.review,
   },
@@ -73,8 +73,8 @@ export const USE_CASES: UseCase[] = [
     situation:
       'On a robot or an edge device, you cannot simply add hardware. Every watt, every megabyte, and every degree of heat is already spoken for — yet the models you want to run keep getting heavier.',
     approach:
-      'itriX looks at whether the computation can be restructured to do more within tight budgets, before it reaches the constrained device. ALPHA Compute identifies the opportunity; ALPHA Core tests structure-preserving execution on the target environment.',
-    startsWith: 'ALPHA Compute first; ALPHA Core on the device.',
+      'itriX looks at whether the computation can be restructured to do more within tight budgets, before it reaches the constrained device. ALPHA Compute identifies and validates the representation opportunity. ALPHA Core may test structure-preserving execution on the target environment only if that hypothesis is validated and deeper execution evidence is needed.',
+    startsWith: 'ALPHA Compute first; ALPHA Core only after validated fit.',
     ctaLabel: 'Map an edge workload',
     ctaHref: routes.review,
   },

@@ -3,6 +3,7 @@
 import { PoCEvidenceTable } from '@/components/workspace/PoCEvidenceTable';
 import type { Artifact } from '@/types/artifact.types';
 import type { PoCKpi } from '@/types/workspace.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * State 8 — proving it on the customer's workload (Playbook v1.6, State 8).
@@ -30,6 +31,7 @@ interface PoCEvidencePayload {
 }
 
 export function PoCEvidenceArtifact({ artifact }: { artifact: Artifact }) {
+  const copy = useCommonCopy();
   const p = artifact.payload as PoCEvidencePayload;
   const kpis = p.kpis ?? [];
 
@@ -39,20 +41,18 @@ export function PoCEvidenceArtifact({ artifact }: { artifact: Artifact }) {
 
       {p.baseline ? (
         <section>
-          <h3 className="artifact__section-title">The baseline we agreed</h3>
+          <h3 className="artifact__section-title">{copy.baselineAgreed}</h3>
           <p>{p.baseline}</p>
         </section>
       ) : null}
 
       {kpis.length > 0 ? (
         <section>
-          <h3 className="artifact__section-title">Results against the agreed KPIs</h3>
+          <h3 className="artifact__section-title">{copy.resultsAgainstKpis}</h3>
           <PoCEvidenceTable kpis={kpis} />
         </section>
       ) : (
-        <p className="artifact__pending">
-          Evidence appears here as it is produced.
-        </p>
+        <p className="artifact__pending">{copy.evidenceAppears}</p>
       )}
     </div>
   );

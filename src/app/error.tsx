@@ -1,35 +1,3 @@
 'use client';
-
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/Button';
-import { SectionLabel } from '@/components/ui/SectionLabel';
-
-export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
-  useEffect(() => {
-    // Surface 1 holds no business logic; log to the console for now.
-    // Production telemetry is wired in Phase 3 (analytics/).
-    console.error('itrix-web error:', error);
-  }, [error]);
-
-  return (
-    <section className="container-page section flex flex-col items-center text-center" role="alert">
-      <SectionLabel tone="error">Something went wrong</SectionLabel>
-      <h1 className="mt-4 text-web-h2">We hit an unexpected error</h1>
-      <p className="reading mt-3 text-center">
-        The page failed to load. You can try again, and if it keeps happening, the assessment team
-        will still receive any review you submitted.
-      </p>
-      {error.digest ? (
-        <p className="mt-3 font-mono text-caption text-ink-secondary">Reference: {error.digest}</p>
-      ) : null}
-      <div className="mt-8 flex gap-3">
-        <Button variant="primary" onClick={reset}>
-          Try again
-        </Button>
-        <Button variant="secondary" onClick={() => (window.location.href = '/')}>
-          Go to homepage
-        </Button>
-      </div>
-    </section>
-  );
-}
+import { useEffect } from 'react';import { Button } from '@/components/ui/Button';import { SectionLabel } from '@/components/ui/SectionLabel';import { useLocaleStore } from '@/store/localeStore';
+export default function GlobalError({error,reset}:{error:Error&{digest?:string};reset:()=>void}){const ko=useLocaleStore(s=>s.locale)==='ko';useEffect(()=>{console.error('itrix-web error',{digest:error.digest??'unavailable'});},[error.digest]);return <section className="container-page section flex flex-col items-center text-center" role="alert"><SectionLabel tone="error">{ko?'오류가 발생했습니다':'Something went wrong'}</SectionLabel><h1 className="mt-4 text-web-h2">{ko?'예기치 않은 오류가 발생했습니다':'We hit an unexpected error'}</h1><p className="reading mt-3 text-center">{ko?'페이지를 불러오지 못했습니다. 다시 시도해 주세요. 이미 제출된 요청은 재시도 과정에서 중복 생성되지 않도록 서버의 복구 경로를 사용합니다.':'The page failed to load. Try again. Recovery paths are designed to reuse already-submitted work rather than create duplicate visitor turns or business actions.'}</p>{error.digest?<p className="mt-3 font-mono text-caption text-ink-secondary">{ko?'참조':'Reference'}: {error.digest}</p>:null}<div className="mt-8 flex gap-3"><Button variant="primary" onClick={reset}>{ko?'다시 시도':'Try again'}</Button><Button variant="secondary" onClick={()=>window.location.href='/'}>{ko?'홈으로':'Go to homepage'}</Button></div></section>}

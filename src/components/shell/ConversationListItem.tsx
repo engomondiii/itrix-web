@@ -1,9 +1,10 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useState } from 'react';
 import { useThreadContext } from '@/context/ThreadContext';
 import { useRailStore } from '@/store/railStore';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { RenameThreadDialog } from './RenameThreadDialog';
 import type { ThreadSummary } from '@/types/thread.types';
@@ -38,6 +39,7 @@ function relativeTime(iso: string): string {
  * persona (Playbook v1.7 §16A).
  */
 export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
+  const railCopy = useRailCopy();
   const { activeThreadId, switchTo, rename, remove } = useThreadContext();
   const closeSheet = useRailStore((s) => s.closeSheet);
   /* Renaming opens a dialog rather than replacing this row with an input. The rail
@@ -50,7 +52,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
   // The store preserves the real title across partial updates. This is the final
   // rendering guard: even a malformed/legacy row may never leave the timestamp as the
   // only visible text, where it looks like the conversation name.
-  const visibleTitle = thread.title.trim() || RAIL_COPY.newChat;
+  const visibleTitle = thread.title.trim() || railCopy.newChat;
 
   return (
     <li className="rail-thread" data-active={active || undefined}>
@@ -78,7 +80,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         <button
           type="button"
           className="rail-thread__action"
-          aria-label={`${RAIL_COPY.rename} “${visibleTitle}”`}
+          aria-label={`${railCopy.rename} “${visibleTitle}”`}
           onClick={() => setRenaming(true)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -88,7 +90,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         <button
           type="button"
           className="rail-thread__action"
-          aria-label={`${RAIL_COPY.delete} “${visibleTitle}”`}
+          aria-label={`${railCopy.delete} “${visibleTitle}”`}
           onClick={() => remove(thread.id)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

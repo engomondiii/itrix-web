@@ -7,7 +7,7 @@ import { PresenceBar } from './PresenceBar';
 import { CitationChip } from '@/components/chat/CitationChip';
 import { attachmentsApi } from '@/lib/api/attachmentsApi';
 import { StreamingCursor } from '@/components/chat/StreamingCursor';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { cn } from '@/lib/cn';
 import type { ChatMessage } from '@/types/chat.types';
 
@@ -35,6 +35,7 @@ export function MessageThread({
   pending: boolean;
   underReview: boolean;
 }) {
+  const portalCopy = usePortalCopy();
   return (
     <div className="flex flex-col gap-3">
       <PresenceBar conversationId={conversationId} />
@@ -90,7 +91,7 @@ export function MessageThread({
         <div className="rounded-md border-l-[3px] border-ink-primary bg-soft px-4 py-3">
           <SenderKindBadge kind="agent" />
           <p className="mt-1 text-body text-ink-secondary">
-            {PORTAL_COPY.messages.states.preparing}
+            {portalCopy.messages.states.preparing}
             <StreamingCursor />
           </p>
         </div>

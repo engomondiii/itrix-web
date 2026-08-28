@@ -5,6 +5,7 @@ import { CommercialDocumentList } from '@/components/workspace/CommercialDocumen
 import { useIntegration } from '@/hooks/useIntegration';
 import { PANE_SECTION_EMPTY } from '@/lib/content/paneCopy';
 import { PaneSectionFrame } from './_shared';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * DECISIONS — what has been agreed, and when.
@@ -20,6 +21,7 @@ import { PaneSectionFrame } from './_shared';
  * recorded afterwards, not clicked in a panel.
  */
 export function DecisionsPaneSection() {
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { data, loading } = useIntegration();
   /* `openDecisions` is what is still open; `documents` is what is in flight. The
      decision LOG — what was already decided — is the `governance` section's job, and
@@ -36,7 +38,7 @@ export function DecisionsPaneSection() {
       emptyMessage={PANE_SECTION_EMPTY.decisions}
     >
       <div className="pane__stack">
-        {decisions.length > 0 ? <DecisionLog entries={decisions} title="Open and agreed" /> : null}
+        {decisions.length > 0 ? <DecisionLog entries={decisions} title={ko ? '진행 중인 결정' : 'Open decisions'} /> : null}
         {documents.length > 0 ? <CommercialDocumentList documents={documents} /> : null}
       </div>
     </PaneSectionFrame>

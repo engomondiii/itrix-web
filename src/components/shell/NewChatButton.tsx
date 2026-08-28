@@ -1,11 +1,12 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useRouter } from 'next/navigation';
 
 import { useThreadContext } from '@/context/ThreadContext';
 import { useComposerStore } from '@/store/composerStore';
 import { useRailStore } from '@/store/railStore';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
 /**
@@ -37,6 +38,7 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * the marketing arrival screen.
  */
 export function NewChatButton() {
+  const railCopy = useRailCopy();
   const { startNew } = useThreadContext();
   const clear = useComposerStore((s) => s.clear);
   const closeSheet = useRailStore((s) => s.closeSheet);
@@ -69,7 +71,7 @@ export function NewChatButton() {
       >
         <path d="M12 5v14M5 12h14" />
       </svg>
-      <span>{RAIL_COPY.newChat}</span>
+      <span>{railCopy.newChat}</span>
     </button>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 
 /**
  * One error summary, above the fields, focused on submit failure.
@@ -21,6 +21,7 @@ import { AUTH_COPY } from '@/lib/content/authCopy';
  * notice and a service failure also land.
  */
 export function AuthErrorSummary({ messages }: { messages: (string | null | undefined)[] }) {
+  const authCopy = useAuthCopy();
   const items = messages.filter((m): m is string => Boolean(m));
   const ref = useRef<HTMLDivElement | null>(null);
   const announced = useRef<string>('');
@@ -36,7 +37,7 @@ export function AuthErrorSummary({ messages }: { messages: (string | null | unde
 
   return (
     <div ref={ref} tabIndex={-1} role="alert" className="auth-error-summary">
-      <p className="auth-error-summary__heading">{AUTH_COPY.shared.errorSummaryHeading}</p>
+      <p className="auth-error-summary__heading">{authCopy.shared.errorSummaryHeading}</p>
       <ul>
         {items.map((m) => (
           <li key={m}>{m}</li>

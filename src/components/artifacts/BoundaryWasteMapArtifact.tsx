@@ -3,6 +3,7 @@
 import { BoundaryWasteMapView } from '@/components/workspace/BoundaryWasteMapView';
 import type { Artifact } from '@/types/artifact.types';
 import type { BoundaryWasteSection } from '@/types/workspace.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * State 7 — the Alpha Compute Assessment (Playbook v1.6, State 7).
@@ -29,6 +30,7 @@ interface BoundaryWasteMapPayload {
 }
 
 export function BoundaryWasteMapArtifact({ artifact }: { artifact: Artifact }) {
+  const copy = useCommonCopy();
   const p = artifact.payload as BoundaryWasteMapPayload;
   const sections = p.sections ?? [];
 
@@ -39,10 +41,7 @@ export function BoundaryWasteMapArtifact({ artifact }: { artifact: Artifact }) {
       {sections.length > 0 ? (
         <BoundaryWasteMapView sections={sections} />
       ) : (
-        <p className="artifact__pending">
-          The assessment is being prepared. Nothing is hidden from you — there is
-          simply nothing to show yet.
-        </p>
+        <p className="artifact__pending">{copy.assessmentPreparing}</p>
       )}
 
       {p.standingLine ? <p className="artifact__standing">{p.standingLine}</p> : null}

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEmailVerification } from '@/hooks/useEmailVerification';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 
 /**
  * THE UNCONFIRMED-ADDRESS BANNER (Playbook v1.9 §18G, R66).
@@ -21,6 +21,7 @@ import { AUTH_COPY } from '@/lib/content/authCopy';
  * mailbox.
  */
 export function VerificationNotice() {
+  const authCopy = useAuthCopy();
   const { verified, resend, resent, busy } = useEmailVerification();
 
   if (verified !== false) return null;
@@ -28,7 +29,7 @@ export function VerificationNotice() {
   return (
     <div className="verify-banner" role="status">
       <p className="verify-banner__body">
-        {resent ? AUTH_COPY.verify.bannerSent : AUTH_COPY.verify.bannerBody}
+        {resent ? authCopy.verify.bannerSent : authCopy.verify.bannerBody}
       </p>
       {resent ? null : (
         <button
@@ -37,7 +38,7 @@ export function VerificationNotice() {
           disabled={busy}
           onClick={() => void resend()}
         >
-          {busy ? AUTH_COPY.verify.resending : AUTH_COPY.verify.bannerAction}
+          {busy ? authCopy.verify.resending : authCopy.verify.bannerAction}
         </button>
       )}
     </div>

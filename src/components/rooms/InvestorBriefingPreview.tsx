@@ -1,34 +1,4 @@
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { brand } from '@/constants/brand';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-const POINTS = [
-  { h: 'Thesis', d: 'Computational AI infrastructure for sustainable AI — make computation worth scaling before scaling it.' },
-  { h: 'Model', d: 'Asset-light and IP-led: patented methods, licensed across hardware, cloud, and enterprise R&D.' },
-  { h: 'Participation', d: 'itriX participates in the value its methods create, rather than selling commodity compute.' },
-];
-
-export function InvestorBriefingPreview() {
-  return (
-    <section className="section border-b border-border-medium bg-surface">
-      <div className="container-page">
-        <div className="mb-6 flex items-center gap-2">
-          <Badge tone="info">Investor briefing</Badge>
-          <span className="text-caption text-ink-secondary">High-level preview</span>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
-          {POINTS.map((p) => (
-            <Card key={p.h} className="flex flex-col gap-2">
-              <span className="text-card-title text-structure-900">{p.h}</span>
-              <span className="text-secondary text-ink-secondary">{p.d}</span>
-            </Card>
-          ))}
-        </div>
-        <p className="mt-6 text-caption text-ink-secondary">
-          Figures, projections, and the data room are shared directly by the {brand.assessmentTeam}. {NDA_WARNINGS.pricing}
-        </p>
-      </div>
-    </section>
-  );
-}
+'use client';
+import { Card } from '@/components/ui/Card';import { Badge } from '@/components/ui/Badge';import { brand } from '@/constants/brand';import { useNdaWarnings } from '@/lib/i18n/ndaLocale';import { useLocaleStore } from '@/store/localeStore';
+const P=[{h:'Thesis',hk:'명제',d:'Computational AI infrastructure for sustainable AI — improve computational structure before scaling it.',dk:'지속 가능한 AI를 위한 컴퓨팅 AI 인프라 — 규모를 키우기 전에 계산 구조를 먼저 개선합니다.'},{h:'Model',hk:'모델',d:'Asset-light and IP-led: methods may be licensed where evidence and written agreements support deployment.',dk:'자산 경량·IP 중심 모델: 근거와 서면 계약이 배포를 뒷받침하는 경우 방법을 라이선스할 수 있습니다.'},{h:'Evidence',hk:'근거',d:'Commercial discussion follows verified technical value; public material does not prescribe economics or rights.',dk:'상업적 논의는 검증된 기술 가치 이후에 이루어지며, 공개 자료는 경제 조건이나 권리를 미리 정하지 않습니다.'}];
+export function InvestorBriefingPreview(){const ko=useLocaleStore(s=>s.locale)==='ko';const w=useNdaWarnings();return <section className="section border-b border-border-medium bg-surface"><div className="container-page"><div className="mb-6 flex items-center gap-2"><Badge tone="info">{ko?'투자자 브리핑':'Investor briefing'}</Badge><span className="text-caption text-ink-secondary">{ko?'공개 수준 미리보기':'High-level preview'}</span></div><div className="grid gap-4 md:grid-cols-3">{P.map(p=><Card key={p.h} className="flex flex-col gap-2"><span className="text-card-title text-structure-900">{ko?p.hk:p.h}</span><span className="text-secondary text-ink-secondary">{ko?p.dk:p.d}</span></Card>)}</div><p className="mt-6 text-caption text-ink-secondary">{ko?`수치, 전망 및 제한 자료는 현재 논의에 대해 ${brand.assessmentTeam}이 명시적으로 승인한 경우에만 공유됩니다. `:`Figures, projections and restricted materials are shared only when explicitly authorized for the current discussion by the ${brand.assessmentTeam}. `}{w.pricing}</p></div></section>}

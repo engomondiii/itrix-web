@@ -1,32 +1,4 @@
-import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { routes } from '@/constants/routes';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-const ITEMS = [
-  { h: 'Published method', d: 'FQNM — the Fast Quantised Numerical Method — is published and citable.', tone: 'success' as const },
-  { h: 'Validation', d: 'Results are stated conditionally and confirmed through proof-of-concept against agreed baselines.', tone: 'info' as const },
-  { h: 'Collaboration', d: 'Research collaboration is welcome where it can be validated and published responsibly.', tone: 'info' as const },
-];
-
-export function ResearchRoomContent() {
-  return (
-    <section className="section border-b border-border-medium bg-surface">
-      <div className="container-page">
-        <div className="grid gap-4 md:grid-cols-3">
-          {ITEMS.map((it) => (
-            <Card key={it.h} className="flex flex-col gap-2">
-              <Badge tone={it.tone}>{it.h}</Badge>
-              <span className="text-secondary text-ink-secondary">{it.d}</span>
-            </Card>
-          ))}
-        </div>
-        <p className="mt-6 text-caption text-ink-secondary">{NDA_WARNINGS.benchmarks}</p>
-        <Link href={routes.fqnmPaper} className="mt-2 inline-block text-secondary text-ink-primary underline-offset-2 hover:underline">
-          Read the FQNM paper →
-        </Link>
-      </div>
-    </section>
-  );
-}
+'use client';
+import Link from 'next/link';import { Card } from '@/components/ui/Card';import { Badge } from '@/components/ui/Badge';import { routes } from '@/constants/routes';import { useNdaWarnings } from '@/lib/i18n/ndaLocale';import { useLocaleStore } from '@/store/localeStore';
+const ITEMS=[{h:'Public preprint',hk:'공개 프리프린트',d:'FQNM — Fast Quantised Numerical Method — is available as a public arXiv preprint.',dk:'FQNM — Fast Quantised Numerical Method — 은 공개 arXiv 프리프린트로 제공됩니다.',tone:'success' as const},{h:'Validation',hk:'검증',d:'Claims are bounded by the evidence actually available for the relevant workload.',dk:'주장은 해당 워크로드에 실제로 उपलब्ध한 근거 범위로 제한됩니다.',tone:'info' as const},{h:'Collaboration',hk:'협업',d:'Research collaboration can be discussed where it can be validated and communicated responsibly.',dk:'검증 가능하고 책임 있게 소통할 수 있는 연구 협업을 논의할 수 있습니다.',tone:'info' as const}];
+export function ResearchRoomContent(){const ko=useLocaleStore(s=>s.locale)==='ko';const w=useNdaWarnings();return <section className="section border-b border-border-medium bg-surface"><div className="container-page"><div className="grid gap-4 md:grid-cols-3">{ITEMS.map(it=><Card key={it.h} className="flex flex-col gap-2"><Badge tone={it.tone}>{ko?it.hk:it.h}</Badge><span className="text-secondary text-ink-secondary">{ko?it.dk:it.d}</span></Card>)}</div><p className="mt-6 text-caption text-ink-secondary">{w.benchmarks}</p><Link href={routes.fqnmPaper} className="mt-2 inline-block text-secondary text-ink-primary underline-offset-2 hover:underline">{ko?'FQNM 프리프린트 읽기 →':'Read the FQNM preprint →'}</Link></div></section>}

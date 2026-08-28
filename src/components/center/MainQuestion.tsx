@@ -1,4 +1,7 @@
-import { CENTER_COPY } from '@/lib/content/centerCopy';
+'use client';
+
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * THE MAIN QUESTION — the single most important sentence on the platform, and
@@ -32,11 +35,12 @@ import { CENTER_COPY } from '@/lib/content/centerCopy';
  * visually hidden rather than duplicated on screen.
  */
 export function MainQuestion({ id = 'main-question' }: { id?: string }) {
+  const centerCopy = useCenterCopy();
   return (
     <>
-      <p className="arrival__eyebrow arrival-label">{CENTER_COPY.eyebrow}</p>
+      <p className="arrival__eyebrow arrival-label">{centerCopy.eyebrow}</p>
       <h1 id={id} className="arrival__question">
-        {CENTER_COPY.mainQuestion}
+        {centerCopy.mainQuestion}
       </h1>
     </>
   );

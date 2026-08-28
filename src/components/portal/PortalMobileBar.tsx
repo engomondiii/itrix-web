@@ -5,6 +5,8 @@ import { ItrixLogo } from '@/components/brand/ItrixLogo';
 import { usePortalNavStore } from '@/store/portalNavStore';
 import { usePortalStore } from '@/store/portalStore';
 import { routes } from '@/constants/routes';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * THE WORKSPACE MOBILE BAR — PORTRAIT ONLY (2026-08-12).
@@ -33,6 +35,8 @@ import { routes } from '@/constants/routes';
  * customer must not miss is visible while the thing that would show it is hidden.
  */
 export function PortalMobileBar() {
+  const copy = useCommonCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const toggleNav = usePortalNavStore((s) => s.toggleNav);
   const open = usePortalNavStore((s) => s.open);
   const unread = usePortalStore((s) => s.unreadMessages);
@@ -42,7 +46,7 @@ export function PortalMobileBar() {
       <button
         type="button"
         className="portal-topbar__menu"
-        aria-label={open ? 'Close workspace menu' : 'Open workspace menu'}
+        aria-label={open ? copy.closeWorkspaceMenu : (ko ? '워크스페이스 메뉴 열기' : 'Open workspace menu')}
         aria-expanded={open}
         aria-controls="portal-sidebar"
         onClick={toggleNav}
@@ -62,14 +66,14 @@ export function PortalMobileBar() {
         ) : null}
       </button>
 
-      <Link href={routes.workspaceOverview} className="portal-topbar__mark" aria-label="itriX workspace">
+      <Link href={routes.workspaceOverview} className="portal-topbar__mark" aria-label={ko ? 'itriX 워크스페이스' : 'itriX workspace'}>
         <ItrixLogo width={92} priority />
       </Link>
 
       {/* Balances the row so the mark sits centred, and carries the count in words for
           assistive tech — the dot above is decorative and announces nothing. */}
       <span className="portal-topbar__count">
-        {unread > 0 ? <span className="sr-only">{unread} unread messages</span> : null}
+        {unread > 0 ? <span className="sr-only">{ko ? `읽지 않은 메시지 ${unread}개` : `${unread} unread messages`}</span> : null}
       </span>
     </header>
   );

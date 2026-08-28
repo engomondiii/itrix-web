@@ -80,7 +80,7 @@ export const CENTER_COPY = {
   signUp: 'Sign up',
 
   /** Section label above the rotating prompts. */
-  examplesLabel: 'Examples from the work our visitors bring',
+  examplesLabel: 'Optional question ideas',
 
   /** Reveal the five prompts as a static list, for anyone who should not wait. */
   showAllPrompts: 'Show all five',
@@ -89,7 +89,7 @@ export const CENTER_COPY = {
   /** Accessible names for the carousel controls. */
   previousPrompt: 'Previous example',
   nextPrompt: 'Next example',
-  promptGroupLabel: 'Example ways visitors describe their situation',
+  promptGroupLabel: 'Optional questions you can place in the composer',
 
   /** The four-step pathway hint below the prompts. */
   pathwayHint: ['You share', 'itriX reflects', 'You receive a tailored brief', 'You decide what happens next'],
@@ -129,3 +129,18 @@ export const REVIEW_COPY = {
   /** The field label in that same cold-start case. */
   coldStartLabel: 'Describe the bottleneck or opportunity in one non-confidential sentence',
 } as const;
+
+export const CENTER_COPY_KO = {
+  eyebrow:'수학적 지능',
+  mainQuestion:'계산이 무엇을 더 잘했으면 하나요?',
+  promptPlaceholder:'메시지를 입력한 뒤 Enter를 눌러 보내세요.',
+  promptAriaLabel:'계산 과제 설명',
+  safetyNote:'시작할 때는 비기밀 요약이면 충분합니다.',
+  descriptor:'계산 인프라 기업', signIn:'로그인', signUp:'회원가입',
+  examplesLabel:'선택 가능한 질문 아이디어', showAllPrompts:'다섯 개 모두 보기', hideAllPrompts:'하나씩 보기',
+  previousPrompt:'이전 예시', nextPrompt:'다음 예시', promptGroupLabel:'입력창에 넣을 수 있는 선택 질문',
+  pathwayHint:['당신이 설명합니다','itriX가 반영합니다','맞춤형 브리프를 받습니다','다음에 무엇을 할지 당신이 결정합니다'],
+  tooShort:'문제의 구조를 이해할 수 있도록 조금만 더 설명해 주세요.',
+} as const;
+export const NDA_DRAWER_KO = { tier:'제어된 공개', title:'NDA 이전에 무엇을 공유할 수 있나요?', body:'비즈니스 압력, 워크로드 종류, 현재 환경, 개선하고 싶은 결과는 설명할 수 있습니다. NDA 이전에는 독점 코드, 내부 벤치마크 데이터, 아키텍처 세부사항 등 기밀 자료를 공유하지 마세요.', dismiss:'확인했습니다' } as const;
+export const REVIEW_COPY_KO = { sectionTitle:'컴퓨트 병목 리뷰', capturedLabel:'itriX가 이해한 내용', capturedIntro:'다음은 itriX가 이해한 내용입니다. 정확하지 않다면 수정해 주세요.', addMore:'상황을 이해하는 데 도움이 되는 내용을 더 알려 주세요.', continue:'계속', coldStartQuestion:CENTER_COPY_KO.mainQuestion, coldStartLabel:'병목 또는 기회를 비기밀 문장 하나로 설명해 주세요' } as const;

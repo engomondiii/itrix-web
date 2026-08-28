@@ -2,6 +2,9 @@
 
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { PANE_SECTION_LABEL } from '@/lib/content/paneCopy';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
+import { useLocaleStore } from '@/store/localeStore';
+import { PANE_SECTION_LABEL_KO } from '@/lib/content/paneCopy';
 
 /**
  * Which section of the pane is showing.
@@ -19,12 +22,14 @@ import { PANE_SECTION_LABEL } from '@/lib/content/paneCopy';
  * current, and each tab controls the panel by id.
  */
 export function ContentPaneTabs({ panelId }: { panelId: string }) {
+  const copy = useCommonCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { sections, activeSection, setSection } = useContentPaneContext();
 
   if (sections.length < 2) return null;
 
   return (
-    <div className="pane__tabs" role="tablist" aria-label="Sections">
+    <div className="pane__tabs" role="tablist" aria-label={copy.sections}>
       {sections.map((section) => (
         <button
           key={section}
@@ -46,7 +51,7 @@ export function ContentPaneTabs({ panelId }: { panelId: string }) {
             document.getElementById(`pane-tab-${target}`)?.focus();
           }}
         >
-          {PANE_SECTION_LABEL[section]}
+          {ko ? PANE_SECTION_LABEL_KO[section] : PANE_SECTION_LABEL[section]}
         </button>
       ))}
     </div>

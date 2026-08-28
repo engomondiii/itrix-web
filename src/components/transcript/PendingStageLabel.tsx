@@ -1,6 +1,7 @@
 'use client';
 
-import { PENDING_COPY, PENDING_STAGE_LABEL, type PendingStage } from '@/lib/content/pendingCopy';
+import { PENDING_COPY, PENDING_COPY_KO, PENDING_STAGE_LABEL, PENDING_STAGE_LABEL_KO, type PendingStage } from '@/lib/content/pendingCopy';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * The stage a pending turn is at.
@@ -17,11 +18,14 @@ import { PENDING_COPY, PENDING_STAGE_LABEL, type PendingStage } from '@/lib/cont
  * elapsed time, which we know, and nothing about the backend, which we do not.
  */
 export function PendingStageLabel({ stage, slow }: { stage: PendingStage | null; slow: boolean }) {
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
+  const copy = ko ? PENDING_COPY_KO : PENDING_COPY;
+  const labels = ko ? PENDING_STAGE_LABEL_KO : PENDING_STAGE_LABEL;
   const text = slow
-    ? PENDING_COPY.timeout
+    ? copy.timeout
     : stage
-      ? PENDING_STAGE_LABEL[stage]
-      : PENDING_COPY.waiting;
+      ? labels[stage]
+      : copy.waiting;
 
   return <span className="pending__label">{text}</span>;
 }

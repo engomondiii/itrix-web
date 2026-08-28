@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api/authApi';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { siteConfig } from '@/config/site.config';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
@@ -60,6 +60,7 @@ export interface UseSignUpResult {
 }
 
 export function useSignUp(): UseSignUpResult {
+  const authCopy = useAuthCopy();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +71,7 @@ export function useSignUp(): UseSignUpResult {
       if (!siteConfig.featureFlags.openSignup) {
         /* The kill switch is thrown. The page does not render the form, so reaching here
            means something called the hook directly — refuse rather than post. */
-        setError(AUTH_COPY.signUp.serviceFailure);
+        setError(authCopy.signUp.serviceFailure);
         return false;
       }
 
@@ -106,7 +107,7 @@ export function useSignUp(): UseSignUpResult {
          REQUEST proxy degrades to accepted because a missing account and a broken service
          must be indistinguishable there; registration has no such requirement and must
          not borrow the pattern (Surface 1 v8.0 §16.7). */
-      setError(AUTH_COPY.signUp.serviceFailure);
+      setError(authCopy.signUp.serviceFailure);
       return false;
     },
     [router],
@@ -116,7 +117,7 @@ export function useSignUp(): UseSignUpResult {
     async (code: string) => {
       const trimmed = code.trim();
       if (!trimmed) {
-        setError(AUTH_COPY.signUp.codeFailure);
+        setError(authCopy.signUp.codeFailure);
         return;
       }
 
@@ -134,7 +135,7 @@ export function useSignUp(): UseSignUpResult {
       if (outcome.kind !== 'ok' || !result?.redeemUrl) {
         /* One message for unknown, used and expired. No code in the event. */
         trackEvent('auth.signup_door_chosen', { door: 'invite', outcome: 'rejected' });
-        setError(AUTH_COPY.signUp.codeFailure);
+        setError(authCopy.signUp.codeFailure);
         return;
       }
 

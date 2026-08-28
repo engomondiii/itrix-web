@@ -14,7 +14,7 @@ import { AssentCheckbox } from '@/components/legal/AssentCheckbox';
 import { AssentSummary } from '@/components/legal/AssentSummary';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
 import { useLegalAssent } from '@/hooks/useLegalAssent';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { ASSENT_COPY } from '@/lib/content/legalCopy';
 import { JourneyProvider } from '@/context/JourneyContext';
 import { RevealGate } from '@/components/client-page/RevealGate';
@@ -22,8 +22,9 @@ import { portalApi } from '@/lib/api/portalApi';
 import { siteConfig } from '@/config/site.config';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * The invitation account-creation page (reveal ②→③). Gated by RevealGate so only a holder of an
@@ -60,6 +61,9 @@ import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
  * numbers as set-password and reset-password.
  */
 function CreateAccountInner({ token }: { token: string }) {
+  const portalCopy = usePortalCopy();
+  const authCopy = useAuthCopy();
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
   const router = useRouter();
   const portalEnabled = siteConfig.featureFlags.clientPortal;
 
@@ -83,11 +87,11 @@ function CreateAccountInner({ token }: { token: string }) {
 
   function validate(): boolean {
     const next: Record<string, string> = {};
-    if (!fullName.trim()) next.fullName = 'Tell us who to address in the workspace.';
-    if (!organization.trim()) next.organization = 'Add your company or organization.';
-    if (!/.+@.+\..+/.test(email.trim())) next.email = 'Enter a valid email address.';
-    if (policy.tooShort) next.password = AUTH_COPY.reset.tooShort;
-    else if (!policy.matches) next.confirm = AUTH_COPY.reset.mismatch;
+    if (!fullName.trim()) next.fullName = ko ? '워크스페이스에서 사용할 이름을 입력해 주세요.' : 'Tell us who to address in the workspace.';
+    if (!organization.trim()) next.organization = ko ? '회사 또는 조직을 입력해 주세요.' : 'Add your company or organization.';
+    if (!/.+@.+\..+/.test(email.trim())) next.email = ko ? '올바른 이메일 주소를 입력해 주세요.' : 'Enter a valid email address.';
+    if (policy.tooShort) next.password = authCopy.reset.tooShort;
+    else if (!policy.matches) next.confirm = authCopy.reset.mismatch;
     setErrors(next);
     return Object.keys(next).length === 0;
   }
@@ -161,15 +165,12 @@ function CreateAccountInner({ token }: { token: string }) {
           surface="account_invite"
           fallback={
             <Card variant="warm" className="flex flex-col gap-3 text-center">
-              <SectionLabel>Not yet available</SectionLabel>
-              <h1 className="text-web-h3 text-structure-900">Your workspace isn’t open yet</h1>
-              <p className="reading text-ink-secondary">
-                A private workspace becomes available once the team has reviewed your case. Return to
-                your review — you’ll see the option there the moment it’s ready.
-              </p>
+              <SectionLabel>{ko ? '아직 이용할 수 없음' : 'Not yet available'}</SectionLabel>
+              <h1 className="text-web-h3 text-structure-900">{ko ? '워크스페이스가 아직 열리지 않았습니다' : 'Your workspace isn’t open yet'}</h1>
+              <p className="reading text-ink-secondary">{ko ? '팀이 현재 상황을 검토한 뒤 비공개 워크스페이스가 준비됩니다. 리뷰로 돌아가면 준비되는 즉시 해당 옵션이 표시됩니다.' : 'A private workspace becomes available once the team has reviewed your case. Return to your review — you’ll see the option there the moment it’s ready.'}</p>
               <div className="pt-1">
                 <Link href={routes.clientPage}>
-                  <Button variant="secondary">Back to my review</Button>
+                  <Button variant="secondary">{ko ? '내 리뷰로 돌아가기' : 'Back to my review'}</Button>
                 </Link>
               </div>
             </Card>
@@ -177,56 +178,53 @@ function CreateAccountInner({ token }: { token: string }) {
         >
           {fallback ? (
             <Card variant="featured" className="flex flex-col gap-3 text-center">
-              <SectionLabel tone="gold">Thank you</SectionLabel>
-              <h1 className="text-web-h3 text-structure-900">{PORTAL_COPY.invite.fallbackTitle}</h1>
-              <p className="reading text-ink-secondary">{PORTAL_COPY.invite.fallbackBody}</p>
+              <SectionLabel tone="gold">{ko ? '감사합니다' : 'Thank you'}</SectionLabel>
+              <h1 className="text-web-h3 text-structure-900">{portalCopy.invite.fallbackTitle}</h1>
+              <p className="reading text-ink-secondary">{portalCopy.invite.fallbackBody}</p>
               <div className="pt-1">
                 <Link href={routes.clientPage}>
-                  <Button variant="secondary">Back to my review</Button>
+                  <Button variant="secondary">{ko ? '내 리뷰로 돌아가기' : 'Back to my review'}</Button>
                 </Link>
               </div>
             </Card>
           ) : (
             <Card variant="featured" className="flex flex-col gap-4">
               <div>
-                <SectionLabel tone="gold">Create your itriX workspace</SectionLabel>
-                <h1 className="mt-2 text-web-h3 text-structure-900">Continue privately with the team</h1>
-                <p className="reading mt-2 text-ink-secondary">
-                  Set up your private workspace to keep this conversation, share documents under NDA,
-                  and track next steps with the itriX team.
-                </p>
+                <SectionLabel tone="gold">{ko ? 'itriX 워크스페이스 만들기' : 'Create your itriX workspace'}</SectionLabel>
+                <h1 className="mt-2 text-web-h3 text-structure-900">{ko ? '팀과 비공개로 계속하기' : 'Continue privately with the team'}</h1>
+                <p className="reading mt-2 text-ink-secondary">{ko ? '이 대화를 보관하고, 필요한 보호와 권한이 갖춰진 범위에서 문서를 공유하며, itriX 팀과 다음 단계를 추적할 수 있는 비공개 워크스페이스를 설정하세요.' : 'Set up your private workspace to keep this conversation, share documents only when appropriate protection and authorization are in place, and track next steps with the itriX team.'}</p>
               </div>
 
               <div className="flex flex-col gap-3">
                 <Input
-                  label="Full name"
+                  label={ko ? '이름' : 'Full name'}
                   value={fullName}
                   autoComplete="name"
-                  placeholder="Your name"
+                  placeholder={ko ? '이름' : 'Your name'}
                   error={errors.fullName}
                   onChange={(e) => setFullName(e.target.value)}
                 />
                 <Input
-                  label="Company / organization"
+                  label={ko ? '회사 / 조직' : 'Company / organization'}
                   value={organization}
                   autoComplete="organization"
-                  placeholder="Your organization"
+                  placeholder={ko ? '회사 또는 조직' : 'Your organization'}
                   error={errors.organization}
                   onChange={(e) => setOrganization(e.target.value)}
                 />
                 <Input
-                  label="Role (optional)"
+                  label={ko ? '역할(선택 사항)' : 'Role (optional)'}
                   value={role}
                   autoComplete="organization-title"
-                  placeholder="e.g. Head of Infrastructure"
+                  placeholder={ko ? '예: 인프라 책임자' : 'e.g. Head of Infrastructure'}
                   onChange={(e) => setRole(e.target.value)}
                 />
                 <Input
-                  label="Email address"
+                  label={ko ? '이메일 주소' : 'Email address'}
                   type="email"
                   value={email}
                   autoComplete="email"
-                  placeholder="you@company.com"
+                  placeholder={ko ? 'you@company.com' : 'you@company.com'}
                   error={errors.email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -234,7 +232,7 @@ function CreateAccountInner({ token }: { token: string }) {
                     and paste never blocked. The rules render beneath it, ALWAYS — not as
                     a correction after a failure. */}
                 <PasswordField
-                  label={AUTH_COPY.reset.passwordLabel}
+                  label={authCopy.reset.passwordLabel}
                   value={password}
                   onChange={setPassword}
                   autoComplete="new-password"
@@ -242,7 +240,7 @@ function CreateAccountInner({ token }: { token: string }) {
                 />
                 <PasswordRules assessment={policy} />
                 <PasswordField
-                  label={AUTH_COPY.reset.confirmLabel}
+                  label={authCopy.reset.confirmLabel}
                   value={confirm}
                   onChange={setConfirm}
                   autoComplete="new-password"
@@ -267,7 +265,7 @@ function CreateAccountInner({ token }: { token: string }) {
                 onClick={submit}
                 disabled={submitting || assent.recording}
               >
-                {submitting || assent.recording ? PORTAL_COPY.invite.accepting : 'Create workspace'}
+                {submitting || assent.recording ? portalCopy.invite.accepting : (ko ? '워크스페이스 만들기' : 'Create workspace')}
               </Button>
               <ConfidentialityNote />
             </Card>

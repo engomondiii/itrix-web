@@ -7,7 +7,7 @@ import { AuthFooterLinks } from '@/components/auth/AuthFooterLinks';
 import { RateLimitNotice } from '@/components/auth/RateLimitNotice';
 import { Button } from '@/components/ui/Button';
 import { useEmailVerification } from '@/hooks/useEmailVerification';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 
 type Phase = 'idle' | 'confirming' | 'done' | 'expired' | 'unavailable';
@@ -27,6 +27,7 @@ type Phase = 'idle' | 'confirming' | 'done' | 'expired' | 'unavailable';
  * affects what happens next.
  */
 export default function VerifyEmailPage() {
+  const authCopy = useAuthCopy();
   const { confirm, resend, resent, email, busy, retryAfterSeconds } = useEmailVerification();
   const [phase, setPhase] = useState<Phase>('idle');
 
@@ -57,54 +58,54 @@ export default function VerifyEmailPage() {
   return (
     <AuthPanel>
       <AuthHeading
-        title={AUTH_COPY.verify.title}
-        standfirst={email ? AUTH_COPY.verify.standfirst(email) : AUTH_COPY.verify.standfirstNoAddress}
+        title={authCopy.verify.title}
+        standfirst={email ? authCopy.verify.standfirst(email) : authCopy.verify.standfirstNoAddress}
       />
 
       <RateLimitNotice retryAfterSeconds={retryAfterSeconds} />
 
       {phase === 'confirming' ? (
         <p className="verify-status" role="status">
-          {AUTH_COPY.verify.confirming}
+          {authCopy.verify.confirming}
         </p>
       ) : null}
 
       {phase === 'done' ? (
         <p className="verify-status" role="status">
-          {AUTH_COPY.verify.success}
+          {authCopy.verify.success}
         </p>
       ) : null}
 
       {phase === 'expired' ? (
         <p className="verify-status verify-status--warn" role="status">
-          {AUTH_COPY.verify.expired}
+          {authCopy.verify.expired}
         </p>
       ) : null}
 
       {phase === 'unavailable' ? (
         <p className="verify-status verify-status--warn" role="status">
-          {AUTH_COPY.shared.serviceFailure}
+          {authCopy.shared.serviceFailure}
         </p>
       ) : null}
 
       {phase !== 'done' ? (
         <div className="verify-actions">
           {/* THE COMPLETE LIST of what confirmation gates. Never "for full access". */}
-          <p className="verify-unlocks">{AUTH_COPY.verify.unlocks}</p>
+          <p className="verify-unlocks">{authCopy.verify.unlocks}</p>
           {resent ? (
             <p className="verify-status" role="status">
-              {AUTH_COPY.verify.resendConfirmation}
+              {authCopy.verify.resendConfirmation}
             </p>
           ) : (
             <Button variant="secondary" size="md" disabled={busy} onClick={() => void resend()}>
-              {busy ? AUTH_COPY.verify.resending : AUTH_COPY.verify.resend}
+              {busy ? authCopy.verify.resending : authCopy.verify.resend}
             </Button>
           )}
         </div>
       ) : null}
 
       <AuthFooterLinks
-        links={[{ label: AUTH_COPY.verify.back, href: routes.portalSignIn }]}
+        links={[{ label: authCopy.verify.back, href: routes.portalSignIn }]}
       />
     </AuthPanel>
   );

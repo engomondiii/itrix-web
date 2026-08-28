@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { PENDING_COPY } from '@/lib/content/pendingCopy';
+import { PENDING_COPY, PENDING_COPY_KO } from '@/lib/content/pendingCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PendingStageLabel } from './PendingStageLabel';
 import { ItrixTurnLabel } from './ItrixTurnLabel';
 import type { PendingStage } from '@/lib/content/pendingCopy';
@@ -51,6 +52,8 @@ export interface PendingTransferIndicatorProps {
 
 export function PendingTransferIndicator({ stage, slow, onRetry }: PendingTransferIndicatorProps) {
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
+  const copy = ko ? PENDING_COPY_KO : PENDING_COPY;
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -82,7 +85,7 @@ export function PendingTransferIndicator({ stage, slow, onRetry }: PendingTransf
 
         {slow && onRetry ? (
           <button type="button" className="pending__retry" onClick={onRetry}>
-            {PENDING_COPY.retry}
+            {copy.retry}
           </button>
         ) : null}
       </div>
@@ -90,7 +93,7 @@ export function PendingTransferIndicator({ stage, slow, onRetry }: PendingTransf
       {/* Announced once, politely, at the start of the wait. The region mounts with
           the text already in it, so it is read once and not on every re-render. */}
       <p role="status" aria-live="polite" className="sr-only">
-        {PENDING_COPY.announcement}
+        {copy.announcement}
       </p>
     </article>
   );

@@ -8,10 +8,11 @@ import { Button } from '@/components/ui/Button';
 import { Spinner } from '@/components/ui/Spinner';
 import { usePortalSettings } from '@/hooks/usePortalSettings';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 
 /** Settings (§68): profile · team access · notifications · sign out. */
 export default function SettingsPage() {
+  const portalCopy = usePortalCopy();
   const { data, loading, saving, saveProfile, saveNotifications, inviteTeammate } = usePortalSettings();
   const { signOut } = usePortalAuth();
 
@@ -29,7 +30,7 @@ export default function SettingsPage() {
 
             <div className="border-t border-border-soft pt-5">
               <Button variant="secondary" size="md" onClick={() => void signOut()}>
-                {PORTAL_COPY.settings.signOut}
+                {portalCopy.settings.signOut}
               </Button>
             </div>
           </>

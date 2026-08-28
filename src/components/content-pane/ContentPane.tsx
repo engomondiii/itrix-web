@@ -2,7 +2,8 @@
 
 import { useId } from 'react';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { ContentPaneHeader } from './ContentPaneHeader';
 import { ContentPaneTabs } from './ContentPaneTabs';
 import { ContentPaneSection } from './ContentPaneSection';
@@ -37,6 +38,7 @@ import { PaneEmptyState } from './PaneEmptyState';
  * section the backend did not authorize has no path to the screen.
  */
 export function ContentPane() {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   const { available, collapsed, sections, activeSection, isSheetBreakpoint } = useContentPaneContext();
   const uid = useId();
   const panelId = `${uid}-pane-panel`;
@@ -49,7 +51,7 @@ export function ContentPane() {
     <aside
       className="content-pane"
       data-collapsed={collapsed || undefined}
-      aria-label={PANE_COPY.regionLabel}
+      aria-label={paneCopy.regionLabel}
     >
       {collapsed ? (
         /* Collapsed to its edge, and still reachable by keyboard. Authorization is

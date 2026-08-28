@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
 /**
@@ -37,6 +37,7 @@ export interface UseSignInResult {
 }
 
 export function useSignIn(): UseSignInResult {
+  const authCopy = useAuthCopy();
   const { signIn, retryAfterSeconds } = usePortalAuth();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +48,7 @@ export function useSignIn(): UseSignInResult {
          email" for one field and "those details did not match" for the other is a
          difference an attacker can read. */
       if (!email.trim() || !password) {
-        setError(AUTH_COPY.signIn.failure);
+        setError(authCopy.signIn.failure);
         return;
       }
 
@@ -63,7 +64,7 @@ export function useSignIn(): UseSignInResult {
 
       /* No email, no reason, no indication of whether the address exists. */
       trackEvent('auth.sign_in_failed', {});
-      setError(AUTH_COPY.signIn.failure);
+      setError(authCopy.signIn.failure);
     },
     [signIn],
   );

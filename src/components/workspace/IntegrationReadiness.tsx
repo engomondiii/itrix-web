@@ -1,5 +1,8 @@
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { ReadinessItem } from '@/types/workspace.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Integration readiness — State 9.
@@ -9,12 +12,14 @@ import type { ReadinessItem } from '@/types/workspace.types';
  * optional in practice even though the type permits null.
  */
 export function IntegrationReadiness({ items }: { items: readonly ReadinessItem[] }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   if (items.length === 0) return null;
 
   return (
     <section aria-labelledby="readiness-title" className="flex flex-col gap-3">
       <h2 id="readiness-title" className="font-display text-web-h3 text-ink-primary">
-        {WORKSPACE_COPY.integration.readinessTitle}
+        {workspaceCopy.integration.readinessTitle}
       </h2>
       <ul className="flex flex-col gap-2">
         {items.map((item) => (
@@ -25,7 +30,7 @@ export function IntegrationReadiness({ items }: { items: readonly ReadinessItem[
             <span className="text-web-body text-ink-primary">{item.label}</span>
             <span className="flex items-center gap-3 font-mono text-micro uppercase tracking-[0.08em]">
               <span className={item.status === 'blocked' ? 'text-error' : 'text-ink-secondary'}>
-                {WORKSPACE_COPY.integration.readinessStatus[item.status]}
+                {workspaceCopy.integration.readinessStatus[item.status]}
               </span>
               {item.owner ? <span className="text-ink-muted">{item.owner}</span> : null}
             </span>

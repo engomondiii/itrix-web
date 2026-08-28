@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import type { PortalSettings } from '@/types/portal.types';
 
 /** Team access — invite colleagues into the shared workspace (§68). */
@@ -18,6 +18,7 @@ export function TeamAccessForm({
   saving: boolean;
   onInvite: (email: string) => Promise<boolean>;
 }) {
+  const portalCopy = usePortalCopy();
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -35,8 +36,8 @@ export function TeamAccessForm({
   return (
     <Card variant="default" className="flex flex-col gap-4">
       <div>
-        <SectionLabel>{PORTAL_COPY.settings.teamHeader}</SectionLabel>
-        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.settings.teamIntro}</p>
+        <SectionLabel>{portalCopy.settings.teamHeader}</SectionLabel>
+        <p className="reading mt-2 text-ink-secondary">{portalCopy.settings.teamIntro}</p>
       </div>
 
       {team.length > 0 ? (
@@ -58,12 +59,12 @@ export function TeamAccessForm({
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={PORTAL_COPY.settings.invitePlaceholder}
+            placeholder={portalCopy.settings.invitePlaceholder}
             className="h-10 rounded-md border border-border-medium bg-surface px-3 text-body text-ink-primary placeholder:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary"
           />
         </label>
         <Button variant="secondary" size="md" disabled={saving} onClick={() => void submit()}>
-          {PORTAL_COPY.settings.sendInvite}
+          {portalCopy.settings.sendInvite}
         </Button>
       </div>
       {error ? <ErrorMessage>{error}</ErrorMessage> : null}

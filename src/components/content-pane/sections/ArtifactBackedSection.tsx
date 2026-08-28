@@ -3,7 +3,8 @@
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { ArtifactBlock } from '@/components/artifacts/ArtifactBlock';
 import { ARTIFACT_TITLE } from '@/lib/journey/artifactTypes';
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PaneSectionFrame } from './_shared';
 import type { ContentPaneSection } from '@/lib/journey/contentPaneSections';
 import type { Artifact } from '@/types/artifact.types';
@@ -38,6 +39,7 @@ export interface ArtifactBackedSectionProps {
 export function ArtifactBackedSection({
   section, types, fallback, loading = false, emptyMessage,
 }: ArtifactBackedSectionProps) {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   const { artifacts, activeArtifact, focusArtifact } = useContentPaneContext();
   const items: Artifact[] = types.length
     ? artifacts.filter((a) => types.includes(a.type))
@@ -58,7 +60,7 @@ export function ArtifactBackedSection({
     <PaneSectionFrame section={section}>
       <div className="pane__artifacts">
         {items.length > 1 ? (
-          <nav className="pane__switcher" aria-label={PANE_COPY.artifactSwitcherLabel}>
+          <nav className="pane__switcher" aria-label={paneCopy.artifactSwitcherLabel}>
             <ul>
               {items.map((artifact) => (
                 <li key={artifact.id}>

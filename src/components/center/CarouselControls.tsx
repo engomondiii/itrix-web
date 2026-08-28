@@ -1,6 +1,7 @@
 'use client';
 
-import { CENTER_COPY } from '@/lib/content/centerCopy';
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * Previous and next, plus a position readout.
@@ -23,12 +24,13 @@ export interface CarouselControlsProps {
 }
 
 export function CarouselControls({ index, count, onPrevious, onNext, onSelect }: CarouselControlsProps) {
+  const centerCopy = useCenterCopy();
   return (
     <div className="prompt-carousel__controls">
       <button
         type="button"
         className="prompt-carousel__step"
-        aria-label={CENTER_COPY.previousPrompt}
+        aria-label={centerCopy.previousPrompt}
         onClick={onPrevious}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
@@ -67,7 +69,7 @@ export function CarouselControls({ index, count, onPrevious, onNext, onSelect }:
       <button
         type="button"
         className="prompt-carousel__step"
-        aria-label={CENTER_COPY.nextPrompt}
+        aria-label={centerCopy.nextPrompt}
         onClick={onNext}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">

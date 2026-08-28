@@ -1,5 +1,8 @@
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { CommercialDocument } from '@/types/workspace.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Commercial documents in flight — State 9.
@@ -9,12 +12,14 @@ import type { CommercialDocument } from '@/types/workspace.types';
  * list a browser has cached.
  */
 export function CommercialDocumentList({ documents }: { documents: readonly CommercialDocument[] }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   if (documents.length === 0) return null;
 
   return (
     <section aria-labelledby="commercial-docs-title" className="flex flex-col gap-3">
       <h2 id="commercial-docs-title" className="font-display text-web-h3 text-ink-primary">
-        {WORKSPACE_COPY.integration.documentsTitle}
+        {workspaceCopy.integration.documentsTitle}
       </h2>
       <ul className="flex flex-col gap-2">
         {documents.map((doc) => (
@@ -30,7 +35,7 @@ export function CommercialDocumentList({ documents }: { documents: readonly Comm
               <span className="text-web-body text-ink-primary">{doc.title}</span>
             )}
             <span className="font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-              {WORKSPACE_COPY.integration.documentStatus[doc.status]}
+              {workspaceCopy.integration.documentStatus[doc.status]}
               <span className="ml-2 text-ink-muted">{new Date(doc.updatedAt).toLocaleDateString()}</span>
             </span>
           </li>

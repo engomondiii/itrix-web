@@ -7,6 +7,7 @@ import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { ARTIFACT_TITLE } from '@/lib/journey/artifactTypes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { Artifact } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * A PERMANENT RECORD IN THE TRANSCRIPT THAT SOMETHING WAS DELIVERED (R35).
@@ -45,6 +46,7 @@ function deliveredAt(iso: string): string {
 }
 
 export function ArtifactReferenceCard({ artifact }: ArtifactReferenceCardProps) {
+  const copy = useCommonCopy();
   const { visible, focusArtifact, setSection, sections } = useContentPaneContext();
   const [expanded, setExpanded] = useState(false);
 
@@ -76,7 +78,7 @@ export function ArtifactReferenceCard({ artifact }: ArtifactReferenceCardProps) 
         </span>
 
         <span className="artifact-ref__text">
-          <span className="artifact-ref__label">itriX prepared this for you</span>
+          <span className="artifact-ref__label">{copy.preparedForYou}</span>
           <span className="artifact-ref__title">{title}</span>
           <span className="artifact-ref__time">{deliveredAt(artifact.createdAt)}</span>
         </span>
@@ -86,7 +88,7 @@ export function ArtifactReferenceCard({ artifact }: ArtifactReferenceCardProps) 
             {visible ? 'Open' : expanded ? 'Hide' : 'Open here'}
           </button>
           <Link href={`/a/${artifact.id}`} className="artifact-ref__link">
-            Open on its own
+            {copy.openStandalone}
           </Link>
         </span>
       </div>

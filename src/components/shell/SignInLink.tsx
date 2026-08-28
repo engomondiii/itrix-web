@@ -1,8 +1,9 @@
 'use client';
 
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
-import { CENTER_COPY } from '@/lib/content/centerCopy';
 
 /**
  * Sign in — the only control in the top right of the arrival screen.
@@ -37,10 +38,11 @@ import { CENTER_COPY } from '@/lib/content/centerCopy';
  * sign-up from the sign-in page. A second link in a 240px rail earns less than the space.
  */
 export function SignInLink({ variant = 'arrival' }: { variant?: 'arrival' | 'rail' }) {
+  const centerCopy = useCenterCopy();
   if (variant === 'rail') {
     return (
       <Link href={routes.portalSignIn} className="sign-in-link" data-variant={variant}>
-        {CENTER_COPY.signIn}
+        {centerCopy.signIn}
       </Link>
     );
   }
@@ -48,10 +50,10 @@ export function SignInLink({ variant = 'arrival' }: { variant?: 'arrival' | 'rai
   return (
     <span className="sign-in-group">
       <Link href={routes.portalSignIn} className="sign-in-link" data-variant={variant}>
-        {CENTER_COPY.signIn}
+        {centerCopy.signIn}
       </Link>
       <Link href={routes.portalSignUp} className="sign-up-link">
-        {CENTER_COPY.signUp}
+        {centerCopy.signUp}
       </Link>
     </span>
   );

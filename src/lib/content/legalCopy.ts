@@ -1,11 +1,11 @@
 /**
  * THE FOUR LEGAL INSTRUMENTS — routes, metadata and body copy.
  *
- * Source: itriX Legal Instruments v1.0 (the counsel-review bundle). This module
+ * Source: itriX Legal Instruments v1.2 (the counsel-review bundle). This module
  * is the WEB rendering of those instruments; the bundle remains the document of
  * record and counsel edits it there.
  *
- * Playbook v1.7 Part XVII · Architecture v2.7 §19.10 · Surface 1 v6.0 §1.1
+ * Playbook v1.9 Part XVIII · Architecture v2.9 §19.10, §27 · Surface 1 v8.0 §16.7
  *
  * ── THIS IS A DRAFT, AND THE PAGES SAY SO ───────────────────────────────────
  * These instruments have NOT been reviewed by a qualified lawyer. Until they are,
@@ -42,19 +42,23 @@ export const LEGAL_DRAFT_NOTICE =
  * (Architecture v2.7 §19.10).
  */
 export const ASSENT_COPY = {
-  sectionTitle: 'Before we create your workspace',
-  checkboxPrefix: 'I agree to the',
+  sectionTitle: LEGAL_PUBLISHED ? 'Before we create your workspace' : 'Before we create your workspace — draft instruments',
+  checkboxPrefix: LEGAL_PUBLISHED ? 'I agree to the' : 'I acknowledge that I have read the draft',
   termsName: 'Terms of Service',
   privacyName: 'Privacy Policy',
   and: 'and the',
-  blocked: 'Please accept the Terms and the Privacy Policy to continue.',
+  blocked: LEGAL_PUBLISHED
+    ? 'Please accept the Terms and the Privacy Policy to continue.'
+    : 'Please acknowledge the draft Terms and Privacy Policy to continue in this pre-publication environment.',
 
   keepTitle: 'What we keep',
   keepBody:
     'Creating a workspace keeps this conversation, anything itriX has prepared for you, and any files you attached. You can delete a conversation or a file at any time, and none of it is used to train, fine-tune or evaluate any model.',
 
   /** Shown at the next sign-in after a material version change. */
-  reprompt: 'We have updated our Terms of Service. Please review and accept the new version to continue.',
+  reprompt: LEGAL_PUBLISHED
+    ? 'We have updated our Terms of Service. Please review and accept the new version to continue.'
+    : 'The legal instruments are still draft. Please review and acknowledge the current counsel-review version to continue in this pre-publication environment.',
   repromptSummary: 'What changed:',
 } as const;
 
@@ -80,8 +84,8 @@ export interface LegalInstrument {
 /** Strip labels, in order. Terms first because it is the operative agreement. */
 export const LEGAL_STRIP_LABELS = ['Terms', 'Privacy', 'Security', 'Disclosure policy'] as const;
 
-const VERSION = '1.0';
-const EFFECTIVE = '[effective date]';
+const VERSION = '1.2';
+const EFFECTIVE = '{effective_date}';
 
 export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
   {
@@ -99,6 +103,41 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
           'They govern the itriX website, the conversational assessment surface, any workspace we make available to you, and anything we prepare and deliver to you through those surfaces.',
           'They do not govern a signed non-disclosure, evaluation, proof-of-concept or licence agreement between us. Those govern themselves, and where they conflict with these Terms, they prevail.',
           'If you are using the platform for an organisation, you confirm you have authority to bind it, and "you" means both you and that organisation.',
+        ],
+      },
+      {
+        heading: 'Eligibility and accounts',
+        body: [
+          'You must be at least 18 years old and legally able to enter a contract. The Platform is intended for use by organisations in a professional capacity; it is not a consumer service and is not directed at children.',
+          'You may begin a Conversation without an account, and you may open one at any time — including before you have said anything to us.',
+          'A Workspace is opened either by registering, which is open to anyone, or by invitation after we have reviewed what you described and there is something for us to work on together.',
+          '· You must provide accurate information and keep it current.',
+          '· You must accept these Terms and the Privacy Policy before the Workspace is created. We record the versions and time of that acceptance.',
+          '· You are responsible for activity under your credentials and must tell us promptly at {security_email} if you believe they have been compromised.',
+          '· Invitations are personal, single-use and time-limited, and may not be shared or transferred.',
+          '· We may decline to create, suspend, or close a Workspace where we reasonably believe these Terms have been breached or an address is being used without authority.',
+          'Having a Workspace does not entitle you to any particular information. What we can discuss is governed by the Disclosure Policy, your contractual position, the work that has actually progressed, and any separate content authorization. Registering does not make you a customer and does not put us under an obligation to work with you.',
+          'We are not obliged to issue an invitation, and the absence of one is not a statement about you or your organisation.',
+        ],
+      },
+      {
+        heading: 'Credentials and access',
+        body: [
+          'Choosing a password. We require at least {password_min_length} characters. We do not require particular symbols, digits or capitals, we do not force scheduled rotation, we do not use security questions, and we allow paste so you can use a password manager.',
+          'How we hold it. Your password is stored only as a cryptographic hash using {password_hash_algorithm}. We cannot read it, we will never ask you for it, and no member of our team can retrieve it.',
+          'Confirming your email address. When you register we email a single-use link that expires after {verification_ttl}. Requesting a new link invalidates any earlier one.',
+          'You do not have to confirm your address to use your Workspace. Confirmation is required before we send non-authentication email, before an NDA is put in place, and before your address is named on a proposal, agreement or other commercial document. Confirmation proves control of an address; it is not content authorization and it does not raise disclosure.',
+          'Resetting your password. A reset link expires after {reset_ttl}, may be used once, and a new link invalidates older ones. We answer reset requests the same way whether or not an address has a Workspace.',
+          'When your password changes, every other signed-in session for the Workspace is signed out.',
+          'Two-factor authentication is not currently offered. Where it becomes available, we will tell you before it is required.',
+        ],
+      },
+      {
+        heading: 'One account per address, and addresses that are not yours',
+        body: [
+          'One Workspace per email address. If an address is already in use, we do not create a second Workspace. We answer the registration request in the same outward way whether or not the address is already in use, and notify the holder rather than revealing account existence to the requester.',
+          'Do not register an address you do not control. If somebody registers your address, confirm nothing and tell us at {security_email}; we will close the Workspace.',
+          'If a Workspace is opened and then never used — no Conversation, no confirmed address and no sign-in — we delete it and its data after {abandoned_account_days}. See Privacy §8.',
         ],
       },
       {
@@ -211,7 +250,8 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         body: [
           '· Conversation content — the text of your messages, the prompts you select, your conversation titles.',
           '· Attachments — files you attach, and the text we extract from them.',
-          '· Workspace data — name, business email, organisation, role, credentials, invitation records.',
+          '· Workspace data — name, email, organisation, role, credentials, and whether the Workspace was opened by registration or invitation.',
+          '· Authentication data — sign-in identifier, password hash, password-reset and email-confirmation requests and hashed single-use tokens, confirmation state, password-change time, request IP addresses and sign-in timestamps.',
           '· Assent records — which version of these instruments you accepted, and when.',
           '· Support and relationship data — support requests, meeting notes, feedback, agreed outcomes.',
           '· Technical and usage data — IP address, browser and device information, timestamps, which sections you opened, error and performance logs.',
@@ -224,6 +264,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         body: [
           'To respond to you and prepare your output (contract, and our legitimate interest in answering an enquiry). To create and operate a workspace (contract). To scan attachments for malware and abuse (legitimate interest in security; legal obligation). To keep audit logs of access and disclosure (legal obligation; accountability). To improve the platform using aggregate, non-identifying signals (legitimate interest). To send you material you asked for (contract; consent where marketing). To comply with law and to establish or defend claims (legal obligation).',
           'Where we rely on legitimate interests we have considered your interests and rights, and you may object.',
+          'Authentication includes confirming that an address is yours and protecting the Workspace from unauthorised access. Registration, reset, sign-in, invitation-code and confirmation-resend responses are deliberately enumeration-safe and do not reveal whether an account exists.',
           'Three things we do not do: we do not use your conversation content or attachments to train, fine-tune or evaluate any model; we do not use your content to answer anyone else\u2019s question; and we do not sell personal data or share it for cross-context behavioural advertising.',
         ],
       },
@@ -256,7 +297,10 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
           '· Pre-NDA attachments — [pre-NDA retention] days, then purged with a verifiable record.',
           '· Workspace conversations and attachments — the life of the workspace, then [workspace deletion window].',
           '· Workspace account data — the life of the relationship, then [account retention].',
-          '· Assent records — [assent retention], because we must be able to show what you agreed to.',
+          '· Password-reset and email-confirmation tokens — until used, superseded or expired, then purged on a scheduled sweep.',
+          '· A Workspace that is never used — deleted after {abandoned_account_days} where there has been no Conversation, no confirmed address and no sign-in.',
+          '· How the account was opened — for the life of the Workspace.',
+          '· Assent records — [assent retention], because we must be able to show what you agreed to. The narrow acceptance record may survive Workspace deletion and contains no conversation content or attachments.',
           '· Audit and security logs — [audit retention].',
           '· Accounting and tax records — as required by Korean law.',
           '· Aggregate, non-identifying analytics — indefinitely, in a form that does not identify you.',
@@ -290,6 +334,21 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
     version: VERSION,
     effective: EFFECTIVE,
     sections: [
+      {
+        heading: 'Credentials',
+        body: [
+          'Your password is never stored. Only a cryptographic hash is kept, using {password_hash_algorithm} with a per-account salt. We cannot read it and will never ask you for it.',
+          'We require at least {password_min_length} characters rather than mandatory composition rules, do not force rotation, do not use security questions, and allow paste so password managers work.',
+          'An email address identifies at most one active Workspace, enforced in the database.',
+          'Reset and confirmation links are single-use, short-lived and stored only as hashes. A reset token expires after {reset_ttl}; a confirmation token after {verification_ttl}. Requesting a new link invalidates any earlier one.',
+          'A confirmation token is bound to the address it was issued for. Changing the Workspace address prevents an older link from confirming the newer address.',
+          'A password change signs out every other session.',
+          'Registration, reset, sign-in, invitation-code and confirmation-resend requests deliberately return enumeration-safe responses. Where an address is already in use, the holder is notified without revealing that fact to the requester.',
+          'Authentication is rate-limited by address and network origin. Sessions are held in an httpOnly cookie set by the server; browser JavaScript cannot read credentials or session tokens.',
+          'Confirmation is not a substitute for authorisation. It proves control of an address; it does not increase what we may disclose.',
+          'Two-factor authentication is not currently offered.',
+        ],
+      },
       {
         heading: 'Separation of access',
         body: [
@@ -371,15 +430,24 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         body: [
           '· Public — anyone. What our technologies do and why it matters, our positioning, our products, the shape of the commercial path, and these instruments.',
           '· Controlled — a visitor who has described their situation. A reflection of your problem, a brief written for your role, and the route we would examine first.',
-          '· Under NDA — a client with a signed NDA. Controlled technical explanation of how a method works, eligibility conditions, proof summaries, validation boundaries, benchmark methodology, and a scoped assessment of your workload.',
-          '· Under contract — a contracted customer. Your assessment, your evidence, your deployment material, your success plan.',
+          '· Under NDA — a client whose NDA protects the relevant disclosure and whose current work has explicit authorization for the specific material. Within that approved scope, controlled technical explanation, eligibility conditions, proof summaries, validation boundaries, benchmark methodology, and a scoped assessment may be available. An NDA alone does not authorize every protected item.',
+          '· Under contract — a contracted customer, within the scope of the applicable agreement and content authorization. Your assessment, your evidence, your deployment material, your success plan.',
           'And one that is not a level: implementation. Source code, the full transformation pipeline, kernel-level detail, our benchmark harness, unfiled invention detail and another customer\u2019s results are not disclosed at any level, to anyone, without a licence. If we would not show it to you, we are not showing it to your competitor either.',
+        ],
+      },
+      {
+        heading: 'An account is not a disclosure level',
+        body: [
+          'Holding an account is not a disclosure level.',
+          'What we can show and discuss is determined by the stricter of the position you are in and the stage the work has legitimately reached. It is not determined by whether you have an account or whether you have confirmed your email address.',
+          'A person who registers and says nothing reaches exactly what an unregistered visitor reaches. Signing in changes where your work is kept; it does not change what we can show you.',
+          'An NDA protects an authorized disclosure. It does not, by itself, authorize every protected item or expand access beyond the content and stage separately approved for the relationship.',
         ],
       },
       {
         heading: 'What you can have before an NDA',
         body: [
-          'A great deal. What our technologies address, which of them is likely relevant to you and why, where in your stack the pressure probably sits, what a proof would have to demonstrate, what an engagement would look like, and what an NDA would unlock.',
+          'A great deal. What our technologies address, which of them is likely relevant to you and why, where in your stack the pressure probably sits, what a proof would have to demonstrate, what an engagement would look like, and what additional material may be considered after the relevant agreement and authorization are in place.',
           'That is enough for a serious first conversation, and we would rather have that conversation than a vague one.',
         ],
       },
@@ -404,7 +472,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         body: [
           'The platform\u2019s automated responses answer only from material approved for your level. They cannot be argued, prompted or persuaded into a level you have not reached, and neither can a document you upload. If you ask something above your level, you will be told plainly what would unlock it — and offered a person.',
           'Material at controlled level or above is given for your organisation\u2019s evaluation. Please do not publish it or pass it outside your organisation without asking.',
-          'If the boundary is in the way of a decision you are genuinely trying to make, say so. The fastest route through it is usually an NDA, and the person named in your conversation can start one the same day.',
+          'If the boundary is in the way of a decision you are genuinely trying to make, say so. A person can explain which agreement, stage and content authorization would be required; an NDA alone does not create entitlement.',
         ],
       },
     ],

@@ -1,9 +1,10 @@
 'use client';
 
 import type { InlineCard } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
- * "What we can discuss now, and what an NDA unlocks" (Playbook v1.6, State 6).
+ * "What we can discuss now, and what requires further authorization".
  *
  * It fires when the ceiling CHANGES, so the visitor always knows where the line
  * currently sits. The framing is reassurance, not friction:
@@ -21,6 +22,7 @@ interface BoundaryPayload {
 }
 
 export function DisclosureBoundaryCard({ card }: { card: InlineCard }) {
+  const copy = useCommonCopy();
   const p = (card.payload ?? {}) as BoundaryPayload;
 
   return (
@@ -31,13 +33,13 @@ export function DisclosureBoundaryCard({ card }: { card: InlineCard }) {
       <div className="inline-card__columns">
         {p.openNow && p.openNow.length > 0 ? (
           <div>
-            <p className="inline-card__column-title">Open now</p>
+            <p className="inline-card__column-title">{copy.openNow}</p>
             <ul>{p.openNow.map((i) => <li key={i}>{i}</li>)}</ul>
           </div>
         ) : null}
         {p.afterNda && p.afterNda.length > 0 ? (
           <div>
-            <p className="inline-card__column-title">After an NDA</p>
+            <p className="inline-card__column-title">{copy.agreementAuthorization}</p>
             <ul>{p.afterNda.map((i) => <li key={i}>{i}</li>)}</ul>
           </div>
         ) : null}

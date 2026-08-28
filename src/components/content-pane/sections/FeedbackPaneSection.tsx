@@ -1,7 +1,8 @@
 'use client';
 
 import { ChangesSinceLastVisit } from '@/components/success/ChangesSinceLastVisit';
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PaneSectionFrame } from './_shared';
 
 /**
@@ -32,11 +33,12 @@ import { PaneSectionFrame } from './_shared';
  * that feedback is answered in the conversation instead of implying a record exists.
  */
 export function FeedbackPaneSection() {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   return (
     <PaneSectionFrame section="feedback">
       <div className="pane__stack">
         <ChangesSinceLastVisit />
-        <p className="pane__note">{PANE_COPY.feedbackNote}</p>
+        <p className="pane__note">{paneCopy.feedbackNote}</p>
       </div>
     </PaneSectionFrame>
   );

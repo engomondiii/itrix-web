@@ -1,5 +1,8 @@
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { RelationshipTeamMember, TeamRole } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 const ROLE_ORDER: TeamRole[] = ['customer_success', 'technical', 'executive', 'support'];
 
@@ -14,7 +17,9 @@ const ROLE_ORDER: TeamRole[] = ['customer_success', 'technical', 'executive', 's
  * the page, not left as an internal principle.
  */
 export function RelationshipTeamCard({ team }: { team: readonly RelationshipTeamMember[] }) {
-  if (team.length === 0) return <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.team.empty}</p>;
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
+  if (team.length === 0) return <p className="text-web-body text-ink-secondary">{successCopy.team.empty}</p>;
 
   const ordered = [...team].sort(
     (a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role) || Number(b.isPrimary) - Number(a.isPrimary),
@@ -28,19 +33,19 @@ export function RelationshipTeamCard({ team }: { team: readonly RelationshipTeam
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h3 className="text-card-title text-ink-primary">
                 {m.name}
-                {m.isPrimary ? <span className="ml-2 font-mono text-micro uppercase tracking-[0.08em] text-ink-muted">Primary</span> : null}
+                {m.isPrimary ? <span className="ml-2 font-mono text-micro uppercase tracking-[0.08em] text-ink-muted">{ko ? '주 담당' : 'Primary'}</span> : null}
               </h3>
               <span className="font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-                {SUCCESS_COPY.team.roleLabel[m.role]}
+                {successCopy.team.roleLabel[m.role]}
               </span>
             </div>
             <p className="mt-1.5 text-caption text-ink-secondary">
-              {m.expectations || SUCCESS_COPY.team.roles[m.role]}
+              {m.expectations || successCopy.team.roles[m.role]}
             </p>
           </li>
         ))}
       </ul>
-      <p className="text-caption text-ink-primary">{SUCCESS_COPY.team.reachability}</p>
+      <p className="text-caption text-ink-primary">{successCopy.team.reachability}</p>
     </div>
   );
 }

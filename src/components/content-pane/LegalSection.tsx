@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
-import { PANE_SECTION_LABEL } from '@/lib/content/paneCopy';
+import { PANE_SECTION_LABEL, PANE_SECTION_LABEL_KO } from '@/lib/content/paneCopy';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * THE FOUR LEGAL INSTRUMENTS, in the home Architecture v2.7 §2.4 specifies.
@@ -24,9 +26,11 @@ import { PANE_SECTION_LABEL } from '@/lib/content/paneCopy';
  * (§19.10).
  */
 export function LegalSection() {
+  const copy = useCommonCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   return (
     <div className="pane__section" data-section="legal">
-      <h3 className="pane__section-title">{PANE_SECTION_LABEL.legal}</h3>
+      <h3 className="pane__section-title">{ko ? PANE_SECTION_LABEL_KO.legal : PANE_SECTION_LABEL.legal}</h3>
 
       <ul className="pane__legal">
         {LEGAL_INSTRUMENTS.map((instrument) => (
@@ -34,7 +38,7 @@ export function LegalSection() {
             <Link href={`/${instrument.slug}`} className="pane__legal-link">
               <span className="pane__legal-title">{instrument.title}</span>
               <span className="pane__legal-version">
-                Version {instrument.version} · effective {instrument.effective}
+                {copy.version} {instrument.version} · {copy.effective} {instrument.effective}
               </span>
             </Link>
           </li>

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { cn } from '@/lib/cn';
 import type { ToastItem } from '@/store/uiStore';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 const toneStyle: Record<ToastItem['tone'], { bar: string; bg: string; fg: string }> = {
   info: { bar: 'var(--ink-primary)', bg: 'var(--soft)', fg: 'var(--ink-primary)' },
@@ -17,6 +18,7 @@ export interface ToastProps {
 }
 
 export function Toast({ toast, onDismiss }: ToastProps) {
+  const copy = useCommonCopy();
   const { bar, bg, fg } = toneStyle[toast.tone];
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export function Toast({ toast, onDismiss }: ToastProps) {
       <button
         type="button"
         onClick={() => onDismiss(toast.id)}
-        aria-label="Dismiss"
+        aria-label={copy.dismiss}
         className="m-2 rounded-sm px-1.5 text-ink-secondary transition-colors hover:bg-soft"
         style={{ color: fg, background: bg }}
       >

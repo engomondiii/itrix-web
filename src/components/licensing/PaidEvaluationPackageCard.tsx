@@ -1,31 +1,4 @@
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-export interface PaidEvaluationPackageCardProps {
-  name: string;
-  summary: string;
-  deliverables: string[];
-  featured?: boolean;
-}
-
-export function PaidEvaluationPackageCard({ name, summary, deliverables, featured }: PaidEvaluationPackageCardProps) {
-  return (
-    <Card variant={featured ? 'featured' : 'default'} className="flex h-full flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-web-h3 text-structure-900">{name}</h3>
-        <Badge tone={featured ? 'special' : 'info'}>Paid evaluation</Badge>
-      </div>
-      <p className="text-secondary text-ink-secondary">{summary}</p>
-      <ul className="flex flex-col gap-2">
-        {deliverables.map((d) => (
-          <li key={d} className="flex items-start gap-2 text-secondary text-ink-secondary">
-            <span aria-hidden className="mt-1 text-ink-primary">▪</span>
-            <span>{d}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="mt-auto border-t border-border-soft pt-3 text-caption text-ink-secondary">{NDA_WARNINGS.pricing}</p>
-    </Card>
-  );
-}
+'use client';
+import { Card } from '@/components/ui/Card'; import { Badge } from '@/components/ui/Badge'; import { useNdaWarnings } from '@/lib/i18n/ndaLocale'; import { useLocaleStore } from '@/store/localeStore';
+export interface PaidEvaluationPackageCardProps{name:string;summary:string;deliverables:string[];featured?:boolean;nameKo?:string;summaryKo?:string;deliverablesKo?:string[]}
+export function PaidEvaluationPackageCard({name,summary,deliverables,featured,nameKo,summaryKo,deliverablesKo}:PaidEvaluationPackageCardProps){const ko=useLocaleStore(s=>s.locale)==='ko';const warnings=useNdaWarnings();const shownName=ko?(nameKo??name):name;const shownSummary=ko?(summaryKo??summary):summary;const shownDeliverables=ko?(deliverablesKo??deliverables):deliverables;return <Card variant={featured?'featured':'default'} className="flex h-full flex-col gap-4"><div className="flex items-center justify-between"><h3 className="text-web-h3 text-structure-900">{shownName}</h3><Badge tone={featured?'special':'info'}>{ko?'유료 평가':'Paid evaluation'}</Badge></div><p className="text-secondary text-ink-secondary">{shownSummary}</p><ul className="flex flex-col gap-2">{shownDeliverables.map(d=><li key={d} className="flex items-start gap-2 text-secondary text-ink-secondary"><span aria-hidden className="mt-1 text-ink-primary">▪</span><span>{d}</span></li>)}</ul><p className="mt-auto border-t border-border-soft pt-3 text-caption text-ink-secondary">{warnings.pricing}</p></Card>}

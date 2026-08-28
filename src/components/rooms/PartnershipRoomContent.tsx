@@ -1,29 +1,4 @@
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { PRODUCTS } from '@/constants/products';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-const PATHS = [
-  { h: 'Integration', d: `${PRODUCTS.alpha_core.name} embeds into hardware and runtime backends as licensed IP.` },
-  { h: 'Co-development', d: 'Joint work to adapt the methods to a partner platform, scoped after evaluation.' },
-  { h: 'Strategic rights', d: 'Field or regional exclusivity for partners who commit to deep integration.' },
-];
-
-export function PartnershipRoomContent() {
-  return (
-    <section className="section border-b border-border-medium bg-surface">
-      <div className="container-page">
-        <Badge tone="special">Partnership</Badge>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {PATHS.map((p) => (
-            <Card key={p.h} className="flex flex-col gap-2">
-              <span className="text-card-title text-structure-900">{p.h}</span>
-              <span className="text-secondary text-ink-secondary">{p.d}</span>
-            </Card>
-          ))}
-        </div>
-        <p className="mt-6 text-caption text-ink-secondary">{NDA_WARNINGS.exclusivity}</p>
-      </div>
-    </section>
-  );
-}
+'use client';
+import { Card } from '@/components/ui/Card';import { Badge } from '@/components/ui/Badge';import { PRODUCTS } from '@/constants/products';import { useNdaWarnings } from '@/lib/i18n/ndaLocale';import { useLocaleStore } from '@/store/localeStore';
+const PATHS=[{h:'Integration questions',hk:'통합 질문',d:`Where evidence supports it, ${PRODUCTS.alpha_core.name} can validate a previously established representation hypothesis against a target runtime or hardware environment.`,dk:'근거가 있을 때 ALPHA Core는 이미 수립된 표현 가설을 목표 런타임 또는 하드웨어 환경에서 검증할 수 있습니다.'},{h:'Co-development',hk:'공동 개발',d:'Joint work may be scoped after applicability and evidence are established; it is not assumed from a partnership conversation.',dk:'적용 가능성과 근거가 확인된 뒤 공동 작업 범위를 논의할 수 있으며, 파트너십 대화만으로 이를 가정하지 않습니다.'},{h:'Rights questions',hk:'권리 관련 질문',d:'Field, regional, exclusive or other rights are negotiable questions only if the parties choose to discuss them and agree them in writing.',dk:'분야·지역·독점 등 권리는 당사자가 논의하기로 선택하고 서면으로 합의한 경우에만 성립하는 협상 질문입니다.'}];
+export function PartnershipRoomContent(){const ko=useLocaleStore(s=>s.locale)==='ko';const w=useNdaWarnings();return <section className="section border-b border-border-medium bg-surface"><div className="container-page"><Badge tone="special">{ko?'파트너십':'Partnership'}</Badge><div className="mt-6 grid gap-4 md:grid-cols-3">{PATHS.map(p=><Card key={p.h} className="flex flex-col gap-2"><span className="text-card-title text-structure-900">{ko?p.hk:p.h}</span><span className="text-secondary text-ink-secondary">{ko?p.dk:p.d}</span></Card>)}</div><p className="mt-6 text-caption text-ink-secondary">{w.exclusivity}</p></div></section>}

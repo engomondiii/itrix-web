@@ -1,35 +1,3 @@
-import Link from 'next/link';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { SectionLabel } from '@/components/ui/SectionLabel';
-import { routes } from '@/constants/routes';
-
-/**
- * Names the paid Alpha Compute Assessment — the first paid step the public sees
- * (Playbook §00E). Its deliverable is the Boundary Waste Map. No fee is ever shown;
- * terms and pricing are handled privately by the team.
- */
-export function AssessmentOfferCard() {
-  return (
-    <Card variant="featured" className="flex flex-col gap-3">
-      <SectionLabel tone="gold">Alpha Compute Assessment</SectionLabel>
-      <h3 className="text-web-h3 text-structure-900">A focused study of one real workload</h3>
-      <p className="reading text-ink-secondary">
-        A paid engineering study that looks at where your computation crosses unnecessary boundaries
-        and produces a Boundary Waste Map — a prioritised view of where ALPHA Compute may help, and a
-        recommendation on a proof of concept. You receive a clear engineering result even if you
-        choose not to go further. It is arranged after an NDA; details are discussed privately.
-      </p>
-      <ul className="flex flex-col gap-1.5 text-secondary text-ink-secondary">
-        <li className="flex items-start gap-2"><span aria-hidden className="mt-1 text-ink-primary">•</span> A Boundary Waste Map of one workload</li>
-        <li className="flex items-start gap-2"><span aria-hidden className="mt-1 text-ink-primary">•</span> A prioritised view of where the waste sits</li>
-        <li className="flex items-start gap-2"><span aria-hidden className="mt-1 text-ink-primary">•</span> A recommendation on whether a PoC is worth it</li>
-      </ul>
-      <div className="pt-1">
-        <Link href={routes.review}>
-          <Button variant="gold" size="md">Request an Alpha Compute Assessment</Button>
-        </Link>
-      </div>
-    </Card>
-  );
-}
+'use client';
+import Link from 'next/link'; import { Card } from '@/components/ui/Card'; import { Button } from '@/components/ui/Button'; import { SectionLabel } from '@/components/ui/SectionLabel'; import { routes } from '@/constants/routes'; import { useLocaleStore } from '@/store/localeStore';
+export function AssessmentOfferCard(){const ko=useLocaleStore(s=>s.locale)==='ko';return <Card variant="featured" className="flex flex-col gap-3"><SectionLabel tone="gold">{ko ? 'ALPHA Compute 평가' : 'ALPHA Compute Assessment'}</SectionLabel><h3 className="text-web-h3 text-structure-900">{ko?'실제 워크로드 하나를 집중적으로 살펴보는 엔지니어링 평가':'A focused study of one real workload'}</h3><p className="reading text-ink-secondary">{ko?'계산이 불필요한 경계를 어디에서 넘는지 살펴보고 Boundary Waste Map과 우선순위, 그리고 다음에 어떤 근거가 필요한지에 대한 권고를 제공합니다. 더 진행하지 않더라도 명확한 엔지니어링 결과를 받습니다. 기밀 교환과 제한 자료에는 적절한 보호와 명시적 승인이 필요하며 PoC는 나중에 별도로 선택하는 단계입니다.':'A focused engineering study that looks at where your computation crosses unnecessary boundaries and produces a Boundary Waste Map — a prioritised view of where ALPHA Compute may help, and a recommendation on what evidence, if any, should come next. You receive a clear engineering result even if you choose not to go further. Confidential exchange and restricted material require the appropriate protection and explicit authorization; a PoC is a separate stage only if you later choose it.'}</p><ul className="flex flex-col gap-1.5 text-secondary text-ink-secondary">{(ko?['워크로드 하나의 Boundary Waste Map','낭비가 발생하는 위치의 우선순위','다음 근거 단계에 대한 권고 — 추가 조치를 하지 않는 결과도 포함']:['A Boundary Waste Map of one workload','A prioritised view of where the waste sits','A recommendation on the next evidence step, which may be no further action']).map(x=><li key={x} className="flex items-start gap-2"><span aria-hidden className="mt-1 text-ink-primary">•</span>{x}</li>)}</ul><div className="pt-1"><Link href={routes.review}><Button variant="gold" size="md">{ko?'ALPHA Compute Assessment 요청':'Request an ALPHA Compute Assessment'}</Button></Link></div></Card>}

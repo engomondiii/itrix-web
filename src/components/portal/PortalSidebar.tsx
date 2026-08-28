@@ -1,5 +1,7 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useEffect } from 'react';
 import type { ReactElement } from 'react';
 import Link from 'next/link';
@@ -18,8 +20,9 @@ import { useThreadContext } from '@/context/ThreadContext';
 import { useComposerStore } from '@/store/composerStore';
 import { routes } from '@/constants/routes';
 import { brand } from '@/constants/brand';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
+import { useLocaleStore } from '@/store/localeStore';
+import { portalNavLabel } from '@/lib/i18n/portalConfigLocale';
 
 /**
  * The portal's own left navigation — never the public header.
@@ -100,6 +103,9 @@ const GROUPS: readonly (readonly string[])[] = [
 ];
 
 export function PortalSidebar() {
+  const railCopy = useRailCopy();
+  const portalCopy = usePortalCopy();
+  const locale = useLocaleStore((s) => s.locale);
   const unread = usePortalStore((s) => s.unreadMessages);
   /* The badge's data supply (fix, 2026-08-10): nothing mounted the old overview
      hook, so `unreadMessages` was never written and the Messaging badge never
@@ -155,11 +161,11 @@ export function PortalSidebar() {
       <Link href={routes.workspaceOverview} className="flex flex-col gap-1 px-3">
         <ItrixLogo width={112} priority />
         <span className="text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
-          Workspace
+          {locale === 'ko' ? '워크스페이스' : 'Workspace'}
         </span>
       </Link>
 
-      <nav className="flex flex-col gap-4" aria-label="Workspace">
+      <nav className="flex flex-col gap-4" aria-label={locale === 'ko' ? '워크스페이스' : 'Workspace'}>
         {groups.map((group, gi) => (
           <div
             key={group[0].key}
@@ -170,7 +176,7 @@ export function PortalSidebar() {
                 <PortalNavLink
                   key={item.key}
                   href={item.href}
-                  label={item.label}
+                  label={portalNavLabel(locale, item.key, item.label)}
                   icon={<NavGlyph itemKey={item.key} />}
                   badge={item.key === 'messages' ? unread : undefined}
                   onClick={
@@ -215,7 +221,7 @@ export function PortalSidebar() {
           >
             <path d="M12 5v14M5 12h14" />
           </svg>
-          {RAIL_COPY.newChat}
+          {locale === 'ko' ? '새 대화' : railCopy.newChat}
         </button>
       </div>
 
@@ -227,7 +233,7 @@ export function PortalSidebar() {
       <div className="flex flex-col gap-3 border-t border-border-soft px-3 pt-4">
         <p className="text-caption italic text-ink-secondary">“{brand.thesis}”</p>
         <Button variant="ghost" size="sm" onClick={() => void signOut()} className="self-start">
-          {PORTAL_COPY.settings.signOut}
+          {portalCopy.settings.signOut}
         </Button>
       </div>
     </aside>

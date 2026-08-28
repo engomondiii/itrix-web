@@ -1,8 +1,9 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useThreadContext } from '@/context/ThreadContext';
 import { ConversationListItem } from './ConversationListItem';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 
 /**
  * The conversation list — the substance of the rail.
@@ -20,14 +21,15 @@ import { RAIL_COPY } from '@/lib/content/composerCopy';
  * conversations does not need a decorative panel telling them so.
  */
 export function ConversationList() {
+  const railCopy = useRailCopy();
   const { threads } = useThreadContext();
 
   return (
     <div className="rail-group">
-      <h2 className="rail-group__label">{RAIL_COPY.conversationsLabel}</h2>
+      <h2 className="rail-group__label">{railCopy.conversationsLabel}</h2>
 
       {threads.length === 0 ? (
-        <p className="rail-group__empty">{RAIL_COPY.conversationsEmpty}</p>
+        <p className="rail-group__empty">{railCopy.conversationsEmpty}</p>
       ) : (
         <ul className="rail-threads">
           {threads.map((thread) => (

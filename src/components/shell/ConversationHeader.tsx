@@ -1,5 +1,7 @@
 'use client';
 
+import { useHeaderCopy, useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useShellContext } from '@/context/ShellContext';
@@ -7,7 +9,6 @@ import { useRailStore } from '@/store/railStore';
 import { useComposerStore } from '@/store/composerStore';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
-import { HEADER_COPY, RAIL_COPY } from '@/lib/content/composerCopy';
 
 /**
  * The conversation header — where the retired right rail's guarantees live.
@@ -40,6 +41,8 @@ import { HEADER_COPY, RAIL_COPY } from '@/lib/content/composerCopy';
  * breakpoint, so it always says what pressing it will do.
  */
 export function ConversationHeader() {
+  const railCopy = useRailCopy();
+  const headerCopy = useHeaderCopy();
   const { conversationHeader } = useShellContext();
   const openSheet = useRailStore((s) => s.openSheet);
   /* Inside the signed-in workspace the conversation list lives in the portal
@@ -61,7 +64,7 @@ export function ConversationHeader() {
       <button
         type="button"
         className="conversation-header__nav"
-        aria-label={RAIL_COPY.openNavigation}
+        aria-label={railCopy.openNavigation}
         onClick={openSheet}
       >
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
@@ -96,8 +99,8 @@ export function ConversationHeader() {
             }}
           >
             {(pane.isSheetBreakpoint ? pane.sheetOpen : !pane.collapsed)
-              ? HEADER_COPY.hideContent
-              : HEADER_COPY.openContent}
+              ? headerCopy.hideContent
+              : headerCopy.openContent}
           </button>
         ) : null}
 
@@ -113,19 +116,19 @@ export function ConversationHeader() {
               aria-controls="quick-help"
               onClick={() => setHelpOpen((v) => !v)}
             >
-              {HEADER_COPY.quickHelp}
+              {headerCopy.quickHelp}
             </button>
             {/* Each item now DOES something: it puts an opening sentence in the
                 composer and returns focus there, so the request goes down the same
                 governed path as any other turn rather than into a dead menu. */}
             <ul id="quick-help" hidden={!helpOpen} className="conversation-header__help-menu">
-              {HEADER_COPY.quickHelpExpanded.map((item, i) => (
+              {headerCopy.quickHelpExpanded.map((item, i) => (
                 <li key={item}>
                   <button
                     type="button"
                     className="conversation-header__help-item"
                     onClick={() => {
-                      populate(HEADER_COPY.quickHelpPrompts[i] ?? item);
+                      populate(headerCopy.quickHelpPrompts[i] ?? item);
                       requestFocus();
                       setHelpOpen(false);
                       trackEvent('help.action_chosen', { action: item });
@@ -135,7 +138,7 @@ export function ConversationHeader() {
                   </button>
                 </li>
               ))}
-              <li className="conversation-header__help-hint">{HEADER_COPY.quickHelpHint}</li>
+              <li className="conversation-header__help-hint">{headerCopy.quickHelpHint}</li>
             </ul>
           </div>
         ) : null}

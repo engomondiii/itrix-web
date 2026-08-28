@@ -1,5 +1,7 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { createElement } from 'react';
 import type { ReactElement } from 'react';
 import { useRouter } from 'next/navigation';
@@ -11,7 +13,6 @@ import { WordmarkLockup } from './WordmarkLockup';
 import { NewChatButton } from './NewChatButton';
 import { ConversationList } from './ConversationList';
 import { RailAccountFooter } from './RailAccountFooter';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 import type { ConversationRailSection } from '@/lib/journey/railSections';
 
 /**
@@ -46,6 +47,7 @@ const SECTIONS: Readonly<Record<ConversationRailSection, () => ReactElement>> = 
 };
 
 export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
+  const railCopy = useRailCopy();
   const { conversationRailSections } = useShellContext();
   const { startNew } = useThreadContext();
   const clearComposer = useComposerStore((s) => s.clear);
@@ -93,7 +95,7 @@ export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
         <button
           type="button"
           className="conversation-rail__collapse"
-          aria-label={collapsed ? RAIL_COPY.expand : RAIL_COPY.collapse}
+          aria-label={collapsed ? railCopy.expand : railCopy.collapse}
           onClick={toggleCollapsed}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">

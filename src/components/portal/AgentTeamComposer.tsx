@@ -6,7 +6,7 @@ import { AttachControl } from '@/components/composer/AttachControl';
 import { AttachmentTray } from '@/components/composer/AttachmentTray';
 import { Button } from '@/components/ui/Button';
 import { useAttachments } from '@/hooks/useAttachments';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 
 /**
  * The portal message input (§63). Enter sends; Shift+Enter newlines.
@@ -41,6 +41,7 @@ export function AgentTeamComposer({
   disabled?: boolean;
   threadId?: string | null;
 }) {
+  const portalCopy = usePortalCopy();
   const [value, setValue] = useState('');
   const attachments = useAttachments(threadId, { statusSocket: false });
 
@@ -76,7 +77,7 @@ export function AgentTeamComposer({
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={onKeyDown}
           rows={2}
-          placeholder={PORTAL_COPY.messages.inputPlaceholder}
+          placeholder={portalCopy.messages.inputPlaceholder}
           disabled={disabled}
           className="min-h-[2.75rem] w-full resize-y rounded-md border border-border-medium bg-surface px-3 py-2 text-body text-ink-primary placeholder:text-ink-secondary focus-visible:border-accent-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary focus-visible:ring-offset-1 focus-visible:ring-offset-canvas disabled:opacity-50"
         />
@@ -86,10 +87,10 @@ export function AgentTeamComposer({
           onClick={submit}
           disabled={disabled || attachments.uploading || (!value.trim() && attachments.ids.length === 0)}
         >
-          {PORTAL_COPY.messages.sendButton}
+          {portalCopy.messages.sendButton}
         </Button>
       </div>
-      <p className="text-caption text-ink-secondary">{PORTAL_COPY.messages.inputNote}</p>
+      <p className="text-caption text-ink-secondary">{portalCopy.messages.inputNote}</p>
     </div>
   );
 }

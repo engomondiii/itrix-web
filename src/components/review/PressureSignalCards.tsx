@@ -3,6 +3,7 @@
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { usePressureSignal } from '@/hooks/usePressureSignal';
 import { cn } from '@/lib/cn';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * Pressure signal cards (Playbook §10). The intro line and card wording come from
@@ -10,10 +11,11 @@ import { cn } from '@/lib/cn';
  * ("Computation is becoming too expensive", "Our workload is too slow", …).
  */
 export function PressureSignalCards() {
+  const copy = useCommonCopy();
   const { signals, isSelected, toggle } = usePressureSignal();
   return (
     <div className="flex flex-col gap-3">
-      <SectionLabel withRule={false}>If useful, begin from one of these pressures</SectionLabel>
+      <SectionLabel withRule={false}>{copy.pressurePrompt}</SectionLabel>
       <div className="grid gap-2 sm:grid-cols-2">
         {signals.map((s) => {
           const selected = isSelected(s.area);

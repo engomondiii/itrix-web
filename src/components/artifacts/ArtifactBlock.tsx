@@ -11,6 +11,9 @@ import { PoCEvidenceArtifact } from './PoCEvidenceArtifact';
 import { IntegrationReadinessArtifact } from './IntegrationReadinessArtifact';
 import { SuccessOverviewArtifact } from './SuccessOverviewArtifact';
 import { DocumentArtifact } from './DocumentArtifact';
+import { ExecutiveBriefArtifact } from './ExecutiveBriefArtifact';
+import { TechnicalBriefArtifact } from './TechnicalBriefArtifact';
+import { ProductBriefArtifact } from './ProductBriefArtifact';
 import { isRenderableArtifact } from '@/lib/journey/artifactTypes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import type { Artifact } from '@/types/artifact.types';
@@ -81,6 +84,9 @@ export function ArtifactBlock({ artifact, defaultOpen = false, pinned = false }:
         {artifact.type === 'integration_readiness' ? <IntegrationReadinessArtifact artifact={artifact} /> : null}
         {artifact.type === 'success_overview' ? <SuccessOverviewArtifact artifact={artifact} /> : null}
         {artifact.type === 'document' ? <DocumentArtifact artifact={artifact} /> : null}
+        {artifact.type === 'executive_brief' ? <ExecutiveBriefArtifact artifact={artifact} /> : null}
+        {artifact.type === 'technical_brief' ? <TechnicalBriefArtifact artifact={artifact} /> : null}
+        {artifact.type === 'product_brief' ? <ProductBriefArtifact artifact={artifact} /> : null}
 
         <ArtifactActions artifact={artifact} />
       </div>

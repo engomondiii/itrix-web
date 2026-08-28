@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { apiRoutes } from '@/constants/routes';
 import { buildImmediateResponse } from '@/lib/content/immediateResponses';
-import { familyForPrompt } from '@/lib/content/examplePrompts';
 import { VISITOR_SESSION_COOKIE, cookieOptions, visitorBindingFromRequest } from '@/lib/server/reviewAccess';
 import type { PressureArea } from '@/types/review.types';
 import type { AppLocale } from '@/store/localeStore';
@@ -31,12 +30,6 @@ interface SubmitBody {
   clientId?: string | null;
   visitorType?: string | null;
   locale?: AppLocale;
-  /**
-   * The functional-family prior, when the visitor used one of the five example
-   * prompts. INTERNAL routing signal only — it is never returned to the client
-   * and never rendered (Architecture v2.5 §4.2, §9.4).
-   */
-  family?: string | null;
 }
 
 /**
@@ -50,9 +43,8 @@ interface SubmitBody {
  * backend this prompt originated at the center, so the Concierge opens by
  * mirroring rather than by prompting.
  *
- * If the visitor selected one of the five example chips we also pass the
- * functional family as a routing PRIOR. It is a hypothesis, never a conclusion,
- * and it is never echoed back to the visitor.
+ * Optional question guidance does not emit a persona/family prior. Relationship and
+ * qualification state are derived only from the substantive request and explicit consent.
  *
  * Reliability rule: backend failures return a recoverable, customer-safe error. Internal
  * URLs/status diagnostics are never serialized to the browser.
@@ -65,7 +57,6 @@ export async function POST(req: Request) {
   const prompt = (body.prompt ?? '').trim();
   const pressures = body.selectedPressures ?? [];
   const immediateResponse = buildImmediateResponse(prompt, pressures);
-  const family = familyForPrompt(prompt) ?? (body.family || null);
 
   if (!prompt) {
     return NextResponse.json({ error: { detail: 'Tell us what you would like to explore.' } }, { status: 400 });
@@ -105,7 +96,6 @@ export async function POST(req: Request) {
         pressure_areas: pressures,
         environment: body.environment ?? null,
         first_turn: true,
-        ...(family ? { functional_family: family } : {}),
       }),
     });
     if (!promptRes.ok) {

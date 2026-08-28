@@ -1,6 +1,7 @@
 'use client';
 
-import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
+import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
+
 import { StreamCaret } from './StreamCaret';
 import { ItrixTurnLabel } from './ItrixTurnLabel';
 import { UnderReviewNotice } from './UnderReviewNotice';
@@ -10,6 +11,7 @@ import { MarkdownTurn } from './MarkdownTurn';
 import { TurnActions } from './TurnActions';
 import { useContinueGeneration } from '@/hooks/useContinueGeneration';
 import type { Turn } from '@/types/thread.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * An itriX turn at any point in its life.
@@ -47,6 +49,8 @@ export interface StreamingTurnProps {
 }
 
 export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
+  const transcriptCopy = useTranscriptCopy();
+  const commonCopy = useCommonCopy();
   const provisional = turn.status === 'streaming' || turn.status === 'pending';
   const { continueGeneration, continuing } = useContinueGeneration(turn);
 
@@ -54,7 +58,7 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
     <article
       className="turn turn--itrix"
       data-status={turn.status}
-      aria-label={TRANSCRIPT_COPY.itrixTurn}
+      aria-label={transcriptCopy.itrixTurn}
       aria-busy={provisional || undefined}
     >
       <p className="turn__label turn__label--brand">
@@ -71,7 +75,7 @@ export function StreamingTurn({ turn, citations = [] }: StreamingTurnProps) {
           {provisional ? (
             <p className="turn__preparing">
               <StreamCaret />
-              <span className="sr-only">Preparing a response</span>
+              <span className="sr-only">{commonCopy.preparingResponse}</span>
             </p>
           ) : null}
         </div>

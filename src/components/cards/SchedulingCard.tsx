@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { InlineCard } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * "Schedule" (Playbook v1.6 §16F).
@@ -19,6 +20,7 @@ interface SchedulingPayload {
 }
 
 export function SchedulingCard({ card }: { card: InlineCard }) {
+  const copy = useCommonCopy();
   const p = (card.payload ?? {}) as SchedulingPayload;
 
   return (
@@ -29,7 +31,7 @@ export function SchedulingCard({ card }: { card: InlineCard }) {
         <p className="inline-card__slot">
           {p.nextAvailable}
           {p.duration ? <span className="inline-card__slot-meta">{p.duration}</span> : null}
-          {p.withWhom ? <span className="inline-card__slot-meta">with {p.withWhom}</span> : null}
+          {p.withWhom ? <span className="inline-card__slot-meta">{copy.withPerson(p.withWhom)}</span> : null}
         </p>
       ) : null}
 

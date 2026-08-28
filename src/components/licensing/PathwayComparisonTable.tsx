@@ -1,41 +1,6 @@
-import { LICENSE_PATHWAYS } from '@/constants/products';
-import { Badge } from '@/components/ui/Badge';
-
-const ORDER = ['non_exclusive', 'exclusive', 'strategic'] as const;
-const ROWS: { dim: string; values: Record<(typeof ORDER)[number], string> }[] = [
-  { dim: 'Who can license', values: { non_exclusive: 'Multiple licensees', exclusive: 'One, within a defined field or region', strategic: 'A single strategic partner' } },
-  { dim: 'Best for', values: { non_exclusive: 'Standard product adoption', exclusive: 'Defensible advantage in a domain', strategic: 'Deep, long-term co-development' } },
-  { dim: 'Terms', values: { non_exclusive: 'Standard', exclusive: 'Scoped and priced case by case', strategic: 'Bespoke, with strategic rights' } },
-];
-
-export function PathwayComparisonTable() {
-  return (
-    <div className="overflow-x-auto rounded-lg border border-border-medium">
-      <table className="w-full min-w-[680px] border-collapse bg-surface text-left">
-        <thead>
-          <tr className="bg-soft text-caption text-ink-secondary">
-            <th className="px-4 py-3 font-semibold"> </th>
-            {ORDER.map((k) => (
-              <th key={k} className="px-4 py-3 font-semibold">
-                <span className="flex items-center gap-2">
-                  {LICENSE_PATHWAYS[k].label}
-                  {k === 'exclusive' || k === 'strategic' ? <Badge tone="special">Premium</Badge> : null}
-                </span>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {ROWS.map((r) => (
-            <tr key={r.dim} className="border-t border-border-soft align-top">
-              <td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td>
-              {ORDER.map((k) => (
-                <td key={k} className="px-4 py-4 text-secondary text-ink-secondary">{r.values[k]}</td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+'use client';
+import { LICENSE_PATHWAYS } from '@/constants/products'; import { useLocaleStore } from '@/store/localeStore'; import { licenseCopy } from '@/lib/i18n/productsLocale';
+const ORDER=['non_exclusive','exclusive','strategic'] as const;
+const EN=[{dim:'Meaning',values:{non_exclusive:'Use that does not reserve the agreed scope to one licensee.',exclusive:'Rights that may reserve a specifically defined scope to one licensee, if agreed.',strategic:'A broader relationship structure whose rights and obligations must be expressly negotiated.'}},{dim:'Public status',values:{non_exclusive:'No default terms are stated here.',exclusive:'No scope, duration or entitlement is assumed.',strategic:'No co-development, priority or strategic right is assumed.'}},{dim:'What decides it',values:{non_exclusive:'The applicable written agreement.',exclusive:'The applicable written agreement.',strategic:'The applicable written agreement.'}}] as const;
+const KO=[{dim:'의미',values:{non_exclusive:'합의된 범위를 한 라이선시에게만 유보하지 않는 사용 구조.',exclusive:'합의할 경우 특정 범위를 한 라이선시에게 유보할 수 있는 권리 구조.',strategic:'권리와 의무를 명시적으로 협상해야 하는 더 넓은 관계 구조.'}},{dim:'공개 상태',values:{non_exclusive:'여기에는 기본 조건이 없습니다.',exclusive:'범위, 기간 또는 자격을 가정하지 않습니다.',strategic:'공동개발, 우선권 또는 전략적 권리를 가정하지 않습니다.'}},{dim:'결정 근거',values:{non_exclusive:'적용 가능한 서면 계약.',exclusive:'적용 가능한 서면 계약.',strategic:'적용 가능한 서면 계약.'}}] as const;
+export function PathwayComparisonTable(){const locale=useLocaleStore(s=>s.locale);const rows=locale==='ko'?KO:EN;return <div className="overflow-x-auto rounded-lg border border-border-medium"><table className="w-full min-w-[680px] border-collapse bg-surface text-left"><thead><tr className="bg-soft text-caption text-ink-secondary"><th className="px-4 py-3 font-semibold"> </th>{ORDER.map(k=><th key={k} className="px-4 py-3 font-semibold">{licenseCopy(locale,k).label}</th>)}</tr></thead><tbody>{rows.map(r=><tr key={r.dim} className="border-t border-border-soft align-top"><td className="px-4 py-4 text-micro font-semibold uppercase tracking-[0.06em] text-ink-secondary">{r.dim}</td>{ORDER.map(k=><td key={k} className="px-4 py-4 text-secondary text-ink-secondary">{r.values[k]}</td>)}</tr>)}</tbody></table></div>}

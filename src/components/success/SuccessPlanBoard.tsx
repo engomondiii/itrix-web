@@ -1,5 +1,8 @@
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { SuccessPlan } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * The shared 30/60/90 plan.
@@ -11,7 +14,9 @@ import type { SuccessPlan } from '@/types/success.types';
  * becoming a surprise.
  */
 export function SuccessPlanBoard({ plan }: { plan: SuccessPlan | null }) {
-  if (!plan) return <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.plan.empty}</p>;
+  const successCopy = useSuccessCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
+  if (!plan) return <p className="text-web-body text-ink-secondary">{successCopy.plan.empty}</p>;
 
   const customerItems = plan.milestones.filter((m) => m.ownerSide === 'customer');
 
@@ -19,7 +24,7 @@ export function SuccessPlanBoard({ plan }: { plan: SuccessPlan | null }) {
     <div className="flex flex-col gap-6">
       <div>
         <p className="font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-          Next {plan.horizonDays} days
+          {ko ? `향후 ${plan.horizonDays}일` : `Next ${plan.horizonDays} days`}
         </p>
         {plan.goals.length > 0 ? (
           <ul className="mt-2 flex flex-col gap-1.5">
@@ -30,7 +35,7 @@ export function SuccessPlanBoard({ plan }: { plan: SuccessPlan | null }) {
         ) : null}
         {plan.nextReviewAt ? (
           <p className="mt-3 text-caption text-ink-secondary">
-            Next review {new Date(plan.nextReviewAt).toLocaleDateString()}
+            {ko ? '다음 리뷰' : 'Next review'} {new Date(plan.nextReviewAt).toLocaleDateString(ko ? 'ko-KR' : 'en')}
           </p>
         ) : null}
       </div>
@@ -38,21 +43,21 @@ export function SuccessPlanBoard({ plan }: { plan: SuccessPlan | null }) {
       {customerItems.length > 0 ? (
         <section className="rounded-lg border border-border-medium bg-soft p-4">
           <h3 className="font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-            {SUCCESS_COPY.plan.dependencyTitle}
+            {successCopy.plan.dependencyTitle}
           </h3>
-          <p className="mt-1.5 text-caption text-ink-secondary">{SUCCESS_COPY.plan.dependencyIntro}</p>
+          <p className="mt-1.5 text-caption text-ink-secondary">{successCopy.plan.dependencyIntro}</p>
           <ul className="mt-2 flex flex-col gap-1.5">
             {customerItems.map((m) => (
               <li key={m.id} className="text-caption text-ink-primary">
                 {m.label}
-                {m.dueAt ? <span className="text-ink-secondary"> · by {new Date(m.dueAt).toLocaleDateString()}</span> : null}
+                {m.dueAt ? <span className="text-ink-secondary">{ko ? ' · 기한 ' : ' · by '}{new Date(m.dueAt).toLocaleDateString(ko ? 'ko-KR' : 'en')}</span> : null}
               </li>
             ))}
           </ul>
         </section>
       ) : null}
 
-      <section aria-label="All milestones">
+      <section aria-label={ko ? '전체 마일스톤' : 'All milestones'}>
         <ul className="flex flex-col gap-2">
           {plan.milestones.map((m) => (
             <li
@@ -62,12 +67,12 @@ export function SuccessPlanBoard({ plan }: { plan: SuccessPlan | null }) {
               <span className="text-web-body text-ink-primary">{m.label}</span>
               <span className="flex items-center gap-3 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
                 <span className={m.status === 'blocked' ? 'text-error' : undefined}>
-                  {m.status === 'complete' ? 'Complete'
-                    : m.status === 'in_progress' ? 'In progress'
-                    : m.status === 'blocked' ? 'Blocked' : 'Not started'}
+                  {m.status === 'complete' ? (ko ? '완료' : 'Complete')
+                    : m.status === 'in_progress' ? (ko ? '진행 중' : 'In progress')
+                    : m.status === 'blocked' ? (ko ? '차단됨' : 'Blocked') : (ko ? '시작 전' : 'Not started')}
                 </span>
                 <span className="text-ink-muted">
-                  {m.ownerSide === 'customer' ? 'Your side' : 'itriX'}
+                  {m.ownerSide === 'customer' ? (ko ? '귀사' : 'Your side') : 'itriX'}
                   {m.owner ? ` · ${m.owner}` : ''}
                 </span>
               </span>

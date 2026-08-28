@@ -13,7 +13,7 @@ import { useSignUp } from '@/hooks/useSignUp';
 import { isValidEmail } from '@/lib/validation/emailValidator';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
 import { useLegalAssent } from '@/hooks/useLegalAssent';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { ASSENT_COPY } from '@/lib/content/legalCopy';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
@@ -55,6 +55,7 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * used could not work on this path at all.
  */
 export function RegistrationForm() {
+  const authCopy = useAuthCopy();
   const { register, submitting, error, retryAfterSeconds } = useSignUp();
   const assent = useLegalAssent({ transport: 'in_payload' });
 
@@ -92,11 +93,11 @@ export function RegistrationForm() {
    */
   function validate(): Record<string, string> {
     const next: Record<string, string> = {};
-    if (!fullName.trim()) next.fullName = AUTH_COPY.signUp.missingName;
-    if (!organization.trim()) next.organization = AUTH_COPY.signUp.missingOrganization;
-    if (!isValidEmail(email)) next.email = AUTH_COPY.signUp.missingEmail;
-    if (policy.tooShort) next.password = AUTH_COPY.reset.tooShort;
-    else if (!policy.matches) next.confirm = AUTH_COPY.reset.mismatch;
+    if (!fullName.trim()) next.fullName = authCopy.signUp.missingName;
+    if (!organization.trim()) next.organization = authCopy.signUp.missingOrganization;
+    if (!isValidEmail(email)) next.email = authCopy.signUp.missingEmail;
+    if (policy.tooShort) next.password = authCopy.reset.tooShort;
+    else if (!policy.matches) next.confirm = authCopy.reset.mismatch;
     if (!assent.accepted) next.assent = ASSENT_COPY.blocked;
     return next;
   }
@@ -126,27 +127,27 @@ export function RegistrationForm() {
 
       <div className="auth-fields">
         <Input
-          label={AUTH_COPY.signUp.nameLabel}
+          label={authCopy.signUp.nameLabel}
           value={fullName}
           autoComplete="name"
           error={errors.fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
         <Input
-          label={AUTH_COPY.signUp.organizationLabel}
+          label={authCopy.signUp.organizationLabel}
           value={organization}
           autoComplete="organization"
           error={errors.organization}
           onChange={(e) => setOrganization(e.target.value)}
         />
         <Input
-          label={AUTH_COPY.signUp.roleLabel}
+          label={authCopy.signUp.roleLabel}
           value={role}
           autoComplete="organization-title"
           onChange={(e) => setRole(e.target.value)}
         />
         <Input
-          label={AUTH_COPY.signUp.emailLabel}
+          label={authCopy.signUp.emailLabel}
           type="email"
           value={email}
           autoComplete="username"
@@ -155,7 +156,7 @@ export function RegistrationForm() {
         />
 
         <PasswordField
-          label={AUTH_COPY.signUp.passwordLabel}
+          label={authCopy.signUp.passwordLabel}
           value={password}
           onChange={setPassword}
           autoComplete="new-password"
@@ -164,7 +165,7 @@ export function RegistrationForm() {
         {/* Shown ALWAYS, not only after a failure (Playbook v1.9 §18C). */}
         <PasswordRules assessment={policy} />
         <PasswordField
-          label={AUTH_COPY.signUp.confirmLabel}
+          label={authCopy.signUp.confirmLabel}
           value={confirm}
           onChange={setConfirm}
           autoComplete="new-password"
@@ -194,7 +195,7 @@ export function RegistrationForm() {
         onClick={() => void submit()}
         disabled={submitting}
       >
-        {submitting ? AUTH_COPY.signUp.submitting : AUTH_COPY.signUp.submit}
+        {submitting ? authCopy.signUp.submitting : authCopy.signUp.submit}
       </Button>
     </div>
   );

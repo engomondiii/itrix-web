@@ -1,5 +1,7 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { ConversationRail } from './ConversationRail';
@@ -9,7 +11,9 @@ import { ContentPane } from '@/components/content-pane/ContentPane';
 import { PaneSheet } from '@/components/content-pane/PaneSheet';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { VerificationNotice } from '@/components/auth/VerificationNotice';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
+import { useLocaleStore } from '@/store/localeStore';
+import { commonUi } from '@/lib/i18n/siteLocale';
 
 /**
  * THE WORKING SHELL — mounted the moment a thread exists.
@@ -44,10 +48,13 @@ import { RAIL_COPY } from '@/lib/content/composerCopy';
  * (Surface 1 v6.0 §7.2).
  */
 export function WorkingShell({ children }: { children: ReactNode }) {
+  const railCopy = useRailCopy();
   const pathname = usePathname();
   const collapsed = useRailStore((s) => s.collapsed);
   const openSheet = useRailStore((s) => s.openSheet);
   const pane = useContentPaneContext();
+  const locale = useLocaleStore((s) => s.locale);
+  const common = commonUi(locale);
 
   /* THE CONTENT PANE IS SUPPRESSED ON MY REVIEW (/c). The personalised
      page is itself the delivered content — it renders its own review and
@@ -69,18 +76,19 @@ export function WorkingShell({ children }: { children: ReactNode }) {
       data-collapsed={collapsed ? 'true' : undefined}
       data-pane={paneColumn ? 'true' : undefined}
     >
-      <aside className="conversation-rail" aria-label="Your conversations">
+      <aside className="conversation-rail" aria-label={common.conversations}>
         <ConversationRail />
       </aside>
 
       <main id="content" className="conversation-main" data-pathname={pathname}>
+        <div className="working-shell__locale"><SiteLocaleToggle compact /></div>
         {/* The only way to reach the rail once it becomes a sheet. The
             conversation header also carries one, but marketing routes have no
             header — so this lives at the shell level. */}
         <button
           type="button"
           className="conversation-main__nav"
-          aria-label={RAIL_COPY.openNavigation}
+          aria-label={railCopy.openNavigation}
           onClick={openSheet}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">

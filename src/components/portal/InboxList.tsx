@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/cn';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import type { PortalConversation } from '@/types/portal.types';
 
 /**
@@ -16,6 +16,7 @@ import type { PortalConversation } from '@/types/portal.types';
  * what may be opened.
  */
 function whenLabel(iso: string): string {
+  const portalCopy = usePortalCopy();
   const then = new Date(iso);
   if (Number.isNaN(then.getTime())) return '';
   const mins = Math.round((Date.now() - then.getTime()) / 60000);
@@ -41,7 +42,7 @@ export function InboxList({
   briefingId: string;
   briefingAvailable: boolean;
 }) {
-  const copy = PORTAL_COPY.messages.inbox;
+  const copy = portalCopy.messages.inbox;
 
   return (
     /* `inbox-list` is the hook mobile.css uses to cap this list's height in portrait,

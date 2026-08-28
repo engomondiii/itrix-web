@@ -6,8 +6,9 @@ import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { IntegrationReadinessArtifact } from '@/components/artifacts/IntegrationReadinessArtifact';
 import { useIntegration } from '@/hooks/useIntegration';
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { Artifact } from '@/types/artifact.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * State 9 — integration and commercial decisions, as a DEEP-LINK VIEW.
@@ -17,6 +18,8 @@ import type { Artifact } from '@/types/artifact.types';
  * not part of the payload.
  */
 export default function IntegrationPage() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   const { data, loading } = useIntegration();
 
   const artifact: Artifact | null = data?.exists
@@ -38,7 +41,7 @@ export default function IntegrationPage() {
       <PortalTopbar title="Integration" />
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
         <Link href="/workspace" className="artifact-page__back">
-          Back to your conversation
+          {ko ? '대화로 돌아가기' : 'Back to your conversation'}
         </Link>
 
         {loading ? (
@@ -48,7 +51,7 @@ export default function IntegrationPage() {
             <IntegrationReadinessArtifact artifact={artifact} />
           </div>
         ) : (
-          <EmptyState>{WORKSPACE_COPY.integration.empty}</EmptyState>
+          <EmptyState>{workspaceCopy.integration.empty}</EmptyState>
         )}
       </div>
     </>

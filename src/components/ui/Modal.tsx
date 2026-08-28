@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/cn';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 export interface ModalProps {
   open: boolean;
@@ -17,6 +18,7 @@ export interface ModalProps {
 const sizeClass = { sm: 'max-w-sm', md: 'max-w-lg', lg: 'max-w-2xl' } as const;
 
 export function Modal({ open, onClose, title, children, footer, size = 'md', className }: ModalProps) {
+  const copy = useCommonCopy();
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export function Modal({ open, onClose, title, children, footer, size = 'md', cla
         {title ? (
           <div className="flex items-center justify-between border-b border-border-medium px-5 py-4">
             <h2 className="text-section text-ink-primary">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Close" className="rounded-sm p-1 text-ink-secondary transition-colors hover:bg-soft hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary">
+            <button type="button" onClick={onClose} aria-label={copy.close} className="rounded-sm p-1 text-ink-secondary transition-colors hover:bg-soft hover:text-ink-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink-primary">
               <span aria-hidden className="text-lg leading-none">×</span>
             </button>
           </div>

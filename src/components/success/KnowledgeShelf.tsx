@@ -1,5 +1,8 @@
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+'use client';
+
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import type { KnowledgeItem } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 const KIND_LABEL: Record<KnowledgeItem['kind'], string> = {
   training: 'Training',
@@ -15,7 +18,9 @@ const KIND_LABEL: Record<KnowledgeItem['kind'], string> = {
  * catalogue of what itriX has written.
  */
 export function KnowledgeShelf({ items }: { items: readonly KnowledgeItem[] }) {
-  if (items.length === 0) return <p className="text-web-body text-ink-secondary">{SUCCESS_COPY.knowledge.empty}</p>;
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
+  if (items.length === 0) return <p className="text-web-body text-ink-secondary">{successCopy.knowledge.empty}</p>;
 
   const kinds: KnowledgeItem['kind'][] = ['training', 'documentation', 'practice'];
 
@@ -27,7 +32,7 @@ export function KnowledgeShelf({ items }: { items: readonly KnowledgeItem[] }) {
         return (
           <section key={kind} aria-labelledby={`kn-${kind}`}>
             <h3 id={`kn-${kind}`} className="font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">
-              {KIND_LABEL[kind]}
+              {ko ? ({training:'교육',documentation:'문서',practice:'권장 실무'} as const)[kind] : KIND_LABEL[kind]}
             </h3>
             <ul className="mt-2 flex flex-col gap-2">
               {group.map((item) => (
@@ -40,7 +45,7 @@ export function KnowledgeShelf({ items }: { items: readonly KnowledgeItem[] }) {
                     <span className="text-web-body text-ink-primary">{item.title}</span>
                   )}
                   <p className="mt-1 text-caption text-ink-secondary">
-                    {item.audience ? `For ${item.audience}` : 'For everyone'}
+                    {item.audience ? (ko ? `${item.audience} 대상` : `For ${item.audience}`) : (ko ? '모두를 위한 자료' : 'For everyone')}
                     {item.durationMinutes ? ` · ${item.durationMinutes} min` : ''}
                   </p>
                 </li>

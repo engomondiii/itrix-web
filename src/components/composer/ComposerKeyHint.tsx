@@ -1,6 +1,7 @@
 'use client';
 
-import { COMPOSER_COPY } from '@/lib/content/composerCopy';
+import { useComposerCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * The keyboard hint beneath the composer.
@@ -23,7 +24,7 @@ import { COMPOSER_COPY } from '@/lib/content/composerCopy';
  * "Enter to send · Ctrl + X to ask itriX / Shift + Enter for a new line" is
  * removed from below the composer. The component and its copy stay in place so
  * the hint can be restored by flipping this one constant — and, more
- * importantly, so `COMPOSER_COPY.keyHint` remains the single source for the
+ * importantly, so `composerCopy.keyHint` remains the single source for the
  * wording if it is ever shown again.
  *
  * NOTHING ABOUT THE KEYS CHANGES. Enter still sends, Shift + Enter still
@@ -33,12 +34,13 @@ import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 const SHOW_KEY_HINT = false;
 
 export function ComposerKeyHint({ id }: { id?: string }) {
+  const composerCopy = useComposerCopy();
   if (!SHOW_KEY_HINT) return null;
 
   return (
     <p id={id} className="composer-keyhint">
-      <span>{COMPOSER_COPY.keyHint}</span>
-      <span className="composer-keyhint__secondary">{COMPOSER_COPY.keyHintNewline}</span>
+      <span>{composerCopy.keyHint}</span>
+      <span className="composer-keyhint__secondary">{composerCopy.keyHintNewline}</span>
     </p>
   );
 }

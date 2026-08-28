@@ -2,7 +2,7 @@
 
 import { useId } from 'react';
 import type { ChangeEvent } from 'react';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 
 /**
  * The invitation code field (door 1 of sign up).
@@ -27,6 +27,7 @@ export function InviteCodeField({
   error?: string | null;
   onSubmitKey?: () => void;
 }) {
+  const authCopy = useAuthCopy();
   const uid = useId();
   const id = `${uid}-code`;
   const hintId = `${uid}-code-hint`;
@@ -35,7 +36,7 @@ export function InviteCodeField({
   return (
     <div className="invite-field">
       <label htmlFor={id} className="invite-field__label">
-        {AUTH_COPY.signUp.codeLabel}
+        {authCopy.signUp.codeLabel}
       </label>
       <input
         id={id}
@@ -58,7 +59,7 @@ export function InviteCodeField({
         }}
       />
       <p id={hintId} className="invite-field__hint">
-        {AUTH_COPY.signUp.codeHint}
+        {authCopy.signUp.codeHint}
       </p>
       {error ? (
         <p id={errorId} className="invite-field__error">

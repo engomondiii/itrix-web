@@ -5,9 +5,9 @@ import { BackgroundGrid } from '@/components/visual/BackgroundGrid';
 
 export interface PageWrapperProps {
   children: ReactNode;
-  eyebrow?: string;
-  title?: string;
-  lead?: string;
+  eyebrow?: ReactNode;
+  title?: ReactNode;
+  lead?: ReactNode;
   grid?: boolean;
   className?: string;
 }

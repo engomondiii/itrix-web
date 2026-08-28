@@ -7,7 +7,7 @@ import { AuthHeading } from '@/components/auth/AuthHeading';
 import { AuthFooterLinks } from '@/components/auth/AuthFooterLinks';
 import { RateLimitNotice } from '@/components/auth/RateLimitNotice';
 import { usePasswordReset } from '@/hooks/usePasswordReset';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 
 /**
@@ -31,32 +31,33 @@ import { routes } from '@/constants/routes';
  * carefully is not.
  */
 export default function ForgotPasswordPage() {
+  const authCopy = useAuthCopy();
   const { request, requested, submitting, retryAfterSeconds } = usePasswordReset();
   const [email, setEmail] = useState('');
 
   if (requested) {
     return (
       <AuthPanel>
-        <AuthHeading title={AUTH_COPY.forgot.title} />
+        <AuthHeading title={authCopy.forgot.title} />
         <p className="auth-confirmation" role="status">
-          {AUTH_COPY.forgot.confirmation}
+          {authCopy.forgot.confirmation}
         </p>
-        <p className="auth-confirmation__follow">{AUTH_COPY.forgot.confirmationFollowOn}</p>
-        <AuthFooterLinks links={[{ label: AUTH_COPY.forgot.back, href: routes.portalSignIn }]} />
+        <p className="auth-confirmation__follow">{authCopy.forgot.confirmationFollowOn}</p>
+        <AuthFooterLinks links={[{ label: authCopy.forgot.back, href: routes.portalSignIn }]} />
       </AuthPanel>
     );
   }
 
   return (
     <AuthPanel>
-      <AuthHeading title={AUTH_COPY.forgot.title} standfirst={AUTH_COPY.forgot.standfirst} />
+      <AuthHeading title={authCopy.forgot.title} standfirst={authCopy.forgot.standfirst} />
 
       <RateLimitNotice retryAfterSeconds={retryAfterSeconds} />
 
       <div className="auth-fields">
         <div className="auth-field">
           <label htmlFor="forgot-email" className="auth-field__label">
-            {AUTH_COPY.forgot.emailLabel}
+            {authCopy.forgot.emailLabel}
           </label>
           <input
             id="forgot-email"
@@ -82,10 +83,10 @@ export default function ForgotPasswordPage() {
         onClick={() => void request(email)}
         disabled={submitting || !email.trim()}
       >
-        {submitting ? AUTH_COPY.forgot.submitting : AUTH_COPY.forgot.submit}
+        {submitting ? authCopy.forgot.submitting : authCopy.forgot.submit}
       </Button>
 
-      <AuthFooterLinks links={[{ label: AUTH_COPY.forgot.back, href: routes.portalSignIn }]} />
+      <AuthFooterLinks links={[{ label: authCopy.forgot.back, href: routes.portalSignIn }]} />
     </AuthPanel>
   );
 }

@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
+import { useLocaleStore } from '@/store/localeStore';
+import { LEGAL_INSTRUMENTS_KO } from '@/lib/i18n/legalKo';
 
 /**
  * The four legal instruments — Terms · Privacy · Security · Disclosure policy.
@@ -27,13 +30,15 @@ import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
  * development warning that stood in for the two missing pages are gone with it.
  */
 export function LegalStrip({ variant = 'arrival' }: { variant?: 'arrival' | 'rail' }) {
+  const copy = useCommonCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   return (
-    <nav className="legal-strip" data-variant={variant} aria-label="Legal and policy">
+    <nav className="legal-strip" data-variant={variant} aria-label={copy.legalAndPolicy}>
       <ul>
         {LEGAL_INSTRUMENTS.map((instrument) => (
           <li key={instrument.slug}>
             <Link href={`/${instrument.slug}`} className="legal-strip__link">
-              {instrument.navLabel}
+              {ko ? LEGAL_INSTRUMENTS_KO[instrument.slug].navLabel : instrument.navLabel}
             </Link>
           </li>
         ))}

@@ -1,9 +1,10 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { useFeedbackPulse } from '@/hooks/useFeedbackPulse';
 import type { FeedbackPulseSubmission } from '@/types/success.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * The private satisfaction pulse.
@@ -22,6 +23,8 @@ import type { FeedbackPulseSubmission } from '@/types/success.types';
 const SCORES = [1, 2, 3, 4, 5] as const;
 
 export function SatisfactionPulse() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const successCopy = useSuccessCopy();
   const uid = useId();
   const { submit, submitting, error, receipt, alreadySubmitted } = useFeedbackPulse();
   const [score, setScore] = useState<FeedbackPulseSubmission['score'] | null>(null);
@@ -31,7 +34,7 @@ export function SatisfactionPulse() {
   if (receipt || alreadySubmitted) {
     return (
       <p role="status" className="text-web-body text-ink-primary">
-        {receipt?.followUpRequested ? SUCCESS_COPY.feedback.thanksWithFollowUp : SUCCESS_COPY.feedback.thanks}
+        {receipt?.followUpRequested ? successCopy.feedback.thanksWithFollowUp : successCopy.feedback.thanks}
       </p>
     );
   }
@@ -44,11 +47,11 @@ export function SatisfactionPulse() {
         if (score) void submit({ score, freeText: freeText.trim() || undefined, followUpRequested: followUp });
       }}
     >
-      <p className="text-caption text-ink-secondary">{SUCCESS_COPY.feedback.prompt}</p>
+      <p className="text-caption text-ink-secondary">{successCopy.feedback.prompt}</p>
 
       <fieldset>
         <legend className="mb-2 text-caption font-semibold text-ink-primary">
-          {SUCCESS_COPY.feedback.scaleLabel}
+          {successCopy.feedback.scaleLabel}
         </legend>
         <div className="flex flex-wrap gap-2">
           {SCORES.map((s) => (
@@ -66,29 +69,29 @@ export function SatisfactionPulse() {
                 onChange={() => setScore(s)}
                 className="sr-only"
               />
-              {SUCCESS_COPY.feedback.scale[s - 1]}
+              {successCopy.feedback.scale[s - 1]}
             </label>
           ))}
         </div>
       </fieldset>
 
-      <label htmlFor={`${uid}-text`} className="sr-only">Anything you would want us to change</label>
+      <label htmlFor={`${uid}-text`} className="sr-only">{ko ? '바꾸었으면 하는 점' : 'Anything you would want us to change'}</label>
       <textarea
         id={`${uid}-text`}
         rows={3}
         value={freeText}
-        placeholder={SUCCESS_COPY.feedback.freeTextPlaceholder}
+        placeholder={successCopy.feedback.freeTextPlaceholder}
         onChange={(e) => setFreeText(e.target.value)}
         className="rounded-md border border-border-soft bg-soft px-3 py-2 text-web-body text-ink-primary"
       />
 
       <label className="flex items-center gap-2 text-caption text-ink-secondary">
         <input type="checkbox" checked={followUp} onChange={(e) => setFollowUp(e.target.checked)} />
-        {SUCCESS_COPY.feedback.followUp}
+        {successCopy.feedback.followUp}
       </label>
 
       <button type="submit" className="button-primary self-start" disabled={!score || submitting}>
-        {submitting ? 'Sending…' : SUCCESS_COPY.feedback.submit}
+        {submitting ? (ko ? '보내는 중…' : 'Sending…') : successCopy.feedback.submit}
       </button>
       {error ? <p className="text-caption text-error">{error}</p> : null}
     </form>

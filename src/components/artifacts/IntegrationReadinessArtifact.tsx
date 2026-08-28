@@ -4,6 +4,7 @@ import { IntegrationReadiness } from '@/components/workspace/IntegrationReadines
 import { DecisionLog } from '@/components/workspace/DecisionLog';
 import type { Artifact } from '@/types/artifact.types';
 import type { ReadinessItem, DecisionEntry } from '@/types/workspace.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * State 9 — integration and commercial decisions (Playbook v1.6, State 9).
@@ -27,6 +28,7 @@ interface IntegrationPayload {
 }
 
 export function IntegrationReadinessArtifact({ artifact }: { artifact: Artifact }) {
+  const copy = useCommonCopy();
   const p = artifact.payload as IntegrationPayload;
   const readiness = p.readiness ?? [];
   const decisions = p.decisions ?? [];
@@ -37,14 +39,14 @@ export function IntegrationReadinessArtifact({ artifact }: { artifact: Artifact 
 
       {readiness.length > 0 ? (
         <section>
-          <h3 className="artifact__section-title">Integration readiness</h3>
+          <h3 className="artifact__section-title">{copy.integrationReadiness}</h3>
           <IntegrationReadiness items={readiness} />
         </section>
       ) : null}
 
       {decisions.length > 0 ? (
         <section>
-          <h3 className="artifact__section-title">Decision log</h3>
+          <h3 className="artifact__section-title">{copy.decisionLog}</h3>
           <DecisionLog entries={decisions} />
         </section>
       ) : null}

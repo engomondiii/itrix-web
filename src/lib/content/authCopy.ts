@@ -268,3 +268,70 @@ export const KEEP_WORK_COPY = {
   action: 'Open a workspace',
   dismiss: 'Not now',
 } as const;
+
+/** Korean UI copy mirrors the same enumeration-safe security states as English. */
+export const AUTH_COPY_KO = {
+  shared: {
+    errorSummaryHeading: '다음 내용을 확인해 주세요',
+    rateLimited: (minutes: number) => `시도가 너무 많습니다. ${minutes}분 후 다시 시도해 주세요.`,
+    serviceFailure: '지금은 요청을 완료할 수 없습니다. 잠시 후 다시 시도해 주세요.',
+    showPassword: '비밀번호 보기', hidePassword: '비밀번호 숨기기', capsLock: 'Caps Lock이 켜져 있습니다.',
+  },
+  signIn: {
+    title: '워크스페이스에 로그인',
+    standfirst: '대화, 문서, 팀 작업은 그대로 보관되어 있습니다.',
+    emailLabel: '이메일 주소', passwordLabel: '비밀번호', submit: '로그인', submitting: '로그인 중…',
+    failure: '입력한 정보가 일치하지 않습니다. 이메일과 비밀번호를 확인해 주세요.',
+    forgot: '비밀번호를 잊으셨나요?', noAccountPrefix: '아직 계정이 없나요?', noAccountLink: '회원가입',
+  },
+  signUp: {
+    title: 'itriX 워크스페이스 열기',
+    standfirst: '약 1분이면 충분하며 무료입니다. 워크스페이스는 대화, 문서, 작업을 한곳에 보관합니다.',
+    nameLabel: '이름', organizationLabel: '회사 또는 조직', roleLabel: '역할 (선택 사항)', emailLabel: '이메일 주소',
+    passwordLabel: '비밀번호', confirmLabel: '비밀번호 확인', submit: '워크스페이스 만들기', submitting: '워크스페이스 여는 중…',
+    missingName: '워크스페이스에서 사용할 이름을 입력해 주세요.', missingOrganization: '회사 또는 조직을 입력해 주세요.', missingEmail: '이메일 주소를 입력해 주세요.',
+    confirmation: '이메일을 확인해 주세요. 해당 주소로 itriX 워크스페이스를 만들 수 있는 경우 확인 링크가 전송됩니다. 그동안 워크스페이스는 사용할 수 있습니다.',
+    serviceFailure: '지금은 워크스페이스를 열 수 없습니다. 아무것도 생성되지 않았습니다. 잠시 후 다시 시도해 주세요.',
+    codeDisclosure: '초대 코드가 있나요?', codeLabel: '초대 코드', codeHint: 'itriX가 보낸 이메일에 있는 긴 영문/숫자 문자열입니다.',
+    codeSubmit: '계속', codeChecking: '확인 중…',
+    codeFailure: '이 초대 코드는 사용할 수 없습니다. 오래전에 받은 코드라면 만료되었을 수 있습니다. 이메일에 답장해 새 코드를 요청해 주세요.',
+    haveAccountPrefix: '이미 계정이 있나요?', haveAccountLink: '로그인', closedLabel: '아직 초대 코드가 없습니다',
+    closedBody: '짧은 대화 뒤 함께 검토할 일이 확인되면 워크스페이스를 마련할 수 있습니다. 먼저 계산에서 개선하고 싶은 점을 알려 주세요.',
+    closedAction: '대화 시작',
+  },
+  verify: {
+    title: '이메일 주소 확인',
+    standfirst: (email: string) => `${email} 주소로 링크를 보냈습니다. 링크를 열면 해당 주소가 본인 소유임을 확인합니다.`,
+    standfirstNoAddress: '확인 링크를 보냈습니다. 링크를 열면 해당 주소가 본인 소유임을 확인합니다.',
+    unlocks: '워크스페이스는 지금 바로 사용할 수 있습니다. 이메일 확인은 문서 전송과 NDA 체결 전에 필요하지만, 확인 자체가 공개 범위나 콘텐츠 권한을 높이지는 않습니다.',
+    confirming: '확인 중…', success: '이메일 주소가 확인되었습니다.',
+    expired: '이 링크는 더 이상 사용할 수 없습니다. 확인 링크는 48시간 동안 한 번만 사용할 수 있습니다. 새 링크를 요청할 수 있습니다.',
+    resend: '링크 다시 보내기', resending: '보내는 중…',
+    resendConfirmation: '해당 주소로 itriX 워크스페이스를 사용할 수 있는 경우 새 링크가 전송됩니다.',
+    continueToWorkspace: '워크스페이스로 이동', back: '로그인으로 돌아가기',
+    bannerBody: '문서를 이메일로 받으려면 이메일 주소를 확인해 주세요.', bannerAction: '링크 다시 보내기', bannerSent: '새 링크가 전송됩니다.',
+  },
+  forgot: {
+    title: '비밀번호 재설정', standfirst: '워크스페이스에서 사용하는 이메일을 입력하면 재설정 링크를 보내드립니다.',
+    emailLabel: '이메일 주소', submit: '재설정 링크 보내기', submitting: '보내는 중…',
+    confirmation: '해당 주소에 itriX 워크스페이스가 있는 경우 비밀번호 재설정 링크가 전송됩니다. 링크는 1시간 동안 한 번만 사용할 수 있습니다.',
+    confirmationFollowOn: '메일이 보이지 않나요? 스팸함을 확인하거나 itriX 담당자에게 문의해 주세요.', back: '로그인으로 돌아가기',
+  },
+  reset: {
+    title: '새 비밀번호 설정', standfirst: '거의 끝났습니다. 길고 기억하기 어려운 비밀번호를 사용하는 것이 좋습니다.',
+    passwordLabel: '새 비밀번호', confirmLabel: '새 비밀번호 확인', submit: '저장하고 로그인', submitting: '저장 중…',
+    rules: `최소 ${PASSWORD_MIN_LENGTH}자. 기호나 대문자는 필수가 아닙니다. 비밀번호 관리자를 사용한다면 붙여넣을 수 있습니다.`,
+    mismatch: '두 비밀번호가 일치하지 않습니다.', tooShort: `최소 ${PASSWORD_MIN_LENGTH}자를 사용해 주세요.`,
+    success: '비밀번호가 변경되었으며 다른 모든 세션에서 로그아웃되었습니다.',
+    expired: '이 링크는 더 이상 사용할 수 없습니다. 재설정 링크는 1시간 동안 한 번만 사용할 수 있습니다. 새 링크를 요청해 주세요.',
+    requestAgain: '새 링크 보내기', back: '로그인으로 돌아가기',
+  },
+  setPassword: { title: '비밀번호 설정', standfirst: '한 단계만 더 완료하면 워크스페이스를 사용할 수 있습니다.' },
+  strength: { short: '너무 짧음', fair: '보통', good: '좋음', strong: '강함', label: '비밀번호 강도' },
+} as const;
+
+export const KEEP_WORK_COPY_KO = {
+  title: '이 대화를 보관하세요',
+  body: '현재 이 대화는 이 브라우저에만 저장됩니다. 워크스페이스를 열면 작성한 내용과 itriX의 답변을 함께 보관하고 다른 기기에서도 이어갈 수 있습니다.',
+  action: '워크스페이스 열기', dismiss: '나중에',
+} as const;

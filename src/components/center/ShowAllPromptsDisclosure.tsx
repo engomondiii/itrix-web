@@ -1,6 +1,7 @@
 'use client';
 
-import { CENTER_COPY } from '@/lib/content/centerCopy';
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * `Show all five` — the reason a carousel is acceptable here at all.
@@ -19,6 +20,7 @@ export interface ShowAllPromptsDisclosureProps {
 }
 
 export function ShowAllPromptsDisclosure({ showAll, onToggle, controls }: ShowAllPromptsDisclosureProps) {
+  const centerCopy = useCenterCopy();
   return (
     <button
       type="button"
@@ -27,7 +29,7 @@ export function ShowAllPromptsDisclosure({ showAll, onToggle, controls }: ShowAl
       aria-controls={controls}
       onClick={onToggle}
     >
-      {showAll ? CENTER_COPY.hideAllPrompts : CENTER_COPY.showAllPrompts}
+      {showAll ? centerCopy.hideAllPrompts : centerCopy.showAllPrompts}
     </button>
   );
 }

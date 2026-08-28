@@ -1,6 +1,7 @@
 'use client';
 
 import { usePortalNavStore } from '@/store/portalNavStore';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * The scrim behind the workspace drawer (mobile portrait only).
@@ -14,6 +15,7 @@ import { usePortalNavStore } from '@/store/portalNavStore';
  * has no starting state to transition from, so it would appear instantly.
  */
 export function PortalNavBackdrop() {
+  const copy = useCommonCopy();
   const open = usePortalNavStore((s) => s.open);
   const closeNav = usePortalNavStore((s) => s.closeNav);
 
@@ -22,7 +24,7 @@ export function PortalNavBackdrop() {
       type="button"
       className="portal-nav-backdrop lg:hidden"
       data-open={open ? 'true' : undefined}
-      aria-label="Close workspace menu"
+      aria-label={copy.closeWorkspaceMenu}
       tabIndex={open ? 0 : -1}
       onClick={closeNav}
     />

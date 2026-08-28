@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { WordmarkLockup } from '@/components/shell/WordmarkLockup';
 import { LegalStrip } from '@/components/shell/LegalStrip';
 import { ArrivalMotifs } from '@/components/arrival/ArrivalMotifs';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
 /**
  * THE AUTHENTICATION ZONE'S CHROME (Architecture v2.8 §26.3, R46, R56).
@@ -41,6 +42,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <div className="auth-page">
       <header className="auth-bar">
         <WordmarkLockup variant="arrival" />
+        <SiteLocaleToggle compact />
       </header>
 
       <main id="content" className="auth-main">

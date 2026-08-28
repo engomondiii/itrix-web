@@ -1,8 +1,9 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { useImprovement } from '@/hooks/useImprovement';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * "What can we improve for you?" — the persistent improvement composer.
@@ -16,6 +17,8 @@ import { useImprovement } from '@/hooks/useImprovement';
  * is the difference between a routed request and a message into a void.
  */
 export function ImprovementComposer() {
+  const successCopy = useSuccessCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   const uid = useId();
   const { submit, submitting, error, receipt, reset } = useImprovement();
   const [message, setMessage] = useState('');
@@ -24,7 +27,7 @@ export function ImprovementComposer() {
     return (
       <div role="status" className="flex flex-col gap-2">
         <p className="text-web-body text-ink-primary">{receipt.acknowledgement}</p>
-        {receipt.owner ? <p className="text-caption text-ink-secondary">{receipt.owner} has it.</p> : null}
+        {receipt.owner ? <p className="text-caption text-ink-secondary">{ko ? `${receipt.owner} 담당입니다.` : `${receipt.owner} has it.`}</p> : null}
         <button
           type="button"
           onClick={() => {
@@ -33,7 +36,7 @@ export function ImprovementComposer() {
           }}
           className="button-text self-start text-caption"
         >
-          Tell us something else
+          {ko ? '다른 내용 전달하기' : 'Tell us something else'}
         </button>
       </div>
     );
@@ -48,22 +51,22 @@ export function ImprovementComposer() {
       }}
     >
       <label htmlFor={`${uid}-improve`} className="font-display text-web-question text-ink-primary">
-        {SUCCESS_COPY.home.composerLabel}
+        {successCopy.home.composerLabel}
       </label>
       <p id={`${uid}-help`} className="max-w-reading text-caption text-ink-secondary">
-        {SUCCESS_COPY.home.composerHelper}
+        {successCopy.home.composerHelper}
       </p>
       <textarea
         id={`${uid}-improve`}
         aria-describedby={`${uid}-help`}
         rows={3}
         value={message}
-        placeholder={SUCCESS_COPY.home.composerPlaceholder}
+        placeholder={successCopy.home.composerPlaceholder}
         onChange={(e) => setMessage(e.target.value)}
         className="prompt-box__textarea"
       />
       <button type="submit" className="button-primary self-start" disabled={submitting || message.trim().length < 4}>
-        {submitting ? 'Sending…' : 'Send'}
+        {submitting ? (ko ? '보내는 중…' : 'Sending…') : (ko ? '보내기' : 'Send')}
       </button>
       {error ? <p className="text-caption text-error">{error}</p> : null}
     </form>

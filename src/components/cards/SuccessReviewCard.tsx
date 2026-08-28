@@ -1,6 +1,7 @@
 'use client';
 
 import type { InlineCard } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * The next success review — when we next sit down together.
@@ -22,6 +23,7 @@ interface ReviewPayload {
 }
 
 export function SuccessReviewCard({ card }: { card: InlineCard }) {
+  const copy = useCommonCopy();
   const p = (card.payload ?? {}) as ReviewPayload;
   const agenda = p.agenda ?? [];
 
@@ -32,7 +34,7 @@ export function SuccessReviewCard({ card }: { card: InlineCard }) {
       {p.scheduledFor ? (
         <p className="inline-card__slot">
           {p.scheduledFor}
-          {p.withWhom ? <span className="inline-card__slot-meta">with {p.withWhom}</span> : null}
+          {p.withWhom ? <span className="inline-card__slot-meta">{copy.withPerson(p.withWhom)}</span> : null}
         </p>
       ) : null}
 
@@ -40,7 +42,7 @@ export function SuccessReviewCard({ card }: { card: InlineCard }) {
 
       {agenda.length > 0 ? (
         <>
-          <p className="inline-card__column-title">Agenda so far</p>
+          <p className="inline-card__column-title">{copy.agendaSoFar}</p>
           <ul className="inline-card__saved">
             {agenda.map((item) => (
               <li key={item}>{item}</li>

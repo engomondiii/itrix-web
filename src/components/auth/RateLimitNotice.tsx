@@ -1,6 +1,6 @@
 'use client';
 
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 
 /**
  * A stated wait (R55).
@@ -15,11 +15,12 @@ import { AUTH_COPY } from '@/lib/content/authCopy';
  * confusion.
  */
 export function RateLimitNotice({ retryAfterSeconds }: { retryAfterSeconds: number | null }) {
+  const authCopy = useAuthCopy();
   if (!retryAfterSeconds || retryAfterSeconds <= 0) return null;
   const minutes = Math.max(1, Math.ceil(retryAfterSeconds / 60));
   return (
     <p role="status" className="auth-rate-limit">
-      {AUTH_COPY.shared.rateLimited(minutes)}
+      {authCopy.shared.rateLimited(minutes)}
     </p>
   );
 }

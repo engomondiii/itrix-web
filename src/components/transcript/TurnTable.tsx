@@ -2,6 +2,7 @@
 
 import type { Align, InlineNode } from '@/lib/markdown/allowedNodes';
 import { InlineNodes } from './MarkdownTurn';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * A table inside an assistant turn.
@@ -21,8 +22,9 @@ export interface TurnTableProps {
 }
 
 export function TurnTable({ header, rows, align }: TurnTableProps) {
+  const copy = useCommonCopy();
   return (
-    <div className="turn-table" role="region" aria-label="Table" tabIndex={0}>
+    <div className="turn-table" role="region" aria-label={copy.table} tabIndex={0}>
       <table>
         <thead>
           <tr>

@@ -1,10 +1,11 @@
 'use client';
 
+import { useRailCopy } from '@/lib/i18n/conversationLocale';
+
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useThreadContext } from '@/context/ThreadContext';
-import { RAIL_COPY } from '@/lib/content/composerCopy';
 import { cn } from '@/lib/cn';
 
 /**
@@ -25,6 +26,7 @@ import { cn } from '@/lib/cn';
  * route re-authorizes on fetch.
  */
 export function PortalConversationList() {
+  const railCopy = useRailCopy();
   const { threads, activeThreadId, refresh } = useThreadContext();
   const pathname = usePathname();
 
@@ -43,11 +45,11 @@ export function PortalConversationList() {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-1.5">
       <h2 className="px-3 text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
-        {RAIL_COPY.conversationsLabel}
+        {railCopy.conversationsLabel}
       </h2>
 
       {threads.length === 0 ? (
-        <p className="px-3 text-caption text-ink-secondary">{RAIL_COPY.conversationsEmpty}</p>
+        <p className="px-3 text-caption text-ink-secondary">{railCopy.conversationsEmpty}</p>
       ) : (
         <ul className="min-h-0 flex-1 space-y-0.5 overflow-y-auto pr-1">
           {threads.map((thread) => {

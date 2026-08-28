@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { SectionLabel } from '@/components/ui/SectionLabel';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import type { PortalSettings } from '@/types/portal.types';
 
 /** Profile editor (§68). */
@@ -17,14 +17,15 @@ export function ProfileForm({
   saving: boolean;
   onSave: (p: Partial<PortalSettings['profile']>) => void;
 }) {
+  const portalCopy = usePortalCopy();
   const [fullName, setFullName] = useState(profile.fullName ?? '');
   const [organization, setOrganization] = useState(profile.organization ?? '');
   const [role, setRole] = useState(profile.role ?? '');
 
-  const f = PORTAL_COPY.settings.profileFields;
+  const f = portalCopy.settings.profileFields;
   return (
     <Card variant="default" className="flex flex-col gap-4">
-      <SectionLabel>{PORTAL_COPY.settings.profileHeader}</SectionLabel>
+      <SectionLabel>{portalCopy.settings.profileHeader}</SectionLabel>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5">
           <span className="text-secondary font-medium text-ink-primary">{f.fullName}</span>
@@ -45,7 +46,7 @@ export function ProfileForm({
       </div>
       <div>
         <Button variant="primary" size="md" disabled={saving} onClick={() => onSave({ fullName, organization, role })}>
-          {saving ? 'Saving…' : PORTAL_COPY.settings.saveProfile}
+          {saving ? 'Saving…' : portalCopy.settings.saveProfile}
         </Button>
       </div>
     </Card>

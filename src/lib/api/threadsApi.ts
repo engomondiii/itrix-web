@@ -40,12 +40,16 @@ export const threadsApi = {
    * The sentence IS turn 1 (R12). There is no separate "start" step, because a
    * separate step is exactly how a surface ends up asking for it twice.
    */
-  async create(body: CreateThreadRequest): Promise<ApiResult<SubmitResult>> {
+  async create(body: CreateThreadRequest, idempotencyKey?: string): Promise<ApiResult<SubmitResult>> {
     try {
       const res = await fetch('/api/threads', {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
+        },
         body: JSON.stringify(body),
       });
       if (!res.ok) {

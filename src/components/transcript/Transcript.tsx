@@ -1,5 +1,7 @@
 'use client';
 
+import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
+
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TurnGroup } from './TurnGroup';
 import { ScrollAnchor } from './ScrollAnchor';
@@ -13,7 +15,6 @@ import { usePendingStage } from '@/hooks/usePendingStage';
 import { useComposer } from '@/hooks/useComposer';
 import { useScrollMemory } from '@/hooks/useScrollMemory';
 import { isPinnedArtifact } from '@/lib/journey/artifactTypes';
-import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
 import type { TranscriptItem } from '@/hooks/useTranscript';
 
 /**
@@ -72,6 +73,7 @@ export interface TranscriptProps {
 }
 
 export function Transcript({ items }: TranscriptProps) {
+  const transcriptCopy = useTranscriptCopy();
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [atBottom, setAtBottom] = useState(true);
   const [unseen, setUnseen] = useState(false);
@@ -140,7 +142,7 @@ export function Transcript({ items }: TranscriptProps) {
         aria-live="polite"
         aria-relevant="additions"
         aria-atomic="false"
-        aria-label={TRANSCRIPT_COPY.regionLabel}
+        aria-label={transcriptCopy.regionLabel}
       >
         {flow.map((item) => {
           if (item.kind === 'turn') return <TurnGroup key={item.id} turn={item.turn} />;

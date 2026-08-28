@@ -1,6 +1,10 @@
+'use client';
+
 import { KpiOutcomeBadge } from './KpiOutcomeBadge';
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { PoCKpi } from '@/types/workspace.types';
+import { useLocaleStore } from '@/store/localeStore';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * The PoC evidence table — State 8.
@@ -14,21 +18,24 @@ import type { PoCKpi } from '@/types/workspace.types';
  * KPI and its outcome survives a screen reader.
  */
 export function PoCEvidenceTable({ kpis }: { kpis: readonly PoCKpi[] }) {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const copy = useCommonCopy();
+  const workspaceCopy = useWorkspaceCopy();
   if (kpis.length === 0) return null;
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
         <caption className="sr-only">
-          Agreed KPIs, the criteria set before the run, and the observed outcomes.
+          {copy.pocEvidenceIntro}
         </caption>
         <thead>
           <tr className="border-b border-border-medium">
-            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">KPI</th>
-            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{WORKSPACE_COPY.poc.criterionLabel}</th>
-            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">Baseline</th>
-            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">Observed</th>
-            <th scope="col" className="py-2 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">Outcome</th>
+            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{copy.kpi}</th>
+            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{workspaceCopy.poc.criterionLabel}</th>
+            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{copy.baseline}</th>
+            <th scope="col" className="py-2 pr-4 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{copy.observed}</th>
+            <th scope="col" className="py-2 font-mono text-micro uppercase tracking-[0.08em] text-ink-secondary">{copy.outcome}</th>
           </tr>
         </thead>
         <tbody>
@@ -40,7 +47,7 @@ export function PoCEvidenceTable({ kpis }: { kpis: readonly PoCKpi[] }) {
               <td className="py-3 pr-4 text-caption text-ink-secondary">
                 {k.passCriterion}
                 {k.partialCriterion ? (
-                  <span className="mt-1 block text-ink-muted">Partial: {k.partialCriterion}</span>
+                  <span className="mt-1 block text-ink-muted">{copy.partial}: {k.partialCriterion}</span>
                 ) : null}
               </td>
               <td className="py-3 pr-4 text-caption tabular-nums text-ink-secondary">{k.baseline ?? '—'}</td>

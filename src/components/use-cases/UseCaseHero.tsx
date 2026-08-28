@@ -1,17 +1,3 @@
-import { SectionLabel } from '@/components/ui/SectionLabel';
-import type { UseCase } from '@/lib/content/useCases';
-
-/** The situation-mirroring hero for a single use case (Playbook §70–75). */
-export function UseCaseHero({ useCase }: { useCase: UseCase }) {
-  return (
-    <section className="border-b border-border-medium bg-canvas">
-      <div className="container-page py-16">
-        <div className="mx-auto max-w-reading">
-          <SectionLabel>{useCase.audience}</SectionLabel>
-          <h1 className="mt-4 text-web-h1 text-structure-900">{useCase.headline}</h1>
-          <p className="reading mt-5 text-web-lead text-ink-secondary">{useCase.situation}</p>
-        </div>
-      </div>
-    </section>
-  );
-}
+'use client';
+import { SectionLabel } from '@/components/ui/SectionLabel';import { useCaseCopy } from '@/lib/i18n/useCasesLocale';import { useLocaleStore } from '@/store/localeStore';import type { UseCase } from '@/lib/content/useCases';
+export function UseCaseHero({useCase}:{useCase:UseCase}){const locale=useLocaleStore(s=>s.locale);const c=useCaseCopy(locale,useCase);return <section className="border-b border-border-medium bg-canvas"><div className="container-page py-16"><div className="mx-auto max-w-reading"><SectionLabel>{c.audience}</SectionLabel><h1 className="mt-4 text-web-h1 text-structure-900">{c.headline}</h1><p className="reading mt-5 text-web-lead text-ink-secondary">{c.situation}</p></div></div></section>}

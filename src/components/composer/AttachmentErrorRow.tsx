@@ -2,6 +2,7 @@
 
 import { formatBytes } from '@/lib/attachments/formatBytes';
 import type { RejectedFile } from '@/types/attachment.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * Files that could not even be staged.
@@ -20,6 +21,7 @@ export interface AttachmentErrorRowProps {
 }
 
 export function AttachmentErrorRow({ rejected, onDismiss }: AttachmentErrorRowProps) {
+  const copy = useCommonCopy();
   if (rejected.length === 0) return null;
 
   return (
@@ -32,7 +34,7 @@ export function AttachmentErrorRow({ rejected, onDismiss }: AttachmentErrorRowPr
         ))}
       </ul>
       <button type="button" className="attachment-errors__dismiss" onClick={onDismiss}>
-        Dismiss
+        {copy.dismiss}
       </button>
     </div>
   );

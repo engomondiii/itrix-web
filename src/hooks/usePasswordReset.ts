@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api/authApi';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
@@ -44,6 +44,7 @@ export interface UsePasswordResetResult {
 }
 
 export function usePasswordReset(): UsePasswordResetResult {
+  const authCopy = useAuthCopy();
   const router = useRouter();
   const [requested, setRequested] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
@@ -95,11 +96,11 @@ export function usePasswordReset(): UsePasswordResetResult {
       if (outcome.kind === 'rejected') {
         /* One message for expired, consumed and unknown alike. */
         setLinkUnusable(true);
-        setError(AUTH_COPY.reset.expired);
+        setError(authCopy.reset.expired);
         return;
       }
 
-      setError(AUTH_COPY.shared.serviceFailure);
+      setError(authCopy.shared.serviceFailure);
     },
     [router],
   );

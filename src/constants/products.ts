@@ -13,7 +13,7 @@ export const PRODUCTS: Record<'alpha_compute' | 'alpha_core', ProductInfo> = {
     route: 'alpha_core',
     name: 'ALPHA Core',
     layer: 'Runtime / execution layer',
-    thesis: 'Validates whether a transformed representation can run, through PoC validation and backend execution.',
+    thesis: 'Validates whether an ALPHA Compute representation hypothesis can run usefully in the target execution environment. A PoC is a separate, explicitly agreed stage where appropriate.',
     buyer: 'Engineering, infrastructure, and deployment leads',
   },
 };
@@ -27,7 +27,6 @@ export const TECHNOLOGIES: Record<string, Technology> = {
     gap: 'Algebraic State–Observation Gap',
     oneLiner:
       'Represents computation as algebraic state — state transition, projected observation, and hidden-state preservation — so a zero observation is never mistaken for a zero state.',
-    patentRef: 'P260-07KR',
   },
   cre: {
     id: 'cre',
@@ -36,7 +35,6 @@ export const TECHNOLOGIES: Record<string, Technology> = {
     gap: 'Boundary–Energy Gap',
     oneLiner:
       'A structure-preserving real representation for selected complex and tensor operator workloads, retaining spectra, norms, and conditioning.',
-    patentRef: 'P253-84KR',
   },
   fqnm: {
     id: 'fqnm',
@@ -45,7 +43,6 @@ export const TECHNOLOGIES: Record<string, Technology> = {
     gap: 'Continuum–Count Gap',
     oneLiner:
       'Executes conservation-law dynamics as exact integer transfer, reconstructing continuum behaviour afterward.',
-    patentRef: 'P253-18KR',
   },
   boundary_aware: {
     id: 'boundary_aware',
@@ -58,9 +55,9 @@ export const TECHNOLOGIES: Record<string, Technology> = {
 };
 
 export const LICENSE_PATHWAYS: Record<LicensePathway, { label: string; summary: string }> = {
-  non_exclusive: { label: 'Non-exclusive', summary: 'Default commercial pathway, open to multiple licensees.' },
-  exclusive: { label: 'Exclusive', summary: 'Field, regional, or full exclusivity — priced separately and approved case by case.' },
-  strategic: { label: 'Strategic', summary: 'Deep partnership and co-development with strategic rights.' },
+  non_exclusive: { label: 'Non-exclusive', summary: 'A possible licence structure that would need to be scoped and agreed in writing.' },
+  exclusive: { label: 'Exclusive', summary: 'A possible negotiated structure only where separately assessed and expressly agreed; it is never a default entitlement.' },
+  strategic: { label: 'Strategic', summary: 'A possible partnership structure whose scope and rights would need to be agreed in writing.' },
 };
 
 export const PRODUCT_ROUTE_LABEL: Record<string, string> = {

@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { BackgroundGrid } from '@/components/visual/BackgroundGrid';
 import { CoordinateAxis } from '@/components/visual/CoordinateAxis';
 
 export interface TechnologyHeroProps {
-  eyebrow: string;
-  title: string;
-  lead: string;
-  expansion?: string;
+  eyebrow: ReactNode;
+  title: ReactNode;
+  lead: ReactNode;
+  expansion?: ReactNode;
 }
 
 export function TechnologyHero({ eyebrow, title, lead, expansion }: TechnologyHeroProps) {

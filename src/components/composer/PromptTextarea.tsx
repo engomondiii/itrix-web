@@ -1,8 +1,9 @@
 'use client';
 
+import { useComposerCopy } from '@/lib/i18n/conversationLocale';
+
 import { useEffect, useRef } from 'react';
 import type { ChangeEvent } from 'react';
-import { COMPOSER_COPY } from '@/lib/content/composerCopy';
 import { useComposerStore } from '@/store/composerStore';
 import { useSendKeys } from '@/hooks/useSendKeys';
 
@@ -55,8 +56,9 @@ const MAX_HEIGHT_PX = 320;
 
 export function PromptTextarea({
   value, onChange, onSubmit, id, describedBy, labelledBy,
-  placeholder = COMPOSER_COPY.placeholder, invalid = false, minRows = 3, busy = false,
+  placeholder = composerCopy.placeholder, invalid = false, minRows = 3, busy = false,
 }: PromptTextareaProps) {
+  const composerCopy = useComposerCopy();
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const focusRequest = useComposerStore((s) => s.focusRequest);
   const { onKeyDown } = useSendKeys({ onSubmit, disabled: busy });
@@ -85,7 +87,7 @@ export function PromptTextarea({
   return (
     <>
       <label htmlFor={id} className="sr-only">
-        {COMPOSER_COPY.textareaLabel}
+        {composerCopy.textareaLabel}
       </label>
       <textarea
         ref={ref}

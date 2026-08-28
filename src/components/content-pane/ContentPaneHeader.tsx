@@ -1,6 +1,7 @@
 'use client';
 
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PaneCollapseControl } from './PaneCollapseControl';
 
 /**
@@ -17,10 +18,10 @@ import { PaneCollapseControl } from './PaneCollapseControl';
 export function ContentPaneHeader({ onClose }: { onClose?: () => void }) {
   return (
     <header className="pane__header">
-      <h2 className="pane__title">{PANE_COPY.header}</h2>
+      <h2 className="pane__title">{paneCopy.header}</h2>
       {onClose ? (
         <button type="button" className="pane__close" onClick={onClose}>
-          {PANE_COPY.close}
+          {paneCopy.close}
         </button>
       ) : (
         <PaneCollapseControl />

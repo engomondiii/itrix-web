@@ -5,10 +5,11 @@ import { EvalTracker } from '@/components/portal/EvalTracker';
 import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { useEvalTracking } from '@/hooks/useEvalTracking';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 
 /** Evaluation stage tracking (§66). */
 export default function EvaluationPage() {
+  const portalCopy = usePortalCopy();
   const { data, loading } = useEvalTracking();
 
   return (
@@ -20,7 +21,7 @@ export default function EvaluationPage() {
         ) : data && data.exists ? (
           <EvalTracker evaluation={data} />
         ) : (
-          <EmptyState>{PORTAL_COPY.evaluation.emptyState}</EmptyState>
+          <EmptyState>{portalCopy.evaluation.emptyState}</EmptyState>
         )}
       </div>
     </>

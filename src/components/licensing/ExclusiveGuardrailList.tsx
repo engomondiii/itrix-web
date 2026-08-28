@@ -1,31 +1,5 @@
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { NDA_WARNINGS } from '@/lib/content/ndaWarnings';
-
-const GUARDRAILS = [
-  'Exclusivity is granted only after a successful proof-of-concept.',
-  'Scope is bounded — by field, region, or application — not blanket.',
-  'Exclusive and strategic rights are priced separately from standard licensing.',
-  'Option and exclusivity fees are never presented as standard pricing.',
-  'Strategic rights carry co-development and milestone commitments.',
-];
-
-export function ExclusiveGuardrailList() {
-  return (
-    <Card variant="default" className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
-        <Badge tone="special">Exclusive & strategic</Badge>
-        <span className="text-card-title text-ink-primary">Guardrails</span>
-      </div>
-      <ul className="flex flex-col gap-2">
-        {GUARDRAILS.map((g) => (
-          <li key={g} className="flex items-start gap-2 text-secondary text-ink-secondary">
-            <span aria-hidden className="mt-1 text-accent">◆</span>
-            <span>{g}</span>
-          </li>
-        ))}
-      </ul>
-      <p className="border-t border-border-soft pt-3 text-caption text-ink-secondary">{NDA_WARNINGS.exclusivity}</p>
-    </Card>
-  );
-}
+'use client';
+import { Card } from '@/components/ui/Card'; import { Badge } from '@/components/ui/Badge'; import { useLocaleStore } from '@/store/localeStore';
+const EN=['Whether any exclusivity is appropriate at all.','What field, geography, application or other scope would be covered.','What duration, milestones, dependencies and termination conditions would apply.','What rights each party would have to improvements, derived work, publication and sublicensing.','What commercial consideration would apply, if the parties decide to proceed.'];
+const KO=['독점 구조가 적절한지 여부.','어떤 분야, 지역, 응용 또는 기타 범위를 포함할지.','기간, 마일스톤, 의존성, 종료 조건을 어떻게 정할지.','개선물, 파생 작업, 공개, 재라이선스에 대해 각 당사자가 어떤 권리를 가질지.','진행하기로 결정할 경우 어떤 상업적 대가를 적용할지.'];
+export function ExclusiveGuardrailList(){const ko=useLocaleStore(s=>s.locale)==='ko';const qs=ko?KO:EN;return <Card variant="default" className="flex flex-col gap-4"><div className="flex items-center gap-2"><Badge tone="special">{ko?'계약에 따라 결정':'Agreement-dependent'}</Badge><span className="text-card-title text-ink-primary">{ko?'합의가 필요한 질문':'Questions that must be agreed'}</span></div><ul className="flex flex-col gap-2">{qs.map(q=><li key={q} className="flex items-start gap-2 text-secondary text-ink-secondary"><span aria-hidden className="mt-1 text-accent">◆</span><span>{q}</span></li>)}</ul><p className="border-t border-border-soft pt-3 text-caption text-ink-secondary">{ko?'이 페이지는 독점 정책, 가격, 기본값, 자격 또는 약속을 만들지 않습니다. 그러한 조건은 적용 가능한 서면 계약이 명시한 경우에만 존재합니다.':'This page does not create an exclusivity policy, price, default, entitlement or commitment. Any such term exists only if an applicable written agreement says so.'}</p></Card>}

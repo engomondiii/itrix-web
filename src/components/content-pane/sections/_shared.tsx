@@ -2,7 +2,8 @@
 
 import type { ReactNode } from 'react';
 import { Spinner } from '@/components/ui/Spinner';
-import { PANE_SECTION_INTRO, PANE_SECTION_LABEL } from '@/lib/content/paneCopy';
+import { PANE_SECTION_INTRO, PANE_SECTION_INTRO_KO, PANE_SECTION_LABEL, PANE_SECTION_LABEL_KO, PANE_SECTION_EMPTY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PaneEmptyState } from '../PaneEmptyState';
 import type { ContentPaneSection } from '@/lib/journey/contentPaneSections';
 
@@ -33,17 +34,19 @@ export interface PaneSectionFrameProps {
 export function PaneSectionFrame({
   section, loading = false, empty = false, emptyMessage, children,
 }: PaneSectionFrameProps) {
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
+  const label = ko ? PANE_SECTION_LABEL_KO[section] : PANE_SECTION_LABEL[section];
+  const intro = ko ? PANE_SECTION_INTRO_KO[section] : PANE_SECTION_INTRO[section];
+  const localizedEmpty = ko && !emptyMessage ? PANE_SECTION_EMPTY_KO[section] : emptyMessage;
   return (
     <div className="pane__section" data-section={section}>
-      <h3 className="pane__section-title">{PANE_SECTION_LABEL[section]}</h3>
-      {PANE_SECTION_INTRO[section] ? (
-        <p className="pane__section-intro">{PANE_SECTION_INTRO[section]}</p>
-      ) : null}
+      <h3 className="pane__section-title">{label}</h3>
+      {intro ? <p className="pane__section-intro">{intro}</p> : null}
 
       {loading ? (
         <div className="pane__loading"><Spinner size="sm" /></div>
       ) : empty ? (
-        <PaneEmptyState message={emptyMessage} />
+        <PaneEmptyState message={localizedEmpty} />
       ) : (
         children
       )}

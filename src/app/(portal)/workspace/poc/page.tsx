@@ -6,8 +6,9 @@ import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { PoCEvidenceArtifact } from '@/components/artifacts/PoCEvidenceArtifact';
 import { usePoCEvidence } from '@/hooks/usePoCEvidence';
-import { WORKSPACE_COPY } from '@/lib/content/successCopy';
+import { useWorkspaceCopy } from '@/lib/i18n/successLocale';
 import type { Artifact } from '@/types/artifact.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * State 8 — PoC evidence, as a DEEP-LINK VIEW.
@@ -18,6 +19,8 @@ import type { Artifact } from '@/types/artifact.types';
  * pending, and it is never re-described after the fact.
  */
 export default function PoCPage() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
+  const workspaceCopy = useWorkspaceCopy();
   const { data, loading } = usePoCEvidence();
 
   const artifact: Artifact | null = data?.exists
@@ -39,7 +42,7 @@ export default function PoCPage() {
       <PortalTopbar title="Proof of concept" />
       <div className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-8">
         <Link href="/workspace" className="artifact-page__back">
-          Back to your conversation
+          {ko ? '대화로 돌아가기' : 'Back to your conversation'}
         </Link>
 
         {loading ? (
@@ -49,7 +52,7 @@ export default function PoCPage() {
             <PoCEvidenceArtifact artifact={artifact} />
           </div>
         ) : (
-          <EmptyState>{WORKSPACE_COPY.poc.empty}</EmptyState>
+          <EmptyState>{workspaceCopy.poc.empty}</EmptyState>
         )}
       </div>
     </>

@@ -1,10 +1,11 @@
 'use client';
 
+import { useCenterCopy } from '@/lib/i18n/conversationLocale';
+
 import Link from 'next/link';
 import { ItrixLogo } from '@/components/brand/ItrixLogo';
 import { brand } from '@/constants/brand';
 import { routes } from '@/constants/routes';
-import { CENTER_COPY } from '@/lib/content/centerCopy';
 
 /**
  * The wordmark and its descriptor — top left, on both shells.
@@ -33,10 +34,11 @@ export interface WordmarkLockupProps {
 }
 
 export function WordmarkLockup({ variant = 'arrival', onActivate }: WordmarkLockupProps) {
+  const centerCopy = useCenterCopy();
   const inner = (
     <>
       <ItrixLogo width={120} priority={variant === 'arrival'} />
-      <span className="wordmark__descriptor">{CENTER_COPY.descriptor}</span>
+      <span className="wordmark__descriptor">{centerCopy.descriptor}</span>
     </>
   );
 

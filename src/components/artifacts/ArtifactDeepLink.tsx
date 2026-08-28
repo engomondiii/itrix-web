@@ -6,6 +6,7 @@ import { artifactsApi } from '@/lib/api/artifactsApi';
 import { ArtifactBlock } from './ArtifactBlock';
 import { Composer } from '@/components/composer/Composer';
 import type { Artifact } from '@/types/artifact.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * The deep-link view of one artifact.
@@ -31,6 +32,7 @@ import type { Artifact } from '@/types/artifact.types';
  * page is a special case.
  */
 export function ArtifactDeepLink({ artifactId }: { artifactId: string }) {
+  const copy = useCommonCopy();
   const [artifact, setArtifact] = useState<Artifact | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -55,18 +57,18 @@ export function ArtifactDeepLink({ artifactId }: { artifactId: string }) {
         <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
           <path d="M15 6l-6 6 6 6" />
         </svg>
-        Back to your conversation
+        {copy.backConversation}
       </Link>
 
       {loading ? (
         <p className="artifact-page__status" role="status">
-          Opening…
+          {copy.opening}
         </p>
       ) : artifact ? (
         <ArtifactBlock artifact={artifact} defaultOpen />
       ) : (
         <p className="artifact-page__status">
-          We could not open that just now. Your conversation is still where you left it.
+          {copy.artifactOpenError}
         </p>
       )}
 

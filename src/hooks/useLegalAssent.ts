@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { legalApi, type LegalInstrumentVersion } from '@/lib/api/legalApi';
-import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
+import { LEGAL_INSTRUMENTS, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
 import { siteConfig } from '@/config/site.config';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
@@ -37,9 +37,9 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * POST produced a SECOND record for one act of consent.
  *
  * ── THE RECORD STORES VERSIONS, NOT A BOOLEAN ───────────────────────────────
- * `versions` is what this build RENDERED, and those are what get sent. It must always be
- * answerable what a given customer actually agreed to, and a boolean stops being able to
- * answer that the first time the Terms change.
+ * `versions` is what this build RENDERED, and those are what get sent. While the legal
+ * bundle is unpublished the backend records this act explicitly as a draft acknowledgement,
+ * not as published-instrument assent. Publication forces a fresh assent.
  *
  * ── AND IT WARNS WHEN THE TWO SIDES DISAGREE ────────────────────────────────
  * In development it compares the rendered versions against the backend's. A silent
@@ -111,7 +111,7 @@ export function useLegalAssent(options?: { transport?: AssentTransport }): UseLe
   const record = useCallback(
     async (token?: string): Promise<boolean> => {
       if (!accepted) {
-        setError('Please accept the Terms and the Privacy Policy to continue.');
+        setError(LEGAL_PUBLISHED ? 'Please accept the Terms and the Privacy Policy to continue.' : 'Please acknowledge the draft Terms and Privacy Policy to continue.');
         return false;
       }
 

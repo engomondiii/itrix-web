@@ -3,7 +3,8 @@
 import { PortalTopbar } from '@/components/portal/PortalTopbar';
 import { SatisfactionPulse } from '@/components/success/SatisfactionPulse';
 import { ImprovementComposer } from '@/components/success/ImprovementComposer';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * Private feedback.
@@ -14,19 +15,21 @@ import { SUCCESS_COPY } from '@/lib/content/successCopy';
  * toll nobody should pay to ask for help.
  */
 export default function FeedbackPage() {
+  const successCopy = useSuccessCopy();
+  const ko = useLocaleStore((s) => s.locale) === 'ko';
   return (
     <>
       <PortalTopbar title="Feedback" />
       <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-8">
         <section aria-labelledby="pulse-title" className="flex flex-col gap-3">
           <h1 id="pulse-title" className="font-display text-web-h2 text-ink-primary">
-            {SUCCESS_COPY.feedback.title}
+            {successCopy.feedback.title}
           </h1>
           <SatisfactionPulse />
         </section>
 
         <section aria-labelledby="improve-title" className="flex flex-col gap-3 rounded-panel border border-border-soft bg-surface-glass-soft p-5">
-          <h2 id="improve-title" className="sr-only">Tell us what to improve</h2>
+          <h2 id="improve-title" className="sr-only">{ko ? '개선할 점을 알려주세요' : 'Tell us what to improve'}</h2>
           <ImprovementComposer />
         </section>
       </div>

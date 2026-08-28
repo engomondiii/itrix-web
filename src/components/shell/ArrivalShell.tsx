@@ -5,6 +5,7 @@ import { WordmarkLockup } from './WordmarkLockup';
 import { SignInLink } from './SignInLink';
 import { LegalStrip } from './LegalStrip';
 import { ArrivalMotifs } from '@/components/arrival/ArrivalMotifs';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
 /**
  * THE ARRIVAL SHELL — the front door, before the visitor has spoken.
@@ -44,7 +45,10 @@ export function ArrivalShell({ children }: { children: ReactNode }) {
     <div className="arrival-page" data-journey-state="arrival">
       <header className="arrival-bar">
         <WordmarkLockup variant="arrival" />
-        <SignInLink variant="arrival" />
+        <div className="flex items-center gap-3">
+          <SiteLocaleToggle compact />
+          <SignInLink variant="arrival" />
+        </div>
       </header>
 
       <main id="content" className="arrival-hero">

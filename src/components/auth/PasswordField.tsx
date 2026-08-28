@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react';
 import type { ChangeEvent, KeyboardEvent } from 'react';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { PASSWORD_MAX_LENGTH } from '@/lib/validation/password';
 
 /**
@@ -50,6 +50,7 @@ export interface PasswordFieldProps {
 export function PasswordField({
   label, value, onChange, autoComplete, error = null, describedBy, onSubmitKey, autoFocus,
 }: PasswordFieldProps) {
+  const authCopy = useAuthCopy();
   const uid = useId();
   const id = `${uid}-password`;
   const errorId = `${uid}-password-error`;
@@ -96,7 +97,7 @@ export function PasswordField({
           type="button"
           className="password-field__toggle"
           aria-pressed={visible}
-          aria-label={visible ? AUTH_COPY.shared.hidePassword : AUTH_COPY.shared.showPassword}
+          aria-label={visible ? authCopy.shared.hidePassword : authCopy.shared.showPassword}
           onClick={() => setVisible((v) => !v)}
         >
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
@@ -118,7 +119,7 @@ export function PasswordField({
 
       {capsOn ? (
         <p role="status" className="password-field__caps">
-          {AUTH_COPY.shared.capsLock}
+          {authCopy.shared.capsLock}
         </p>
       ) : null}
 

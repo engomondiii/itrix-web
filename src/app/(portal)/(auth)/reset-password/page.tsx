@@ -13,7 +13,7 @@ import { PasswordField } from '@/components/auth/PasswordField';
 import { PasswordRules } from '@/components/auth/PasswordRules';
 import { usePasswordReset } from '@/hooks/usePasswordReset';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 
 /**
@@ -48,6 +48,7 @@ import { routes } from '@/constants/routes';
  * whichever state renders.
  */
 function ResetPasswordInner() {
+  const authCopy = useAuthCopy();
   const params = useSearchParams();
   const token = params.get('token') ?? '';
 
@@ -58,8 +59,8 @@ function ResetPasswordInner() {
 
   const policy = usePasswordPolicy(password, confirmValue);
 
-  const shortError = touched && policy.tooShort ? AUTH_COPY.reset.tooShort : null;
-  const mismatchError = touched && !policy.tooShort && !policy.matches ? AUTH_COPY.reset.mismatch : null;
+  const shortError = touched && policy.tooShort ? authCopy.reset.tooShort : null;
+  const mismatchError = touched && !policy.tooShort && !policy.matches ? authCopy.reset.mismatch : null;
 
   function send() {
     setTouched(true);
@@ -71,9 +72,9 @@ function ResetPasswordInner() {
     return (
       <>
         <p className="auth-confirmation" role="status">
-          {AUTH_COPY.reset.success}
+          {authCopy.reset.success}
         </p>
-        <AuthFooterLinks links={[{ label: AUTH_COPY.reset.back, href: routes.portalSignIn }]} />
+        <AuthFooterLinks links={[{ label: authCopy.reset.back, href: routes.portalSignIn }]} />
       </>
     );
   }
@@ -83,12 +84,12 @@ function ResetPasswordInner() {
     return (
       <>
         <p className="auth-confirmation" role="status">
-          {AUTH_COPY.reset.expired}
+          {authCopy.reset.expired}
         </p>
-        <AuthFooterLinks links={[{ label: AUTH_COPY.reset.back, href: routes.portalSignIn }]}>
+        <AuthFooterLinks links={[{ label: authCopy.reset.back, href: routes.portalSignIn }]}>
           <p className="auth-footer__row">
             <Link href={routes.portalForgotPassword} className="auth-footer__link">
-              {AUTH_COPY.reset.requestAgain}
+              {authCopy.reset.requestAgain}
             </Link>
           </p>
         </AuthFooterLinks>
@@ -98,14 +99,14 @@ function ResetPasswordInner() {
 
   return (
     <>
-      <p className="auth-heading__standfirst">{AUTH_COPY.reset.standfirst}</p>
+      <p className="auth-heading__standfirst">{authCopy.reset.standfirst}</p>
 
       <AuthErrorSummary messages={[error, shortError, mismatchError]} />
       <RateLimitNotice retryAfterSeconds={retryAfterSeconds} />
 
       <div className="auth-fields">
         <PasswordField
-          label={AUTH_COPY.reset.passwordLabel}
+          label={authCopy.reset.passwordLabel}
           value={password}
           onChange={setPassword}
           autoComplete="new-password"
@@ -115,7 +116,7 @@ function ResetPasswordInner() {
         {/* Shown ALWAYS, not as a correction after a failure. */}
         <PasswordRules assessment={policy} />
         <PasswordField
-          label={AUTH_COPY.reset.confirmLabel}
+          label={authCopy.reset.confirmLabel}
           value={confirmValue}
           onChange={setConfirmValue}
           autoComplete="new-password"
@@ -125,20 +126,21 @@ function ResetPasswordInner() {
       </div>
 
       <Button variant="primary" size="lg" fullWidth onClick={send} disabled={submitting}>
-        {submitting ? AUTH_COPY.reset.submitting : AUTH_COPY.reset.submit}
+        {submitting ? authCopy.reset.submitting : authCopy.reset.submit}
       </Button>
 
-      <AuthFooterLinks links={[{ label: AUTH_COPY.reset.back, href: routes.portalSignIn }]} />
+      <AuthFooterLinks links={[{ label: authCopy.reset.back, href: routes.portalSignIn }]} />
     </>
   );
 }
 
 export default function ResetPasswordPage() {
+  const authCopy = useAuthCopy();
   return (
     <AuthPanel>
       {/* The heading is OUTSIDE the boundary, so it exists in the server response and
           there is exactly one h1 whichever state the body resolves to. */}
-      <AuthHeading title={AUTH_COPY.reset.title} />
+      <AuthHeading title={authCopy.reset.title} />
       <Suspense fallback={null}>
         <ResetPasswordInner />
       </Suspense>

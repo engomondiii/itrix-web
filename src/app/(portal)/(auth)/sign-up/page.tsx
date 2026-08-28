@@ -6,7 +6,7 @@ import { AuthHeading } from '@/components/auth/AuthHeading';
 import { AuthFooterLinks } from '@/components/auth/AuthFooterLinks';
 import { RegistrationForm } from '@/components/auth/RegistrationForm';
 import { InviteCodeDisclosure } from '@/components/auth/InviteCodeDisclosure';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { siteConfig } from '@/config/site.config';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
@@ -40,14 +40,15 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * a friendly face.
  */
 export default function SignUpPage() {
+  const authCopy = useAuthCopy();
   const openSignup = siteConfig.featureFlags.openSignup;
   const codeDoorEnabled = siteConfig.featureFlags.signupInviteCode;
 
   return (
     <AuthPanel>
       <AuthHeading
-        title={AUTH_COPY.signUp.title}
-        standfirst={openSignup ? AUTH_COPY.signUp.standfirst : undefined}
+        title={authCopy.signUp.title}
+        standfirst={openSignup ? authCopy.signUp.standfirst : undefined}
       />
 
       {openSignup ? <RegistrationForm /> : null}
@@ -63,8 +64,8 @@ export default function SignUpPage() {
       <AuthFooterLinks
         links={[
           {
-            prefix: AUTH_COPY.signUp.haveAccountPrefix,
-            label: AUTH_COPY.signUp.haveAccountLink,
+            prefix: authCopy.signUp.haveAccountPrefix,
+            label: authCopy.signUp.haveAccountLink,
             href: routes.portalSignIn,
           },
         ]}
@@ -80,18 +81,19 @@ export default function SignUpPage() {
  * composer, which is where a workspace actually starts when registration is closed.
  */
 function ClosedRegistrationNotice() {
+  const authCopy = useAuthCopy();
   return (
     <section className="auth-door" aria-labelledby="signup-closed">
       <h2 id="signup-closed" className="auth-door__label">
-        {AUTH_COPY.signUp.closedLabel}
+        {authCopy.signUp.closedLabel}
       </h2>
-      <p className="auth-door__body">{AUTH_COPY.signUp.closedBody}</p>
+      <p className="auth-door__body">{authCopy.signUp.closedBody}</p>
       <Link
         href={routes.home}
         className="auth-door__action"
         onClick={() => trackEvent('auth.signup_door_chosen', { door: 'conversation' })}
       >
-        {AUTH_COPY.signUp.closedAction}
+        {authCopy.signUp.closedAction}
       </Link>
     </section>
   );

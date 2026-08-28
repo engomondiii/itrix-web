@@ -11,11 +11,11 @@ import { useTranscriptStore } from '@/store/transcriptStore';
 import { usePendingStore } from '@/store/pendingStore';
 import { useAttachmentStore } from '@/store/attachmentStore';
 import { setThreadUrl } from '@/hooks/useThread';
-import { COMPOSER_COPY } from '@/lib/content/composerCopy';
-import { familyForPrompt } from '@/lib/content/examplePrompts';
+import { useComposerCopy } from '@/lib/i18n/conversationLocale';
+import { isExamplePrompt } from '@/lib/content/examplePrompts';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { successApi } from '@/lib/api/successApi';
-import type { SubmitResult, Turn, TurnAttachment } from '@/types/thread.types';
+import type { CreateThreadRequest, SubmitResult, Turn, TurnAttachment } from '@/types/thread.types';
 
 /**
  * THE NO-NAVIGATION CONTRACT (R21, Surface 1 v5.0 §2.3).
@@ -56,6 +56,41 @@ function localId(prefix: string): string {
       ? crypto.randomUUID()
       : Math.random().toString(36).slice(2);
   return `${prefix}_local_${rand}`;
+}
+
+const FIRST_TURN_RECOVERY_KEY = 'itrix:first-turn-recovery:v1';
+
+interface FirstTurnRecovery {
+  idempotencyKey: string;
+  payload: CreateThreadRequest;
+  localThreadId: string;
+  optimisticTurnId: string;
+}
+
+function newIdempotencyKey(): string {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
+}
+
+function saveFirstTurnRecovery(value: FirstTurnRecovery): void {
+  if (typeof window === 'undefined') return;
+  try { window.sessionStorage.setItem(FIRST_TURN_RECOVERY_KEY, JSON.stringify(value)); } catch { /* storage is optional */ }
+}
+
+function loadFirstTurnRecovery(): FirstTurnRecovery | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.sessionStorage.getItem(FIRST_TURN_RECOVERY_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as Partial<FirstTurnRecovery>;
+    if (!value.idempotencyKey || !value.localThreadId || !value.optimisticTurnId || !value.payload) return null;
+    return value as FirstTurnRecovery;
+  } catch { return null; }
+}
+
+function clearFirstTurnRecovery(): void {
+  if (typeof window === 'undefined') return;
+  try { window.sessionStorage.removeItem(FIRST_TURN_RECOVERY_KEY); } catch { /* storage is optional */ }
 }
 
 /** Snapshot display metadata before the composer tray is cleared after send. */
@@ -119,10 +154,10 @@ export interface UseComposerResult {
 }
 
 export function useComposer(): UseComposerResult {
+  const composerCopy = useComposerCopy();
   const value = useComposerStore((s) => s.value);
   const submitting = useComposerStore((s) => s.submitting);
   const error = useComposerStore((s) => s.error);
-  const familyPrior = useComposerStore((s) => s.familyPrior);
   const setValue = useComposerStore((s) => s.setValue);
   const setSubmitting = useComposerStore((s) => s.setSubmitting);
   const setError = useComposerStore((s) => s.setError);
@@ -185,7 +220,7 @@ export function useComposer(): UseComposerResult {
     if (journeyState === 10) {
       const receipt = await successApi.submitImprovement({ message: text });
       if (receipt.error) {
-        setError(COMPOSER_COPY.unreachable);
+        setError(composerCopy.unreachable);
         setSubmitting(false);
         return;
       }
@@ -239,17 +274,29 @@ export function useComposer(): UseComposerResult {
     trackEvent(isFirstTurn ? 'thread.started' : 'thread.turn_submitted', {
       fromCenter: isFirstTurn,
       length: text.length,
-      usedExample: familyForPrompt(text) !== null,
+      usedExample: isExamplePrompt(text),
       attachments: attachmentIds.length,
     });
 
+    const firstPayload: CreateThreadRequest | null = isFirstTurn
+      ? { body: text, attachmentIds }
+      : null;
+    const firstIdempotencyKey = isFirstTurn ? newIdempotencyKey() : '';
+    if (isFirstTurn && firstPayload) {
+      // Persist BEFORE the network call. If the server commits but this response is lost,
+      // Try Again must resend the exact same identifier and payload rather than creating a
+      // second thread/turn/business effect. sessionStorage survives a reload in this tab.
+      saveFirstTurnRecovery({
+        idempotencyKey: firstIdempotencyKey,
+        payload: firstPayload,
+        localThreadId: threadId,
+        optimisticTurnId: optimistic.id,
+      });
+    }
+
     try {
-      const result = isFirstTurn
-        ? await threadsApi.create({
-            body: text,
-            familyPrior: familyPrior ?? familyForPrompt(text),
-            attachmentIds,
-          })
+      const result = isFirstTurn && firstPayload
+        ? await threadsApi.create(firstPayload, firstIdempotencyKey)
         : await turnsApi.submit(threadId, { body: text, attachmentIds });
 
       if (result.data) {
@@ -269,6 +316,7 @@ export function useComposer(): UseComposerResult {
 
         reconcile(serverThreadId, optimistic.id, result.data);
         setThreadUrl(serverThreadId);
+        if (isFirstTurn) clearFirstTurnRecovery();
 
         /* Non-streaming path: the POST already carried the answer, so the wait is
            over the moment we reconcile. With streaming on, `useStreamingTurn` ends it
@@ -281,9 +329,9 @@ export function useComposer(): UseComposerResult {
            that it has not been reviewed. No fabricated answer, ever. */
         update(threadId, optimistic.id, {
           status: 'unavailable',
-          contextNote: COMPOSER_COPY.unreachable,
+          contextNote: composerCopy.unreachable,
         });
-        setError(result.error ? COMPOSER_COPY.unreachable : COMPOSER_COPY.unreachable);
+        setError(result.error ? composerCopy.unreachable : composerCopy.unreachable);
         setThreadUrl(threadId);
         /* Honest degradation ends the wait too. Leaving the indicator spinning over a
            turn we have already told the visitor was not reviewed would be the surface
@@ -294,7 +342,7 @@ export function useComposer(): UseComposerResult {
       setSubmitting(false);
     }
   }, [
-    activeThreadId, familyPrior, journeyState,
+    activeThreadId, journeyState,
     setError, setSubmitting, setActive, upsertThread, append, clear, update, reconcile,
     beginPending, endPending,
   ]);
@@ -336,7 +384,7 @@ export function useComposer(): UseComposerResult {
     /* A turn is substantive if it has words OR files. Someone who drags in an
        architecture document and writes "have a look" has said enough. */
     if (text.length < MIN_LENGTH && attachmentIds.length === 0) {
-      setError(COMPOSER_COPY.tooShort);
+      setError(composerCopy.tooShort);
       return;
     }
 
@@ -352,7 +400,7 @@ export function useComposer(): UseComposerResult {
       trackEvent('thread.turn_submitted', {
         fromCenter: false,
         length: text.length,
-        usedExample: familyForPrompt(text) !== null,
+        usedExample: isExamplePrompt(text),
         attachments: attachmentIds.length,
       });
       return;
@@ -435,7 +483,7 @@ export function useComposer(): UseComposerResult {
     trackEvent('thread.turn_submitted', {
       fromCenter: false,
       length: text.length,
-      usedExample: familyForPrompt(text) !== null,
+      usedExample: isExamplePrompt(text),
       attachments: 0,
     });
 
@@ -444,17 +492,54 @@ export function useComposer(): UseComposerResult {
 
   const retryLatest = useCallback(async () => {
     const threadId = useThreadStore.getState().activeThreadId;
-    if (!threadId || threadId.includes('_local_') || submitting) return;
+    if (!threadId || submitting) return;
+
+    // Case 1: the first POST may have committed upstream while its response was lost.
+    // Reuse the exact durable idempotency key AND exact payload; do not re-run the general
+    // submit pipeline (which could repeat an unrelated business action).
+    if (threadId.includes('_local_')) {
+      const recovery = loadFirstTurnRecovery();
+      if (!recovery || recovery.localThreadId !== threadId) {
+        setError(composerCopy.unreachable);
+        return;
+      }
+      setSubmitting(true); setError(null); beginPending(threadId);
+      try {
+        const result = await threadsApi.create(recovery.payload, recovery.idempotencyKey);
+        if (!result.data) {
+          setError(composerCopy.unreachable);
+          endPending(threadId);
+          return;
+        }
+        const serverThreadId = result.data.thread.id;
+        const localTurns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+        useTranscriptStore.getState().replace(
+          serverThreadId, localTurns.map((t) => ({ ...t, threadId: serverThreadId })),
+        );
+        useTranscriptStore.getState().clearThread(threadId);
+        useThreadStore.getState().remove(threadId);
+        setActive(serverThreadId);
+        reconcile(serverThreadId, recovery.optimisticTurnId, result.data);
+        setThreadUrl(serverThreadId);
+        clearFirstTurnRecovery();
+        endPending(serverThreadId);
+        endPending(threadId);
+      } finally { setSubmitting(false); }
+      return;
+    }
+
+    // Case 2: the visitor turn is already persisted. `/retry` regenerates only the
+    // unanswered turn; it never POSTs the visitor text again.
     setSubmitting(true); setError(null); beginPending(threadId);
     try {
       const result = await turnsApi.retry(threadId);
       if (result.data?.assistantTurn) append(threadId, result.data.assistantTurn);
-      if (result.error) setError(COMPOSER_COPY.unreachable);
-      // A 202 means the original generation still owns the idempotency lock. Keep the
-      // pending indicator alive so realtime/poll refresh can settle it.
+      if (result.error) setError(composerCopy.unreachable);
       if (!result.data?.pending) endPending(threadId);
     } finally { setSubmitting(false); }
-  }, [submitting, setSubmitting, setError, beginPending, append, endPending]);
+  }, [
+    submitting, setSubmitting, setError, beginPending, append, endPending, setActive, reconcile,
+  ]);
 
   return {
     value,

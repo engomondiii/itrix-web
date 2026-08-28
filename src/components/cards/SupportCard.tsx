@@ -1,7 +1,8 @@
 'use client';
 
 import { SupportRequestList } from '@/components/success/SupportRequestList';
-import { SUCCESS_COPY } from '@/lib/content/successCopy';
+import { useSuccessCopy } from '@/lib/i18n/successLocale';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 import type { InlineCard } from '@/types/artifact.types';
 import type { SupportRequest } from '@/types/success.types';
 
@@ -27,18 +28,18 @@ interface SupportPayload {
 }
 
 export function SupportCard({ card }: { card: InlineCard }) {
+  const successCopy = useSuccessCopy();
+  const copy = useCommonCopy();
   const p = (card.payload ?? {}) as SupportPayload;
   const requests = p.requests ?? [];
 
   return (
     <aside className="inline-card inline-card--support" data-card={card.type}>
-      <p className="inline-card__title">{card.title || SUCCESS_COPY.support.title}</p>
-      <p className="inline-card__body">{card.body || SUCCESS_COPY.support.intro}</p>
+      <p className="inline-card__title">{card.title || successCopy.support.title}</p>
+      <p className="inline-card__body">{card.body || successCopy.support.intro}</p>
 
       {p.slaHours ? (
-        <p className="inline-card__body">
-          Your response time is {p.slaHours} hours.
-        </p>
+        <p className="inline-card__body">{copy.responseTime(p.slaHours)}</p>
       ) : null}
 
       {requests.length > 0 ? <SupportRequestList requests={requests} /> : null}

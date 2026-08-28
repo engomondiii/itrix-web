@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { Spinner } from '@/components/ui/Spinner';
 import { portalApi } from '@/lib/api/portalApi';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
 /**
@@ -24,7 +24,7 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * carries no message, and says the same in the same terms.
  *
  * The room does NOT unlock on submission, and the copy does not imply it will: a
- * request is not a signature. It opens when the signed NDA is in place, which the
+ * request is not a signature. Restricted material appears only after explicit content authorization and any required agreement are in place; the
  * live `nda.signed` event and the next fetch both already handle.
  */
 /* ── THE PREPARING STATE (fix, 2026-08-12) ──────────────────────────────────
@@ -57,7 +57,8 @@ const FALLBACK_CONFIRMATION =
   'the address on your account. Keep an eye on your workspace inbox and your email; you do ' +
   'not need to do anything until it arrives.';
 
-export function DataRoomLockedState() {
+export function DataRoomLockedState({ ndaSigned = false }: { ndaSigned?: boolean }) {
+  const portalCopy = usePortalCopy();
   const [state, setState] = useState<'idle' | 'sending' | 'done' | 'expired' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -88,8 +89,12 @@ export function DataRoomLockedState() {
 
   return (
     <Card variant="warm" className="flex flex-col gap-3">
-      <SectionLabel tone="gold">{PORTAL_COPY.documents.dataRoomLocked.heading}</SectionLabel>
-      <p className="reading text-ink-secondary">{PORTAL_COPY.documents.dataRoomLocked.body}</p>
+      <SectionLabel tone="gold">{portalCopy.documents.dataRoomLocked.heading}</SectionLabel>
+      <p className="reading text-ink-secondary">
+        {ndaSigned
+          ? portalCopy.documents.dataRoomLocked.bodyWithNda
+          : portalCopy.documents.dataRoomLocked.body}
+      </p>
 
       {state === 'done' ? (
         <div
@@ -114,9 +119,11 @@ export function DataRoomLockedState() {
       ) : (
         <>
           <div className="flex items-center gap-3 pt-1">
-            <Button variant="gold" size="md" onClick={() => void submit()}>
-              {PORTAL_COPY.documents.dataRoomLocked.button}
-            </Button>
+            {!ndaSigned ? (
+              <Button variant="gold" size="md" onClick={() => void submit()}>
+                {portalCopy.documents.dataRoomLocked.button}
+              </Button>
+            ) : null}
           </div>
           {state === 'expired' ? (
             <p role="status" className="text-secondary text-ink-secondary">

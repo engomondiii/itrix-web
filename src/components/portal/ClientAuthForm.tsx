@@ -9,7 +9,7 @@ import { AuthErrorSummary } from '@/components/auth/AuthErrorSummary';
 import { RateLimitNotice } from '@/components/auth/RateLimitNotice';
 import { PasswordField } from '@/components/auth/PasswordField';
 import { useSignIn } from '@/hooks/useSignIn';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 
 /**
@@ -60,6 +60,7 @@ function nextFromLocation(): string | undefined {
 }
 
 export function ClientAuthForm({ next }: { next?: string } = {}) {
+  const authCopy = useAuthCopy();
   const { submit, submitting, error, retryAfterSeconds, clearError } = useSignIn();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -70,7 +71,7 @@ export function ClientAuthForm({ next }: { next?: string } = {}) {
 
   return (
     <AuthPanel>
-      <AuthHeading title={AUTH_COPY.signIn.title} standfirst={AUTH_COPY.signIn.standfirst} />
+      <AuthHeading title={authCopy.signIn.title} standfirst={authCopy.signIn.standfirst} />
 
       <AuthErrorSummary messages={[error]} />
       <RateLimitNotice retryAfterSeconds={retryAfterSeconds} />
@@ -78,7 +79,7 @@ export function ClientAuthForm({ next }: { next?: string } = {}) {
       <div className="auth-fields">
         <div className="auth-field">
           <label htmlFor="signin-email" className="auth-field__label">
-            {AUTH_COPY.signIn.emailLabel}
+            {authCopy.signIn.emailLabel}
           </label>
           <input
             id="signin-email"
@@ -99,7 +100,7 @@ export function ClientAuthForm({ next }: { next?: string } = {}) {
         </div>
 
         <PasswordField
-          label={AUTH_COPY.signIn.passwordLabel}
+          label={authCopy.signIn.passwordLabel}
           value={password}
           onChange={(v) => {
             setPassword(v);
@@ -111,15 +112,15 @@ export function ClientAuthForm({ next }: { next?: string } = {}) {
       </div>
 
       <Button variant="primary" size="lg" fullWidth onClick={send} disabled={submitting}>
-        {submitting ? AUTH_COPY.signIn.submitting : AUTH_COPY.signIn.submit}
+        {submitting ? authCopy.signIn.submitting : authCopy.signIn.submit}
       </Button>
 
       <AuthFooterLinks
         links={[
-          { label: AUTH_COPY.signIn.forgot, href: routes.portalForgotPassword },
+          { label: authCopy.signIn.forgot, href: routes.portalForgotPassword },
           {
-            prefix: AUTH_COPY.signIn.noAccountPrefix,
-            label: AUTH_COPY.signIn.noAccountLink,
+            prefix: authCopy.signIn.noAccountPrefix,
+            label: authCopy.signIn.noAccountLink,
             href: routes.portalSignUp,
           },
         ]}

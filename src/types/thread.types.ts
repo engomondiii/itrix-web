@@ -109,12 +109,6 @@ export interface CreateThreadRequest {
    * separate "start" step.
    */
   body: string;
-  /**
-   * The functional family behind a chosen example chip, when one was used
-   * verbatim. A ROUTING PRIOR for the backend, never a conclusion and never
-   * rendered back to the visitor.
-   */
-  familyPrior?: string | null;
   /** PHASE 2: attachments staged before the thread existed travel with turn 1. */
   attachmentIds?: string[];
 }

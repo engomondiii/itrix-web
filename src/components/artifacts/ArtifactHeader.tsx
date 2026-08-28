@@ -1,6 +1,7 @@
 'use client';
 
-import { ARTIFACT_TITLE } from '@/lib/journey/artifactTypes';
+import { artifactTitle } from '@/lib/journey/artifactTypes';
+import { useLocaleStore } from '@/store/localeStore';
 import type { Artifact } from '@/types/artifact.types';
 
 /**
@@ -19,8 +20,9 @@ export interface ArtifactHeaderProps {
 }
 
 export function ArtifactHeader({ artifact, open, onToggle, regionId }: ArtifactHeaderProps) {
+  const locale = useLocaleStore((s) => s.locale);
   const title =
-    (artifact.payload?.title as string | undefined) ?? ARTIFACT_TITLE[artifact.type];
+    (artifact.payload?.title as string | undefined) ?? artifactTitle(artifact.type, locale);
 
   return (
     <button

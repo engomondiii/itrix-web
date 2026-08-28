@@ -3,7 +3,8 @@
 import { useEffect, useId, useRef } from 'react';
 import { useContentPaneContext } from '@/context/ContentPaneContext';
 import { useRailStore } from '@/store/railStore';
-import { PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { ContentPaneHeader } from './ContentPaneHeader';
 import { ContentPaneTabs } from './ContentPaneTabs';
 import { ContentPaneSection } from './ContentPaneSection';
@@ -27,6 +28,7 @@ import { PaneEmptyState } from './PaneEmptyState';
  * instead, which is why R35 holds at 390px.
  */
 export function PaneSheet() {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
   const { available, sections, activeSection, sheetOpen, closeSheet, isSheetBreakpoint } =
     useContentPaneContext();
   const closeRail = useRailStore((s) => s.closeSheet);
@@ -59,13 +61,13 @@ export function PaneSheet() {
 
   return (
     <div className="pane-sheet" role="presentation">
-      <button type="button" className="pane-sheet__scrim" aria-label={PANE_COPY.close} onClick={closeSheet} />
+      <button type="button" className="pane-sheet__scrim" aria-label={paneCopy.close} onClick={closeSheet} />
 
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-label={PANE_COPY.regionLabel}
+        aria-label={paneCopy.regionLabel}
         tabIndex={-1}
         className="pane-sheet__panel"
       >

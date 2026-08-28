@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { SectionLabel } from '@/components/ui/SectionLabel';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import type { PortalNotificationPrefs } from '@/types/portal.types';
 
 const DEFAULT_PREFS: PortalNotificationPrefs = {
@@ -24,6 +24,7 @@ export function NotificationPrefsForm({
   saving: boolean;
   onSave: (p: PortalNotificationPrefs) => void;
 }) {
+  const portalCopy = usePortalCopy();
   /* Defaults mirror the backend's: every switch ON. Spreading `prefs` over them
      means a missing or partial payload renders a working form instead of
      crashing on an undefined key. */
@@ -31,14 +32,14 @@ export function NotificationPrefsForm({
     ...DEFAULT_PREFS,
     ...(prefs ?? {}),
   }));
-  const labels = PORTAL_COPY.settings.notificationLabels;
+  const labels = portalCopy.settings.notificationLabels;
   const keys = Object.keys(labels) as (keyof PortalNotificationPrefs)[];
 
   return (
     <Card variant="default" className="flex flex-col gap-4">
       <div>
-        <SectionLabel>{PORTAL_COPY.settings.notificationsHeader}</SectionLabel>
-        <p className="reading mt-2 text-ink-secondary">{PORTAL_COPY.settings.notificationsIntro}</p>
+        <SectionLabel>{portalCopy.settings.notificationsHeader}</SectionLabel>
+        <p className="reading mt-2 text-ink-secondary">{portalCopy.settings.notificationsIntro}</p>
       </div>
       <ul className="flex flex-col gap-2">
         {keys.map((key) => (
@@ -57,7 +58,7 @@ export function NotificationPrefsForm({
       </ul>
       <div>
         <Button variant="primary" size="md" disabled={saving} onClick={() => onSave(state)}>
-          {saving ? 'Saving…' : PORTAL_COPY.settings.savePreferences}
+          {saving ? 'Saving…' : portalCopy.settings.savePreferences}
         </Button>
       </div>
     </Card>

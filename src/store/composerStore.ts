@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import type { FunctionalFamily } from '@/lib/content/examplePrompts';
 
 /**
  * The composer's own state.
@@ -14,8 +13,8 @@ import type { FunctionalFamily } from '@/lib/content/examplePrompts';
  * safety cap and reports it as a recoverable message; the UI never pre-empts the
  * visitor's sentence.
  *
- * `familyPrior` is an internal ROUTING PRIOR recorded when a visitor uses an
- * example chip verbatim. It is sent to the backend and never rendered back.
+ * Optional question guidance never writes a routing/persona prior. Clicking guidance
+ * only populates `value`; journey/relationship decisions remain server-side.
  */
 /** One prompt waiting behind the turn currently in flight. */
 export interface QueuedPrompt {
@@ -30,7 +29,6 @@ interface ComposerState {
   value: string;
   submitting: boolean;
   error: string | null;
-  familyPrior: FunctionalFamily | null;
   /** Set when the composer should take focus — chips use it after populating. */
   focusRequest: number;
 
@@ -52,7 +50,7 @@ interface ComposerState {
 
   setValue: (value: string) => void;
   /** Populate from a chip. Never submits. */
-  populate: (value: string, family?: FunctionalFamily | null) => void;
+  populate: (value: string) => void;
   setSubmitting: (submitting: boolean) => void;
   setError: (error: string | null) => void;
   requestFocus: () => void;
@@ -63,7 +61,6 @@ export const useComposerStore = create<ComposerState>((set, get) => ({
   value: '',
   submitting: false,
   error: null,
-  familyPrior: null,
   focusRequest: 0,
   queue: [],
 
@@ -80,10 +77,9 @@ export const useComposerStore = create<ComposerState>((set, get) => ({
 
   setValue: (value) => set((s) => ({ value, error: s.error ? null : s.error })),
 
-  populate: (value, family = null) =>
+  populate: (value) =>
     set((s) => ({
       value,
-      familyPrior: family,
       error: null,
       focusRequest: s.focusRequest + 1,
     })),
@@ -95,5 +91,5 @@ export const useComposerStore = create<ComposerState>((set, get) => ({
   /* Clears the DRAFT only. The queue is deliberately untouched: `clear` runs on
      every submit, and emptying the queue there would discard the prompts the
      visitor sent while waiting. */
-  clear: () => set({ value: '', error: null, familyPrior: null }),
+  clear: () => set({ value: '', error: null }),
 }));

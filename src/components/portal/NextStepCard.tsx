@@ -1,6 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
-import { PORTAL_COPY } from '@/lib/content/portalCopy';
+import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { routes } from '@/constants/routes';
 import type { PortalNextStepKey } from '@/types/portal.types';
 
@@ -12,7 +14,8 @@ const HREF: Record<PortalNextStepKey, string> = {
 
 /** A single next-step card on the workspace home (§62). */
 export function NextStepCard({ stepKey }: { stepKey: PortalNextStepKey }) {
-  const copy = PORTAL_COPY.home.nextSteps[stepKey];
+  const portalCopy = usePortalCopy();
+  const copy = portalCopy.home.nextSteps[stepKey];
   const href = HREF[stepKey];
   // Defensive: if the backend ever sends a next-step key the client doesn't
   // know (contract drift), skip it rather than crashing the whole workspace.

@@ -1,4 +1,7 @@
-import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
+'use client';
+
+import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
+
 
 /**
  * The stream guard stopped a response mid-flight.
@@ -11,9 +14,10 @@ import { TRANSCRIPT_COPY } from '@/lib/content/composerCopy';
  * preparing an accurate answer. They are not told what the pattern was.
  */
 export function HaltedTurnNotice() {
+  const transcriptCopy = useTranscriptCopy();
   return (
     <div className="turn__governance" role="status">
-      {TRANSCRIPT_COPY.halted}
+      {transcriptCopy.halted}
     </div>
   );
 }

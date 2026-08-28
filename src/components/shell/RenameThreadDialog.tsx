@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * RENAMING A CONVERSATION, IN A DIALOG.
@@ -43,6 +44,7 @@ export function RenameThreadDialog({
   onClose,
   onSave,
 }: RenameThreadDialogProps) {
+  const copy = useCommonCopy();
   const [draft, setDraft] = useState(currentTitle);
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
@@ -69,10 +71,10 @@ export function RenameThreadDialog({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Rename conversation" size="md">
+    <Modal open={open} onClose={onClose} title={copy.renameConversation} size="md">
       <div className="rename-dialog">
         <label htmlFor="rename-thread-input" className="rename-dialog__label">
-          Conversation name
+          {copy.conversationName}
         </label>
 
         <textarea
@@ -92,12 +94,12 @@ export function RenameThreadDialog({
         />
 
         <p className="rename-dialog__hint">
-          {draft.trim().length}/{MAX_LENGTH} · Enter to save, Escape to cancel
+          {copy.renameHint(draft.trim().length, MAX_LENGTH)}
         </p>
 
         <div className="rename-dialog__actions">
           <button type="button" className="rename-dialog__cancel" onClick={onClose}>
-            Cancel
+            {copy.cancel}
           </button>
           <button
             type="button"
@@ -105,7 +107,7 @@ export function RenameThreadDialog({
             disabled={!draft.trim()}
             onClick={commit}
           >
-            Save
+            {copy.save}
           </button>
         </div>
       </div>

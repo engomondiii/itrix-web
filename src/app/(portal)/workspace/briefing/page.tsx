@@ -7,9 +7,11 @@ import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
 import { portalApi } from '@/lib/api/portalApi';
 import type { PortalBriefing } from '@/types/portal.types';
+import { useLocaleStore } from '@/store/localeStore';
 
 /** The living Problemology review inside the portal (§64). */
 export default function BriefingPage() {
+  const ko = useLocaleStore((state) => state.locale) === 'ko';
   const [briefing, setBriefing] = useState<PortalBriefing | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -36,10 +38,7 @@ export default function BriefingPage() {
         ) : briefing ? (
           <BriefingView briefing={briefing} />
         ) : (
-          <EmptyState>
-            Your briefing is being prepared. When it’s ready, it will appear here and you’ll see a note in
-            Messages.
-          </EmptyState>
+          <EmptyState>{ko ? '브리핑을 준비 중입니다. 준비되면 여기에 표시되고 메시지에도 알림이 나타납니다.' : 'Your briefing is being prepared. When it’s ready, it will appear here and you’ll see a note in Messages.'}</EmptyState>
         )}
       </div>
     </>

@@ -6,6 +6,7 @@ import { StreamingCursor } from './StreamingCursor';
 import { UnderReviewPill } from './UnderReviewPill';
 import { cn } from '@/lib/cn';
 import type { ChatMessage } from '@/types/chat.types';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * Renders a governed thread. Sender kinds are legible at a glance (Theme §21):
@@ -26,6 +27,7 @@ export function ChatThread({
   pending: boolean;
   underReview: boolean;
 }) {
+  const copy = useCommonCopy();
   const list = Array.isArray(messages) ? messages : [];
   const anyStreaming = list.some((m) => m.streaming === true);
 
@@ -63,7 +65,7 @@ export function ChatThread({
         <div className="rounded-md border-l-[3px] border-ink-primary bg-soft px-4 py-3">
           <SenderLabel kind="agent" />
           <p className="mt-1 text-body text-ink-secondary">
-            itriX assessment is preparing a response
+            {copy.preparingResponse}
             <StreamingCursor />
           </p>
         </div>

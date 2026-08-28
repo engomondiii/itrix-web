@@ -56,3 +56,17 @@ export const PENDING_TIMEOUT_MS = Number.parseInt(
   process.env.NEXT_PUBLIC_PENDING_TIMEOUT_MS ?? '20000',
   10,
 );
+
+
+export const PENDING_STAGE_LABEL_KO: Record<PendingStage, string> = {
+  retrieving: '승인된 자료 확인 중',
+  composing: '답변 구성 중',
+  checking: '전송 전 확인 중',
+};
+
+export const PENDING_COPY_KO = {
+  announcement: '요청을 처리하고 있습니다',
+  timeout: '평소보다 시간이 더 걸리고 있습니다.',
+  retry: '다시 시도',
+  waiting: '처리 중…',
+} as const;

@@ -10,7 +10,7 @@ import { AuthErrorSummary } from '@/components/auth/AuthErrorSummary';
 import { PasswordField } from '@/components/auth/PasswordField';
 import { PasswordRules } from '@/components/auth/PasswordRules';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
-import { AUTH_COPY } from '@/lib/content/authCopy';
+import { useAuthCopy } from '@/lib/i18n/authLocale';
 import { routes } from '@/constants/routes';
 import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
 
@@ -34,6 +34,7 @@ import { navigateAfterAuth } from '@/lib/navigation/afterAuth';
  * inside a `null` fallback the static HTML had no heading and no fields in it.
  */
 function SetPasswordInner() {
+  const authCopy = useAuthCopy();
   const params = useSearchParams();
   const token = params.get('token') ?? '';
 
@@ -44,8 +45,8 @@ function SetPasswordInner() {
   const [saving, setSaving] = useState(false);
 
   const policy = usePasswordPolicy(password, confirm);
-  const shortError = touched && policy.tooShort ? AUTH_COPY.reset.tooShort : null;
-  const mismatchError = touched && !policy.tooShort && !policy.matches ? AUTH_COPY.reset.mismatch : null;
+  const shortError = touched && policy.tooShort ? authCopy.reset.tooShort : null;
+  const mismatchError = touched && !policy.tooShort && !policy.matches ? authCopy.reset.mismatch : null;
 
   async function submit() {
     setTouched(true);
@@ -67,9 +68,9 @@ function SetPasswordInner() {
         return;
       }
       /* One message for expired, consumed and unknown, and it offers a way forward. */
-      setError(AUTH_COPY.reset.expired);
+      setError(authCopy.reset.expired);
     } catch {
-      setError(AUTH_COPY.shared.serviceFailure);
+      setError(authCopy.shared.serviceFailure);
     } finally {
       setSaving(false);
     }
@@ -77,13 +78,13 @@ function SetPasswordInner() {
 
   return (
     <>
-      <p className="auth-heading__standfirst">{AUTH_COPY.setPassword.standfirst}</p>
+      <p className="auth-heading__standfirst">{authCopy.setPassword.standfirst}</p>
 
       <AuthErrorSummary messages={[error, shortError, mismatchError]} />
 
       <div className="auth-fields">
         <PasswordField
-          label={AUTH_COPY.reset.passwordLabel}
+          label={authCopy.reset.passwordLabel}
           value={password}
           onChange={setPassword}
           autoComplete="new-password"
@@ -92,7 +93,7 @@ function SetPasswordInner() {
         />
         <PasswordRules assessment={policy} />
         <PasswordField
-          label={AUTH_COPY.reset.confirmLabel}
+          label={authCopy.reset.confirmLabel}
           value={confirm}
           onChange={setConfirm}
           autoComplete="new-password"
@@ -102,18 +103,19 @@ function SetPasswordInner() {
       </div>
 
       <Button variant="primary" size="lg" fullWidth onClick={() => void submit()} disabled={saving}>
-        {saving ? AUTH_COPY.reset.submitting : AUTH_COPY.reset.submit}
+        {saving ? authCopy.reset.submitting : authCopy.reset.submit}
       </Button>
 
-      <AuthFooterLinks links={[{ label: AUTH_COPY.reset.back, href: routes.portalSignIn }]} />
+      <AuthFooterLinks links={[{ label: authCopy.reset.back, href: routes.portalSignIn }]} />
     </>
   );
 }
 
 export default function SetPasswordPage() {
+  const authCopy = useAuthCopy();
   return (
     <AuthPanel>
-      <AuthHeading title={AUTH_COPY.setPassword.title} />
+      <AuthHeading title={authCopy.setPassword.title} />
       <Suspense fallback={null}>
         <SetPasswordInner />
       </Suspense>

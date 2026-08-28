@@ -14,6 +14,7 @@ import { useClientPageReveal } from '@/hooks/useClientPageReveal';
 import { ViewYourPageButton } from './ViewYourPageButton';
 import { KeepThisWorkCard } from '@/components/center/KeepThisWorkCard';
 import { CustomerStageIndicator } from '@/components/journey/CustomerStageIndicator';
+import { QuestionGuidance } from '@/components/guidance/QuestionGuidance';
 
 /**
  * The conversation column — the working half of the surface.
@@ -102,6 +103,7 @@ export function ConversationColumn({ emptyState }: ConversationColumnProps) {
         {suggestions.visible ? (
           <SuggestedQuestions chips={suggestions.chips} onChoose={suggestions.choose} />
         ) : null}
+        <QuestionGuidance />
         <Composer variant="docked" />
       </div>
     </div>
