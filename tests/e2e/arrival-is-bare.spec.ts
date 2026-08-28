@@ -37,6 +37,22 @@ for (const vp of WIDTHS) {
       await expect(h1).toHaveText('What would you like computation to do better?');
     });
 
+    test('the retired Mathematical intelligence eyebrow is not shown', async ({ page }) => {
+      await page.goto('/');
+      await expect(page.locator('body')).not.toContainText('Mathematical intelligence');
+      await expect(page.locator('.arrival__eyebrow')).toHaveCount(0);
+    });
+
+    test('the question and composer keep responsive breathing room', async ({ page }) => {
+      await page.goto('/');
+      const question = await page.locator('.arrival__question').boundingBox();
+      const composer = await page.locator('.arrival-center .composer-shell').boundingBox();
+      expect(question).not.toBeNull();
+      expect(composer).not.toBeNull();
+      expect((composer?.y ?? 0) - ((question?.y ?? 0) + (question?.height ?? 0))).toBeGreaterThanOrEqual(20);
+      expect((composer?.x ?? 0) + (composer?.width ?? 0)).toBeLessThanOrEqual(vp.width + 1);
+    });
+
     test('no rail and no navigation', async ({ page }) => {
       await page.goto('/');
       await expect(page.locator('.conversation-rail')).toHaveCount(0);

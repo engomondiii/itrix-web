@@ -9,19 +9,6 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
 import { RenameThreadDialog } from './RenameThreadDialog';
 import type { ThreadSummary } from '@/types/thread.types';
 
-/** Relative time, dependency-free and stable enough for a list label. */
-function relativeTime(iso: string): string {
-  const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return '';
-  const mins = Math.max(0, Math.round((Date.now() - then) / 60000));
-  if (mins < 1) return 'just now';
-  if (mins < 60) return `${mins}m ago`;
-  const hours = Math.round(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.round(hours / 24);
-  return days === 1 ? 'yesterday' : `${days}d ago`;
-}
-
 /**
  * One conversation in the rail.
  *
@@ -49,9 +36,8 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
   const [renaming, setRenaming] = useState(false);
 
   const active = activeThreadId === thread.id;
-  // The store preserves the real title across partial updates. This is the final
-  // rendering guard: even a malformed/legacy row may never leave the timestamp as the
-  // only visible text, where it looks like the conversation name.
+  // The store preserves the real title across partial updates. Even a malformed
+  // or legacy row still gets an explicit conversation label rather than a blank row.
   const visibleTitle = thread.title.trim() || railCopy.newChat;
 
   return (
@@ -71,7 +57,6 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
         }}
       >
         <span className="rail-thread__title">{visibleTitle}</span>
-        <span className="rail-thread__time">{relativeTime(thread.lastActivityAt)}</span>
       </button>
 
       {/* Two plain controls rather than a hidden menu: a keyboard user should not

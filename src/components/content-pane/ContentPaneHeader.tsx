@@ -16,6 +16,8 @@ import { PaneCollapseControl } from './PaneCollapseControl';
  * visitor's route to a human out of the conversation.
  */
 export function ContentPaneHeader({ onClose }: { onClose?: () => void }) {
+  const paneCopy = useLocaleStore((state) => state.locale) === 'ko' ? PANE_COPY_KO : PANE_COPY;
+
   return (
     <header className="pane__header">
       <h2 className="pane__title">{paneCopy.header}</h2>

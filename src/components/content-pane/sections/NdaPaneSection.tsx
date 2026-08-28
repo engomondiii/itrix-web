@@ -2,7 +2,8 @@
 
 import { useShellContext } from '@/context/ShellContext';
 import { NDA_DRAWER } from '@/lib/content/centerCopy';
-import { PANE_SECTION_EMPTY, PANE_COPY } from '@/lib/content/paneCopy';
+import { PANE_SECTION_EMPTY, PANE_COPY, PANE_COPY_KO } from '@/lib/content/paneCopy';
+import { useLocaleStore } from '@/store/localeStore';
 import { PaneSectionFrame } from './_shared';
 
 /** Plain language for a disclosure ceiling. Never the internal tier name. */

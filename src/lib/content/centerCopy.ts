@@ -31,9 +31,6 @@
 export { CONFIDENTIALITY_NOTICE } from '@/lib/content/ctaCopy';
 
 export const CENTER_COPY = {
-  /** Technical label above the question (IBM Plex Mono, uppercase, tracked). */
-  eyebrow: 'Mathematical intelligence',
-
   /**
    * THE MAIN QUESTION. The single most important sentence on the platform, and
    * from v6.0 the arrival route's ONLY h1 — display face at
@@ -131,7 +128,6 @@ export const REVIEW_COPY = {
 } as const;
 
 export const CENTER_COPY_KO = {
-  eyebrow:'수학적 지능',
   mainQuestion:'계산이 무엇을 더 잘했으면 하나요?',
   promptPlaceholder:'메시지를 입력한 뒤 Enter를 눌러 보내세요.',
   promptAriaLabel:'계산 과제 설명',

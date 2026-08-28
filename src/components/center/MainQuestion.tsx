@@ -20,9 +20,8 @@ import { useCenterCopy } from '@/lib/i18n/conversationLocale';
  * argument of the change: nothing on the front door competes with the one thing
  * being asked.
  *
- * The eyebrow moved here with the promotion. It was in SituationFraming, which no
- * longer exists, and it is a label for the heading rather than a heading of its
- * own — so it renders as a paragraph immediately above.
+ * The former technical eyebrow is intentionally absent. The landing surface now
+ * presents the question directly, without a category label competing above it.
  *
  * SIZE: `--arrival-question-size`, which resolves to clamp(32px, 5vw, 56px) and
  * lands exactly on the Brand Manual H1 of 56px desktop / 32px mobile. The
@@ -37,11 +36,8 @@ import { useCenterCopy } from '@/lib/i18n/conversationLocale';
 export function MainQuestion({ id = 'main-question' }: { id?: string }) {
   const centerCopy = useCenterCopy();
   return (
-    <>
-      <p className="arrival__eyebrow arrival-label">{centerCopy.eyebrow}</p>
-      <h1 id={id} className="arrival__question">
-        {centerCopy.mainQuestion}
-      </h1>
-    </>
+    <h1 id={id} className="arrival__question">
+      {centerCopy.mainQuestion}
+    </h1>
   );
 }

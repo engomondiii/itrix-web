@@ -56,9 +56,10 @@ const MAX_HEIGHT_PX = 320;
 
 export function PromptTextarea({
   value, onChange, onSubmit, id, describedBy, labelledBy,
-  placeholder = composerCopy.placeholder, invalid = false, minRows = 3, busy = false,
+  placeholder, invalid = false, minRows = 3, busy = false,
 }: PromptTextareaProps) {
   const composerCopy = useComposerCopy();
+  const resolvedPlaceholder = placeholder ?? composerCopy.placeholder;
   const ref = useRef<HTMLTextAreaElement | null>(null);
   const focusRequest = useComposerStore((s) => s.focusRequest);
   const { onKeyDown } = useSendKeys({ onSubmit, disabled: busy });
@@ -95,7 +96,7 @@ export function PromptTextarea({
         rows={minRows}
         className="composer-textarea"
         value={value}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         aria-labelledby={labelledBy}
         aria-describedby={describedBy}
         aria-invalid={invalid || undefined}

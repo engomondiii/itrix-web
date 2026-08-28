@@ -16,7 +16,6 @@ import type { PortalConversation } from '@/types/portal.types';
  * what may be opened.
  */
 function whenLabel(iso: string): string {
-  const portalCopy = usePortalCopy();
   const then = new Date(iso);
   if (Number.isNaN(then.getTime())) return '';
   const mins = Math.round((Date.now() - then.getTime()) / 60000);
@@ -42,6 +41,7 @@ export function InboxList({
   briefingId: string;
   briefingAvailable: boolean;
 }) {
+  const portalCopy = usePortalCopy();
   const copy = portalCopy.messages.inbox;
 
   return (

@@ -150,7 +150,7 @@
      `min-width: 0` because this is a flex child: without it a long unbroken string
      inside can push the stage wider than its parent and take the centring with it. */
   min-width: 0;
-  padding-inline: clamp(20px, 5vw, 48px);
+  padding-inline: clamp(20px, 4vw, 48px);
 }
 .arrival-center { text-align: center; }
 
@@ -158,8 +158,6 @@
 /* The centre COMPONENTS are shared with the working surface. Only their
    arrival-screen sizing lives here, so neither surface can drift from the other in
    copy or structure — only in scale. */
-.arrival-center .arrival__eyebrow { margin: 0 0 20px; }
-
 /* THE H1 — the main question. Promoted in v6.0; there is no second large line. */
 .arrival-center .arrival__question {
   max-width: 860px;
@@ -181,11 +179,14 @@
 }
 
 /* The composer becomes the approved prompt box: a full-width glass panel. */
-.arrival-center .composer { max-width: none; }
+.arrival-center .composer {
+  max-width: none;
+  margin-top: clamp(32px, 5vh, 56px);
+}
 .arrival-center .composer-shell {
-  padding: 28px;
+  padding: clamp(20px, 2.4vw, 28px);
   border: 1px solid var(--border-glass);
-  border-radius: 28px;
+  border-radius: clamp(20px, 2vw, 28px);
   background: var(--surface-glass);
   -webkit-backdrop-filter: blur(var(--blur-glass-md, 18px));
   backdrop-filter: blur(var(--blur-glass-md, 18px));
@@ -210,7 +211,6 @@
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 @media (max-width: 1023px) {
-  .arrival-stage { max-width: 760px; }
   .arrival-x { display: none; }
 }
 
@@ -218,6 +218,7 @@
   /* The bottom pad respects the home-bar / gesture area, so the composer is not
      sitting under it on an iPhone. */
   .arrival-hero { padding: 40px 0 max(32px, env(safe-area-inset-bottom)); }
+  .arrival-center .composer { margin-top: clamp(24px, 4vh, 36px); }
   .arrival-center .composer-shell { padding: 20px; border-radius: 20px; }
   .arrival-center .composer-textarea { min-height: 104px; }
 }

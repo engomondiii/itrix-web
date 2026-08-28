@@ -152,3 +152,28 @@ test('New chat returns to the front door and clears the active thread', async ({
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator('h1')).toHaveText('What would you like computation to do better?');
 });
+
+
+test('conversation history uses topic labels and omits relative-time captions', async ({ page }) => {
+  await page.route('**/api/threads', (route) =>
+    route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        threads: [
+          {
+            threadId: 'thr_topic',
+            title: 'How can we reduce HBM traffic on our inference fleet?',
+            lastActivityAt: now(),
+          },
+        ],
+      }),
+    }),
+  );
+
+  await page.goto('/review/thr_one');
+  const row = page.locator('.rail-thread__open').filter({ hasText: 'Reduce HBM traffic on our inference fleet' });
+  await expect(row).toBeVisible();
+  await expect(row).not.toContainText('ago');
+  await expect(row).not.toContainText('How can we');
+  await expect(page.locator('.rail-thread__time')).toHaveCount(0);
+});

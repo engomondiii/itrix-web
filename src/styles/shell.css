@@ -281,7 +281,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.rail-thread__time { font-size: 12px; color: var(--ink-secondary); }
 .rail-thread__actions { display: flex; gap: 2px; padding-right: 6px; opacity: 0; }
 .rail-thread:hover .rail-thread__actions,
 .rail-thread:focus-within .rail-thread__actions { opacity: 1; }
@@ -809,15 +808,6 @@
 .arrival__geometry--left { left: -160px; top: 90px; transform: rotate(19deg); }
 .arrival__geometry--right { right: -150px; top: 170px; transform: rotate(-16deg); }
 
-.arrival__eyebrow {
-  margin-bottom: 16px;
-  font-family: var(--font-mono, monospace);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-secondary);
-}
 /* REMOVED IN v6.0: .arrival__framing. The sentence it styled has left the product
    (R31), and this is not the two lines trading sizes — the question is now the
    ONLY large line on the front door.

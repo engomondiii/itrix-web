@@ -13,6 +13,7 @@ import { useAttachmentStore } from '@/store/attachmentStore';
 import { setThreadUrl } from '@/hooks/useThread';
 import { useComposerCopy } from '@/lib/i18n/conversationLocale';
 import { isExamplePrompt } from '@/lib/content/examplePrompts';
+import { formatConversationTitle } from '@/lib/formatting/formatConversationTitle';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { successApi } from '@/lib/api/successApi';
 import type { CreateThreadRequest, SubmitResult, Turn, TurnAttachment } from '@/types/thread.types';
@@ -255,9 +256,9 @@ export function useComposer(): UseComposerResult {
       setActive(threadId);
       upsertThread({
         id: threadId,
-        /* A provisional title from the visitor's own words. It is replaced by
-           the backend's generated title, which inherits the no-inference rule. */
-        title: text.length > 48 ? `${text.slice(0, 48).trimEnd()}…` : text,
+        /* A short, extractive topic label rather than the visitor's exact
+           question. The backend may later replace it with its generated title. */
+        title: formatConversationTitle(text),
         createdAt: now,
         lastActivityAt: now,
       });

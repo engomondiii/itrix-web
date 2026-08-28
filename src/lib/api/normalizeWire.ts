@@ -33,6 +33,7 @@
  */
 
 import type { Artifact, InlineCard } from '@/types/artifact.types';
+import { formatConversationTitle } from '@/lib/formatting/formatConversationTitle';
 import type {
   Attachment,
   AttachmentStatus,
@@ -116,7 +117,7 @@ export function toThreadSummary(raw: unknown): ThreadSummary {
   const activity = str(r.lastActivityAt) || new Date().toISOString();
   return {
     id: str(r.threadId) || str(r.id),
-    title: str(r.title, 'New review'),
+    title: formatConversationTitle(str(r.title, 'New review')),
     context: str(r.context) || undefined,
     // Django's summary carries no createdAt. Falling back to lastActivityAt
     // keeps the sidebar's ordering sane rather than leaving it undefined.

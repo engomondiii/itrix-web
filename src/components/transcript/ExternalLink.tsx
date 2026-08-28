@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { internalHref, linkHostLabel } from '@/lib/markdown/linkAllowlist';
+import { useCommonCopy } from '@/lib/i18n/commonLocale';
 
 /**
  * A link inside an assistant turn.
