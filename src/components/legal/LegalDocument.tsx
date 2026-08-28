@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { routes } from '@/constants/routes';
 import { ItrixLogo } from '@/components/brand/ItrixLogo';
-import { LEGAL_DRAFT_NOTICE, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
+import { LEGAL_UNPUBLISHED_NOTICE, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
 import { LEGAL_INSTRUMENTS_KO } from '@/lib/i18n/legalKo';
 import type { LegalInstrument } from '@/lib/content/legalCopy';
 import { LegalNav } from './LegalNav';
@@ -12,7 +12,7 @@ import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 import { LocalizedText } from '@/components/i18n/LocalizedText';
 import { useLocaleStore } from '@/store/localeStore';
 
-/** Server-rendered English remains the canonical no-JS fallback; Korean is an in-page convenience rendering of the same v1.2 draft. */
+/** Server-rendered English remains the canonical no-JS fallback; Korean is an in-page convenience rendering of the same published v1.2 policy substance. */
 export function LegalDocument({ instrument }: { instrument: LegalInstrument }) {
   const isKo = useLocaleStore((s) => s.locale) === 'ko';
   const ko = LEGAL_INSTRUMENTS_KO[instrument.slug];
@@ -27,7 +27,7 @@ export function LegalDocument({ instrument }: { instrument: LegalInstrument }) {
           <h1 className="legal-doc__title"><LocalizedText en={instrument.title} ko={ko.title} /></h1>
           <p className="legal-doc__standfirst"><LocalizedText en={instrument.standfirst} ko={ko.standfirst} /></p>
           <LegalVersionBadge instrument={instrument} />
-          {!LEGAL_PUBLISHED ? <aside className="legal-draft" role="note"><p className="legal-draft__label"><LocalizedText en="Draft" ko="초안" /></p><LocalizedText en={<p>{LEGAL_DRAFT_NOTICE}</p>} ko={<p>본 문서는 자격 있는 법률 전문가의 검토를 기다리는 초안이며 아직 효력이 없습니다. 현재 행동에 필요한 법적 해석이 있다면 지정된 담당자 연결을 요청하십시오. 한국어 표시는 편의를 위한 초안 번역이며 별도로 효력을 발생시키지 않습니다.</p>} /></aside> : null}
+          {!LEGAL_PUBLISHED ? <aside className="legal-draft" role="note"><p className="legal-draft__label"><LocalizedText en="Publication unavailable" ko="게시 불가" /></p><LocalizedText en={<p>{LEGAL_UNPUBLISHED_NOTICE}</p>} ko={<p>현재 법률 문서는 게시되지 않았습니다. 현재 적용되는 문서가 필요하면 itrix@gpslab.org로 문의하십시오. 한국어 표시는 영어 정책과 동일한 내용을 전달하기 위한 편의 번역이며 충돌 시 영어 버전이 우선합니다.</p>} /></aside> : null}
           {instrument.sections.map((section, index) => {
             const ks = ko.sections[index];
             return <section key={section.heading} className="legal-doc__section"><h2><LocalizedText en={section.heading} ko={ks?.heading ?? section.heading} /></h2><LocalizedText en={renderBody(section.body)} ko={renderBody(ks?.body ?? section.body)} /></section>;

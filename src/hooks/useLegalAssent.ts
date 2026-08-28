@@ -111,7 +111,7 @@ export function useLegalAssent(options?: { transport?: AssentTransport }): UseLe
   const record = useCallback(
     async (token?: string): Promise<boolean> => {
       if (!accepted) {
-        setError(LEGAL_PUBLISHED ? 'Please accept the Terms and the Privacy Policy to continue.' : 'Please acknowledge the draft Terms and Privacy Policy to continue.');
+        setError(LEGAL_PUBLISHED ? 'Please accept the Terms and the Privacy Policy to continue.' : 'The current legal instruments are not published, so assent is temporarily unavailable.');
         return false;
       }
 

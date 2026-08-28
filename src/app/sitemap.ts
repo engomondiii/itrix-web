@@ -18,9 +18,9 @@ import { LEGAL_INSTRUMENTS, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
  * accidental deindexing (Architecture v2.7 §00.2).
  *
  * ── AND THE LEGAL ROUTES ARE CONDITIONAL ────────────────────────────────────
- * They are listed only once `NEXT_PUBLIC_LEGAL_PUBLISHED=true`. An unreviewed draft
- * contract should not be the version a search engine caches, and the page-level
- * `noindex` and this list have to agree or one of them is lying.
+ * They are listed only once `NEXT_PUBLIC_LEGAL_PUBLISHED=true`. An intentionally
+ * unpublished instrument should not be the version a search engine caches, and the
+ * page-level `noindex` and this list have to agree.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteConfig.url.replace(/\/+$/, '');

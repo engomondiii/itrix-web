@@ -1,37 +1,19 @@
 /**
  * THE FOUR LEGAL INSTRUMENTS — routes, metadata and body copy.
  *
- * Source: itriX Legal Instruments v1.2 (the counsel-review bundle). This module
- * is the WEB rendering of those instruments; the bundle remains the document of
- * record and counsel edits it there.
+ * Source lineage: itriX Legal Instruments v1.2, Master Technical Architecture v2.9,
+ * Backend Structure v7.2, Surface 1 v8.0 and the implemented platform controls.
  *
- * Playbook v1.9 Part XVIII · Architecture v2.9 §19.10, §27 · Surface 1 v8.0 §16.7
- *
- * ── THIS IS A DRAFT, AND THE PAGES SAY SO ───────────────────────────────────
- * These instruments have NOT been reviewed by a qualified lawyer. Until they are,
- * every route renders `LEGAL_DRAFT_NOTICE` at the top and is `noindex`.
- * `NEXT_PUBLIC_LEGAL_PUBLISHED=true` removes the banner and makes them
- * indexable — flip it only after Schedule A of the bundle is answered in writing
- * and every bracketed placeholder below is filled.
- *
- * That is a deliberate deviation from Surface 1 v6.0 §1.1, which specifies the
- * routes as indexable. Publishing an unreviewed contract as the authoritative
- * terms of a commercial platform is a worse failure than a delayed index, and the
- * requirement the specification actually cares about — that the four instruments
- * EXIST, are reachable at every state and every width, and are linked from the
- * arrival screen — is met in full.
- *
- * ── PLACEHOLDERS ────────────────────────────────────────────────────────────
- * Square brackets mark a value counsel must supply. They render visibly, which is
- * intentional while the draft banner is up: an unfilled placeholder should be
- * impossible to miss on the page itself, not only in a checklist.
+ * This release publishes v1.2 as the current itriX MVP instrument effective 2026-08-28.
+ * It is an itriX-authored publication; this source does not claim review or approval by
+ * external counsel. Factual security and retention statements below are intentionally
+ * bounded to controls that exist in the repository or deployment configuration.
  */
 
 export const LEGAL_PUBLISHED = (process.env.NEXT_PUBLIC_LEGAL_PUBLISHED ?? '').toLowerCase() === 'true';
 
-export const LEGAL_DRAFT_NOTICE =
-  'This is a draft pending review by qualified counsel. It is not yet in force and should not be relied on. ' +
-  'For anything you need to act on today, please ask us and we will put you in touch with a named person.';
+export const LEGAL_UNPUBLISHED_NOTICE =
+  'These legal instruments are not currently published. Please contact itrix@gpslab.org if you need the current governing terms.';
 
 /**
  * PHASE 3. The strings around the assent checkbox (Playbook v1.7 §17B).
@@ -42,14 +24,14 @@ export const LEGAL_DRAFT_NOTICE =
  * (Architecture v2.7 §19.10).
  */
 export const ASSENT_COPY = {
-  sectionTitle: LEGAL_PUBLISHED ? 'Before we create your workspace' : 'Before we create your workspace — draft instruments',
-  checkboxPrefix: LEGAL_PUBLISHED ? 'I agree to the' : 'I acknowledge that I have read the draft',
+  sectionTitle: LEGAL_PUBLISHED ? 'Before we create your workspace' : 'Before we create your workspace — legal publication unavailable',
+  checkboxPrefix: LEGAL_PUBLISHED ? 'I agree to the' : 'I acknowledge the currently displayed instruments',
   termsName: 'Terms of Service',
   privacyName: 'Privacy Policy',
   and: 'and the',
   blocked: LEGAL_PUBLISHED
     ? 'Please accept the Terms and the Privacy Policy to continue.'
-    : 'Please acknowledge the draft Terms and Privacy Policy to continue in this pre-publication environment.',
+    : 'The current legal instruments are not published, so workspace creation is temporarily unavailable.',
 
   keepTitle: 'What we keep',
   keepBody:
@@ -58,7 +40,7 @@ export const ASSENT_COPY = {
   /** Shown at the next sign-in after a material version change. */
   reprompt: LEGAL_PUBLISHED
     ? 'We have updated our Terms of Service. Please review and accept the new version to continue.'
-    : 'The legal instruments are still draft. Please review and acknowledge the current counsel-review version to continue in this pre-publication environment.',
+    : 'The legal instruments have changed. Please review the currently displayed version before continuing.',
   repromptSummary: 'What changed:',
 } as const;
 
@@ -85,7 +67,7 @@ export interface LegalInstrument {
 export const LEGAL_STRIP_LABELS = ['Terms', 'Privacy', 'Security', 'Disclosure policy'] as const;
 
 const VERSION = '1.2';
-const EFFECTIVE = '{effective_date}';
+const EFFECTIVE = '2026-08-28';
 
 export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
   {
@@ -99,7 +81,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Who we are, and what this covers',
         body: [
-          'These Terms are a binding agreement between you and iTrix Co., Ltd (주식회사 아이트릭스), a company incorporated in the Republic of Korea, business registration number [registration number], registered office [registered address].',
+          'These Terms are a binding agreement between you and iTrix Co., Ltd (주식회사 아이트릭스), a company incorporated in the Republic of Korea. They apply to the itriX platform operated for professional and organisational use.',
           'They govern the itriX website, the conversational assessment surface, any workspace we make available to you, and anything we prepare and deliver to you through those surfaces.',
           'They do not govern a signed non-disclosure, evaluation, proof-of-concept or licence agreement between us. Those govern themselves, and where they conflict with these Terms, they prevail.',
           'If you are using the platform for an organisation, you confirm you have authority to bind it, and "you" means both you and that organisation.',
@@ -113,7 +95,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
           'A Workspace is opened either by registering, which is open to anyone, or by invitation after we have reviewed what you described and there is something for us to work on together.',
           '· You must provide accurate information and keep it current.',
           '· You must accept these Terms and the Privacy Policy before the Workspace is created. We record the versions and time of that acceptance.',
-          '· You are responsible for activity under your credentials and must tell us promptly at {security_email} if you believe they have been compromised.',
+          '· You are responsible for activity under your credentials and must tell us promptly at itrix@gpslab.org if you believe they have been compromised.',
           '· Invitations are personal, single-use and time-limited, and may not be shared or transferred.',
           '· We may decline to create, suspend, or close a Workspace where we reasonably believe these Terms have been breached or an address is being used without authority.',
           'Having a Workspace does not entitle you to any particular information. What we can discuss is governed by the Disclosure Policy, your contractual position, the work that has actually progressed, and any separate content authorization. Registering does not make you a customer and does not put us under an obligation to work with you.',
@@ -123,11 +105,11 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Credentials and access',
         body: [
-          'Choosing a password. We require at least {password_min_length} characters. We do not require particular symbols, digits or capitals, we do not force scheduled rotation, we do not use security questions, and we allow paste so you can use a password manager.',
-          'How we hold it. Your password is stored only as a cryptographic hash using {password_hash_algorithm}. We cannot read it, we will never ask you for it, and no member of our team can retrieve it.',
-          'Confirming your email address. When you register we email a single-use link that expires after {verification_ttl}. Requesting a new link invalidates any earlier one.',
+          'Choosing a password. We require at least 12 characters. We do not require particular symbols, digits or capitals, we do not force scheduled rotation, we do not use security questions, and we allow paste so you can use a password manager.',
+          'How we hold it. Your password is stored only as a salted cryptographic hash using Django\'s PBKDF2-SHA256 password hasher. We cannot read it, we will never ask you for it, and no member of our team can retrieve the original password.',
+          'Confirming your email address. When you register we email a single-use link that expires after 48 hours. Requesting a new link invalidates any earlier one.',
           'You do not have to confirm your address to use your Workspace. Confirmation is required before we send non-authentication email, before an NDA is put in place, and before your address is named on a proposal, agreement or other commercial document. Confirmation proves control of an address; it is not content authorization and it does not raise disclosure.',
-          'Resetting your password. A reset link expires after {reset_ttl}, may be used once, and a new link invalidates older ones. We answer reset requests the same way whether or not an address has a Workspace.',
+          'Resetting your password. A reset link expires after 60 minutes, may be used once, and a new link invalidates older ones. We answer reset requests the same way whether or not an address has a Workspace.',
           'When your password changes, every other signed-in session for the Workspace is signed out.',
           'Two-factor authentication is not currently offered. Where it becomes available, we will tell you before it is required.',
         ],
@@ -136,8 +118,8 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         heading: 'One account per address, and addresses that are not yours',
         body: [
           'One Workspace per email address. If an address is already in use, we do not create a second Workspace. We answer the registration request in the same outward way whether or not the address is already in use, and notify the holder rather than revealing account existence to the requester.',
-          'Do not register an address you do not control. If somebody registers your address, confirm nothing and tell us at {security_email}; we will close the Workspace.',
-          'If a Workspace is opened and then never used — no Conversation, no confirmed address and no sign-in — we delete it and its data after {abandoned_account_days}. See Privacy §8.',
+          'Do not register an address you do not control. If somebody registers your address, confirm nothing and tell us at itrix@gpslab.org; we will investigate and close or secure the Workspace where appropriate.',
+          'If a Workspace is opened and then never used — no Conversation, no confirmed address and no sign-in — we delete it and its data after 180 days. See Privacy §8.',
         ],
       },
       {
@@ -146,7 +128,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
           'The platform is a pre-contractual surface. Please do not send us confidential information before a non-disclosure agreement is in place. We say so wherever you can describe a problem, and we say it here as a term:',
           'Please do not submit confidential technical information before an NDA. The initial assessment is based on non-confidential workload descriptions only.',
           'Unless and until a signed NDA covers the disclosure, you should treat anything you send as disclosed without confidentiality obligations on our part, other than the handling, security and retention commitments we make in the Privacy Policy and the Security Statement.',
-          'If you send confidential material anyway, we apply restricted pre-NDA handling: shortened retention, encryption at rest, access limited to the owning conversation and the internal roles that require it, and deletion on your request. That is our practice, not a contractual undertaking of confidence, and it is not a substitute for an NDA.',
+          'If you send confidential material anyway, we apply restricted pre-NDA handling: shortened retention, access limited to the owning conversation and the internal roles that require it, and deletion on your request. That is our handling practice, not a substitute for an NDA and not a promise of confidentiality beyond the commitments expressly stated here.',
           'You may delete any file, or an entire conversation, at any time. Deletion removes the stored file, anything we extracted from it, and any excerpt derived from it.',
         ],
       },
@@ -213,18 +195,18 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
           'The platform and our output are provided "as is" and "as available". To the fullest extent permitted by law we exclude all implied warranties, including merchantability, fitness for a particular purpose and non-infringement.',
           'We do not warrant that the platform will be uninterrupted or error-free, that a response will be accurate or complete, that a hypothesis will be borne out by measurement, or that any particular runtime, memory, energy, accuracy, conservation, reproducibility or cost result will be achieved.',
           'Neither party is liable for indirect, special, incidental, consequential or punitive loss, or for loss of profit, revenue, anticipated saving, business, goodwill or data.',
-          'Our total aggregate liability is limited to the greater of [liability cap] and the fees you paid us in the twelve months before the event giving rise to the claim. Where you use the platform without paying a fee, it is limited to [free-tier cap].',
+          'For use of the free public platform, our total aggregate liability arising out of or relating to these Terms is limited to KRW 1,000,000. For a paid engagement, liability for that engagement is governed by its separate signed agreement; if that agreement is silent, our aggregate liability is limited to the fees paid for that engagement in the twelve months before the event giving rise to the claim.',
           'Nothing here excludes liability that cannot lawfully be excluded, including for death or personal injury caused by negligence, or for fraud.',
         ],
       },
       {
         heading: 'Changes, law and disputes',
         body: [
-          'We may change these Terms. Each version carries a version number and an effective date. For a change that materially affects your rights we will give at least [notice period] days\u2019 notice on the platform and, where you hold a workspace, by email — and we will ask you to accept the new version at your next sign-in.',
+          'We may change these Terms. Each version carries a version number and an effective date. For a change that materially affects your rights we will ordinarily give at least 30 days\u2019 notice on the platform and, where you hold a workspace, by email, and we will ask you to accept the new version at your next sign-in. A shorter period may be used where a change is required by law or is reasonably necessary to address an urgent security or legal issue.',
           'These Terms are governed by the laws of the Republic of Korea. Where you are established in Korea, the Korean courts have exclusive jurisdiction and the Seoul Central District Court is the court of first instance.',
-          'Where you are established outside Korea, the parties will first attempt to resolve the dispute in good faith for [escalation period] days; failing that it is finally settled by arbitration under the [arbitration rules] administered by [arbitration body], seated in [seat], before [number] arbitrator(s), in [language]. Either party may seek interim relief from a court to protect its intellectual property or confidential information.',
+          'Where you are established outside Korea, the parties will first attempt to resolve the dispute in good faith for 30 days; failing that, it is finally settled under the KCAB International Arbitration Rules, administered by the Korean Commercial Arbitration Board, with the seat of arbitration in Seoul, Republic of Korea, before one arbitrator, in English. Either party may seek interim relief from a court to protect its intellectual property or confidential information.',
           'Nothing in this section deprives you of a mandatory protection or forum available under the law of your place of establishment.',
-          'These Terms are prepared in English and Korean. [Controlling language] governs in the event of conflict. Notices to us: [legal email].',
+          'These Terms are prepared in English and Korean. The English version governs in the event of conflict. Notices to us: itrix@gpslab.org.',
         ],
       },
     ],
@@ -242,7 +224,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         heading: 'Our position, in one paragraph',
         body: [
           'We collect what we need to answer you, and we do not use what you tell us to train anything or to answer anybody else. A conversation you start without an account is kept against your browser session for a limited period and then deleted. Files you attach are scanned, read for text, kept for a short window if you send them before an NDA, and deleted whenever you ask.',
-          'iTrix Co., Ltd (주식회사 아이트릭스), [registered address], is the controller. Privacy contact: [privacy email].',
+          'iTrix Co., Ltd (주식회사 아이트릭스), incorporated in the Republic of Korea, is the controller. Privacy contact: itrix@gpslab.org.',
         ],
       },
       {
@@ -272,13 +254,13 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         heading: 'Automated processing',
         body: [
           'The platform classifies what you describe in order to route it internally and to decide what material may be shown to you. It also generates text automatically.',
-          'This does not produce a legal or similarly significant effect on you: it decides what we show you and who follows up, not whether you receive a right, a credit, employment, or a service you are entitled to. No decision about you is taken by a model — the decisions that matter are taken by fixed rules, and a person is accountable for every commercial step. You can ask for a human at any point, and you can ask what happened by writing to [privacy email].',
+          'This does not produce a legal or similarly significant effect on you: it decides what we show you and who follows up, not whether you receive a right, a credit, employment, or a service you are entitled to. No decision about you is taken by a model — the decisions that matter are taken by fixed rules, and a person is accountable for every commercial step. You can ask for a human at any point, and you can ask what happened by writing to itrix@gpslab.org.',
         ],
       },
       {
         heading: 'Anonymous conversations',
         body: [
-          'If you use the platform without an account, your conversation is held against a signed session identifier in a cookie and is visible only to that session. It is retained for [anonymous retention] days and then deleted, unless you create a workspace, in which case it is transferred to that workspace.',
+          'If you use the platform without an account, your conversation is held against a signed session identifier in a cookie and is visible only to that session. An unclaimed anonymous conversation is retained for 90 days and then deleted, unless you create a workspace, in which case it is transferred to that workspace. Attachments have their own shorter pre-NDA retention period described below.',
           'We do not link separate anonymous sessions to each other, and we do not attempt to identify you from them.',
         ],
       },
@@ -287,21 +269,21 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         body: [
           'Files you attach are stored outside any publicly reachable path and served only through a short-lived, authorisation-checked link. They are scanned for malware and archive abuse before any attempt to read them, and read for text in an isolated environment with no outbound network access.',
           'They are available only within the conversation you attached them to, never added to the knowledge base, and never used for training or evaluation. Deleting one removes the file, the extracted text and any derived excerpt.',
-          'A file attached before an NDA is flagged for restricted handling and deleted after [pre-NDA retention] days unless a signed agreement requires otherwise.',
+          'A file attached before an NDA is flagged for restricted handling and deleted after 30 days unless a signed agreement requires otherwise.',
         ],
       },
       {
         heading: 'How long we keep things',
         body: [
-          '· Anonymous conversation and its attachments — [anonymous retention] days from last activity.',
-          '· Pre-NDA attachments — [pre-NDA retention] days, then purged with a verifiable record.',
-          '· Workspace conversations and attachments — the life of the workspace, then [workspace deletion window].',
-          '· Workspace account data — the life of the relationship, then [account retention].',
+          '· Anonymous conversations — 90 days from creation while unclaimed. Anonymous attachments follow the shorter pre-NDA attachment period below.',
+          '· Pre-NDA attachments — 30 days, then purged with a verifiable record unless a signed agreement requires otherwise.',
+          '· Workspace conversations and attachments — while the workspace remains active, subject to any shorter attachment-specific period and any deletion request or applicable signed agreement. When a workspace is closed, we delete or de-identify this material through our operational deletion process except where law, security or a live dispute requires limited retention.',
+          '· Workspace account data — while the workspace or relationship is active, and afterwards only for as long as reasonably necessary for account closure, security, legal compliance or the establishment or defence of claims.',
           '· Password-reset and email-confirmation tokens — until used, superseded or expired, then purged on a scheduled sweep.',
-          '· A Workspace that is never used — deleted after {abandoned_account_days} where there has been no Conversation, no confirmed address and no sign-in.',
+          '· A Workspace that is never used — deleted after 180 days where there has been no Conversation, no confirmed address and no sign-in.',
           '· How the account was opened — for the life of the Workspace.',
-          '· Assent records — [assent retention], because we must be able to show what you agreed to. The narrow acceptance record may survive Workspace deletion and contains no conversation content or attachments.',
-          '· Audit and security logs — [audit retention].',
+          '· Assent records — retained for as long as reasonably necessary to evidence what you agreed to and to meet legal or claims requirements. The narrow acceptance record may survive Workspace deletion and contains no conversation content or attachments.',
+          '· Audit and security logs — retained for as long as reasonably necessary for security, incident investigation, accountability and legal obligations, with access restricted to authorised roles.',
           '· Accounting and tax records — as required by Korean law.',
           '· Aggregate, non-identifying analytics — indefinitely, in a form that does not identify you.',
         ],
@@ -310,7 +292,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         heading: 'Your rights',
         body: [
           'Depending on where you are, you may have the right to know what we hold and get a copy, to correct it, to delete it, to restrict or object to processing, to withdraw consent, to receive it in a portable form, and not to be discriminated against for exercising a right. Under Korea\u2019s Personal Information Protection Act you may also request suspension of processing.',
-          'Write to [privacy email]. We aim to respond within [response period] days and may need to verify your identity first. You can also delete a conversation, an attachment or your workspace yourself, at any time, from within the platform.',
+          'Write to itrix@gpslab.org. We respond without undue delay and within the period required by applicable law, and we may need to verify your identity first. You can delete a conversation or an attachment through the platform where that control is available; for workspace closure or another data-right request, contact us at that address.',
           'If you are unhappy with our response you may complain to your supervisory authority — in Korea, the Personal Information Protection Commission.',
         ],
       },
@@ -337,10 +319,10 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Credentials',
         body: [
-          'Your password is never stored. Only a cryptographic hash is kept, using {password_hash_algorithm} with a per-account salt. We cannot read it and will never ask you for it.',
-          'We require at least {password_min_length} characters rather than mandatory composition rules, do not force rotation, do not use security questions, and allow paste so password managers work.',
+          'Your password is never stored in plaintext. Only a salted cryptographic hash is kept, using Django\'s PBKDF2-SHA256 password hasher. We cannot read the original password and will never ask you for it.',
+          'We require at least 12 characters rather than mandatory composition rules, do not force scheduled rotation, do not use security questions, and allow paste so password managers work.',
           'An email address identifies at most one active Workspace, enforced in the database.',
-          'Reset and confirmation links are single-use, short-lived and stored only as hashes. A reset token expires after {reset_ttl}; a confirmation token after {verification_ttl}. Requesting a new link invalidates any earlier one.',
+          'Reset and confirmation links are single-use, short-lived and stored only as hashes. A reset token expires after 60 minutes; a confirmation token after 48 hours. Requesting a new link invalidates any earlier one.',
           'A confirmation token is bound to the address it was issued for. Changing the Workspace address prevents an older link from confirming the newer address.',
           'A password change signs out every other session.',
           'Registration, reset, sign-in, invitation-code and confirmation-resend requests deliberately return enumeration-safe responses. Where an address is already in use, the holder is notified without revealing that fact to the requester.',
@@ -365,7 +347,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Encryption',
         body: [
-          'Data is encrypted in transit using TLS [minimum version] or above, and at rest using [at-rest encryption]. Pre-NDA attachments are additionally encrypted at rest under restricted handling.',
+          'Production browser traffic is protected in transit using HTTPS/TLS. Stored application data and attachments are kept in access-controlled application and managed storage paths rather than public web paths. We do not publish a specific at-rest cipher, storage-encryption guarantee or customer recovery objective for the free MVP unless it is stated in a separate signed agreement.',
         ],
       },
       {
@@ -394,17 +376,17 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Logging, deletion and continuity',
         body: [
-          'We log authentication, access to your material, every disclosure-level change, and every upload, scan, read, download and approval decision. Logs are retained for [audit retention] and are access-controlled.',
+          'We log authentication, access to your material, disclosure-level changes, and relevant upload, scan, read, download and approval events. Logs are access-controlled and retained for as long as reasonably necessary for security, incident investigation, accountability and legal obligations.',
           'You can delete a file or a whole conversation at any time; deletion removes the stored object, the extracted text and any derived excerpt. Scheduled deletion runs against the retention periods in the Privacy Policy and writes a verifiable record that it happened.',
-          'Backups are taken [frequency], retained for [period], encrypted at rest, with restoration tested [frequency]. Our target recovery objectives are RPO [rpo] and RTO [rto].',
+          'The platform uses managed infrastructure that may maintain backups or snapshots as part of service operations. The free MVP does not publish or guarantee a backup frequency, backup-retention period, RPO, RTO or uptime SLA. Any customer-specific continuity commitment must be stated in a separate signed agreement.',
         ],
       },
       {
         heading: 'Incidents, assurance and responsible disclosure',
         body: [
-          'We maintain an incident response process with defined severities and named owners. Where a personal-data breach occurs we notify the supervisory authority and, where required, affected individuals, within the period the applicable law requires. Contact: [security email].',
-          'Certifications and third-party assessments we hold, and their scope, are listed at [assurance page]. We do not claim a certification we do not hold; where one is in progress it is described as in progress.',
-          'If you believe you have found a vulnerability, write to [security email]. Give us enough to reproduce it. Please do not access another person\u2019s data, degrade the service, or disclose publicly until we have had a reasonable opportunity to fix it. We will not pursue legal action against research conducted in good faith within those limits, and we aim to acknowledge within [acknowledgement window] business days.',
+          'We maintain an incident response process with defined severities and named owners. Where a personal-data breach occurs we notify the supervisory authority and, where required, affected individuals, within the period the applicable law requires. Security contact: itrix@gpslab.org.',
+          'We do not claim a security certification or third-party assurance that has not been expressly identified in a current written itriX assurance statement or a signed customer agreement.',
+          'If you believe you have found a vulnerability, write to itrix@gpslab.org and give us enough information to reproduce it. Please do not access another person\u2019s data, degrade the service, or disclose publicly until we have had a reasonable opportunity to investigate and fix it. We will not pursue legal action against research conducted in good faith within those limits, and we will acknowledge reports as soon as practicable.',
         ],
       },
     ],

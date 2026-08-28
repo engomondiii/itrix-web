@@ -10,9 +10,9 @@ import { legalInstrument, LEGAL_PUBLISHED } from '@/lib/content/legalCopy';
  * warning rather than shipping two 404s. The null-href workaround is removed with
  * this file, not extended.
  *
- * Statically rendered, indexable ONCE COUNSEL HAS SIGNED OFF, printable, and readable
- * without JavaScript. `noIndex` follows `LEGAL_PUBLISHED` — an unreviewed draft
- * should not be the version a search engine caches.
+ * Statically rendered, indexable when the configured legal publication state is active,
+ * printable, and readable without JavaScript. `noIndex` follows `LEGAL_PUBLISHED` so an
+ * intentionally unpublished instrument is not cached as the governing version.
  */
 const instrument = legalInstrument('terms');
 
