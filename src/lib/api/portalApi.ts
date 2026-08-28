@@ -46,6 +46,48 @@ async function sendJson<T>(url: string, body: unknown, method: 'POST' | 'PATCH' 
   }
 }
 
+export interface PortalLoginResult extends ApiResult<{ client: ClientIdentity }> {
+  retryAfterSeconds: number | null;
+}
+
+function retryAfterSeconds(res: Response, body: unknown): number | null {
+  const raw = res.headers.get('Retry-After');
+  if (raw) {
+    const seconds = Number.parseInt(raw, 10);
+    if (Number.isFinite(seconds) && seconds > 0) return seconds;
+    const date = Date.parse(raw);
+    if (Number.isFinite(date)) return Math.max(1, Math.ceil((date - Date.now()) / 1000));
+  }
+  const fromBody = (body as { retryAfter?: unknown } | null)?.retryAfter;
+  return typeof fromBody === 'number' && Number.isFinite(fromBody) && fromBody > 0 ? fromBody : null;
+}
+
+async function login(email: string, password: string): Promise<PortalLoginResult> {
+  try {
+    const res = await fetch('/api/portal/auth/login', {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const body = await res.json().catch(() => null);
+    if (!res.ok) {
+      return {
+        data: null,
+        error: res.status === 429 ? 'rate_limited' : `/api/portal/auth/login ${res.status}`,
+        retryAfterSeconds: res.status === 429 ? retryAfterSeconds(res, body) : null,
+      };
+    }
+    return { data: body as { client: ClientIdentity }, error: null, retryAfterSeconds: null };
+  } catch (e) {
+    return {
+      data: null,
+      error: e instanceof Error ? e.message : 'unreachable',
+      retryAfterSeconds: null,
+    };
+  }
+}
+
 export const portalApi = {
   // --- auth ---
   /**
@@ -69,8 +111,7 @@ export const portalApi = {
     },
   ) =>
     sendJson<InviteClaimResult>(`/api/accounts/invite/${encodeURIComponent(token)}/claim`, payload),
-  login: (email: string, password: string) =>
-    sendJson<{ client: ClientIdentity }>(`/api/portal/auth/login`, { email, password }),
+  login,
   logout: () => sendJson<{ ok: boolean }>(`/api/portal/auth/logout`, {}),
   me: () => getJson<ClientIdentity>(`/api/portal/auth/me`),
 

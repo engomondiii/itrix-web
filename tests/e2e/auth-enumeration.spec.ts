@@ -136,3 +136,21 @@ test('the invite lookup returns no organisation, persona or email', async ({ pag
     expect(Object.keys(seen).sort()).toEqual(['redeemUrl', 'usable']);
   }
 });
+
+test('sign-in preserves the backend Retry-After instead of substituting one minute', async ({ page }) => {
+  await page.route('**/api/portal/auth/login', (route) =>
+    route.fulfill({
+      status: 429,
+      headers: { 'Retry-After': '7200' },
+      contentType: 'application/json',
+      body: JSON.stringify({ retryAfter: 7200 }),
+    }),
+  );
+
+  await page.goto('/sign-in');
+  await page.getByLabel('Work email').fill('rate-limited@example.com');
+  await page.locator('.password-field__input').fill('some-password-value');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+
+  await expect(page.locator('.auth-rate-limit')).toContainText('120');
+});

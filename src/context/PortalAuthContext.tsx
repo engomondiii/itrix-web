@@ -73,14 +73,13 @@ export function PortalAuthProvider({
       setError(null);
       setRetryAfter(null);
       setLoading(true);
-      const { data, error: err } = await portalApi.login(email, password);
+      const { data, retryAfterSeconds: wait } = await portalApi.login(email, password);
       setLoading(false);
 
       /* A rate limit is a fact about the request, not about the account, so it is the one
-         failure the surface may report specifically. The proxy carries the wait in its
-         detail string. */
-      const wait = err ? /(\d+)/.exec(err.includes('429') || /too many/i.test(err) ? err : '')?.[1] : null;
-      if (wait) setRetryAfter(Number.parseInt(wait, 10));
+         failure the surface may report specifically. Preserve Django's actual Retry-After
+         value; never infer a wait from an HTTP status code or substitute one minute. */
+      if (wait) setRetryAfter(wait);
 
       if (data?.client) {
         setClient(data.client);

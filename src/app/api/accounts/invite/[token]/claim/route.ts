@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiRoutes } from '@/constants/routes';
 import { djangoFetch } from '@/lib/server/proxy';
-import { setClientSession } from '@/lib/server/session';
+import { setClientSession, setPasswordSetCapability } from '@/lib/server/session';
 import type { InviteClaimResult } from '@/types/client.types';
 
 export const runtime = 'nodejs';
@@ -42,6 +42,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ token: string 
     access?: string;
     refresh?: string;
     requiresPasswordSet?: boolean;
+    setPasswordToken?: string;
   }>(apiRoutes.accountInviteClaim(token), {
     method: 'POST',
     authed: false,
@@ -65,6 +66,10 @@ export async function POST(req: Request, ctx: { params: Promise<{ token: string 
   // Store the minted client-JWT in httpOnly cookies (if issued at claim time).
   if (res.data.access) {
     await setClientSession({ accessToken: res.data.access, refreshToken: res.data.refresh ?? null });
+  }
+  if (res.data.requiresPasswordSet && res.data.setPasswordToken) {
+    // Keep the dedicated first-password capability out of URLs and browser JavaScript.
+    await setPasswordSetCapability(res.data.setPasswordToken);
   }
 
   const result: InviteClaimResult = {

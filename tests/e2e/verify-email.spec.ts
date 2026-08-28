@@ -47,3 +47,27 @@ test('a dead link is reported honestly, and does not claim success', async ({ pa
   const body = await page.locator('body').innerText();
   expect(body).not.toContain('Your email address is confirmed');
 });
+
+test('authenticated resend sends the known address and stays enumeration-safe', async ({ page }) => {
+  await page.route('**/api/portal/auth/me', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: 'client-1', leadId: 'lead-1', email: 'pending@example.com', fullName: '',
+        organization: '', role: '', ndaSigned: false, emailVerified: false,
+      }),
+    }),
+  );
+
+  let posted: unknown = null;
+  await page.route('**/api/auth/verify-email/resend', async (route) => {
+    posted = route.request().postDataJSON();
+    await route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ accepted: true }) });
+  });
+
+  await page.goto('/verify-email');
+  await page.getByRole('button', { name: 'Send the link again' }).click();
+  expect(posted).toEqual({ email: 'pending@example.com' });
+  await expect(page.locator('.verify-status')).toContainText('If that address can have an itriX workspace');
+});

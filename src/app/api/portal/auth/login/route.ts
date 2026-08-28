@@ -43,9 +43,13 @@ export async function POST(req: Request) {
      working correctly. The visitor was told to try again immediately, which is exactly
      the traffic the limit exists to stop (R55). */
   if (res.status === 429) {
+    const retryAfter = res.retryAfter;
+    const init = retryAfter
+      ? { status: 429, headers: { 'Retry-After': String(retryAfter) } }
+      : { status: 429 };
     return NextResponse.json(
-      { error: { detail: 'Too many attempts. 429' }, retryAfter: 60 },
-      { status: 429, headers: { 'Retry-After': '60' } },
+      { error: { detail: 'Too many attempts. Please wait before trying again.' }, retryAfter },
+      init,
     );
   }
 

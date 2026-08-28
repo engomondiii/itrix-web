@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { setVerificationEmailHint } from '@/lib/server/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -70,6 +71,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ detail: 'Assent is required.' }, { status: 400 });
   }
 
+  const requestedEmail = (body as { email?: unknown } | null)?.email;
+  const emailHint = typeof requestedEmail === 'string' ? requestedEmail.trim() : '';
+
   try {
     const res = await fetch(`${API_BASE}/auth/register/`, {
       method: 'POST',
@@ -95,6 +99,9 @@ export async function POST(req: Request) {
        connection is drained, then discard it: nothing the backend said about this address may
        reach the browser. */
     await res.text();
+    // Store only what the browser just submitted, regardless of whether Django created an
+    // account. That preserves enumeration resistance while making immediate resend real.
+    if (emailHint) await setVerificationEmailHint(emailHint);
     return NextResponse.json(ACCEPTED, { status: 202 });
   } catch {
     return NextResponse.json({ detail: 'Registration service unavailable.' }, { status: 503 });

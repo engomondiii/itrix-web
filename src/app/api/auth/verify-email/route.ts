@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { clearVerificationEmailHint } from '@/lib/server/session';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -43,7 +44,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ retryAfter: seconds }, { status: 429, headers: { 'Retry-After': String(seconds) } });
     }
 
-    if (res.ok) return NextResponse.json({ confirmed: true }, { status: 200 });
+    if (res.ok) {
+      await clearVerificationEmailHint();
+      return NextResponse.json({ confirmed: true }, { status: 200 });
+    }
     if (res.status === 400 || res.status === 404 || res.status === 410) {
       return NextResponse.json({ confirmed: false }, { status: 410 });
     }

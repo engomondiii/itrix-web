@@ -144,7 +144,7 @@ function CreateAccountInner({ token }: { token: string }) {
       // so the workspace is immediately authenticated. If for any reason the backend
       // still asks for a password set, honour that; otherwise go straight in.
       if (res.data.requiresPasswordSet) {
-        router.push(`${routes.portalSetPassword}?token=${encodeURIComponent(token)}`);
+        router.push(routes.portalSetPassword);
       } else {
         /* HARD navigation. This request created a session cookie, and Next's client
            router cache cannot see an httpOnly cookie -- a soft push can replay a

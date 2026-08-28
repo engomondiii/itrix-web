@@ -14,6 +14,8 @@ import { cookies } from 'next/headers';
 
 const ACCESS_COOKIE = 'itrix_client_at';
 const REFRESH_COOKIE = 'itrix_client_rt';
+const PASSWORD_SET_COOKIE = 'itrix_password_set_cap';
+const VERIFICATION_EMAIL_COOKIE = 'itrix_verification_email_hint';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -62,6 +64,59 @@ export async function hasClientSession(): Promise<boolean> {
   return (await getClientAccessToken()) !== null;
 }
 
+
+/** Store the short-lived first-password capability after a valid invitation claim. */
+export async function setPasswordSetCapability(token: string, maxAge = 60 * 60): Promise<void> {
+  const jar = await cookies();
+  jar.set(PASSWORD_SET_COOKIE, token, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'lax',
+    path: '/',
+    maxAge,
+  });
+}
+
+/** Consume-on-success is performed by Django; this getter keeps the capability server-only. */
+export async function getPasswordSetCapability(): Promise<string | null> {
+  const jar = await cookies();
+  return jar.get(PASSWORD_SET_COOKIE)?.value ?? null;
+}
+
+export async function clearPasswordSetCapability(): Promise<void> {
+  const jar = await cookies();
+  jar.delete(PASSWORD_SET_COOKIE);
+}
+
+/**
+ * Keep the address from an enumeration-safe registration request available to the
+ * server-side resend proxy. The browser never needs the address in a URL just to resend
+ * the verification message, and the cookie itself reveals nothing about whether an
+ * account was created or already existed.
+ */
+export async function setVerificationEmailHint(email: string, maxAge = 60 * 60 * 24): Promise<void> {
+  const normalized = email.trim();
+  if (!normalized) return;
+  const jar = await cookies();
+  jar.set(VERIFICATION_EMAIL_COOKIE, normalized, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'lax',
+    path: '/',
+    maxAge,
+  });
+}
+
+export async function getVerificationEmailHint(): Promise<string | null> {
+  const jar = await cookies();
+  return jar.get(VERIFICATION_EMAIL_COOKIE)?.value ?? null;
+}
+
+export async function clearVerificationEmailHint(): Promise<void> {
+  const jar = await cookies();
+  jar.delete(VERIFICATION_EMAIL_COOKIE);
+}
+
 /** Clear the client session (sign out). */
 export async function clearClientSession(): Promise<void> {
   const jar = await cookies();
@@ -69,4 +124,4 @@ export async function clearClientSession(): Promise<void> {
   jar.delete(REFRESH_COOKIE);
 }
 
-export const CLIENT_COOKIE_NAMES = { access: ACCESS_COOKIE, refresh: REFRESH_COOKIE } as const;
+export const CLIENT_COOKIE_NAMES = { access: ACCESS_COOKIE, refresh: REFRESH_COOKIE, passwordSet: PASSWORD_SET_COOKIE } as const;

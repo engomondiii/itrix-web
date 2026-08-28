@@ -76,7 +76,7 @@ export function useEmailVerification(): UseEmailVerificationResult {
   const resend = useCallback(async () => {
     setBusy(true);
     setRetryAfter(null);
-    const outcome = await authApi.resendVerification();
+    const outcome = await authApi.resendVerification(email ?? undefined);
     setBusy(false);
     if (outcome.kind === 'rate_limited') {
       setRetryAfter(outcome.retryAfterSeconds);
@@ -87,7 +87,7 @@ export function useEmailVerification(): UseEmailVerificationResult {
        not be able to undo that by reporting more than it was told. */
     setResent(true);
     trackEvent('auth.verification_sent', {});
-  }, []);
+  }, [email]);
 
   return { verified, email, confirm, resend, resent, busy, retryAfterSeconds };
 }

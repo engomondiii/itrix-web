@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { djangoFetch } from '@/lib/server/proxy';
+import type { ImprovementReceipt } from '@/types/success.types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,9 +14,9 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(req: Request) {
   const body = (await req.json().catch(() => ({}))) as { message?: string };
-  const res = await djangoFetch<unknown>('/portal/success/improve/', {
+  const res = await djangoFetch<ImprovementReceipt>('/portal/success/improve/', {
     method: 'POST',
-    body: JSON.stringify({ message: body.message ?? '' }),
+    body: { message: body.message ?? '' },
   });
   if (res.status === 401) return NextResponse.json({ error: { detail: 'not_authenticated' } }, { status: 401 });
   if (!res.ok || res.data === null) {
