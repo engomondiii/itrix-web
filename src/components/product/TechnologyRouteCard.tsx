@@ -10,7 +10,7 @@ import type { Technology } from '@/types/product.types';
 /** Shows which technology route can be relevant to a product capability without implying eligibility. */
 export function TechnologyRouteCard({ tech, relevance, relevanceKo }: { tech: Technology; relevance: string; relevanceKo?: string }) {
   const locale = useLocaleStore((state) => state.locale);
-  const copy = technologyCopy(locale, tech.id, tech);
+  const copy = technologyCopy(locale, tech.id);
   return (
     <Card variant="default" className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-2">

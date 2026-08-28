@@ -78,7 +78,7 @@ export function useSuggestions(threadId: string | null): UseSuggestionsResult {
 
   const choose = useCallback(
     (suggestion: Suggestion) => {
-      populate(suggestion.text, null);
+      populate(suggestion.text);
       /* A chosen chip is spent. Leaving the others up under a filled composer
          implies we are still waiting for one of them. */
       setState({ threadId, chips: [] });

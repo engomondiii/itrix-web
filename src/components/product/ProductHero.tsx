@@ -16,7 +16,7 @@ const CTA_KO = {
 
 export function ProductHero({ product }: { product: ProductInfo }) {
   const locale = useLocaleStore((state) => state.locale);
-  const copy = productCopy(locale, product.id, product);
+  const copy = productCopy(locale, product.route);
   return (
     <section className="relative overflow-hidden border-b border-border-medium bg-canvas">
       <BackgroundGrid />
