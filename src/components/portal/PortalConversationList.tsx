@@ -67,7 +67,7 @@ export function PortalConversationList() {
                       : 'text-ink-secondary hover:bg-surface hover:text-ink-primary',
                   )}
                 >
-                  {thread.title || 'Untitled conversation'}
+                  {thread.title || railCopy.newChat}
                 </Link>
               </li>
             );
