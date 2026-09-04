@@ -5,7 +5,7 @@ import { useLocaleStore } from '@/store/localeStore';
 
 const TITLE_KO: Record<string,string> = {
   'Your workspace':'워크스페이스',
-  'Assessment':'ALPHA 평가',
+  'Assessment':'ALPHA Compute 평가',
   'Briefing':'브리핑',
   'Documents':'문서',
   'Evaluation':'평가',
