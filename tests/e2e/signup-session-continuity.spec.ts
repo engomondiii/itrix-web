@@ -47,7 +47,7 @@ test('the app-generated anonymous visitor binding is forwarded unchanged when re
       },
     });
     expect(registration.status()).toBe(202);
-    await expect(registration.json()).resolves.toEqual({ accepted: true });
+    expect(await registration.json()).toEqual({ accepted: true });
 
     expect(seenBindings).toHaveLength(2);
     expect(seenBindings[0].binding).toBe(visitor?.value);
