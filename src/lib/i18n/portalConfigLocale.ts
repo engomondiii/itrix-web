@@ -2,7 +2,7 @@ import type { AppLocale } from '@/store/localeStore';
 import type { PortalStage, EvaluationStage, PoCMilestone } from '@/types/portal.types';
 
 const NAV_KO: Record<string,string> = {
-  overview:'홈', success:'내 워크스페이스', messages:'메시지', briefing:'브리핑', documents:'문서', evaluation:'평가', assessment:'ALPHA 평가', poc:'개념검증(PoC)', integration:'통합', settings:'설정',
+  overview:'홈', success:'내 워크스페이스', messages:'메시지', briefing:'브리핑', documents:'문서', evaluation:'평가', assessment:'ALPHA Compute 평가', poc:'개념검증(PoC)', integration:'통합', settings:'설정',
   'success-home':'개요', outcomes:'성과', deployments:'배포', support:'지원', knowledge:'학습', meetings:'미팅', governance:'의사결정', feedback:'피드백',
 };
 export function portalNavLabel(locale: AppLocale, key: string, english: string) { return locale === 'ko' ? (NAV_KO[key] ?? english) : english; }
