@@ -35,6 +35,17 @@ export function DataRoomLockedState({ data }: { data: PortalDataRoom }) {
       desiredOutcome: desired.trim(),
       discussionReason: reason.trim(),
     });
+    // The API client deliberately returns a backend 400/contextRequired body as data
+    // so the UI can preserve the user's fields. It is not success and must not emit
+    // the requested/done state until the backend actually accepts the request.
+    if (res.data?.contextRequired) {
+      setMessage(
+        res.data.message || res.data.detail ||
+        (ko ? 'NDA 요청을 진행하려면 문제 또는 워크로드 맥락을 조금 더 알려 주세요.' : 'Add a little more problem or workload context before sending the NDA request.'),
+      );
+      setState('error');
+      return;
+    }
     if (res.data) {
       trackEvent('portal.nda_requested', {});
       setMessage(res.data.message || res.data.detail || (ko ? '요청을 접수했습니다. NDA 진행 상황은 워크스페이스에서 확인할 수 있습니다.' : 'Your request has been received. You can follow the NDA status in your workspace.'));

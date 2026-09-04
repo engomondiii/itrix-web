@@ -14,21 +14,6 @@ import { useLocaleStore } from '@/store/localeStore';
 /**
  * Documents, the NDA-gated data room, and — once contracted — the customer's own
  * contract-tier material.
- *
- * PHASE 3: `customer_contract` is the sixth disclosure tier (Architecture v2.5
- * §13.2). It holds a customer's own deployment notes, release notes, runbooks,
- * training material and incident history, and it is scoped PER CUSTOMER — a
- * contract-tier document is never cross-served to another customer.
- *
- * Two things this page deliberately does not do:
- *
- *   · It does not decide the tier. The ceiling comes from the client-JWT and
- *     Django re-checks it on every fetch; the state below only decides whether to
- *     ANNOUNCE that the section exists, so a customer is not left wondering where
- *     their runbooks went.
- *   · It does not merge tiers into one list. Keeping contract-tier material in
- *     its own section is what makes the boundary legible to the person relying
- *     on it.
  */
 export default function DocumentsPage() {
   const ko = useLocaleStore((state) => state.locale) === 'ko';
@@ -43,7 +28,7 @@ export default function DocumentsPage() {
 
   return (
     <>
-      <PortalTopbar title="Documents" />
+      <PortalTopbar title={ko ? '문서' : 'Documents'} />
       <div className="mx-auto flex max-w-4xl flex-col gap-8 px-6 py-8">
         {loading ? (
           <div className="flex justify-center py-16"><Spinner size="lg" /></div>
@@ -62,10 +47,7 @@ export default function DocumentsPage() {
                 <p className="text-caption text-ink-secondary">
                   {ko ? '학습 섹션에서 교육 및 릴리스 노트와 함께 확인할 수 있습니다.' : 'Find it under Learning, alongside your training and release notes.'}
                 </p>
-                <a
-                  href="/workspace/success/knowledge"
-                  className="self-start text-caption text-ink-primary underline underline-offset-2"
-                >
+                <a href="/workspace/success/knowledge" className="self-start text-caption text-ink-primary underline underline-offset-2">
                   {ko ? '학습 열기' : 'Open Learning'}
                 </a>
               </section>
