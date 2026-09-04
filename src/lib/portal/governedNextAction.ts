@@ -9,30 +9,30 @@ export interface GovernedCta {
 type CtaDefinition = { href: string; en: string; ko: string };
 
 /**
- * ONE canonical UI map for backend-governed next actions.
- *
- * This map translates an action the backend already chose. It never chooses an
- * action from entitlement, fee, readiness, product usage or any other local state.
+ * ONE canonical UI map for actions chosen by the backend commercial-progression and
+ * Customer Success services. The frontend translates and routes; it never infers
+ * eligibility or advances product state.
  */
 const CTA_MAP: Record<string, CtaDefinition> = {
-  talk_to_itrix: { href: '/workspace/messages', en: 'Talk to itriX', ko: 'itriX와 대화하기' },
-  contact_itrix: { href: '/workspace/messages', en: 'Talk to itriX', ko: 'itriX와 대화하기' },
-  contact_support: { href: '/workspace/success/support', en: 'Open support', ko: '지원 열기' },
-  review_support: { href: '/workspace/success/support', en: 'Review support', ko: '지원 확인하기' },
-  review_deployment: { href: '/workspace/success/deployments', en: 'Review deployment', ko: '배포 상태 확인하기' },
-  continue_deployment: { href: '/workspace/success/deployments', en: 'Continue deployment work', ko: '배포 작업 계속하기' },
-  prepare_lo: { href: '/workspace/messages', en: 'Prepare the LO', ko: 'LO 준비하기' },
-  review_lo: { href: '/workspace/messages', en: 'Review the LO', ko: 'LO 검토하기' },
-  negotiate_lo: { href: '/workspace/messages', en: 'Continue LO discussion', ko: 'LO 협의 계속하기' },
-  execute_lo: { href: '/workspace/messages', en: 'Complete the LO', ko: 'LO 체결 진행하기' },
-  complete_entitlement: { href: '/workspace/messages', en: 'Complete entitlement setup', ko: '사용 권한 설정 완료하기' },
-  review_entitlement: { href: '/workspace/messages', en: 'Review entitlement', ko: '사용 권한 확인하기' },
-  renew_entitlement: { href: '/workspace/messages', en: 'Discuss renewal', ko: '갱신 논의하기' },
-  review_verified_value: { href: '/workspace/success/outcomes', en: 'Review verified value', ko: '검증된 가치 확인하기' },
-  review_alpha_assessment: { href: '/workspace/assessment', en: 'Review ALPHA assessment', ko: 'ALPHA 평가 확인하기' },
-  continue_alpha_assessment: { href: '/workspace/assessment', en: 'Continue ALPHA assessment', ko: 'ALPHA 평가 계속하기' },
-  review_alpha_core: { href: '/workspace/messages', en: 'Discuss ALPHA Core', ko: 'ALPHA Core 논의하기' },
-  review_expansion: { href: '/workspace/messages', en: 'Review the governed next step', ko: '승인된 다음 단계 검토하기' },
+  resolve_blocking_support: { href: '/workspace/success/support', en: 'Resolve blocking support', ko: '차단 중인 지원 이슈 해결하기' },
+  continue_success_plan: { href: '/workspace/messages', en: 'Continue with itriX', ko: 'itriX와 다음 단계 이어가기' },
+  finalize_license_out_terms: { href: '/workspace/messages', en: 'Finalize License-Out terms', ko: 'License-Out 조건 확정하기' },
+  execute_license_out: { href: '/workspace/messages', en: 'Complete the License-Out', ko: 'License-Out 체결 진행하기' },
+  activate_entitlement: { href: '/workspace/messages', en: 'Complete entitlement activation', ko: '사용 권한 활성화 완료하기' },
+  progress_alpha_core_opportunity: { href: '/workspace/messages', en: 'Continue the ALPHA Core opportunity', ko: 'ALPHA Core 기회 이어가기' },
+  resolve_alpha_core_gate: { href: '/workspace/messages', en: 'Review ALPHA Core requirements', ko: 'ALPHA Core 요건 확인하기' },
+  resolve_alpha_compute_gate: { href: '/workspace/assessment', en: 'Review ALPHA Compute requirements', ko: 'ALPHA Compute 요건 확인하기' },
+  complete_alpha_core_case: { href: '/workspace/messages', en: 'Complete the ALPHA Core case', ko: 'ALPHA Core 검토 근거 완료하기' },
+  open_alpha_core_opportunity: { href: '/workspace/messages', en: 'Discuss an ALPHA Core opportunity', ko: 'ALPHA Core 기회 논의하기' },
+  open_alpha_compute_assessment: { href: '/workspace/assessment', en: 'Review ALPHA Compute assessment', ko: 'ALPHA Compute 평가 확인하기' },
+  complete_astop_verified_value: { href: '/workspace/evaluation', en: 'Complete ASTOP value verification', ko: 'ASTOP 가치 검증 완료하기' },
+  continue_discovery: { href: '/workspace/messages', en: 'Continue discovery with itriX', ko: 'itriX와 탐색 계속하기' },
+};
+
+const FALLBACK: CtaDefinition = {
+  href: '/workspace/messages',
+  en: 'Review the next step with itriX',
+  ko: 'itriX와 다음 단계 확인하기',
 };
 
 function canonicalKey(action: string): string {
@@ -42,7 +42,7 @@ function canonicalKey(action: string): string {
 export function getGovernedCta(action: string | null, locale: PortalLocale): GovernedCta | null {
   if (!action) return null;
   const key = canonicalKey(action);
-  const definition = CTA_MAP[key];
-  if (!definition) return null;
+  if (!key || key === 'none') return null;
+  const definition = CTA_MAP[key] ?? FALLBACK;
   return { key, href: definition.href, label: locale === 'ko' ? definition.ko : definition.en };
 }
