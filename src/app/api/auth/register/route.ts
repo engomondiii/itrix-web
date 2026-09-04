@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { setVerificationEmailHint } from '@/lib/server/session';
+import { getVisitorBinding } from '@/lib/server/reviewAccess';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -49,6 +50,12 @@ const ACCEPTED = { accepted: true } as const;
  * and a broken service must be indistinguishable. Registration has no such requirement, and
  * telling somebody they have a workspace when nothing was created sends them to a sign-in page
  * that will reject them.
+ *
+ * ── THE ANONYMOUS CONVERSATION FOLLOWS THE PERSON IN (R65) ─────────────────
+ * Django claims pre-signup threads by the signed visitor-session binding. Browser cookies do
+ * not cross this server-side fetch automatically, so the BFF forwards only that existing
+ * binding in the backend's explicit X-ITRIX-SESSION header. No binding is invented when the
+ * visitor never started a conversation, and no unrelated browser cookie crosses planes.
  */
 export async function POST(req: Request) {
   if (!OPEN_SIGNUP) {
@@ -73,11 +80,16 @@ export async function POST(req: Request) {
 
   const requestedEmail = (body as { email?: unknown } | null)?.email;
   const emailHint = typeof requestedEmail === 'string' ? requestedEmail.trim() : '';
+  const visitorBinding = await getVisitorBinding();
 
   try {
     const res = await fetch(`${API_BASE}/auth/register/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        ...(visitorBinding ? { 'X-ITRIX-SESSION': visitorBinding } : {}),
+      },
       body: JSON.stringify(body),
       cache: 'no-store',
     });
