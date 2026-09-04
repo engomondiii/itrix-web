@@ -5,13 +5,13 @@ import { useLocaleStore } from '@/store/localeStore';
 
 const TITLE_KO: Record<string,string> = {
   'Your workspace':'워크스페이스',
-  'Assessment':'평가',
+  'Assessment':'ALPHA 평가',
   'Briefing':'브리핑',
   'Documents':'문서',
   'Evaluation':'평가',
   'Integration':'통합',
   'Messages':'메시지',
-  'Proof of concept':'개념 증명(PoC)',
+  'Proof of concept':'개념검증(PoC)',
   'Settings':'설정',
   'Outcomes':'성과',
   'Deployment health':'배포 상태',
