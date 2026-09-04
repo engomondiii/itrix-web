@@ -36,7 +36,7 @@ export default function AlphaComputePage() {
       </section>
       <UseCaseGrid label="Where it may fit" labelKo="적용 가능성을 검토할 수 있는 영역" useCases={[
         { title:'Numerical computing', titleKo:'수치 계산', description:'Selected workloads where representation or structured operators materially contribute to cost.', descriptionKo:'표현 또는 구조화된 연산자가 비용에 실질적으로 기여하는 선택된 워크로드.' },
-        { title:'Simulation', titleKo:'시뮬레이션', description:'Selected models where structural diagnosis can be tested against a frozen baseline.', descriptionKo:'구조적 진단을 고정된 기준선과 비교 검증할 수 있는 선택된 모델.' },
+        { title:'Simulation', titleKo:'시뮬레이션', description:'Selected models where the baseline is defined and versioned before testing. Material baseline errors may be corrected only with the reason documented and affected comparisons rerun.', descriptionKo:'테스트 전에 기준선을 정의하고 버전을 기록하는 선택된 모델. 기준선에 중대한 오류가 확인되면 수정 사유를 기록하고 영향을 받은 비교를 다시 실행합니다.' },
         { title:'AI infrastructure', titleKo:'AI 인프라', description:'Workloads where representation, data movement or execution boundaries may be worth measuring before adding capacity.', descriptionKo:'용량 추가 전에 표현, 데이터 이동 또는 실행 경계를 측정할 가치가 있을 수 있는 워크로드.' },
       ]} />
       <WorkflowSteps label="How an evaluation can start" labelKo="평가를 시작할 수 있는 방법" steps={[
