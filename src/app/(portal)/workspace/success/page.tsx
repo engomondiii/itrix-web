@@ -4,12 +4,14 @@ import Link from 'next/link';
 import { PortalTopbar } from '@/components/portal/PortalTopbar';
 import { EmptyState } from '@/components/portal/EmptyState';
 import { Spinner } from '@/components/ui/Spinner';
+import { AstopSuccessSummary } from '@/components/success/AstopSuccessSummary';
 import { OutcomeProgressCard } from '@/components/success/OutcomeProgressCard';
 import { DeploymentHealthPanel } from '@/components/success/DeploymentHealthPanel';
 import { SupportRequestList } from '@/components/success/SupportRequestList';
 import { ChangesSinceLastVisit } from '@/components/success/ChangesSinceLastVisit';
 import { RelationshipTeamCard } from '@/components/success/RelationshipTeamCard';
 import { ImprovementComposer } from '@/components/success/ImprovementComposer';
+import { useAstopSuccess } from '@/hooks/useAstopSuccess';
 import { useSuccessOverview } from '@/hooks/useSuccessOverview';
 import { useSuccessCopy } from '@/lib/i18n/successLocale';
 import { siteConfig } from '@/config/site.config';
@@ -18,27 +20,16 @@ import { useLocaleStore } from '@/store/localeStore';
 /**
  * State 10 — the customer-success home.
  *
- *   PRIORITY RULE
- *   Keeping paying customers happy and successful is more important than moving
- *   them toward another agreement. This is not an upsell page.
- *
- * The order on this page is the priority order, and it is deliberate:
- *
- *   1. what changed since they were last here   (what they missed)
- *   2. their outcomes                            (whether this is working)
- *   3. open support                              (what is hurting)
- *   4. deployment health                         (whether it is running)
- *   5. their named team                          (who to ask)
- *   6. the improvement composer                  (how to say something)
- *
- * There is no expansion CTA anywhere on this page, at any health level. The
- * backend's customer-first rule decides whether a commercial action is ever
- * ranked primary; this surface simply has nowhere to put one.
+ * Keeping paying customers happy and successful remains the priority. Commercial
+ * progression is never inferred here. If ASTOP exposes a customer-safe governed
+ * next action, this surface may translate that action into the single canonical CTA;
+ * no health, entitlement, fee or usage state can manufacture an upsell locally.
  */
 export default function SuccessHomePage() {
   const successCopy = useSuccessCopy();
   const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { data, loading } = useSuccessOverview();
+  const { data: astop, loading: astopLoading } = useAstopSuccess();
 
   if (!siteConfig.featureFlags.customerSuccess) {
     return (
@@ -58,46 +49,46 @@ export default function SuccessHomePage() {
         {loading ? (
           <div className="flex justify-center py-16"><Spinner size="lg" /></div>
         ) : data ? (
-          <>
-            <div className="flex flex-col gap-10">
-              <header>
-                <h1 className="font-display text-web-h2 text-ink-primary">{successCopy.home.welcome}</h1>
-              </header>
+          <div className="flex flex-col gap-10">
+            <header>
+              <h1 className="font-display text-web-h2 text-ink-primary">{successCopy.home.welcome}</h1>
+            </header>
 
-              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.changes.title} intro={successCopy.changes.intro} href="/workspace/success/feedback" hideLink>
-                <ChangesSinceLastVisit />
-              </Block>
+            <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.changes.title} intro={successCopy.changes.intro} href="/workspace/success/feedback" hideLink>
+              <ChangesSinceLastVisit />
+            </Block>
 
-              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.outcomes.title} intro={successCopy.outcomes.intro} href="/workspace/success/outcomes">
-                {data.outcomes.length > 0 ? (
-                  <div className="flex flex-col gap-3">
-                    {data.outcomes.slice(0, 3).map((o) => (
-                      <OutcomeProgressCard key={o.id} outcome={o} />
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-web-body text-ink-secondary">{successCopy.outcomes.empty}</p>
-                )}
-              </Block>
+            <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.outcomes.title} intro={successCopy.outcomes.intro} href="/workspace/success/outcomes">
+              {data.outcomes.length > 0 ? (
+                <div className="flex flex-col gap-3">
+                  {data.outcomes.slice(0, 3).map((o) => (
+                    <OutcomeProgressCard key={o.id} outcome={o} />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-web-body text-ink-secondary">{successCopy.outcomes.empty}</p>
+              )}
+            </Block>
 
-              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.support.title} intro={successCopy.support.intro} href="/workspace/success/support">
-                <SupportRequestList requests={data.openSupport} />
-              </Block>
+            <AstopSuccessSummary data={astop} loading={astopLoading} />
 
-              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.deployments.title} intro={successCopy.deployments.intro} href="/workspace/success/deployments">
-                <DeploymentHealthPanel deployments={data.deployments.slice(0, 2)} />
-              </Block>
+            <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.support.title} intro={successCopy.support.intro} href="/workspace/success/support">
+              <SupportRequestList requests={data.openSupport} />
+            </Block>
 
-              <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.team.title} intro={successCopy.team.intro} href="/workspace/success/feedback" hideLink>
-                <RelationshipTeamCard team={data.team} />
-              </Block>
+            <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.deployments.title} intro={successCopy.deployments.intro} href="/workspace/success/deployments">
+              <DeploymentHealthPanel deployments={data.deployments.slice(0, 2)} />
+            </Block>
 
-              <section aria-labelledby="improve-title" className="rounded-panel border border-border-soft bg-surface-glass-soft p-5">
-                <h2 id="improve-title" className="sr-only">{ko ? '개선할 점을 알려주세요' : 'Tell us what to improve'}</h2>
-                <ImprovementComposer />
-              </section>
-            </div>
-          </>
+            <Block seeAllLabel={ko ? '전체 보기' : 'See all'} title={successCopy.team.title} intro={successCopy.team.intro} href="/workspace/success/feedback" hideLink>
+              <RelationshipTeamCard team={data.team} />
+            </Block>
+
+            <section aria-labelledby="improve-title" className="rounded-panel border border-border-soft bg-surface-glass-soft p-5">
+              <h2 id="improve-title" className="sr-only">{ko ? '개선할 점을 알려주세요' : 'Tell us what to improve'}</h2>
+              <ImprovementComposer />
+            </section>
+          </div>
         ) : (
           <EmptyState>{successCopy.outcomes.empty}</EmptyState>
         )}

@@ -5,11 +5,12 @@
  * Same-origin only. Never throws: returns { data } | { error }.
  *
  * One rule worth stating in code: nothing here sends a commercial signal, and
- * nothing here receives one. The improvement composer routes a request; it does
- * not open an opportunity.
+ * nothing here receives one except an explicitly customer-safe, backend-governed
+ * ASTOP next action. The browser never derives progression itself.
  */
 
 import type { ApiResult } from './journeyApi';
+import type { AstopSuccessProjection } from '@/types/astop-success.types';
 import type {
   SuccessOverview, Outcome, DeploymentHealth, SupportRequest, SuccessPlan,
   KnowledgeItem, ReleaseNote, ChangeEntry, RelationshipTeamMember,
@@ -44,6 +45,7 @@ async function postJson<T>(url: string, body: unknown): Promise<ApiResult<T>> {
 
 export const successApi = {
   overview: () => getJson<SuccessOverview>('/api/portal/success/overview'),
+  astop: () => getJson<AstopSuccessProjection>('/api/portal/success/astop'),
   outcomes: () => getJson<{ outcomes: Outcome[] }>('/api/portal/success/outcomes'),
   deployments: () => getJson<{ deployments: DeploymentHealth[] }>('/api/portal/success/deployments'),
   support: () => getJson<{ requests: SupportRequest[]; slaHours: number | null }>('/api/portal/success/support'),
