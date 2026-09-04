@@ -141,8 +141,20 @@ export interface PortalEvaluation {
   updatedAt?: string | null;
   ttfvSeconds?: number | null;
   verifiedValue?: Record<string, unknown>;
+  /** Customer-visible fee treatment. It does not determine technical eligibility. */
   customerFeeStatus?: string;
   finalAssessmentFee?: string | number | null;
+  /** Optional customer-safe governed assessment dimensions; no policy reasoning. */
+  eligibilityState?: string | null;
+  eligibility_state?: string | null;
+  assessmentState?: string | null;
+  assessment_state?: string | null;
+  feeState?: string | null;
+  fee_state?: string | null;
+  waiverState?: string | null;
+  waiver_state?: string | null;
+  entitlementState?: string | null;
+  entitlement_state?: string | null;
 }
 
 /** PoC tracking (§67). */

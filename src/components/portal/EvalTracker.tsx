@@ -7,6 +7,7 @@ import { SectionLabel } from '@/components/ui/SectionLabel';
 import { EvalStageLine } from './EvalStageLine';
 import { EVALUATION_STAGE_ORDER } from '@/config/portal.config';
 import { usePortalCopy } from '@/lib/i18n/portalLocale';
+import { alphaAssessmentFacts, safeTtfvSeconds } from '@/lib/portal/evaluationPresentation';
 import type { AstopStage, EvaluationStage, PortalEvaluation } from '@/types/portal.types';
 import { useLocaleStore } from '@/store/localeStore';
 
@@ -20,7 +21,7 @@ const ASTOP_LABELS: Record<(typeof ASTOP_ORDER)[number], { en: string; ko: strin
 };
 
 function FeeStatus({ evaluation, ko }: { evaluation: PortalEvaluation; ko: boolean }) {
-  const status = evaluation.customerFeeStatus ?? '';
+  const status = evaluation.customerFeeStatus ?? evaluation.feeState ?? evaluation.fee_state ?? '';
   let text = ko
     ? 'ALPHA Compute 평가는 원칙적으로 유료입니다. 최종 비용 조건은 합의가 확정되면 이곳에 표시됩니다.'
     : 'An ALPHA Compute assessment is fee-bearing by default. Final fee treatment appears here when terms are finalized.';
@@ -40,6 +41,7 @@ function AstopTracker({ evaluation, ko }: { evaluation: PortalEvaluation; ko: bo
   const rawStage = (evaluation.astopStage || evaluation.stage || 'identify_qualify') as AstopStage;
   const stage = (ASTOP_ORDER as readonly string[]).includes(rawStage) ? rawStage as (typeof ASTOP_ORDER)[number] : 'identify_qualify';
   const currentIndex = ASTOP_ORDER.indexOf(stage);
+  const ttfvSeconds = safeTtfvSeconds(evaluation.ttfvSeconds);
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
@@ -67,7 +69,7 @@ function AstopTracker({ evaluation, ko }: { evaluation: PortalEvaluation; ko: bo
         <p className="mt-1 text-secondary text-ink-secondary">
           {ko ? '절감 수치만으로 다음 단계로 가지 않습니다. 의사결정 충실성, 보안·통합 가능성, 재현 가능한 가치가 먼저 확인되어야 합니다.' : 'Progression is not based on a savings headline alone. Decision fidelity, security/integration feasibility and reproducible value come first.'}
         </p>
-        {evaluation.ttfvSeconds != null ? <p className="mt-2 text-caption text-ink-secondary">{ko ? '첫 검증 가치까지의 시간' : 'Time to First Verified Value'}: {Math.round(evaluation.ttfvSeconds / 60)} min</p> : null}
+        {ttfvSeconds !== null ? <p className="mt-2 text-caption text-ink-secondary">{ko ? '첫 검증 가치까지의 시간' : 'Time to First Verified Value'}: {formatTtfv(ttfvSeconds, ko)}</p> : null}
       </div>
     </div>
   );
@@ -81,6 +83,7 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
 
   const stage = (EVALUATION_STAGE_ORDER.includes(evaluation.stage as EvaluationStage) ? evaluation.stage : 'requested') as EvaluationStage;
   const currentIndex = EVALUATION_STAGE_ORDER.indexOf(stage);
+  const facts = alphaAssessmentFacts(evaluation);
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
@@ -97,6 +100,16 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
           <div className="border-t border-border-soft pt-4"><Link href={evaluation.reportHref}><Button variant="primary" size="md">{portalCopy.evaluation.reportButton}</Button></Link></div>
         ) : null}
       </Card>
+      <Card variant="default" className="flex flex-col gap-3" aria-labelledby="alpha-assessment-status-title">
+        <SectionLabel withRule={false}><span id="alpha-assessment-status-title">{ko ? '평가 상태' : 'Assessment status'}</span></SectionLabel>
+        <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          <AssessmentFact label={ko ? '적격성' : 'Eligibility'} value={facts.eligibility} ko={ko} />
+          <AssessmentFact label={ko ? '평가 진행 상태' : 'Assessment state'} value={facts.assessmentState} ko={ko} />
+          <AssessmentFact label={ko ? '비용 상태' : 'Fee state'} value={facts.feeState} ko={ko} />
+          <AssessmentFact label={ko ? '면제 상태' : 'Waiver state'} value={facts.waiverState} ko={ko} />
+          <AssessmentFact label={ko ? '사용 권한' : 'Entitlement'} value={facts.entitlementState} ko={ko} />
+        </dl>
+      </Card>
       <Card variant="warm" className="flex flex-col gap-2">
         <SectionLabel withRule={false}>{ko ? '평가 비용' : 'Assessment fee'}</SectionLabel>
         <FeeStatus evaluation={evaluation} ko={ko} />
@@ -107,4 +120,40 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
       </div>
     </div>
   );
+}
+
+function AssessmentFact({ label, value, ko }: { label: string; value: string | null; ko: boolean }) {
+  return (
+    <div className="min-w-0">
+      <dt className="text-caption text-ink-tertiary">{label}</dt>
+      <dd className="mt-1 break-words text-body text-ink-primary">{value ? displayState(value, ko) : (ko ? '해당 없음' : 'N/A')}</dd>
+    </div>
+  );
+}
+
+function formatTtfv(seconds: number, ko: boolean): string {
+  if (seconds < 60) return ko ? `${seconds}초` : `${seconds} sec`;
+  if (seconds < 3600) {
+    const minutes = Math.round((seconds / 60) * 10) / 10;
+    return ko ? `${minutes}분` : `${minutes} min`;
+  }
+  const hours = Math.round((seconds / 3600) * 10) / 10;
+  return ko ? `${hours}시간` : `${hours} hr`;
+}
+
+function displayState(value: string, ko: boolean): string {
+  const key = value.trim().replace(/([a-z0-9])([A-Z])/g, '$1_$2').replace(/[\s-]+/g, '_').toLowerCase();
+  const en: Record<string, string> = {
+    requested: 'Requested', scoping: 'Scoping', in_progress: 'In progress', report_ready: 'Report ready',
+    eligible: 'Eligible', ineligible: 'Not eligible', pending: 'Pending', active: 'Active', expired: 'Expired', revoked: 'Revoked',
+    waived: 'Waived', partially_waived: 'Partially waived', paid: 'Paid', waiver_pending_finalization: 'Finalization pending',
+    granted: 'Granted', denied: 'Not granted', not_applicable: 'Not applicable',
+  };
+  const koMap: Record<string, string> = {
+    requested: '요청됨', scoping: '범위 협의 중', in_progress: '진행 중', report_ready: '보고서 준비 완료',
+    eligible: '적격', ineligible: '부적격', pending: '대기 중', active: '활성', expired: '만료', revoked: '취소됨',
+    waived: '면제', partially_waived: '일부 조정', paid: '적용됨', waiver_pending_finalization: '최종 확정 대기',
+    granted: '승인됨', denied: '승인되지 않음', not_applicable: '해당 없음',
+  };
+  return (ko ? koMap : en)[key] ?? (ko ? value : key.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase()));
 }
