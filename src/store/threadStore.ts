@@ -14,9 +14,8 @@ import type { ThreadSummary } from '@/types/thread.types';
  * restored from the browser.
  *
  * The list is a CONVENIENCE mirror. The backend wins on CONTENT — `mergeFromServer`
- * overwrites any thread it returns, field for field — but NOT on ABSENCE. An answer
- * that arrives short or empty no longer erases names the visitor can see; removal is
- * explicit, through `remove`.
+ * overwrites server-owned metadata — but NOT on ABSENCE and not over a title the
+ * visitor explicitly renamed. Removal is explicit, through `remove`.
  *
  * Surface 1 v5.0 §3.2, §7.5
  */
@@ -28,35 +27,38 @@ interface ThreadState {
   upsert: (thread: ThreadSummary) => void;
   rename: (id: string, title: string) => void;
   remove: (id: string) => void;
-  /** Replace the local list with the backend's answer. Absolute, not a delta. */
+  /** Merge the backend's current metadata answer into the local convenience mirror. */
   mergeFromServer: (threads: ThreadSummary[]) => void;
   reset: () => void;
 }
+
+type LocalThreadSummary = ThreadSummary & { __manualTitle?: true };
 
 function byRecency(a: ThreadSummary, b: ThreadSummary): number {
   return new Date(b.lastActivityAt).getTime() - new Date(a.lastActivityAt).getTime();
 }
 
 /**
- * Merge a metadata update without ever erasing the visible conversation name.
+ * Merge metadata without erasing either a stable title or an explicit manual rename.
  *
- * `POST /threads/{id}/turns/` intentionally returns only `{threadId, turn,
- * assistantTurn}`. The frontend normaliser therefore has no title for that response.
- * Before this guard, the resulting empty `title` replaced the existing sidebar row on
- * every follow-up turn, leaving only "4m ago"/"9m ago" visible and making the time look
- * like the conversation's name. A partial transport update may advance activity time,
- * but it may never blank stable metadata it did not carry.
+ * Partial transport updates are allowed to advance server-owned metadata, but a
+ * generated/re-generated backend title must not overwrite a name the visitor explicitly
+ * chose. The private marker lives only in the persisted metadata mirror and never travels
+ * in thread API requests.
  */
 function mergeSummary(existing: ThreadSummary | undefined, incoming: ThreadSummary): ThreadSummary {
   if (!existing) return incoming;
 
+  const local = existing as LocalThreadSummary;
+  const manualTitle = local.__manualTitle === true;
   return {
     ...existing,
     ...incoming,
-    title: incoming.title.trim() || existing.title,
+    title: manualTitle ? existing.title : (incoming.title.trim() || existing.title),
     createdAt: existing.createdAt || incoming.createdAt,
     lastActivityAt: incoming.lastActivityAt || existing.lastActivityAt,
-  };
+    ...(manualTitle ? { __manualTitle: true } : {}),
+  } as LocalThreadSummary;
 }
 
 function isMessagingOnlyThread(thread: ThreadSummary): boolean {
@@ -83,7 +85,11 @@ export const useThreadStore = create<ThreadState>()(
         }),
 
       rename: (id, title) =>
-        set((s) => ({ threads: s.threads.map((t) => (t.id === id ? { ...t, title } : t)) })),
+        set((s) => ({
+          threads: s.threads.map((t) =>
+            t.id === id ? ({ ...t, title, __manualTitle: true } as LocalThreadSummary) : t,
+          ),
+        })),
 
       remove: (id) =>
         set((s) => ({
@@ -91,18 +97,10 @@ export const useThreadStore = create<ThreadState>()(
           activeThreadId: s.activeThreadId === id ? null : s.activeThreadId,
         })),
 
-      /* MERGE, NOT REPLACE (change request, 2026-08).
-         This used to overwrite the list outright, which meant any answer the
-         backend could not fully give — a dropped visitor-session cookie, a cold
-         start, a 5xx that read as an empty list — silently erased every chat
-         name the visitor could see. The names came back on the next good
-         refresh, but by then the sidebar had already looked broken.
-
-         The server still wins on CONTENT: a thread it returns replaces the local
-         copy field for field, so a renamed or re-titled conversation updates as
-         before. It just no longer wins on ABSENCE. Deletion is explicit and
-         local (`remove`), so nothing here can resurrect a conversation the
-         visitor asked us to forget. */
+      /* MERGE, NOT REPLACE. A failed/short list response cannot erase local names,
+         while server metadata still updates normally. Explicit manual titles are the
+         one exception: once the visitor names a conversation, generated titles remain
+         subordinate until that local metadata is removed. */
       mergeFromServer: (incoming) =>
         set((s) => {
           // The AI rail and the client↔itriX inbox are separate products. Drop any
