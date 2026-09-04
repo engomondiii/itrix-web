@@ -30,11 +30,12 @@ export default function SuccessHomePage() {
   const ko = useLocaleStore((s) => s.locale) === 'ko';
   const { data, loading } = useSuccessOverview();
   const { data: astop, loading: astopLoading } = useAstopSuccess();
+  const workspaceTitle = ko ? '워크스페이스' : 'Your workspace';
 
   if (!siteConfig.featureFlags.customerSuccess) {
     return (
       <>
-        <PortalTopbar title="Your workspace" />
+        <PortalTopbar title={workspaceTitle} />
         <div className="mx-auto max-w-3xl px-6 py-8">
           <EmptyState>{ko ? '이 워크스페이스에는 아직 고객 성공 기능이 활성화되지 않았습니다.' : 'Customer success is not enabled for this workspace yet.'}</EmptyState>
         </div>
@@ -44,7 +45,7 @@ export default function SuccessHomePage() {
 
   return (
     <>
-      <PortalTopbar title="Your workspace" />
+      <PortalTopbar title={workspaceTitle} />
       <div className="mx-auto flex max-w-3xl flex-col gap-10 px-6 py-8">
         {loading ? (
           <div className="flex justify-center py-16"><Spinner size="lg" /></div>

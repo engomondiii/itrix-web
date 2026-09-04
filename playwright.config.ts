@@ -13,7 +13,10 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
-    command: 'npm run dev',
+    // Customer Success is feature-gated in production. E2E intentionally enables
+    // the customer-facing surface so its governed ASTOP/LO/entitlement contract is
+    // exercised rather than silently testing the disabled-state placeholder.
+    command: 'NEXT_PUBLIC_ENABLE_CUSTOMER_SUCCESS=true NEXT_PUBLIC_ENABLE_CLIENT_PORTAL=true npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
