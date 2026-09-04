@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { SectionLabel } from '@/components/ui/SectionLabel';
 import { EvalStageLine } from './EvalStageLine';
 import { EVALUATION_STAGE_ORDER } from '@/config/portal.config';
@@ -97,7 +96,9 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
           ))}
         </ul>
         {stage === 'report_ready' && evaluation.reportHref ? (
-          <div className="border-t border-border-soft pt-4"><Link href={evaluation.reportHref}><Button variant="primary" size="md">{portalCopy.evaluation.reportButton}</Button></Link></div>
+          <div className="border-t border-border-soft pt-4">
+            <Link href={evaluation.reportHref} className="btn btn--primary btn--md inline-flex">{portalCopy.evaluation.reportButton}</Link>
+          </div>
         ) : null}
       </Card>
       <Card variant="default" className="flex flex-col gap-3" aria-labelledby="alpha-assessment-status-title">
