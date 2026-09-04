@@ -27,6 +27,36 @@ export type VerifiedValueProjection =
     }
   | null;
 
+export interface CustomerSafeProgression {
+  currentMarketingStage?: string | null;
+  astopVerified?: boolean;
+  alphaComputeReady?: boolean;
+  alphaCoreReady?: boolean;
+  nextBestAction?: string | null;
+}
+
+export interface CustomerSafeSupportSummary {
+  openCount?: number | null;
+  blockingOpenCount?: number | null;
+}
+
+export interface CustomerSafeVerifiedValueSummary {
+  verified?: boolean;
+  technical?: {
+    measured?: { sourceMeasurement?: string | null; available?: boolean; value?: unknown };
+    estimated?: { sourceMeasurement?: string | null; available?: boolean; value?: unknown };
+  };
+  economic?: {
+    status?: string | null;
+    verified?: boolean;
+    sourceMeasurement?: string | null;
+    value?: unknown;
+    currency?: string | null;
+    unit?: string | null;
+    claimScope?: string | null;
+  };
+}
+
 export interface CustomerSafeAlphaAssessment {
   eligibility?: string | null;
   eligibilityState?: string | null;
@@ -44,6 +74,10 @@ export interface CustomerSafeAlphaAssessment {
 
 export interface AstopSuccessProjection {
   exists?: boolean;
+  customerSuccessActive?: boolean;
+  astopStage?: string | null;
+  governedProgression?: CustomerSafeProgression | null;
+  governedNextBestAction?: string | null;
   governedProgressionState?: string | null;
   governed_progression_state?: string | null;
   progressionState?: string | null;
@@ -56,6 +90,8 @@ export interface AstopSuccessProjection {
 
   verifiedValue?: VerifiedValueProjection;
   verified_value?: VerifiedValueProjection;
+  verifiedValueStatus?: string | null;
+  verifiedValueSummary?: CustomerSafeVerifiedValueSummary | null;
   valueBasis?: string | null;
   value_basis?: string | null;
   measurementBasis?: string | null;
@@ -65,8 +101,10 @@ export interface AstopSuccessProjection {
   ttfv_seconds?: number | null;
   ttfv?: number | null;
 
+  support?: CustomerSafeSupportSummary | null;
   supportState?: string | null;
   support_state?: string | null;
+  deploymentScope?: unknown;
   deploymentScopeSummary?: string | null;
   deployment_scope_summary?: string | null;
   readinessState?: string | null;
@@ -80,7 +118,9 @@ export interface AstopSuccessProjection {
   entitlement_state?: string | null;
   entitlementExpiry?: string | null;
   entitlement_expiry?: string | null;
+  entitlementExpiresAt?: string | null;
 
+  expansionStatus?: string | null;
   expansionState?: string | null;
   expansion_state?: string | null;
 
