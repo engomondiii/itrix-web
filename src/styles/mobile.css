@@ -385,7 +385,7 @@ svg { height: auto; }
     top: 0;
     z-index: 40;
     display: grid;
-    grid-template-columns: 44px 1fr 44px;
+    grid-template-columns: 44px minmax(72px, 1fr) auto;
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
@@ -427,7 +427,9 @@ svg { height: auto; }
   }
 
   .portal-topbar__mark { display: inline-flex; justify-content: center; }
-  .portal-topbar__count { width: 44px; }
+  .portal-topbar__locale { display: flex; justify-content: flex-end; min-width: 0; }
+  .portal-topbar__locale .locale-toggle__label { display: none; }
+  .portal-topbar__locale .locale-toggle button { width: 34px; min-height: 34px; padding: 4px; }
 }
 
 /* ── G7.2 · The sidebar as a drawer ───────────────────────────────────────── */

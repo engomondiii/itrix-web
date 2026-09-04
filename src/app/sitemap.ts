@@ -27,8 +27,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const paths = [
-    '', '/alpha-compute', '/alpha-core',
-    '/technology', '/technology/axiom', '/technology/cre', '/technology/fqnm',
+    '', '/astop', '/alpha-compute', '/alpha-core',
+    '/technology', '/technology/prism', '/technology/axiom', '/technology/cre', '/technology/fqnm',
     '/licensing', '/licensing/non-exclusive', '/licensing/exclusive',
     '/about', '/use-cases', '/resources', '/resources/fqnm-paper', '/rooms',
     ...(LEGAL_PUBLISHED ? LEGAL_INSTRUMENTS.map((i) => `/${i.slug}`) : []),

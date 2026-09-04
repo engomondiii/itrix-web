@@ -7,6 +7,10 @@ export interface RoomEntryRequest {
   clientId?: string | null;
   roomId: RoomId;
   visitorType?: VisitorType | null;
+  landingPath?: string;
+  sourceChannel?: string;
+  campaignContent?: string;
+  referralOrIntro?: string;
 }
 export interface RoomEntryResponse {
   sessionId: string | null;

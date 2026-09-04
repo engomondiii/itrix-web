@@ -230,30 +230,6 @@
 .prompt-carousel__dot[data-active] { width: 18px; background: var(--ink-primary); }
 .prompt-carousel__dot:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-/* ── The dwell bar ──────────────────────────────────────────────────────── */
-/* Shows that the thing is going to move on its own, and roughly when. Keyed on the
-   index in the markup so it restarts with each example. Pauses with the rotation —
-   a bar that kept running while hover held the carousel would be lying. */
-.prompt-carousel__dwell {
-  margin-top: 10px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--border-soft);
-  overflow: hidden;
-}
-.prompt-carousel__dwell-fill {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--ink-muted);
-  transform-origin: left center;
-  animation: prompt-dwell 4500ms linear both;
-}
-.prompt-carousel__dwell[data-paused] .prompt-carousel__dwell-fill { animation-play-state: paused; }
-@keyframes prompt-dwell {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
 
 .prompt-card {
   display: flex;
@@ -467,3 +443,45 @@
 .portal-shell__main{position:relative}
 .locale-toggle--compact{font-size:12px}
 @media (max-width:767px){.working-shell__locale{right:10px;top:8px}.portal-shell__locale{right:12px;top:8px}}
+
+/* September 2026 reviewer closure — locale is an actual control, not weak inline text. */
+.locale-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+.locale-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: var(--ink-secondary);
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.locale-toggle button:hover { background: var(--soft); color: var(--ink-primary); }
+.locale-toggle button[data-active] {
+  color: var(--ink-primary);
+  background: var(--canvas);
+  border-color: var(--border-medium);
+}
+.locale-toggle button:focus-visible { outline: 2px solid var(--ink-primary); outline-offset: 2px; }
+.locale-toggle__flag { font-size: 15px; line-height: 1; }
+.locale-toggle--compact { font-size: 12px; }
+.portal-sidebar__locale { display: flex; }
+.portal-signout { min-width: 96px; }
+
+/* The workspace locale control now lives in the sidebar/mobile bar, so it cannot
+   collide with a long client name or organization in a page topbar. */
+.portal-shell__locale { display: none !important; }

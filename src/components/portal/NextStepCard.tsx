@@ -9,7 +9,8 @@ import type { PortalNextStepKey } from '@/types/portal.types';
 const HREF: Record<PortalNextStepKey, string> = {
   read_briefing: routes.workspaceBriefing,
   talk_to_itrix: routes.workspaceMessages,
-  consider_evaluation: routes.workspaceEvaluation,
+  consider_astop: routes.workspaceEvaluation,
+  consider_alpha_assessment: '/workspace/assessment',
 };
 
 /** A single next-step card on the workspace home (§62). */

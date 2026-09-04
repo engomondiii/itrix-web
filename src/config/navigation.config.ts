@@ -21,8 +21,9 @@ export interface NavItem {
 export const primaryNav: NavItem[] = [
   {
     label: 'Products',
-    href: routes.alphaCompute,
+    href: routes.astop,
     children: [
+      { label: 'ASTOP', href: routes.astop },
       { label: 'ALPHA Compute', href: routes.alphaCompute },
       { label: 'ALPHA Core', href: routes.alphaCore },
     ],
@@ -32,6 +33,7 @@ export const primaryNav: NavItem[] = [
     href: routes.technology,
     children: [
       { label: 'Overview', href: routes.technology },
+      { label: 'PRISM', href: routes.prism },
       { label: 'AXIOM', href: routes.axiom },
       { label: 'CRE', href: routes.cre },
       { label: 'FQNM', href: routes.fqnm },
@@ -55,6 +57,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   {
     title: 'Products',
     items: [
+      { label: 'ASTOP', href: routes.astop },
       { label: 'ALPHA Compute', href: routes.alphaCompute },
       { label: 'ALPHA Core', href: routes.alphaCore },
     ],
@@ -62,6 +65,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
   {
     title: 'Technology',
     items: [
+      { label: 'PRISM', href: routes.prism },
       { label: 'AXIOM', href: routes.axiom },
       { label: 'CRE', href: routes.cre },
       { label: 'FQNM', href: routes.fqnm },

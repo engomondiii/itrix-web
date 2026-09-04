@@ -26,8 +26,25 @@ export function useVisitorRoom(roomId: RoomId) {
     setVisitorType(room.visitorType);
     trackRoomEntry({ roomId, visitorType: room.visitorType });
 
+    const params = new URLSearchParams(window.location.search);
+    const referrer = document.referrer || '';
+    let sourceChannel = params.get('utm_source') || '';
+    if (!sourceChannel && referrer) {
+      try {
+        const host = new URL(referrer).hostname.toLowerCase();
+        sourceChannel = /google|bing|duckduckgo|yahoo/.test(host) ? 'search' : 'referral';
+      } catch {
+        sourceChannel = 'referral';
+      }
+    }
     void roomApi
-      .recordEntry({ sessionId: id, clientId, roomId, visitorType: room.visitorType })
+      .recordEntry({
+        sessionId: id, clientId, roomId, visitorType: room.visitorType,
+        landingPath: `${window.location.pathname}${window.location.search}`,
+        sourceChannel: sourceChannel || 'direct',
+        campaignContent: params.get('utm_content') || params.get('utm_campaign') || '',
+        referralOrIntro: referrer,
+      })
       .then((res) => {
         if (res.data?.sessionId) {
           useVisitorStore.getState().setSession(res.data.sessionId, new Date().toISOString());

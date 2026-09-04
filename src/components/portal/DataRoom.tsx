@@ -53,7 +53,7 @@ export function DataRoom({ data }: { data: PortalDataRoom }) {
             )}
           </>
         ) : (
-          <DataRoomLockedState ndaSigned={data.ndaSigned} />
+          <DataRoomLockedState data={data} />
         )}
       </section>
     </div>

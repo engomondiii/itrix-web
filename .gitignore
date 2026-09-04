@@ -233,3 +233,7 @@ itrix-web-ux-v3*
 .web-round2-backup-*
 itrix-web-round2/
 .DS_Store
+
+# Local release overlay artifacts
+itrix-web-astop-review-feedback-overlay.zip
+OVERLAY_MANIFEST.txt

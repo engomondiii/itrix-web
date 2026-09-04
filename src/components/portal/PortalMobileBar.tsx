@@ -7,6 +7,7 @@ import { usePortalStore } from '@/store/portalStore';
 import { routes } from '@/constants/routes';
 import { useCommonCopy } from '@/lib/i18n/commonLocale';
 import { useLocaleStore } from '@/store/localeStore';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
 /**
  * THE WORKSPACE MOBILE BAR — PORTRAIT ONLY (2026-08-12).
@@ -70,11 +71,10 @@ export function PortalMobileBar() {
         <ItrixLogo width={92} priority />
       </Link>
 
-      {/* Balances the row so the mark sits centred, and carries the count in words for
-          assistive tech — the dot above is decorative and announces nothing. */}
-      <span className="portal-topbar__count">
+      <div className="portal-topbar__locale">
+        <SiteLocaleToggle compact />
         {unread > 0 ? <span className="sr-only">{ko ? `읽지 않은 메시지 ${unread}개` : `${unread} unread messages`}</span> : null}
-      </span>
+      </div>
     </header>
   );
 }

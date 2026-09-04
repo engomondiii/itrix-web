@@ -50,7 +50,7 @@ export interface PortalOverview {
   lastUpdated: string | null;
 }
 
-export type PortalNextStepKey = 'read_briefing' | 'talk_to_itrix' | 'consider_evaluation';
+export type PortalNextStepKey = 'read_briefing' | 'talk_to_itrix' | 'consider_astop' | 'consider_alpha_assessment';
 
 /** A conversation summary in the portal messages list. */
 export interface PortalConversation {
@@ -95,12 +95,21 @@ export interface PortalDocument {
 }
 
 /** The answer to an in-place NDA request (2026-08-10). */
+export interface PortalNdaRequestPayload {
+  problemContext?: string;
+  workloadContext?: string;
+  desiredOutcome?: string;
+  discussionReason?: string;
+}
+
 export interface PortalNdaRequestResult {
-  ndaRequested: boolean;
+  ndaRequested?: boolean;
   /** The sentence to show the customer — authored by the backend so the screen
       and the inbox note can never promise different things. */
   message?: string;
   detail?: string;
+  code?: string;
+  contextRequired?: boolean;
 }
 
 export interface PortalDataRoom {
@@ -111,16 +120,29 @@ export interface PortalDataRoom {
   openFolders: { folder: string; documents: PortalDocument[] }[];
   /** Restricted rows may still be present while locked; href remains null until authorized. */
   dataRoomFolders: { folder: string; documents: PortalDocument[] }[];
+  ndaContextPresent?: boolean;
+  ndaProblemContext?: string;
+  ndaWorkloadContext?: string;
+  ndaDesiredOutcome?: string;
+  ndaDiscussionReason?: string;
 }
 
-/** Evaluation tracking (§66). */
+/** Evaluation tracking (§66) plus the controlled ASTOP proof journey. */
 export type EvaluationStage = 'requested' | 'scoping' | 'in_progress' | 'report_ready';
+export type AstopStage = 'identify_qualify' | 'nda_briefing' | 'controlled_evaluation' | 'lo_deployment' | 'verify_expand' | 'closed';
 
 export interface PortalEvaluation {
   exists: boolean;
-  stage: EvaluationStage;
+  kind: 'astop' | 'alpha_compute';
+  stage: string;
+  astopStage?: AstopStage | '';
+  kpis?: Record<string, unknown>[];
   reportHref: string | null;
-  updatedAt: string | null;
+  updatedAt?: string | null;
+  ttfvSeconds?: number | null;
+  verifiedValue?: Record<string, unknown>;
+  customerFeeStatus?: string;
+  finalAssessmentFee?: string | number | null;
 }
 
 /** PoC tracking (§67). */

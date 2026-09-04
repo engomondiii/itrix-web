@@ -12,6 +12,10 @@ interface RoomEntryBody {
   clientId?: string | null;
   roomId?: RoomId;
   visitorType?: string | null;
+  landingPath?: string;
+  sourceChannel?: string;
+  campaignContent?: string;
+  referralOrIntro?: string;
 }
 
 /** Ensures a visitor session exists and records a room entry against it. */
@@ -24,7 +28,14 @@ export async function POST(req: Request) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         cache: 'no-store',
-        body: JSON.stringify({ client_id: body.clientId ?? null, visitor_type: body.visitorType ?? null }),
+        body: JSON.stringify({
+          client_id: body.clientId ?? null,
+          visitor_type: body.visitorType ?? null,
+          landing_path: body.landingPath ?? '',
+          source_channel: body.sourceChannel ?? '',
+          campaign_content: body.campaignContent ?? '',
+          referral_or_intro: body.referralOrIntro ?? '',
+        }),
       });
       if (created.ok) {
         const data = (await created.json()) as { id?: string; session_id?: string };

@@ -44,22 +44,27 @@ export const PORTAL_COPY = {
         body: 'Ask a question or continue the conversation with the team.',
         cta: 'Open messages',
       },
-      consider_evaluation: {
-        title: 'Consider an evaluation',
-        body: 'A focused, paid assessment of your real workload.',
-        cta: 'Explore evaluation',
+      consider_astop: {
+        title: 'Explore ASTOP qualification',
+        body: 'If observation overhead is material, the next controlled step is to confirm a candidate workflow and fit.',
+        cta: 'View ASTOP journey',
+      },
+      consider_alpha_assessment: {
+        title: 'Consider an ALPHA Compute assessment',
+        body: 'A separate, fee-bearing assessment opens only after ASTOP has established value and a deeper computational workload remains.',
+        cta: 'View assessment',
       },
     },
   },
   messages: {
     labels: { team: 'itriX team', agent: 'itriX assessment', client: 'You' },
     greeting:
-      'This is your direct line to itriX. Ask anything about your review, the two products, or the next steps. We will share what we can before an NDA, and tell you when something is better discussed confidentially.',
+      'This is your direct line to itriX. Ask anything about your review, ASTOP, the broader itriX portfolio, or the next steps. We will share what we can before an NDA, and tell you when something is better discussed confidentially.',
     greetingConfidentiality: 'Please avoid sharing confidential technical information before an NDA.',
     suggestedFirst: [
       'What did your review find?',
-      'Which product fits us first — ALPHA Compute or ALPHA Core?',
-      'How would a paid evaluation work?',
+      'How does ASTOP fit our observation workload?',
+      'When would an ALPHA Compute assessment become appropriate?',
       'Can we set up an NDA and a technical briefing?',
     ],
     states: {
@@ -186,14 +191,15 @@ export const PORTAL_COPY_KO = {
     nextSteps:{
       read_briefing:{title:'브리핑 읽기',body:'itriX가 이해한 내용, 가능성이 있는 병목, 권고된 경로를 확인합니다.',cta:'브리핑 열기'},
       talk_to_itrix:{title:'itriX와 대화하기',body:'질문하거나 팀과의 대화를 이어갑니다.',cta:'메시지 열기'},
-      consider_evaluation:{title:'평가 검토하기',body:'실제 워크로드를 대상으로 한 범위가 정해진 유료 평가입니다.',cta:'평가 살펴보기'},
+      consider_astop:{title:'ASTOP 적합성 검토',body:'관측 오버헤드가 실질적인 경우 후보 워크로드와 적합성을 확인하는 통제된 단계로 진행할 수 있습니다.',cta:'ASTOP 진행 보기'},
+      consider_alpha_assessment:{title:'ALPHA Compute 평가 검토',body:'ASTOP에서 검증 가치가 확인되고 별도의 더 깊은 계산 문제가 남아 있을 때 유료 평가를 검토합니다.',cta:'평가 보기'},
     },
   },
   messages:{
     labels:{team:'itriX 팀',agent:'itriX 평가',client:'나'},
-    greeting:'이곳은 itriX와 직접 대화하는 공간입니다. 리뷰, 두 제품, 다음 단계에 대해 질문할 수 있습니다. NDA 이전에 공유 가능한 범위에서 답하고, 기밀 논의가 더 적절한 경우 이를 명확히 안내합니다.',
+    greeting:'이곳은 itriX와 직접 대화하는 공간입니다. 리뷰, ASTOP, itriX 제품군, 다음 단계에 대해 질문할 수 있습니다. NDA 이전에 공유 가능한 범위에서 답하고, 기밀 논의가 더 적절한 경우 이를 명확히 안내합니다.',
     greetingConfidentiality:'NDA 이전에는 기밀 기술 정보를 공유하지 마세요.',
-    suggestedFirst:['리뷰에서 무엇을 확인했나요?','우리에게 먼저 맞는 제품은 ALPHA Compute인가요, ALPHA Core인가요?','유료 평가는 어떻게 진행되나요?','NDA와 기술 브리핑을 준비할 수 있나요?'],
+    suggestedFirst:['리뷰에서 무엇을 확인했나요?','ASTOP이 우리 관측 워크로드에 어떻게 적용될 수 있나요?','ALPHA Compute 평가는 언제 검토할 수 있나요?','NDA와 기술 브리핑을 준비할 수 있나요?'],
     states:{ preparing:'itriX 평가 응답을 준비하고 있습니다…', underReview:'이 답변은 전달 전에 itriX 팀이 검토 중입니다. 잠시 후 여기에서 확인할 수 있습니다.', teamJoined:(name:string)=>`${name} 님이 itriX 팀에서 이 대화에 참여했습니다.`, outsideHours:'전문가가 보통 영업일 기준 1일 이내에 이곳에서 답변합니다. 그동안 계속 작성해도 됩니다.' },
     redirect:{ body:'NDA 이전에는 기밀 기술 정보를 공유하지 마세요. 비기밀 설명으로 계속할 수 있으며 더 깊은 검토가 필요하면 NDA 절차를 선택할 수 있습니다.', button:'NDA 요청', bodyWithNda:'NDA가 체결되어 있습니다. 하지만 접근 권한은 명시적인 콘텐츠 승인과 작업 단계에 따라 별도로 결정됩니다. 여기에서 제한 자료가 자동 승인되지는 않습니다.' },
     tooSensitive:{ body:'이 질문은 기밀 대화에서 다루는 것이 적절합니다. 필요한 NDA와 콘텐츠 승인이 갖춰진 기술 브리핑에서 논의할 수 있습니다.', button:'기밀 브리핑 준비' },

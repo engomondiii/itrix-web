@@ -93,10 +93,6 @@ export function RotatingQuestionCarousel() {
         id={listId}
         className="prompt-carousel__stage"
         data-view={staticList ? 'list' : 'single'}
-        /* The rotation is what tells a visitor there is more than one example. It
-           was previously a bare swap with no motion, which reads as a static line of
-           text — so nobody knew to look for the others. `data-paused` lets the
-           dwell bar stop with the rotation instead of running on regardless. */
         data-paused={paused ? 'true' : undefined}
         aria-label={centerCopy.promptGroupLabel}
       >
@@ -125,15 +121,6 @@ export function RotatingQuestionCarousel() {
             })()}
       </div>
 
-      {/* The dwell indicator. Decorative and aria-hidden: the position is already
-          announced by the controls, and a screen reader does not need a progress
-          bar for something that moves on its own. Hidden entirely under reduced
-          motion, where nothing is rotating to indicate. */}
-      {!staticList ? (
-        <div className="prompt-carousel__dwell" aria-hidden="true" data-paused={paused ? 'true' : undefined}>
-          <span key={index} className="prompt-carousel__dwell-fill" />
-        </div>
-      ) : null}
     </section>
   );
 }

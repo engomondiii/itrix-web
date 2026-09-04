@@ -15,6 +15,7 @@ import type {
   PortalBriefing,
   PortalDataRoom,
   PortalEvaluation,
+  PortalNdaRequestPayload,
   PortalPoC,
   PortalNdaRequestResult,
   PortalSettings,
@@ -41,6 +42,24 @@ async function sendJson<T>(url: string, body: unknown, method: 'POST' | 'PATCH' 
     });
     if (!res.ok) return { data: null, error: `${url} ${res.status}` };
     return { data: (await res.json()) as T, error: null };
+  } catch (e) {
+    return { data: null, error: e instanceof Error ? e.message : 'unreachable' };
+  }
+}
+
+
+async function requestNda(payload: PortalNdaRequestPayload): Promise<ApiResult<PortalNdaRequestResult>> {
+  try {
+    const res = await fetch('/api/portal/nda-request', {
+      method: 'POST',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const body = (await res.json().catch(() => null)) as PortalNdaRequestResult | null;
+    if (res.status === 400 && body?.contextRequired) return { data: body, error: null };
+    if (!res.ok) return { data: null, error: `/api/portal/nda-request ${res.status}` };
+    return { data: body, error: null };
   } catch (e) {
     return { data: null, error: e instanceof Error ? e.message : 'unreachable' };
   }
@@ -125,7 +144,7 @@ export const portalApi = {
   documents: () => getJson<PortalDataRoom>(`/api/portal/documents`),
   evaluation: () => getJson<PortalEvaluation>(`/api/portal/evaluation`),
   poc: () => getJson<PortalPoC>(`/api/portal/poc`),
-  requestNda: () => sendJson<PortalNdaRequestResult>(`/api/portal/nda-request`, {}),
+  requestNda,
   settings: () => getJson<PortalSettings>(`/api/portal/settings`),
   saveProfile: (profile: Partial<PortalSettings['profile']>) =>
     sendJson<PortalSettings>(`/api/portal/settings`, { profile }, 'PATCH'),

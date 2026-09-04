@@ -23,6 +23,7 @@ import { brand } from '@/constants/brand';
 import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { useLocaleStore } from '@/store/localeStore';
 import { portalNavLabel } from '@/lib/i18n/portalConfigLocale';
+import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
 /**
  * The portal's own left navigation — never the public header.
@@ -165,6 +166,10 @@ export function PortalSidebar() {
         </span>
       </Link>
 
+      <div className="portal-sidebar__locale px-3">
+        <SiteLocaleToggle compact />
+      </div>
+
       <nav className="flex flex-col gap-4" aria-label={locale === 'ko' ? '워크스페이스' : 'Workspace'}>
         {groups.map((group, gi) => (
           <div
@@ -232,7 +237,7 @@ export function PortalSidebar() {
 
       <div className="flex flex-col gap-3 border-t border-border-soft px-3 pt-4">
         <p className="text-caption italic text-ink-secondary">“{brand.thesis}”</p>
-        <Button variant="ghost" size="sm" onClick={() => void signOut()} className="self-start">
+        <Button variant="secondary" size="sm" onClick={() => void signOut()} className="self-start portal-signout">
           {portalCopy.settings.signOut}
         </Button>
       </div>

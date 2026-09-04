@@ -2,10 +2,12 @@
 export const routes = {
   home: '/',
 
+  astop: '/astop',
   alphaCompute: '/alpha-compute',
   alphaCore: '/alpha-core',
 
   technology: '/technology',
+  prism: '/technology/prism',
   axiom: '/technology/axiom',
   cre: '/technology/cre',
   fqnm: '/technology/fqnm',
