@@ -65,7 +65,7 @@ test('a rate limit is a stated wait, not a silent failure (R55)', async ({ page 
     }),
   );
   await page.goto('/forgot-password');
-  await page.getByLabel('Work email').fill('someone@example.com');
+  await page.getByLabel('Email address').fill('someone@example.com');
   await page.getByRole('button', { name: /Send the reset link/i }).click();
 
   await expect(page.locator('.auth-rate-limit')).toContainText('2 minutes');
@@ -76,7 +76,7 @@ test('a rate limit is a stated wait, not a silent failure (R55)', async ({ page 
 test('the request survives a backend outage as a confirmation', async ({ page }) => {
   await page.route('**/api/auth/password-reset/request', (route) => route.abort());
   await page.goto('/forgot-password');
-  await page.getByLabel('Work email').fill('someone@example.com');
+  await page.getByLabel('Email address').fill('someone@example.com');
   await page.getByRole('button', { name: /Send the reset link/i }).click();
 
   /* A visitor must not be able to tell a broken service from a missing account, because

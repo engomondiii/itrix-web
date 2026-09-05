@@ -61,8 +61,10 @@ export const LICENSE_PATHWAYS: Record<LicensePathway, { label: string; summary: 
 };
 
 export const PRODUCT_ROUTE_LABEL: Record<string, string> = {
+  undetermined: 'Not yet assessed',
+  astop: 'ASTOP',
   alpha_compute: 'ALPHA Compute',
   alpha_core: 'ALPHA Core',
   both: 'ALPHA Compute + Core',
-  general: 'General enquiry',
+  general: 'Not yet assessed',
 };

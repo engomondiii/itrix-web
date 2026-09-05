@@ -20,7 +20,7 @@ test.describe('the registration form', () => {
       await expect(page.locator('.auth-panel')).toBeVisible();
       await expect(page.locator('.legal-strip a')).toHaveCount(4);
 
-      for (const label of ['Full name', 'Company or organization', 'Work email']) {
+      for (const label of ['Full name', 'Company or organization', 'Email address']) {
         await expect(page.getByLabel(label)).toBeVisible();
       }
     });
@@ -38,11 +38,11 @@ test.describe('the registration form', () => {
 
   test('nothing is prefilled from an inference (R69)', async ({ page }) => {
     await page.goto('/sign-up');
-    for (const label of ['Full name', 'Company or organization', 'Role (optional)', 'Work email']) {
+    for (const label of ['Full name', 'Company or organization', 'Role (optional)', 'Email address']) {
       await expect(page.getByLabel(label)).toHaveValue('');
     }
     /* Typing a recognisable domain must not fill the organisation in. */
-    await page.getByLabel('Work email').fill('someone@samsung.com');
+    await page.getByLabel('Email address').fill('someone@samsung.com');
     await expect(page.getByLabel('Company or organization')).toHaveValue('');
   });
 
@@ -61,7 +61,7 @@ test.describe('the registration form', () => {
     await page.goto('/sign-up');
     await page.getByLabel('Full name').fill('A Person');
     await page.getByLabel('Company or organization').fill('An Organisation');
-    await page.getByLabel('Work email').fill('a.person@example.com');
+    await page.getByLabel('Email address').fill('a.person@example.com');
     await page.getByLabel('Password', { exact: true }).fill('12345678901');
     await page.getByLabel('Confirm password').fill('12345678901');
     await page.getByRole('checkbox').check();
@@ -73,7 +73,7 @@ test.describe('the registration form', () => {
     await page.goto('/sign-up');
     await page.getByLabel('Full name').fill('A Person');
     await page.getByLabel('Company or organization').fill('An Organisation');
-    await page.getByLabel('Work email').fill('a.person@example.com');
+    await page.getByLabel('Email address').fill('a.person@example.com');
     await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
     await page.getByLabel('Confirm password').fill('a-long-enough-password');
     await page.getByRole('button', { name: 'Create workspace' }).click();

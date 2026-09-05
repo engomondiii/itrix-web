@@ -70,14 +70,14 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     slug: 'technical',
     title: 'I want the technical detail',
     label: 'Technical',
-    summary: 'AXIOM, CRE, and FQNM — what they are and where the public boundary sits.',
+    summary: 'PRISM, AXIOM, AXIOM-TENSOR, CRE, FQNM, and QNTA — what is public and where the boundary sits.',
     group: 'technical',
     visitorType: 'technical',
     audience: 'Engineers and applied researchers evaluating the approach',
     intro:
       'The public framing of each technology, the unified Representation → Observation → Transfer → Execution → Reconstruction view, and public evidence. Restricted mechanism detail or benchmark material is shared only when explicitly authorized and any required agreement applies.',
     offers: [
-      'Public framing of AXIOM, CRE, and FQNM',
+      'Public framing of PRISM, AXIOM, AXIOM-TENSOR, CRE, FQNM, and QNTA',
       'The FQNM paper as a public reference',
       'A clear map of public versus authorization-restricted material',
     ],

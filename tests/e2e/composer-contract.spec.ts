@@ -9,10 +9,10 @@ import { expect, test } from '@playwright/test';
  *   · Enter submits, Shift+Enter inserts a newline
  */
 test.describe('the composer', () => {
-  test('has an icon-only arrow send button and no labelled start button', async ({ page }) => {
+  test('has the icon-only itriX X send control and no labelled start button', async ({ page }) => {
     await page.goto('/');
 
-    const send = page.getByRole('button', { name: 'Send' });
+    const send = page.getByRole('button', { name: 'Ask itriX' });
     await expect(send).toBeVisible();
 
     // Icon-only: the accessible name comes from aria-label, not from text.
@@ -24,7 +24,7 @@ test.describe('the composer', () => {
   test('has no character counter and no maxLength', async ({ page }) => {
     await page.goto('/');
 
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+    const composer = page.locator('textarea.composer-textarea');
     await expect(composer).not.toHaveAttribute('maxlength', /.*/);
 
     // The retired counter rendered as "n/600".
@@ -38,7 +38,7 @@ test.describe('the composer', () => {
 
   test('Enter submits and Shift+Enter inserts a newline', async ({ page }) => {
     await page.goto('/');
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+    const composer = page.locator('textarea.composer-textarea');
 
     await composer.fill('First line of the problem');
     await composer.press('Shift+Enter');
@@ -52,17 +52,26 @@ test.describe('the composer', () => {
     await expect(page.getByRole('log', { name: /your conversation with itriX/i })).toBeVisible();
   });
 
-  test('the confidentiality notice is present wherever a problem can be described', async ({ page }) => {
+  test('the retired beneath-composer confidentiality captions stay hidden', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByText('A non-confidential summary is enough to begin.')).toBeVisible();
 
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+    await expect(
+      page.getByText('A non-confidential summary is enough to begin.'),
+    ).toHaveCount(0);
+
+    const footer = page.locator('.composer-footer');
+    await expect(
+      footer.getByText(/do not submit confidential technical information before an NDA/i),
+    ).not.toBeVisible();
+
+    const composer = page.locator('textarea.composer-textarea');
     await composer.fill('Memory movement is limiting our training throughput.');
     await composer.press('Enter');
 
-    // Still present once the conversation is under way — now in full wording.
     await expect(
-      page.getByText(/do not submit confidential technical information before an NDA/i),
-    ).toBeVisible();
+      page.locator('.composer-footer').getByText(
+        /do not submit confidential technical information before an NDA/i,
+      ),
+    ).not.toBeVisible();
   });
 });

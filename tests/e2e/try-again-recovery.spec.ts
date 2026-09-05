@@ -19,6 +19,7 @@ function submitResult(threadId: string, visitorBody: string, visitorId: string, 
     thread: { id: threadId, title: 'Review', createdAt: now, lastActivityAt: now },
     visitorTurn: { id: visitorId, threadId, role: 'visitor', body: visitorBody, seq: 1, status: 'settled', createdAt: now },
     itrixTurn: assistantBody ? { id: `${visitorId}-a`, threadId, role: 'itrix', body: assistantBody, seq: 2, status: 'settled', createdAt: now } : null,
+    generationStatus: assistantBody ? 'ready' : 'failed',
     degraded: false,
   };
 }
@@ -82,6 +83,21 @@ test('Try Again on a persisted thread calls /retry and never reposts the visitor
     if (route.request().method() !== 'POST') return route.fallback();
     turnPosts += 1;
     await route.abort('connectionreset');
+  });
+  await page.route('**/api/threads/thread-existing', async (route) => {
+    if (route.request().method() !== 'GET') return route.fallback();
+    await route.fulfill({
+      status: 200, contentType: 'application/json',
+      body: JSON.stringify({
+        id: 'thread-existing', title: 'Review', createdAt: now, lastActivityAt: now,
+        turns: [
+          { id: 'visitor-1', threadId: 'thread-existing', role: 'visitor', body: first, seq: 1, status: 'settled', createdAt: now },
+          { id: 'visitor-1-a', threadId: 'thread-existing', role: 'itrix', body: 'Initial answer.', seq: 2, status: 'settled', createdAt: now },
+          { id: 'visitor-2', threadId: 'thread-existing', role: 'visitor', body: second, seq: 3, status: 'settled', createdAt: now },
+        ],
+        artifacts: [], cards: [],
+      }),
+    });
   });
   await page.route('**/api/threads/thread-existing/retry', async (route) => {
     if (route.request().method() !== 'POST') return route.fallback();

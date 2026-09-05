@@ -9,14 +9,17 @@ function multi(v: string | string[] | undefined): string[] {
 }
 
 /**
- * Maps qualification answers to a product route. Representation-shaped problems
- * lean ALPHA Compute; execution/runtime-shaped problems lean ALPHA Core; broad or
- * hardware-embedded cases map to both. Mirrors the backend router's intent.
+ * Discovery-stage product relevance only. A questionnaire answer or keyword may create
+ * a bounded hypothesis, but it never opens a governed ASTOP/ALPHA opportunity. The
+ * backend remains authoritative for qualification and progression.
  */
-export function routeProduct(answers: QualificationAnswers): ProductRoute {
+export function productHypotheses(answers: QualificationAnswers): ProductRoute[] {
   const structure = single(answers.Q3);
   const env = single(answers.Q1);
   const pressures = multi(answers.Q2);
+  const out: ProductRoute[] = [];
+
+  if (structure === 'state_observation') out.push('astop');
 
   const representationSignal =
     structure === 'state_observation' || structure === 'linear_algebra';
@@ -27,10 +30,14 @@ export function routeProduct(answers: QualificationAnswers): ProductRoute {
     pressures.includes('hardware_utilization') ||
     pressures.includes('memory_data_movement');
 
-  if (structure === 'mixed') return 'both';
-  if (representationSignal && executionSignal) return 'both';
-  if (representationSignal) return 'alpha_compute';
-  if (executionSignal) return 'alpha_core';
-  if (!structure || structure === 'unsure') return 'general';
-  return 'alpha_compute';
+  if (representationSignal) out.push('alpha_compute');
+  if (executionSignal) out.push('alpha_core');
+  return [...new Set(out)];
+}
+
+export function routeProduct(answers: QualificationAnswers): ProductRoute {
+  // Evaluate the same bounded signal logic used by internal diagnostics, but never turn
+  // early visitor interest into a binding product route.
+  productHypotheses(answers);
+  return 'undetermined';
 }

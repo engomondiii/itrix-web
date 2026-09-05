@@ -32,6 +32,29 @@ test.describe('attachments accept anything', () => {
   });
 
   test('an unreadable format is described honestly, never as a failure', async ({ page }) => {
+    await page.route('**/api/attachments', async (route) => {
+      if (route.request().method() !== 'POST') return route.fallback();
+
+      await route.fulfill({
+        status: 201,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          attachment: {
+            id: 'att-opaque',
+            threadId: null,
+            filename: 'capture.bin',
+            bytes: 8,
+            mimeType: 'application/octet-stream',
+            status: 'opaque',
+            progress: null,
+            errorCode: null,
+            errorMessage: null,
+            createdAt: '2026-09-05T12:00:00.000Z',
+          },
+        }),
+      });
+    });
+
     await page.goto('/');
     await page.setInputFiles('input[type="file"]', [path.join(FIXTURES, 'capture.bin')]);
 
@@ -47,7 +70,7 @@ test.describe('attachments accept anything', () => {
     await page.getByRole('button', { name: /Remove attachment: workload-notes\.txt/i }).click();
     await expect(page.getByText('workload-notes.txt')).toHaveCount(0);
 
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+    const composer = page.locator('textarea.composer-textarea');
     await composer.fill('Memory movement is limiting our training throughput.');
     await composer.press('Enter');
     await expect(page.getByRole('log')).toBeVisible();
@@ -56,8 +79,8 @@ test.describe('attachments accept anything', () => {
   test('the confidentiality notice appears on first attach', async ({ page }) => {
     await page.goto('/');
     await page.setInputFiles('input[type="file"]', [path.join(FIXTURES, 'workload-notes.txt')]);
-    await expect(
-      page.getByText(/do not submit confidential technical information before an NDA/i),
-    ).toBeVisible();
+    await expect(page.locator('.attachment-tray__notice')).toContainText(
+      /do not submit confidential technical information before an NDA/i,
+    );
   });
 });

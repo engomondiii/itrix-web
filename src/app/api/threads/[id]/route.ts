@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getClientAccessToken } from '@/lib/server/session';
 import { toThread } from '@/lib/api/normalizeWire';
+import { djangoFetch } from '@/lib/server/proxy';
+import {
+  applyConversationResponseHeaders,
+  conversationErrorResponse,
+  conversationForwardHeaders,
+  conversationRequestId,
+} from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
  * GET / PATCH / DELETE /api/threads/[id] — one thread.
@@ -40,17 +44,6 @@ function isLocalId(id: string): boolean {
 /* CLIENT PLANE (2026-08-10): the workspace reaches this proxy too; the Bearer
    client-JWT (httpOnly on this host) is attached server-side. Anonymous
    visitors keep the cookie path unchanged. */
-async function headers(req: Request): Promise<HeadersInit> {
-  const cookie = req.headers.get('cookie');
-  const token = await getClientAccessToken();
-  return {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    ...(cookie ? { cookie } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
 
@@ -65,19 +58,17 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
     );
   }
 
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
-      method: 'GET',
-      headers: await headers(req),
-      cache: 'no-store',
-    });
-    if (!res.ok) {
-      return NextResponse.json({ detail: `thread ${res.status}` }, { status: res.status });
-    }
-    return NextResponse.json(toThread(await res.json()), { status: 200 });
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const requestId = conversationRequestId(req);
+  const res = await djangoFetch<unknown>(`/threads/${encodeURIComponent(id)}/`, {
+    method: 'GET',
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok) return conversationErrorResponse(res, requestId);
+  return applyConversationResponseHeaders(
+    NextResponse.json(toThread(res.data), { status: 200 }),
+    res,
+    requestId,
+  );
 }
 
 export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
@@ -90,33 +81,30 @@ export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }>
   } catch {
     return NextResponse.json({ detail: 'Invalid request body.' }, { status: 400 });
   }
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
-      method: 'PATCH',
-      headers: await headers(req),
-      body: JSON.stringify(body),
-      cache: 'no-store',
-    });
-    const text = await res.text();
-    const payload = text ? (JSON.parse(text) as unknown) : null;
-    return NextResponse.json(payload ?? {}, { status: res.status });
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const requestId = conversationRequestId(req);
+  const res = await djangoFetch<unknown>(`/threads/${encodeURIComponent(id)}/`, {
+    method: 'PATCH',
+    body,
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok) return conversationErrorResponse(res, requestId);
+  return applyConversationResponseHeaders(
+    NextResponse.json(res.data ?? {}, { status: res.status || 200 }),
+    res,
+    requestId,
+  );
 }
 
 export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   // Nothing server-side to delete; the client drops its local copy.
   if (isLocalId(id)) return new NextResponse(null, { status: 204 });
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/`, {
-      method: 'DELETE',
-      headers: await headers(req),
-      cache: 'no-store',
-    });
-    return new NextResponse(null, { status: res.status === 204 ? 204 : res.status });
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const requestId = conversationRequestId(req);
+  const res = await djangoFetch<unknown>(`/threads/${encodeURIComponent(id)}/`, {
+    method: 'DELETE',
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok && res.status !== 404) return conversationErrorResponse(res, requestId);
+  const out = new NextResponse(null, { status: res.status === 204 ? 204 : res.status });
+  return applyConversationResponseHeaders(out, res, requestId);
 }

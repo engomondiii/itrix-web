@@ -19,10 +19,17 @@
 import type {
   CreateThreadRequest, SubmitResult, Thread, ThreadSummary,
 } from '@/types/thread.types';
+import {
+  conversationFailureFromResponse,
+  networkConversationFailure,
+  newConversationRequestId,
+} from '@/lib/api/conversationFailure';
+import type { ConversationFailure } from '@/lib/api/conversationFailure';
 
 export interface ApiResult<T> {
   data: T | null;
   error: string | null;
+  failure?: ConversationFailure | null;
 }
 
 async function readJson<T>(res: Response): Promise<T | null> {
@@ -41,6 +48,7 @@ export const threadsApi = {
    * separate step is exactly how a surface ends up asking for it twice.
    */
   async create(body: CreateThreadRequest, idempotencyKey?: string): Promise<ApiResult<SubmitResult>> {
+    const requestId = newConversationRequestId();
     try {
       const res = await fetch('/api/threads', {
         method: 'POST',
@@ -48,50 +56,66 @@ export const threadsApi = {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          'X-Request-ID': requestId,
           ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
         },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        const payload = await readJson<{ detail?: string }>(res);
-        return { data: null, error: payload?.detail ?? `threads ${res.status}` };
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
       }
       const data = await readJson<SubmitResult>(res);
-      return data ? { data, error: null } : { data: null, error: 'threads: empty response' };
+      return data
+        ? { data, error: null, failure: null }
+        : { data: null, error: 'threads: empty response', failure: null };
     } catch (e) {
-      return { data: null, error: e instanceof Error ? e.message : 'threads unreachable' };
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
 
   /** The current session's threads. Metadata only — never transcript text. */
   async list(): Promise<ApiResult<ThreadSummary[]>> {
+    const requestId = newConversationRequestId();
     try {
       const res = await fetch('/api/threads', {
         method: 'GET',
         cache: 'no-store',
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json', 'X-Request-ID': requestId },
       });
-      if (!res.ok) return { data: null, error: `threads ${res.status}` };
+      if (!res.ok) {
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
+      }
       const data = await readJson<{ threads: ThreadSummary[] }>(res);
-      return { data: data?.threads ?? [], error: null };
+      return { data: data?.threads ?? [], error: null, failure: null };
     } catch (e) {
-      return { data: null, error: e instanceof Error ? e.message : 'threads unreachable' };
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
 
   /** One thread with its transcript, re-authorized server-side on every fetch. */
   async get(threadId: string): Promise<ApiResult<Thread>> {
+    const requestId = newConversationRequestId();
     try {
       const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}`, {
         method: 'GET',
         cache: 'no-store',
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json', 'X-Request-ID': requestId },
       });
-      if (!res.ok) return { data: null, error: `thread ${res.status}` };
+      if (!res.ok) {
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
+      }
       const data = await readJson<Thread>(res);
-      return data ? { data, error: null } : { data: null, error: 'thread: empty response' };
+      return data
+        ? { data, error: null, failure: null }
+        : { data: null, error: 'thread: empty response', failure: null };
     } catch (e) {
-      return { data: null, error: e instanceof Error ? e.message : 'thread unreachable' };
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
 
@@ -104,20 +128,23 @@ export const threadsApi = {
    * answered by the proxy with 204 without a round trip (nothing exists upstream).
    */
   async remove(threadId: string): Promise<ApiResult<null>> {
+    const requestId = newConversationRequestId();
     try {
       const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}`, {
         method: 'DELETE',
         cache: 'no-store',
-        headers: { Accept: 'application/json' },
+        headers: { Accept: 'application/json', 'X-Request-ID': requestId },
       });
       if (res.ok || res.status === 204 || res.status === 404) {
         /* 404 counts as success: the thread is already gone server-side, which is
            the state the visitor asked for. */
-        return { data: null, error: null };
+        return { data: null, error: null, failure: null };
       }
-      return { data: null, error: `thread delete ${res.status}` };
+      const failure = await conversationFailureFromResponse(res, requestId);
+      return { data: null, error: failure.detail, failure };
     } catch (e) {
-      return { data: null, error: e instanceof Error ? e.message : 'thread unreachable' };
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
 };

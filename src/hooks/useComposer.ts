@@ -17,6 +17,7 @@ import { formatConversationTitle } from '@/lib/formatting/formatConversationTitl
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { successApi } from '@/lib/api/successApi';
 import type { CreateThreadRequest, SubmitResult, Turn, TurnAttachment } from '@/types/thread.types';
+import type { ConversationFailure } from '@/lib/api/conversationFailure';
 
 /**
  * THE NO-NAVIGATION CONTRACT (R21, Surface 1 v5.0 §2.3).
@@ -179,6 +180,29 @@ export function useComposer(): UseComposerResult {
   const beginPending = usePendingStore((s) => s.begin);
   const endPending = usePendingStore((s) => s.end);
 
+  const failureMessage = useCallback((failure?: ConversationFailure | null): string => {
+    if (!failure) return composerCopy.unreachable;
+    if (failure.status === 413) return composerCopy.serverCap;
+    switch (failure.code) {
+      case 'RATE_LIMITED':
+        return failure.retryAfterSeconds
+          ? `${composerCopy.rateLimited} ${composerCopy.retryAfter(failure.retryAfterSeconds)}`
+          : composerCopy.rateLimited;
+      case 'THREAD_NOT_FOUND_OR_INACCESSIBLE':
+        return composerCopy.threadUnavailable;
+      case 'SERVICE_UNAVAILABLE':
+        return composerCopy.serviceUnavailable;
+      case 'NETWORK_FAILURE':
+        return composerCopy.networkFailure;
+      case 'MODEL_GENERATION_FAILED':
+        return composerCopy.modelGenerationFailed;
+      case 'GENERATION_ALREADY_IN_PROGRESS':
+        return composerCopy.generationInProgress;
+      default:
+        return composerCopy.unknownRetryable;
+    }
+  }, [composerCopy]);
+
   /** Reconcile the optimistic turn with whatever the server actually said. */
   const reconcile = useCallback(
     (threadId: string, optimisticId: string, result: SubmitResult) => {
@@ -319,20 +343,34 @@ export function useComposer(): UseComposerResult {
         setThreadUrl(serverThreadId);
         if (isFirstTurn) clearFirstTurnRecovery();
 
-        /* Non-streaming path: the POST already carried the answer, so the wait is
-           over the moment we reconcile. With streaming on, `useStreamingTurn` ends it
-           on the first delta instead — whichever happens first, it ends exactly once
-           because ending an absent wait is a no-op. */
-        endPending(serverThreadId);
-        if (serverThreadId !== threadId) endPending(threadId);
+        if (result.data.generationStatus === 'failed') {
+          update(serverThreadId, optimistic.id, {
+            status: 'unavailable',
+            contextNote: composerCopy.modelGenerationFailed,
+          });
+          setError(composerCopy.modelGenerationFailed);
+          endPending(serverThreadId);
+          if (serverThreadId !== threadId) endPending(threadId);
+        } else if (result.data.generationStatus === 'ready') {
+          /* Non-streaming path: the POST already carried the answer, so the wait is
+             over the moment we reconcile. With streaming on, `useStreamingTurn` ends it
+             on the first delta instead — whichever happens first, it ends exactly once. */
+          endPending(serverThreadId);
+          if (serverThreadId !== threadId) endPending(threadId);
+        } else if (serverThreadId !== threadId) {
+          // Move the pending marker with a first-turn local→server id transition.
+          endPending(threadId);
+          beginPending(serverThreadId);
+        }
       } else {
         /* Honest degradation. The sentence is kept and shown; we say plainly
            that it has not been reviewed. No fabricated answer, ever. */
+        const message = failureMessage(result.failure);
         update(threadId, optimistic.id, {
           status: 'unavailable',
-          contextNote: composerCopy.unreachable,
+          contextNote: message,
         });
-        setError(result.error ? composerCopy.unreachable : composerCopy.unreachable);
+        setError(message);
         setThreadUrl(threadId);
         /* Honest degradation ends the wait too. Leaving the indicator spinning over a
            turn we have already told the visitor was not reviewed would be the surface
@@ -345,7 +383,7 @@ export function useComposer(): UseComposerResult {
   }, [
     activeThreadId, journeyState,
     setError, setSubmitting, setActive, upsertThread, append, clear, update, reconcile,
-    beginPending, endPending,
+    beginPending, endPending, failureMessage, composerCopy,
   ]);
 
   /** Put a visitor turn on screen right now, before anything is sent. */
@@ -508,7 +546,7 @@ export function useComposer(): UseComposerResult {
       try {
         const result = await threadsApi.create(recovery.payload, recovery.idempotencyKey);
         if (!result.data) {
-          setError(composerCopy.unreachable);
+          setError(failureMessage(result.failure));
           endPending(threadId);
           return;
         }
@@ -523,23 +561,81 @@ export function useComposer(): UseComposerResult {
         reconcile(serverThreadId, recovery.optimisticTurnId, result.data);
         setThreadUrl(serverThreadId);
         clearFirstTurnRecovery();
-        endPending(serverThreadId);
-        endPending(threadId);
+        if (result.data.generationStatus === 'failed') {
+          update(serverThreadId, recovery.optimisticTurnId, {
+            status: 'unavailable',
+            contextNote: composerCopy.modelGenerationFailed,
+          });
+          setError(composerCopy.modelGenerationFailed);
+          endPending(serverThreadId);
+          endPending(threadId);
+        } else if (result.data.generationStatus === 'ready') {
+          endPending(serverThreadId);
+          endPending(threadId);
+        } else {
+          endPending(threadId);
+          beginPending(serverThreadId);
+        }
       } finally { setSubmitting(false); }
       return;
     }
 
-    // Case 2: the visitor turn is already persisted. `/retry` regenerates only the
-    // unanswered turn; it never POSTs the visitor text again.
+    // Case 2: determine whether the unavailable optimistic turn actually reached Django.
+    // A 429/ownership failure happens before persistence; a model failure happens after it;
+    // a lost network response is ambiguous. Re-fetching the authoritative transcript lets
+    // us choose the safe recovery path without guessing or duplicating a visitor turn.
     setSubmitting(true); setError(null); beginPending(threadId);
     try {
+      const localTurns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+      const latestLocalVisitor = [...localTurns].reverse().find((turn) => turn.role === 'visitor');
+      const authoritative = await threadsApi.get(threadId);
+      if (!authoritative.data) {
+        setError(failureMessage(authoritative.failure));
+        endPending(threadId);
+        return;
+      }
+      const latestServerVisitor = [...authoritative.data.turns]
+        .reverse()
+        .find((turn) => turn.role === 'visitor');
+      const persisted = Boolean(
+        latestLocalVisitor &&
+        latestServerVisitor &&
+        latestServerVisitor.body === latestLocalVisitor.body &&
+        latestServerVisitor.seq === latestLocalVisitor.seq,
+      );
+
+      if (!persisted && latestLocalVisitor) {
+        const resubmit = await turnsApi.submit(threadId, {
+          body: latestLocalVisitor.body,
+          attachmentIds: (latestLocalVisitor.attachments ?? []).map((item) => item.id),
+        });
+        if (!resubmit.data) {
+          setError(failureMessage(resubmit.failure));
+          endPending(threadId);
+          return;
+        }
+        reconcile(threadId, latestLocalVisitor.id, resubmit.data);
+        if (resubmit.data.generationStatus === 'failed') {
+          update(threadId, latestLocalVisitor.id, {
+            status: 'unavailable',
+            contextNote: composerCopy.modelGenerationFailed,
+          });
+          setError(composerCopy.modelGenerationFailed);
+          endPending(threadId);
+        } else if (resubmit.data.generationStatus === 'ready') {
+          endPending(threadId);
+        }
+        return;
+      }
+
       const result = await turnsApi.retry(threadId);
       if (result.data?.assistantTurn) append(threadId, result.data.assistantTurn);
-      if (result.error) setError(composerCopy.unreachable);
+      if (result.failure) setError(failureMessage(result.failure));
       if (!result.data?.pending) endPending(threadId);
     } finally { setSubmitting(false); }
   }, [
     submitting, setSubmitting, setError, beginPending, append, endPending, setActive, reconcile,
+    failureMessage, update, composerCopy,
   ]);
 
   return {

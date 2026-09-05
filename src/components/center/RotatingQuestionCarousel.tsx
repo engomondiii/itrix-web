@@ -3,9 +3,10 @@
 import { useCenterCopy } from '@/lib/i18n/conversationLocale';
 
 import { useId } from 'react';
-import { EXAMPLE_PROMPTS } from '@/lib/content/examplePrompts';
+import { examplePromptsFor } from '@/lib/content/examplePrompts';
 import type { ExamplePrompt } from '@/lib/content/examplePrompts';
 import { useComposerStore } from '@/store/composerStore';
+import { useLocaleStore } from '@/store/localeStore';
 import { useRotatingPrompts } from '@/hooks/useRotatingPrompts';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 import { RotatingPromptItem } from './RotatingPromptItem';
@@ -41,6 +42,8 @@ import { ShowAllPromptsDisclosure } from './ShowAllPromptsDisclosure';
  */
 export function RotatingQuestionCarousel() {
   const centerCopy = useCenterCopy();
+  const locale = useLocaleStore((s) => s.locale);
+  const prompts = examplePromptsFor(locale);
   const value = useComposerStore((s) => s.value);
   const populate = useComposerStore((s) => s.populate);
 
@@ -97,7 +100,7 @@ export function RotatingQuestionCarousel() {
         aria-label={centerCopy.promptGroupLabel}
       >
         {staticList
-          ? EXAMPLE_PROMPTS.map((example) => (
+          ? prompts.map((example) => (
               <RotatingPromptItem
                 key={example.index}
                 example={example}
@@ -109,7 +112,7 @@ export function RotatingQuestionCarousel() {
                between. The other four are not rendered at all rather than hidden,
                so a keyboard user cannot tab into something they cannot see. */
             (() => {
-              const example = EXAMPLE_PROMPTS[index];
+              const example = prompts[index];
               return (
                 <RotatingPromptItem
                   key={example.index}

@@ -242,6 +242,40 @@ svg { height: auto; }
   .arrival-center .composer-shell { padding: 16px; border-radius: 18px; }
 }
 
+/* The common 390–420px phone band sits just above the historical
+   389px micro-breakpoint. Reclaim decorative vertical air rather than
+   clipping any front-door content or reducing touch targets. */
+@media (max-width: 420px) {
+  .arrival-hero {
+    padding: 32px 0 max(24px, env(safe-area-inset-bottom));
+  }
+
+  .arrival-stage {
+    padding-inline: 16px;
+  }
+
+  .arrival-center .composer {
+    margin-top: 24px;
+  }
+
+  .arrival-center .composer-shell {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .arrival-center .composer-textarea {
+    min-height: 88px;
+  }
+
+  .prompt-carousel {
+    margin-top: 24px;
+  }
+
+  .arrival-center .arrival__pathway {
+    margin-top: 24px;
+  }
+}
+
 /* ── G6.5 · Cards and grids do not get cramped ────────────────────────────────
    shell.css collapses .example-grid to one column at <=767px; the generic
    marketing grids use Tailwind's md:grid-cols-* and already stack below 768px.

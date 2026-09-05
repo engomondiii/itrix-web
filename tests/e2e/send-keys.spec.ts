@@ -22,14 +22,9 @@ test('the send control is the itriX X, named "Ask itriX"', async ({ page }) => {
   await expect(page.locator('.composer-send__icon--x')).toHaveCount(1);
 });
 
-test('the key hint is real text, not a tooltip', async ({ page }) => {
+test('the retired key hint is not rendered below the composer', async ({ page }) => {
   await page.goto('/');
-  const hint = page.locator('.composer-keyhint');
-  await expect(hint).toBeVisible();
-  await expect(hint).toContainText('Enter to send');
-  await expect(hint).toContainText('Ctrl + X to ask itriX');
-  /* aria-hidden would hide the one place the accelerator is advertised. */
-  expect(await hint.getAttribute('aria-hidden')).toBeNull();
+  await expect(page.locator('.composer-keyhint')).toHaveCount(0);
 });
 
 test('Enter submits and Shift+Enter does not', async ({ page }) => {
@@ -51,16 +46,26 @@ test('Ctrl+X submits when there is no selection', async ({ page }) => {
   await expect(page.locator('.working-shell')).toBeVisible();
 });
 
-test('Ctrl+X with a selection cuts and does NOT submit', async ({ page }) => {
+test('Ctrl+X with a live selection never submits', async ({ page }) => {
   await page.goto('/');
   const ta = page.locator('textarea.composer-textarea');
   await ta.fill(SENTENCE);
-  await ta.press('Control+a');
+
+  await ta.evaluate((el: HTMLTextAreaElement) => {
+    el.focus();
+    el.setSelectionRange(0, el.value.length);
+  });
+
   await ta.press('Control+x');
 
-  /* The platform Cut must have won: nothing submitted, and the field is empty. */
+  /* The application selection guard must win on every platform. */
   await expect(page.locator('.working-shell')).toHaveCount(0);
-  await expect(ta).toHaveValue('');
+
+  /* Windows/Linux additionally give Ctrl+X its native Cut behaviour.
+     macOS does not define Ctrl+X as Cut, so no text-value assertion belongs there. */
+  if (process.platform !== 'darwin') {
+    await expect(ta).toHaveValue('');
+  }
 });
 
 test('Cmd+X is never bound', async ({ page, browserName }) => {

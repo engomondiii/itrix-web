@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getClientAccessToken } from '@/lib/server/session';
 import { toSubmitResult, toThreadList } from '@/lib/api/normalizeWire';
+import { djangoFetch } from '@/lib/server/proxy';
+import {
+  applyConversationResponseHeaders,
+  conversationErrorResponse,
+  conversationForwardHeaders,
+  conversationRequestId,
+} from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
  * Surface code uses camelCase; Django's serializer contract uses snake_case.
@@ -52,21 +56,18 @@ function toDjangoAttachmentPayload(body: unknown): unknown {
 /* CLIENT PLANE (2026-08-10): the workspace reaches this proxy too, and Django
    authenticates the customer with a Bearer client-JWT (httpOnly on this host) —
    attached server-side. Anonymous visitors keep the cookie path unchanged. */
-async function forwardHeaders(req: Request): Promise<HeadersInit> {
-  const cookie = req.headers.get('cookie');
-  const token = await getClientAccessToken();
+function forwardHeaders(req: Request, requestId: string): Record<string, string> {
   const idempotencyKey = req.headers.get('idempotency-key');
-  return {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    ...(cookie ? { cookie } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
-  };
+  return conversationForwardHeaders(
+    req,
+    requestId,
+    idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {},
+  );
 }
 
 /** POST /api/threads — open a conversation with the visitor's first sentence. */
 export async function POST(req: Request) {
+  const requestId = conversationRequestId(req);
   let body: unknown;
   try {
     body = await req.json();
@@ -74,52 +75,26 @@ export async function POST(req: Request) {
     return NextResponse.json({ detail: 'Invalid request body.' }, { status: 400 });
   }
 
-  try {
-    const res = await fetch(`${API_BASE}/threads/`, {
-      method: 'POST',
-      headers: await forwardHeaders(req),
-      body: JSON.stringify(toDjangoAttachmentPayload(body)),
-      cache: 'no-store',
-    });
+  const res = await djangoFetch<unknown>('/threads/', {
+    method: 'POST',
+    body: toDjangoAttachmentPayload(body),
+    headers: forwardHeaders(req, requestId),
+  });
+  if (!res.ok) return conversationErrorResponse(res, requestId);
 
-    const text = await res.text();
-    const payload = text ? (JSON.parse(text) as unknown) : null;
-
-    /* Errors pass through UNTOUCHED, including the 413 that carries the server
-       safety cap. The composer turns that into a specific, recoverable message
-       rather than a silent truncation — normalising it would destroy the
-       `detail` string the visitor needs to read. */
-    if (!res.ok) {
-      return NextResponse.json(payload ?? { detail: 'Empty response.' }, { status: res.status });
-    }
-
-    // Also forward the Set-Cookie so the visitor session issued by Django on
-    // thread creation reaches the browser. Without it the next request is a
-    // different session and the thread is invisible to its own creator.
-    const out = NextResponse.json(toSubmitResult(payload), { status: 201 });
-    const setCookie = res.headers.get('set-cookie');
-    if (setCookie) out.headers.set('set-cookie', setCookie);
-    return out;
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const out = NextResponse.json(toSubmitResult(res.data), { status: res.status || 201 });
+  if (res.setCookie) out.headers.set('set-cookie', res.setCookie);
+  return applyConversationResponseHeaders(out, res, requestId);
 }
 
 /** GET /api/threads — this session's threads. Metadata only, never transcripts. */
 export async function GET(req: Request) {
-  try {
-    const res = await fetch(`${API_BASE}/threads/`, {
-      method: 'GET',
-      headers: await forwardHeaders(req),
-      cache: 'no-store',
-    });
-    if (!res.ok) return NextResponse.json({ threads: [] }, { status: res.status });
-    const payload = (await res.json()) as unknown;
-    /* `threadId` → `id`. The sidebar's conversation list keys on `id`, so
-       without this every row rendered with an undefined key and the list came
-       out empty even when the backend had threads to show. */
-    return NextResponse.json({ threads: toThreadList(payload) }, { status: 200 });
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const requestId = conversationRequestId(req);
+  const res = await djangoFetch<unknown>('/threads/', {
+    method: 'GET',
+    headers: forwardHeaders(req, requestId),
+  });
+  if (!res.ok) return conversationErrorResponse(res, requestId);
+  const out = NextResponse.json({ threads: toThreadList(res.data) }, { status: 200 });
+  return applyConversationResponseHeaders(out, res, requestId);
 }

@@ -1,6 +1,12 @@
 /** ALPHA products and the underlying technologies (public-safe framing, KC v2.0). */
 
-export type ProductRoute = 'alpha_compute' | 'alpha_core' | 'both' | 'general';
+export type ProductRoute =
+  | 'undetermined'
+  | 'astop'
+  | 'alpha_compute'
+  | 'alpha_core'
+  | 'both'
+  | 'general';
 
 export type LicensePathway = 'non_exclusive' | 'exclusive' | 'strategic';
 
@@ -16,7 +22,7 @@ export interface Technology {
 }
 
 export interface ProductInfo {
-  route: Exclude<ProductRoute, 'both' | 'general'>;
+  route: 'alpha_compute' | 'alpha_core';
   name: string;
   layer: string; // representation vs runtime
   thesis: string;

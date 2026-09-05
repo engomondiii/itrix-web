@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { EXAMPLE_PROMPT_DEFINITIONS } from '../../src/lib/content/examplePrompts';
+import { stubConversation } from './support/conversation';
 
 /**
  * R21 — SUBMITTING NEVER NAVIGATES.
@@ -13,43 +15,57 @@ import { expect, test } from '@playwright/test';
  * visual similarity would survive that check.
  */
 test.describe('the composer does not navigate', () => {
-  test('submitting keeps the same surface mounted and appends a turn', async ({ page }) => {
+  test('submitting keeps the same document mounted and appends a turn', async ({ page }) => {
+    await stubConversation(page, {
+      threadId: 'thread-no-navigation',
+    });
+
     await page.goto('/');
 
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
+    const composer = page.locator('textarea.composer-textarea');
     await expect(composer).toBeVisible();
 
-    // Mark the mounted shell so we can prove it survived.
+    // Mark the document itself. history.replaceState preserves it;
+    // a route/document navigation would replace it.
     await page.evaluate(() => {
-      const el = document.querySelector('.conversation-shell');
-      if (el) el.setAttribute('data-e2e-token', 'original-mount');
+      document.documentElement.setAttribute(
+        'data-e2e-token',
+        'original-document',
+      );
     });
 
     await composer.fill('Our inference fleet is limited by memory movement, not by FLOPs.');
-    await page.getByRole('button', { name: 'Send' }).click();
+    await page.getByRole('button', { name: 'Ask itriX' }).click();
 
     // The visitor's turn appears in the transcript.
     await expect(page.getByRole('log', { name: /your conversation with itriX/i })).toBeVisible();
     await expect(page.getByText('Our inference fleet is limited by memory movement')).toBeVisible();
 
-    // THE SAME NODE. A route transition would have replaced it.
-    await expect(page.locator('.conversation-shell')).toHaveAttribute(
+    // THE SAME DOCUMENT. A real navigation would have replaced <html>.
+    await expect(page.locator('html')).toHaveAttribute(
       'data-e2e-token',
-      'original-mount',
+      'original-document',
     );
 
     // The URL is updated for addressability, but by replaceState — so there is
     // exactly one history entry and Back does not return to an empty composer.
-    await expect(page).toHaveURL(/\/review\/[^/]+$/);
+    await expect(page).toHaveURL('/review/thread-no-navigation');
   });
 
   test('selecting an example populates the composer and does not submit', async ({ page }) => {
     await page.goto('/');
 
-    await page.getByRole('button', { name: /our solver is slow/i }).click();
+    const chosen =
+      EXAMPLE_PROMPT_DEFINITIONS[0].prompt.en;
 
-    const composer = page.getByRole('textbox', { name: /describe your compute challenge/i });
-    await expect(composer).toHaveValue(/Our solver is slow, unstable, or difficult to reproduce/);
+    await page
+      .locator('.prompt-card', { hasText: chosen })
+      .click();
+
+    const composer =
+      page.locator('textarea.composer-textarea');
+
+    await expect(composer).toHaveValue(chosen);
 
     // Populating is not submitting: no transcript, still on the landing.
     await expect(page.getByRole('log')).toHaveCount(0);

@@ -21,7 +21,7 @@ test('backend context-required response stays editable and is not treated as an 
   await page.getByLabel('Problem or challenge').fill('Observation overhead');
   await page.getByRole('button', { name: 'Request an NDA' }).click();
 
-  await expect(page.getByRole('alert')).toContainText('Please add more workload context.');
+  await expect(page.locator('p[role="alert"]')).toContainText('Please add more workload context.');
   await expect(page.getByLabel('Problem or challenge')).toHaveValue('Observation overhead');
   await expect(page.getByRole('status')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Request an NDA' })).toBeEnabled();
@@ -52,5 +52,5 @@ test('NDA form is keyboard reachable and exposes validation as an alert', async 
   await request.focus();
   await expect(request).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('alert')).toContainText('problem or workload');
+  await expect(page.locator('p[role="alert"]')).toContainText('problem or workload');
 });

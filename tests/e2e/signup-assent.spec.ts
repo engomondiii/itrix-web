@@ -23,7 +23,7 @@ test('the registration payload carries the rendered versions', async ({ page }) 
   await page.goto('/sign-up');
   await page.getByLabel('Full name').fill('A Person');
   await page.getByLabel('Company or organization').fill('An Organisation');
-  await page.getByLabel('Work email').fill('a.person@example.com');
+  await page.getByLabel('Email address').fill('a.person@example.com');
   await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
   await page.getByLabel('Confirm password').fill('a-long-enough-password');
   await page.getByRole('checkbox').check();
@@ -50,7 +50,7 @@ test('registration makes NO request to the client-plane assent endpoint', async 
   await page.goto('/sign-up');
   await page.getByLabel('Full name').fill('A Person');
   await page.getByLabel('Company or organization').fill('An Organisation');
-  await page.getByLabel('Work email').fill('a.person@example.com');
+  await page.getByLabel('Email address').fill('a.person@example.com');
   await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
   await page.getByLabel('Confirm password').fill('a-long-enough-password');
   await page.getByRole('checkbox').check();

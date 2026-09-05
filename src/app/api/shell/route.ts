@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getClientAccessToken } from '@/lib/server/session';
+import { djangoFetch } from '@/lib/server/proxy';
+import {
+  applyConversationResponseHeaders,
+  conversationForwardHeaders,
+  conversationRequestId,
+} from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
  * GET /api/shell — the shell contract (Backend v7.0 §4.1).
@@ -149,10 +152,7 @@ function normaliseShell(raw: Raw): Raw {
 }
 
 export async function GET(req: Request) {
-  const cookie = req.headers.get('cookie');
-  /* CLIENT PLANE (2026-08-10): the workspace thread asks for its shell through
-     this proxy too; the Bearer token identifies the customer server-side. */
-  const token = await getClientAccessToken();
+  const requestId = conversationRequestId(req);
   const thread = new URL(req.url).searchParams.get('thread');
 
   // No thread, or a thread the backend has not issued yet. Either way there is
@@ -161,20 +161,23 @@ export async function GET(req: Request) {
   // started.
   if (!thread || isLocalId(thread)) return NextResponse.json({}, { status: 200 });
 
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(thread)}/shell/`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        ...(cookie ? { cookie } : {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      cache: 'no-store',
-    });
-    if (!res.ok) return NextResponse.json({}, { status: res.status });
-    const payload = (await res.json()) as Raw;
-    return NextResponse.json(normaliseShell(payload), { status: 200 });
-  } catch {
-    return NextResponse.json({}, { status: 503 });
+  const res = await djangoFetch<Raw>(`/threads/${encodeURIComponent(thread)}/shell/`, {
+    method: 'GET',
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok) {
+    // Shell failure remains fail-closed: no zones are manufactured. Refresh/auth now gets
+    // one recovery attempt before we reach this branch, and the request id stays visible
+    // to operators without exposing resource details to the browser.
+    return applyConversationResponseHeaders(
+      NextResponse.json({}, { status: res.status > 0 ? res.status : 503 }),
+      res,
+      requestId,
+    );
   }
+  return applyConversationResponseHeaders(
+    NextResponse.json(normaliseShell((res.data ?? {}) as Raw), { status: 200 }),
+    res,
+    requestId,
+  );
 }

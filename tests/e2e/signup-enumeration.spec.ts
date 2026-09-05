@@ -19,7 +19,7 @@ async function fillAndSubmit(page: import('@playwright/test').Page, email: strin
   await page.goto('/sign-up');
   await page.getByLabel('Full name').fill('A Person');
   await page.getByLabel('Company or organization').fill('An Organisation');
-  await page.getByLabel('Work email').fill(email);
+  await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
   await page.getByLabel('Confirm password').fill('a-long-enough-password');
   await page.getByRole('checkbox').check();
@@ -69,7 +69,7 @@ test('no auth route greets anyone, before or after an email is entered (R57)', a
     await page.goto(path);
     const before = await page.locator('body').innerText();
     expect(before).not.toMatch(/welcome back/i);
-    const email = page.getByLabel('Work email');
+    const email = page.getByLabel('Email address');
     if (await email.count()) {
       await email.first().fill(HELD_ADDRESS);
       await page.waitForTimeout(250);

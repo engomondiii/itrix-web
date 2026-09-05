@@ -41,6 +41,7 @@ import type {
 } from '@/types/attachment.types';
 import type {
   SubmitResult,
+  TurnGenerationStatus,
   Thread,
   ThreadSummary,
   Turn,
@@ -56,6 +57,14 @@ const str = (v: unknown, fallback = ''): string =>
 
 const num = (v: unknown, fallback = 0): number =>
   typeof v === 'number' && Number.isFinite(v) ? v : fallback;
+
+function toGenerationStatus(raw: unknown, hasAssistant: boolean): TurnGenerationStatus {
+  const value = str(raw);
+  if (value === 'ready' || value === 'pending' || value === 'failed') return value;
+  // Backward-compatible old-backend fallback: an assistant in the response is settled;
+  // absence is treated as pending rather than incorrectly declaring provider failure.
+  return hasAssistant ? 'ready' : 'pending';
+}
 
 /** Django `senderKind` → the two roles the transcript renders. */
 function toRole(senderKind: unknown): TurnRole {
@@ -208,6 +217,7 @@ export function toThread(raw: unknown): Thread {
  * plus the visitor's own turn so it can reconcile its optimistic copy.
  */
 export function toSubmitResult(raw: unknown): SubmitResult {
+  const r = (raw ?? {}) as Raw;
   const thread = toThread(raw);
   const visitorTurns = thread.turns.filter((t) => t.role === 'visitor');
   const itrixTurns = thread.turns.filter((t) => t.role === 'itrix');
@@ -223,6 +233,10 @@ export function toSubmitResult(raw: unknown): SubmitResult {
       visitorTurns[visitorTurns.length - 1] ??
       toTurn({ senderKind: 'visitor', seq: 1 }, thread.id),
     itrixTurn: itrixTurns[itrixTurns.length - 1] ?? null,
+    generationStatus: toGenerationStatus(
+      r.generationStatus,
+      itrixTurns.length > 0,
+    ),
     degraded: false,
   };
 }
@@ -249,6 +263,7 @@ export function toTurnSubmitResult(raw: unknown, fallbackThreadId: string): Subm
     },
     visitorTurn,
     itrixTurn: r.assistantTurn ? toTurn(r.assistantTurn, threadId) : null,
+    generationStatus: toGenerationStatus(r.generationStatus, Boolean(r.assistantTurn)),
     degraded: false,
   };
 }

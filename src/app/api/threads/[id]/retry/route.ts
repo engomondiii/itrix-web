@@ -1,27 +1,42 @@
 import { NextResponse } from 'next/server';
-import { getClientAccessToken } from '@/lib/server/session';
 import { toTurn } from '@/lib/api/normalizeWire';
+import { djangoFetch } from '@/lib/server/proxy';
+import {
+  applyConversationResponseHeaders,
+  conversationErrorResponse,
+  conversationForwardHeaders,
+  conversationRequestId,
+} from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 type Raw = Record<string, unknown>;
 
 /** Retry generation for the latest persisted visitor turn; never re-submits the visitor text. */
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  const cookie = req.headers.get('cookie');
-  const token = await getClientAccessToken();
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/retry/`, {
-      method: 'POST', cache: 'no-store', headers: {
-        Accept: 'application/json', ...(cookie ? { cookie } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  const requestId = conversationRequestId(req);
+  const res = await djangoFetch<Raw>(`/threads/${encodeURIComponent(id)}/retry/`, {
+    method: 'POST',
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok && res.status !== 202) return conversationErrorResponse(res, requestId);
+  const raw = (res.data ?? {}) as Raw;
+  const assistant = raw.assistantTurn ? toTurn(raw.assistantTurn, id) : null;
+  const pending = raw.pending === true;
+  return applyConversationResponseHeaders(
+    NextResponse.json(
+      {
+        assistantTurn: assistant,
+        pending,
+        reused: raw.reused === true,
+        ...(pending ? { code: 'GENERATION_ALREADY_IN_PROGRESS' } : {}),
+        requestId: res.requestId ?? requestId,
       },
-    });
-    const raw = (await res.json().catch(() => ({}))) as Raw;
-    if (!res.ok && res.status !== 202) return NextResponse.json(raw, { status: res.status });
-    const assistant = raw.assistantTurn ? toTurn(raw.assistantTurn, id) : null;
-    return NextResponse.json({ assistantTurn: assistant, pending: raw.pending === true, reused: raw.reused === true }, { status: res.status });
-  } catch { return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 }); }
+      { status: res.status || (pending ? 202 : 200) },
+    ),
+    res,
+    requestId,
+  );
 }

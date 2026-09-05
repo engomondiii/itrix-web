@@ -120,6 +120,8 @@ export interface CreateTurnRequest {
   attachmentIds?: string[];
 }
 
+export type TurnGenerationStatus = 'ready' | 'pending' | 'failed';
+
 /**
  * What a submit returns.
  *
@@ -132,5 +134,7 @@ export interface SubmitResult {
   visitorTurn: Turn;
   /** Present only when the backend already had something to say. */
   itrixTurn?: Turn | null;
+  /** Distinguishes a real generation failure from a response still being produced. */
+  generationStatus: TurnGenerationStatus;
   degraded: boolean;
 }

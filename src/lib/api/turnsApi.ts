@@ -11,37 +11,50 @@
 
 import type { CreateTurnRequest, SubmitResult } from '@/types/thread.types';
 import type { ApiResult } from '@/lib/api/threadsApi';
+import {
+  conversationFailureFromResponse,
+  networkConversationFailure,
+  newConversationRequestId,
+} from '@/lib/api/conversationFailure';
 
 export const turnsApi = {
   async retry(threadId: string): Promise<ApiResult<{ assistantTurn: import('@/types/thread.types').Turn | null; pending: boolean; reused: boolean }>> {
+    const requestId = newConversationRequestId();
     try {
-      const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}/retry`, { method: 'POST', cache: 'no-store', headers: { Accept: 'application/json' } });
-      const data = await res.json().catch(() => null) as { assistantTurn?: import('@/types/thread.types').Turn | null; pending?: boolean; reused?: boolean; detail?: string } | null;
-      if (!res.ok && res.status !== 202) return { data: null, error: data?.detail ?? `retry ${res.status}` };
-      return { data: { assistantTurn: data?.assistantTurn ?? null, pending: data?.pending === true, reused: data?.reused === true }, error: null };
-    } catch (e) { return { data: null, error: e instanceof Error ? e.message : 'retry unreachable' }; }
+      const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}/retry`, {
+        method: 'POST',
+        cache: 'no-store',
+        headers: { Accept: 'application/json', 'X-Request-ID': requestId },
+      });
+      if (!res.ok && res.status !== 202) {
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
+      }
+      const data = await res.json().catch(() => null) as { assistantTurn?: import('@/types/thread.types').Turn | null; pending?: boolean; reused?: boolean } | null;
+      return { data: { assistantTurn: data?.assistantTurn ?? null, pending: data?.pending === true, reused: data?.reused === true }, error: null, failure: null };
+    } catch (e) {
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
+    }
   },
   async submit(threadId: string, body: CreateTurnRequest): Promise<ApiResult<SubmitResult>> {
+    const requestId = newConversationRequestId();
     try {
       const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}/turns`, {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Request-ID': requestId },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        let detail: string | null = null;
-        try {
-          detail = ((await res.json()) as { detail?: string }).detail ?? null;
-        } catch {
-          detail = null;
-        }
-        return { data: null, error: detail ?? `turn ${res.status}` };
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
       }
       const data = (await res.json()) as SubmitResult;
-      return { data, error: null };
+      return { data, error: null, failure: null };
     } catch (e) {
-      return { data: null, error: e instanceof Error ? e.message : 'turn unreachable' };
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
 };

@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getClientAccessToken } from '@/lib/server/session';
 import { toTurnSubmitResult } from '@/lib/api/normalizeWire';
+import { djangoFetch } from '@/lib/server/proxy';
+import {
+  applyConversationResponseHeaders,
+  conversationErrorResponse,
+  conversationForwardHeaders,
+  conversationRequestId,
+} from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-
-const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1';
 
 /**
  * Surface code uses camelCase; Django's serializer contract uses snake_case.
@@ -36,10 +40,7 @@ function toDjangoAttachmentPayload(body: unknown): unknown {
  */
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  const cookie = req.headers.get('cookie');
-  /* CLIENT PLANE (2026-08-10): see the sibling routes — the Bearer token lets a
-     signed-in customer speak on their own thread from any device. */
-  const token = await getClientAccessToken();
+  const requestId = conversationRequestId(req);
 
   let body: unknown;
   try {
@@ -48,29 +49,15 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     return NextResponse.json({ detail: 'Invalid request body.' }, { status: 400 });
   }
 
-  try {
-    const res = await fetch(`${API_BASE}/threads/${encodeURIComponent(id)}/turns/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        ...(cookie ? { cookie } : {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(toDjangoAttachmentPayload(body)),
-      cache: 'no-store',
-    });
-
-    const text = await res.text();
-    const payload = text ? (JSON.parse(text) as unknown) : null;
-
-    /* Errors pass through untouched — the 413 carries the recoverable message
-       about the server safety cap, and normalising it would discard it. */
-    if (!res.ok) {
-      return NextResponse.json(payload ?? { detail: 'Empty response.' }, { status: res.status });
-    }
-    return NextResponse.json(toTurnSubmitResult(payload, id), { status: 201 });
-  } catch {
-    return NextResponse.json({ detail: 'Conversation service unavailable.' }, { status: 503 });
-  }
+  const res = await djangoFetch<unknown>(`/threads/${encodeURIComponent(id)}/turns/`, {
+    method: 'POST',
+    body: toDjangoAttachmentPayload(body),
+    headers: conversationForwardHeaders(req, requestId),
+  });
+  if (!res.ok) return conversationErrorResponse(res, requestId);
+  return applyConversationResponseHeaders(
+    NextResponse.json(toTurnSubmitResult(res.data, id), { status: res.status || 201 }),
+    res,
+    requestId,
+  );
 }

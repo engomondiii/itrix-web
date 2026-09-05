@@ -1,29 +1,72 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * SIGN UP IS TWO DOORS, AND BY DEFAULT ONLY ONE IS A FORM (R48).
+ * SIGN UP — open registration is the current default (Architecture v2.9 §27).
  *
- * Architecture v2.8 §00.2 records why: accounts here are EARNED, and a public form that
- * opened a workspace on demand would produce Clients with no Lead, no journey state and
- * no disclosure basis — breaking value-first, qualification and the persona-keyed pitch
- * model at once.
+ * `NEXT_PUBLIC_ENABLE_OPEN_SIGNUP=false` remains an operational kill switch. These tests
+ * deliberately cover both semantics without forcing the application back to the superseded
+ * v2.8 "earned accounts only" model.
  */
+const OPEN_SIGNUP = (process.env.NEXT_PUBLIC_ENABLE_OPEN_SIGNUP ?? '').toLowerCase() !== 'false';
 
-test('door 2 is not a form, and it reaches the conversation', async ({ page }) => {
+test('open registration is available in the default current configuration', async ({ page }) => {
+  test.skip(!OPEN_SIGNUP, 'This assertion is for the default/open-signup configuration.');
+
   await page.goto('/sign-up');
-  await expect(page.getByText("I don't have one yet")).toBeVisible();
-  await expect(page.getByText('A workspace opens after a short conversation')).toBeVisible();
 
-  /* It collects nothing. */
-  await expect(page.locator('.password-field__input')).toHaveCount(0);
-  await expect(page.locator('input[type="email"]')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Create workspace/i })).toBeVisible();
+  await expect(page.locator('input[type="email"]')).toHaveCount(1);
+  await expect(page.locator('.password-field__input')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: /invitation code/i })).toBeVisible();
 
-  await page.getByRole('link', { name: /Start the conversation/i }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('h1')).toHaveText('What would you like computation to do better?');
+  /* The BFF route is present when registration is enabled. A deliberately malformed request
+     is rejected locally with 400 before any backend/account lookup, which proves the route is
+     reachable without depending on Django or leaking account existence. */
+  const status = await page.evaluate(async () => {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'a@b.com',
+        password: 'a-long-enough-pass',
+        fullName: 'A',
+        organization: 'B',
+      }),
+    });
+    return res.status;
+  });
+  expect(status).toBe(400);
 });
 
-test('door 1 hands off to the assent-gated flow rather than duplicating it', async ({ page }) => {
+test('explicitly disabled registration uses the closed kill-switch surface', async ({ page }) => {
+  test.skip(OPEN_SIGNUP, 'Run this assertion with NEXT_PUBLIC_ENABLE_OPEN_SIGNUP=false.');
+
+  await page.goto('/sign-up');
+
+  await expect(page.getByRole('button', { name: /Create workspace/i })).toHaveCount(0);
+  await expect(page.locator('input[type="email"]')).toHaveCount(0);
+  await expect(page.locator('.password-field__input')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Start the conversation/i })).toBeVisible();
+
+  /* A disabled capability does not advertise itself with a 403. */
+  const status = await page.evaluate(async () => {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'a@b.com',
+        password: 'a-long-enough-pass',
+        fullName: 'A',
+        organization: 'B',
+        assent: ['terms:test'],
+      }),
+    });
+    return res.status;
+  });
+  expect(status).toBe(404);
+});
+
+test('invitation-code option hands off to the existing assent-gated flow', async ({ page }) => {
   await page.route('**/api/auth/invite/lookup**', (route) =>
     route.fulfill({
       status: 200,
@@ -31,37 +74,21 @@ test('door 1 hands off to the assent-gated flow rather than duplicating it', asy
       body: JSON.stringify({ usable: true, redeemUrl: '/c/tok_handoff/create-account' }),
     }),
   );
+
   await page.goto('/sign-up');
+  await page.getByRole('button', { name: /invitation code/i }).click();
   await page.getByLabel('Invitation code').fill('tok_handoff');
   await page.getByRole('button', { name: 'Continue' }).click();
 
-  /* Rebuilding account creation here would be a second place for the assent gate to be
-     forgotten. */
-  await expect(page).toHaveURL(/\/c\/tok_handoff\/create-account/);
+  /* Rebuilding account creation here would create a second assent path. */
+  await expect(page).toHaveURL(/\/invite\/tok_handoff\/create-account/);
 });
 
-test('open registration is unreachable by default, on three layers', async ({ page }) => {
+test('the invitation-code field does not fight a phone keyboard', async ({ page }) => {
   await page.goto('/sign-up');
-  /* Layer 1: the page does not render the form. */
-  await expect(page.getByRole('button', { name: /Create workspace/i })).toHaveCount(0);
-  await expect(page.locator('.assent__box')).toHaveCount(0);
+  await page.getByRole('button', { name: /invitation code/i }).click();
 
-  /* Layer 3: the proxy 404s. A disabled feature should not advertise itself with a 403. */
-  const status = await page.evaluate(async () => {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'a@b.com', password: 'a-long-enough-pass', fullName: 'A', organization: 'B' }),
-    });
-    return res.status;
-  });
-  expect(status).toBe(404);
-});
-
-test('the code field does not fight a phone keyboard', async ({ page }) => {
-  await page.goto('/sign-up');
   const field = page.getByLabel('Invitation code');
-  /* A capitalised first character produces a failure the visitor cannot see. */
   await expect(field).toHaveAttribute('autocapitalize', 'off');
   await expect(field).toHaveAttribute('spellcheck', 'false');
   await expect(field).toHaveAttribute('autocomplete', 'off');

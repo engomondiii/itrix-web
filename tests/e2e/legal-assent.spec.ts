@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { submitResult } from './support/conversation';
 
 /**
  * ASSENT IS TAKEN AT WORKSPACE CREATION, AND NOWHERE ELSE (R44, §19.10).
@@ -47,7 +48,7 @@ test('no assent is required to send the first turn', async ({ page }) => {
   await page.route('**/api/threads', (route) =>
     route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ threadId: 'thr_x', turn: { id: 't1', senderKind: 'visitor', body: 'x', seq: 1 } }),
+      body: JSON.stringify(submitResult('thr_x', 'Our inference cost is rising.', '')),
     }),
   );
   await page.goto('/');
@@ -72,7 +73,7 @@ test('the checkbox is unticked by default and names both instruments with versio
   await expect(label).toContainText('Privacy Policy');
   /* The record stores VERSIONS, not a boolean — so a version nobody was shown is a
      version nobody agreed to. */
-  await expect(label).toContainText('v1.0');
+  await expect(label).toContainText('v1.2');
 });
 
 test('the links open the actual documents in a new tab', async ({ page }) => {
@@ -97,9 +98,9 @@ test('account creation is blocked without an affirmative tick', async ({ page })
   await page.goto(`/c/${INVITE}/create-account`);
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
-  await page.getByLabel('Work email').fill('sora@example.com');
-  await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
-  await page.getByLabel('Confirm password').fill('a-long-enough-password');
+  await page.getByLabel('Email address').fill('sora@example.com');
+  await page.getByLabel('New password', { exact: true }).fill('a-long-enough-password');
+  await page.getByLabel('Confirm new password').fill('a-long-enough-password');
 
   await page.getByRole('button', { name: /Create workspace/i }).click();
 
@@ -109,64 +110,109 @@ test('account creation is blocked without an affirmative tick', async ({ page })
   expect(claimed).toBe(false);
 });
 
-test('assent is recorded BEFORE the invite is claimed', async ({ page }) => {
+test('assent versions travel inside the invite claim payload', async ({ page }) => {
   await stubJourney(page);
-  const order: string[] = [];
+  let payload: Record<string, unknown> | null = null;
 
-  await page.route('**/api/legal/assent', async (route) => {
-    order.push('assent');
-    const body = route.request().postDataJSON() as { instruments?: unknown[] };
-    /* The versions travel with it. */
-    expect(Array.isArray(body.instruments)).toBe(true);
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ recorded: true }) });
-  });
   await page.route('**/api/accounts/invite/**/claim', async (route) => {
-    order.push('claim');
+    payload = route.request().postDataJSON() as Record<string, unknown>;
+
     await route.fulfill({
-      status: 200, contentType: 'application/json',
-      body: JSON.stringify({ client: { id: 'cli_1' }, requiresPasswordSet: false }),
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        client: { id: 'cli_1' },
+        requiresPasswordSet: false,
+      }),
     });
   });
 
   await page.goto(`/c/${INVITE}/create-account`);
+
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
-  await page.getByLabel('Work email').fill('sora@example.com');
-  await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
-  await page.getByLabel('Confirm password').fill('a-long-enough-password');
+  await page.getByLabel('Email address').fill('sora@example.com');
+  await page
+    .getByLabel('New password', { exact: true })
+    .fill('a-long-enough-password');
+  await page
+    .getByLabel('Confirm new password')
+    .fill('a-long-enough-password');
+
   await page.locator('.assent__label').click();
-  await expect(page.locator('.assent__box')).toBeChecked();
+  await page
+    .getByRole('button', { name: /Create workspace/i })
+    .click();
 
-  await page.getByRole('button', { name: /Create workspace/i }).click();
+  await expect.poll(() => payload !== null).toBe(true);
 
-  /* A Client must never exist without the assent that created it. */
-  await expect.poll(() => order.join('>')).toBe('assent>claim');
+  const assent = (
+    payload as unknown as {
+      assent?: { slug: string; version: string }[];
+    }
+  ).assent;
+
+  expect(Array.isArray(assent)).toBe(true);
+  expect(
+    assent?.some(
+      (item) =>
+        item.slug === 'terms' &&
+        item.version === '1.2',
+    ),
+  ).toBe(true);
+  expect(
+    assent?.some(
+      (item) =>
+        item.slug === 'privacy' &&
+        item.version === '1.2',
+    ),
+  ).toBe(true);
 });
 
-test('a failed assent record stops the flow rather than being swallowed', async ({ page }) => {
+test('invite creation makes NO request to the client-plane assent endpoint', async ({ page }) => {
   await stubJourney(page);
-  let claimed = false;
-  await page.route('**/api/legal/assent', (route) =>
-    route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ detail: 'Assent service unavailable.' }) }),
-  );
-  await page.route('**/api/accounts/invite/**/claim', (route) => {
-    claimed = true;
-    return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
+
+  const assentCalls: string[] = [];
+  let claimCalls = 0;
+
+  page.on('request', (request) => {
+    if (request.url().includes('/api/legal/assent')) {
+      assentCalls.push(request.url());
+    }
+  });
+
+  await page.route('**/api/accounts/invite/**/claim', async (route) => {
+    claimCalls += 1;
+
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        client: { id: 'cli_1' },
+        requiresPasswordSet: false,
+      }),
+    });
   });
 
   await page.goto(`/c/${INVITE}/create-account`);
+
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
-  await page.getByLabel('Work email').fill('sora@example.com');
-  await page.getByLabel('Password', { exact: true }).fill('a-long-enough-password');
-  await page.getByLabel('Confirm password').fill('a-long-enough-password');
-  await page.locator('.assent__label').click();
-  await page.getByRole('button', { name: /Create workspace/i }).click();
+  await page.getByLabel('Email address').fill('sora@example.com');
+  await page
+    .getByLabel('New password', { exact: true })
+    .fill('a-long-enough-password');
+  await page
+    .getByLabel('Confirm new password')
+    .fill('a-long-enough-password');
 
-  await expect(page.locator('.assent__error')).toBeVisible();
-  /* An account without a recorded assent is the state §19.10 exists to prevent, and it
-     cannot be repaired afterwards by guessing what the visitor read. */
-  expect(claimed).toBe(false);
+  await page.locator('.assent__label').click();
+  await page
+    .getByRole('button', { name: /Create workspace/i })
+    .click();
+
+  await expect.poll(() => claimCalls).toBe(1);
+  expect(assentCalls).toEqual([]);
 });
 
 test('the checkbox is not bundled with a marketing consent', async ({ page }) => {

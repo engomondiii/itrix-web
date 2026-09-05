@@ -74,6 +74,14 @@ export const COMPOSER_COPY = {
    */
   unreachable:
     'We could not reach itriX just now, so this has not been reviewed yet. Your message is saved — try sending again in a moment.',
+  rateLimited: 'You are sending messages too quickly. Please wait a moment and try again.',
+  retryAfter: (seconds: number) => `Try again in about ${seconds} seconds.`,
+  threadUnavailable: 'This conversation is unavailable or no longer accessible. Reopen it or start a new conversation if needed.',
+  serviceUnavailable: 'itriX is temporarily unavailable. Your message is preserved — please try again shortly.',
+  networkFailure: 'There is a network connection problem. Your message is preserved — please reconnect and try again.',
+  modelGenerationFailed: 'Your message is saved, but response generation failed. Try Again will retry the response without resending your message.',
+  generationInProgress: 'itriX is already preparing this response.',
+  unknownRetryable: 'We could not complete that request just now. Your message is preserved — please try again.',
 
   /** The quiet placeholder while the first response is being prepared. */
   preparing: 'itriX is preparing a response.',
@@ -191,7 +199,16 @@ export const COMPOSER_COPY_KO = {
   placeholder:CENTER_COPY_KO.promptPlaceholder, placeholderContinuing:'메시지를 입력한 뒤 Enter를 눌러 보내세요.', textareaLabel:CENTER_COPY_KO.promptAriaLabel,
   sendLabel:'itriX에 질문', attachLabel:'파일 첨부', keyHint:'Enter로 보내기 · Ctrl + X로 itriX에 질문', keyHintNewline:'Shift + Enter로 줄바꿈', tooShort:CENTER_COPY_KO.tooShort,
   serverCap:'한 메시지에 담기에는 너무 깁니다. 두 부분으로 나눠 보내 주세요. 내용은 손실되지 않았습니다.',
-  unreachable:'현재 itriX에 연결할 수 없어 아직 검토되지 않았습니다. 메시지는 저장되어 있습니다. 잠시 후 다시 시도해 주세요.', preparing:'itriX가 응답을 준비하고 있습니다.',
+  unreachable:'현재 itriX에 연결할 수 없어 아직 검토되지 않았습니다. 메시지는 저장되어 있습니다. 잠시 후 다시 시도해 주세요.',
+  rateLimited:'메시지를 너무 빠르게 보내고 있습니다. 잠시 기다린 뒤 다시 시도해 주세요.',
+  retryAfter:(seconds:number)=>`약 ${seconds}초 후에 다시 시도해 주세요.`,
+  threadUnavailable:'이 대화를 사용할 수 없거나 더 이상 접근할 수 없습니다. 필요하면 대화를 다시 열거나 새 대화를 시작해 주세요.',
+  serviceUnavailable:'현재 itriX 서비스를 일시적으로 사용할 수 없습니다. 메시지는 보존되어 있으니 잠시 후 다시 시도해 주세요.',
+  networkFailure:'네트워크 연결에 문제가 있습니다. 메시지는 보존되어 있으니 연결을 확인한 뒤 다시 시도해 주세요.',
+  modelGenerationFailed:'메시지는 저장되었지만 응답 생성에 실패했습니다. 다시 시도하면 메시지를 다시 보내지 않고 응답만 재생성합니다.',
+  generationInProgress:'itriX가 이미 이 응답을 준비하고 있습니다.',
+  unknownRetryable:'지금은 요청을 완료할 수 없습니다. 메시지는 보존되어 있으니 잠시 후 다시 시도해 주세요.',
+  preparing:'itriX가 응답을 준비하고 있습니다.',
 } as const;
 export const RAIL_COPY_KO = { newChat:'새 대화', conversationsLabel:'내 대화', conversationsEmpty:'대화가 여기에 표시됩니다.', signIn:CENTER_COPY_KO.signIn, signOut:'로그아웃', exploreLabel:'itriX 살펴보기', openNavigation:'탐색 메뉴 열기', closeNavigation:'탐색 메뉴 닫기', collapse:'대화 목록 접기', expand:'대화 목록 펼치기', rename:'이름 바꾸기', delete:'삭제' } as const;
 export const HEADER_COPY_KO = { quickHelp:'도움 받기', quickHelpExpanded:['전문가에게 메시지','통화 요청','지원 요청 열기'], quickHelpPrompts:['이 내용을 검토하는 전문가와 이야기하고 싶습니다.','이 리뷰에 대해 통화를 잡을 수 있을까요?','이 문제에 대한 지원 요청을 열고 싶습니다.'], quickHelpHint:'각 항목은 보내기 전에 수정할 수 있는 메시지를 입력창에 채웁니다.', threadActions:'대화 옵션', untitled:'새 대화', openContent:'콘텐츠 열기', hideContent:'콘텐츠 숨기기' } as const;

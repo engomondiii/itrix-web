@@ -22,6 +22,10 @@ export interface DjangoResult<T> {
   data: T | null;
   /** Backend-provided rate-limit wait, in seconds, when present and valid. */
   retryAfter: number | null;
+  /** Correlation id returned by Django's safe request-logging middleware. */
+  requestId: string | null;
+  /** Needed only by anonymous thread creation so Django's visitor cookie reaches the browser. */
+  setCookie: string | null;
 }
 
 interface DjangoFetchOptions {
@@ -66,7 +70,14 @@ async function readResult<T>(res: Response): Promise<DjangoResult<T>> {
   } catch {
     data = null;
   }
-  return { ok: res.ok, status: res.status, data, retryAfter: retryAfterSeconds(res) };
+  return {
+    ok: res.ok,
+    status: res.status,
+    data,
+    retryAfter: retryAfterSeconds(res),
+    requestId: res.headers.get('X-Request-ID'),
+    setCookie: res.headers.get('set-cookie'),
+  };
 }
 
 async function request<T>(path: string, opts: DjangoFetchOptions, accessToken: string | null): Promise<DjangoResult<T>> {
@@ -84,7 +95,14 @@ async function request<T>(path: string, opts: DjangoFetchOptions, accessToken: s
     });
     return await readResult<T>(res);
   } catch {
-    return { ok: false, status: 0, data: null, retryAfter: null };
+    return {
+      ok: false,
+      status: 0,
+      data: null,
+      retryAfter: null,
+      requestId: finalHeaders['X-Request-ID'] ?? finalHeaders['x-request-id'] ?? null,
+      setCookie: null,
+    };
   }
 }
 

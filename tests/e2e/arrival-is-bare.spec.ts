@@ -64,16 +64,17 @@ for (const vp of WIDTHS) {
       await expect(page.locator('.arrival-footer')).toHaveCount(0);
     });
 
-    test('the only outbound links are Sign in and the four instruments', async ({ page }) => {
+    test('the only outbound links are Sign in, Sign up and the four instruments', async ({ page }) => {
       await page.goto('/');
       const hrefs = await page.locator('a[href]').evaluateAll((els) =>
         els.map((el) => (el as HTMLAnchorElement).getAttribute('href') ?? ''),
       );
       const external = hrefs.filter((h) => h !== '/' && h !== '#content');
       expect(new Set(external)).toEqual(
-        new Set(['/sign-in', '/terms', '/privacy', '/security', '/disclosure-policy']),
+        new Set(['/sign-in', '/sign-up', '/terms', '/privacy', '/security', '/disclosure-policy']),
       );
       await expect(page.getByRole('link', { name: 'Sign in', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: 'Sign up', exact: true })).toBeVisible();
       /* `Approach` is retired as a navigation item on every surface. */
       await expect(page.getByRole('link', { name: 'Approach' })).toHaveCount(0);
     });

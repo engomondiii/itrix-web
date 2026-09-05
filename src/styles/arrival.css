@@ -214,6 +214,14 @@
   .arrival-x { display: none; }
 }
 
+/* Short laptop viewports yield decorative bottom air before
+   allowing the document itself to become scrollable. */
+@media (min-width: 768px) and (max-height: 800px) {
+  .arrival-hero {
+    padding-bottom: 24px;
+  }
+}
+
 @media (max-width: 767px) {
   /* The bottom pad respects the home-bar / gesture area, so the composer is not
      sitting under it on an iPhone. */

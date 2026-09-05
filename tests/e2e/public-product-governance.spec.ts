@@ -17,7 +17,7 @@ test('public ASTOP presents controlled progression without obsolete fixed-price 
   await expect(page.getByText('License-Out & Deployment', { exact: true })).toBeVisible();
   await expect(page.getByText(/not offered as an anonymous executable, public checkout or self-service subscription/i)).toBeVisible();
 
-  const main = page.locator('main');
+  const main = page.locator('#content');
   await expect(main).not.toContainText(/\$\s?\d/);
   await expect(page.getByRole('button', { name: /buy|checkout|subscribe/i })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /buy|checkout|subscribe/i })).toHaveCount(0);
@@ -30,7 +30,7 @@ test('public PRISM remains available as supporting technology without protected 
   await expect(page.getByText(/supporting technology, not a separately purchasable product/i)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Explore ASTOP' })).toBeVisible();
 
-  const main = page.locator('main');
+  const main = page.locator('#content');
   for (const protectedTerm of protectedInternalTerms) await expect(main).not.toContainText(protectedTerm);
   await expect(main).not.toContainText(/\$\s?\d/);
 });

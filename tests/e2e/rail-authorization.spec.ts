@@ -44,7 +44,7 @@ test('a State 10 contract still produces a three-item rail', async ({ page }) =>
   await page.goto('/review/thr_test');
 
   await expect(page.getByRole('button', { name: /New chat/i })).toBeVisible();
-  await expect(page.getByText('Your conversations')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Your conversations' })).toBeVisible();
 
   /* No pane section leaks into the rail. */
   const rail = page.locator('.conversation-rail');

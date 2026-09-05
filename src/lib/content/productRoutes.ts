@@ -11,6 +11,20 @@ export interface ProductRouteInfo {
 
 /** Display + routing metadata for each product route (used by path recommendation + result). */
 export const PRODUCT_ROUTES: Record<ProductRoute, ProductRouteInfo> = {
+  undetermined: {
+    route: 'undetermined',
+    label: 'Not yet assessed',
+    blurb: 'No product route has been selected. Discovery can identify useful hypotheses without implying qualification.',
+    href: routes.technology,
+    technologies: [],
+  },
+  astop: {
+    route: 'astop',
+    label: 'ASTOP',
+    blurb: 'ASTOP is the observation product. A controlled opportunity begins only after its relevance is separately established.',
+    href: routes.astop,
+    technologies: [],
+  },
   alpha_compute: {
     route: 'alpha_compute',
     label: 'ALPHA Compute',
@@ -28,14 +42,14 @@ export const PRODUCT_ROUTES: Record<ProductRoute, ProductRouteInfo> = {
   both: {
     route: 'both',
     label: 'ALPHA Compute + Core',
-    blurb: 'This spans representation and execution — both layers apply, starting from the representation hypothesis.',
+    blurb: 'This historical multi-product route does not itself establish qualification; each product gate remains separate.',
     href: routes.alphaCompute,
     technologies: ['axiom', 'cre', 'fqnm', 'boundary_aware'],
   },
   general: {
     route: 'general',
     label: 'General enquiry',
-    blurb: 'Let’s start with a conversation to find where the structural advantage is.',
+    blurb: 'This legacy general route is treated as not yet assessed, not as an ALPHA qualification.',
     href: routes.technology,
     technologies: ['axiom'],
   },
