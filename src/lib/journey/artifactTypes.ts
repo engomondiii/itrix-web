@@ -48,7 +48,7 @@ export const ARTIFACT_TITLE: Record<ArtifactType, string> = {
   reflection: 'What we think is actually happening',
   pitch_room: 'Your personalized brief',
   review_summary: 'Your review summary',
-  boundary_waste_map: 'Your Alpha Compute Assessment',
+  boundary_waste_map: 'Your ALPHA Compute Assessment',
   poc_evidence: 'Proving it on your workload',
   integration_readiness: 'Integration and commercial decisions',
   success_overview: 'Where things stand',

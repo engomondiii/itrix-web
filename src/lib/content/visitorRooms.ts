@@ -62,7 +62,7 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
       'A prioritised view of where ALPHA Compute may help',
       'A clear recommendation on the next evidence step, including no further action when appropriate',
     ],
-    ctaLabel: 'Request an Alpha Compute Assessment',
+    ctaLabel: 'Request an ALPHA Compute Assessment',
     ctaHref: routes.review,
   },
   technical: {

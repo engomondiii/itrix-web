@@ -31,7 +31,7 @@ export const INFO_DRAWERS: InfoDrawer[] = [
   },
   {
     id: 'what-is-an-assessment',
-    title: 'What is an Alpha Compute Assessment?',
+    title: 'What is an ALPHA Compute Assessment?',
     disclosure: 'public',
     body:
       'An ALPHA Compute Assessment is a focused engineering study of one workload. We look at where computation crosses unnecessary boundaries and produce a Boundary Waste Map, an applicability view, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A controlled evaluation is not a PoC, and either may end with a negative result or no further action.',

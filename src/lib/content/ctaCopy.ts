@@ -35,7 +35,7 @@ export const CTA = {
   requestTechnicalBriefing: { label: 'Request Technical Briefing', href: routes.review },
   requestInvestorBriefing: { label: 'Request Investor Briefing', href: routes.review },
   requestMediaKit: { label: 'Request Media / Story Kit', href: routes.review },
-  requestAssessment: { label: 'Request an Alpha Compute Assessment', href: routes.review },
+  requestAssessment: { label: 'Request an ALPHA Compute Assessment', href: routes.review },
   continueWithSpecialist: { label: 'Continue with an itriX Specialist', href: routes.review },
   discussNonExclusive: { label: 'Discuss a Non-Exclusive Evaluation', href: routes.licensingNonExclusive },
   discussExclusive: { label: 'Discuss Exclusive ALPHA Rights', href: routes.licensingExclusive },

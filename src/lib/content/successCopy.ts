@@ -154,7 +154,7 @@ export const SUCCESS_COPY = {
 /** The paid-workspace copy (States 7–9). */
 export const WORKSPACE_COPY = {
   assessment: {
-    title: 'Your Alpha Compute Assessment',
+    title: 'Your ALPHA Compute Assessment',
     intro:
       'This workspace holds the whole assessment: what we took in, the baseline we agreed, the Boundary Waste Map of your workload, technical feasibility, the benchmark we would design, and what we would recommend proving next.',
     standing: 'You should always know what is happening, why it matters, and who owns the next action.',
