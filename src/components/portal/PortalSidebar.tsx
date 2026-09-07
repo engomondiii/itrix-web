@@ -19,7 +19,6 @@ import { useJourneyContext } from '@/context/JourneyContext';
 import { useThreadContext } from '@/context/ThreadContext';
 import { useComposerStore } from '@/store/composerStore';
 import { routes } from '@/constants/routes';
-import { brand } from '@/constants/brand';
 import { usePortalCopy } from '@/lib/i18n/portalLocale';
 import { useLocaleStore } from '@/store/localeStore';
 import { portalNavLabel } from '@/lib/i18n/portalConfigLocale';
@@ -108,9 +107,6 @@ export function PortalSidebar() {
   const portalCopy = usePortalCopy();
   const locale = useLocaleStore((s) => s.locale);
   const unread = usePortalStore((s) => s.unreadMessages);
-  /* The badge's data supply (fix, 2026-08-10): nothing mounted the old overview
-     hook, so `unreadMessages` was never written and the Messaging badge never
-     showed. The sidebar is on every workspace screen, so the poll lives here. */
   usePortalUnread();
   const { signOut } = usePortalAuth();
   const { journeyNumber } = useJourneyContext();
@@ -128,21 +124,10 @@ export function PortalSidebar() {
     (g) => g.length > 0,
   );
 
-  /* ── DRAWER BEHAVIOUR, MOBILE ONLY (2026-08-12) ────────────────────────────
-     `data-open` drives the transform in mobile.css. Above `lg` that stylesheet does
-     not apply the drawer rules at all, so on desktop this attribute is inert and the
-     sidebar renders exactly as it did before.
-
-     Closing on navigation is not a nicety: a drawer that stays open covers the screen
-     the customer just chose, so the tap appears to have done nothing. `pathname` is
-     the trigger rather than the click handler, so it also closes for a back/forward
-     navigation and for anything else that changes route. */
   useEffect(() => {
     closeNav();
   }, [pathname, closeNav]);
 
-  /* Escape closes it — the same affordance as the backdrop, for a keyboard on a
-     tablet. Bound only while open so there is no idle listener. */
   useEffect(() => {
     if (!navOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -158,7 +143,6 @@ export function PortalSidebar() {
       data-open={navOpen ? 'true' : undefined}
       className="portal-sidebar sticky top-0 flex h-dvh w-60 shrink-0 flex-col gap-5 overflow-hidden border-r border-border-medium bg-surface px-4 py-6"
     >
-      {/* THE MARK, NOT A TYPESET APPROXIMATION (see the logo refresh note). */}
       <Link href={routes.workspaceOverview} className="flex flex-col gap-1 px-3">
         <ItrixLogo width={112} priority />
         <span className="text-micro font-semibold uppercase tracking-[0.1em] text-ink-secondary">
@@ -199,12 +183,6 @@ export function PortalSidebar() {
         ))}
       </nav>
 
-      {/* ── ORDER, AS REQUESTED (2026-08-10) ───────────────────────────────────
-          New chat sits directly beneath the nav (so immediately under Settings,
-          its last item) and directly above the conversation list it starts a new
-          member of. The thesis line then closes the sidebar under the
-          conversations, where it reads as a signature rather than a caption on
-          the navigation. */}
       <div className="border-t border-border-soft pt-4">
         <button
           type="button"
@@ -230,13 +208,11 @@ export function PortalSidebar() {
         </button>
       </div>
 
-      {/* Your conversations — visible the moment the workspace opens. */}
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <PortalConversationList />
       </div>
 
-      <div className="flex flex-col gap-3 border-t border-border-soft px-3 pt-4">
-        <p className="text-caption italic text-ink-secondary">“{brand.thesis}”</p>
+      <div className="border-t border-border-soft px-3 pt-4">
         <Button variant="secondary" size="sm" onClick={() => void signOut()} className="self-start portal-signout">
           {portalCopy.settings.signOut}
         </Button>
