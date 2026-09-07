@@ -14,13 +14,14 @@ import { isValidEmail } from '@/lib/validation/emailValidator';
 import { usePasswordPolicy } from '@/hooks/usePasswordPolicy';
 import { useLegalAssent } from '@/hooks/useLegalAssent';
 import { useAuthCopy } from '@/lib/i18n/authLocale';
+import { useLegalErrorCopy } from '@/lib/i18n/legalErrorCopy';
 import { ASSENT_COPY } from '@/lib/content/legalCopy';
-import { legalApi } from '@/lib/api/legalApi';
 import { trackEvent } from '@/lib/analytics/trackEvent';
 
 /** Open registration. Qualification/routing remain conversation-owned; this form only creates identity. */
 export function RegistrationForm() {
   const authCopy = useAuthCopy();
+  const legalErrorCopy = useLegalErrorCopy();
   const { register, submitting, error, retryAfterSeconds, legalTermsChanged } = useSignUp();
   const assent = useLegalAssent({ transport: 'in_payload' });
 
@@ -35,11 +36,14 @@ export function RegistrationForm() {
 
   useEffect(() => {
     if (!legalTermsChanged) return;
-    // A stale assent can never be re-used. Refetch the backend publication metadata and
-    // force a fresh unticked decision before another submission is possible.
-    assent.setAccepted(false);
-    void legalApi.instruments();
-  }, [legalTermsChanged, assent.setAccepted]);
+    void (async () => {
+      const refreshed = await assent.refreshVersions();
+      setErrors((prev) => ({
+        ...prev,
+        assent: refreshed ? legalErrorCopy.termsChanged : legalErrorCopy.refreshFailed,
+      }));
+    })();
+  }, [legalTermsChanged, assent.refreshVersions, legalErrorCopy.refreshFailed, legalErrorCopy.termsChanged]);
 
   function validate(): Record<string, string> {
     const next: Record<string, string> = {};
@@ -48,7 +52,7 @@ export function RegistrationForm() {
     if (!isValidEmail(email)) next.email = authCopy.signUp.missingEmail;
     if (policy.tooShort) next.password = authCopy.reset.tooShort;
     else if (!policy.matches) next.confirm = authCopy.reset.mismatch;
-    if (!assent.accepted) next.assent = ASSENT_COPY.blocked;
+    if (!assent.accepted) next.assent = errors.assent ?? ASSENT_COPY.blocked;
     return next;
   }
 
