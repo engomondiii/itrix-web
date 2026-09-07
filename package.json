@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:env": "playwright test tests/e2e/production-env-validation.spec.ts --config=playwright.bff.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:retry": "playwright test tests/e2e/try-again-recovery.spec.ts",
     "test:e2e:matrix": "node scripts/verify-playwright-release-matrix.mjs",
