@@ -40,8 +40,8 @@ export interface UseThreadResult {
   /** Deliberate switch from the rail. Adds a history entry; see the note above. */
   switchTo: (threadId: string) => void;
   startNew: () => void;
-  rename: (threadId: string, title: string) => void;
-  remove: (threadId: string) => void;
+  rename: (threadId: string, title: string) => Promise<boolean>;
+  remove: (threadId: string) => Promise<boolean>;
   refresh: () => void;
 }
 
@@ -107,29 +107,32 @@ export function useThread(): UseThreadResult {
     setActive(null);
   }, [setActive]);
 
+  const rename = useCallback(
+    async (threadId: string, title: string) => {
+      const result = await threadsApi.rename(threadId, title);
+      if (result.error) return false;
+      renameLocal(threadId, title);
+      return true;
+    },
+    [renameLocal],
+  );
+
   const remove = useCallback(
-    (threadId: string) => {
+    async (threadId: string) => {
+      /* The server is authoritative: do not make the conversation disappear until
+         Django confirms deletion. That keeps purge/storage failures visible and
+         prevents a false local success that later reappears. */
+      const result = await threadsApi.remove(threadId);
+      if (result.error) return false;
+
       removeLocal(threadId);
       clearThread(threadId);
-      /* Everything keyed by this thread goes with it. A deleted conversation that
-         left its scroll offset and its open artifact behind would slowly accumulate
-         state for threads that no longer exist — and, worse, could restore a pane
-         onto an artifact from a conversation the visitor asked us to forget. */
       forgetPane(threadId);
       forgetScroll(threadId);
       if (threadId === activeThreadId) setThreadUrl(null);
-      /* THE SERVER HALF OF DELETION (fix, 2026-08-10). This used to stop at the
-         local removal above, so the backend still held the thread and the next
-         list fetch merged it straight back into the rail — "delete" looked broken
-         because it was only ever half done. The DELETE is fire-and-forget for the
-         UI (the row is already gone), but a FAILURE is answered honestly: we
-         refresh the list, the thread reappears, and the visitor can try again —
-         never a row that silently returns hours later. */
-      void threadsApi.remove(threadId).then((res) => {
-        if (res.error) refresh();
-      });
+      return true;
     },
-    [removeLocal, clearThread, forgetPane, forgetScroll, activeThreadId, refresh],
+    [removeLocal, clearThread, forgetPane, forgetScroll, activeThreadId],
   );
 
   return {
@@ -138,7 +141,7 @@ export function useThread(): UseThreadResult {
     select,
     switchTo,
     startNew,
-    rename: renameLocal,
+    rename,
     remove,
     refresh,
   };
