@@ -58,7 +58,7 @@ test('open signup refreshes N+1 and requires fresh assent after legal race', asy
   expect(registrations[0].assent?.find((row) => row.slug === 'terms')?.version).toBe('1.2');
 
   await expect(page).toHaveURL(/\/sign-up$/);
-  await expect(page.getByRole('alert')).toHaveText(
+  await expect(page.locator('.assent__error')).toContainText(
     'The legal terms changed while you were reviewing them.',
   );
   await expect(page.getByRole('checkbox')).not.toBeChecked();
