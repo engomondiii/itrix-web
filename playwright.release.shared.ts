@@ -11,6 +11,8 @@ const PORTS: Record<Partition, number> = {
   accessibility: 3105,
 };
 
+const LOCAL_API_URL = 'http://127.0.0.1:8000/api/v1';
+
 const COMMON = [
   'NEXT_PUBLIC_LEGAL_PUBLISHED=true',
   'NEXT_PUBLIC_ENABLE_OPEN_SIGNUP=true',
@@ -83,7 +85,7 @@ export function releaseConfig(partition: Partition): PlaywrightTestConfig {
     },
     projects,
     webServer: {
-      command: `${COMMON} ${FLAGS[partition]} npm run dev -- -p ${port}`,
+      command: `NEXT_PUBLIC_SITE_URL=${baseURL} NEXT_PUBLIC_API_URL=${LOCAL_API_URL} API_URL=${LOCAL_API_URL} ${COMMON} ${FLAGS[partition]} npm run dev -- --hostname 127.0.0.1 -p ${port}`,
       url: baseURL,
       reuseExistingServer: false,
       timeout: 120_000,
