@@ -1,8 +1,12 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { expect, test, type BrowserContext } from '@playwright/test';
 
-const APP = 'http://localhost:3000';
 const BACKEND_PORT = 8000;
+
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
 
 async function withBackend(
   handler: (req: IncomingMessage, res: ServerResponse, body: string) => void,
@@ -25,10 +29,10 @@ async function withBackend(
   }
 }
 
-async function seedClientCookies(context: BrowserContext, access = 'stale-access', refresh = 'valid-refresh') {
+async function seedClientCookies(context: BrowserContext, appURL: string, access = 'stale-access', refresh = 'valid-refresh') {
   await context.addCookies([
-    { name: 'itrix_client_at', value: access, url: APP, httpOnly: true, sameSite: 'Lax' },
-    { name: 'itrix_client_rt', value: refresh, url: APP, httpOnly: true, sameSite: 'Lax' },
+    { name: 'itrix_client_at', value: access, url: appURL, httpOnly: true, sameSite: 'Lax' },
+    { name: 'itrix_client_rt', value: refresh, url: appURL, httpOnly: true, sameSite: 'Lax' },
   ]);
 }
 
@@ -43,8 +47,9 @@ function threadPayload(id: string) {
 
 test.describe.configure({ mode: 'serial' });
 
-test('401 refreshes exactly once, replays the same thread request, and rotates the client session', async ({ context }) => {
-  await seedClientCookies(context);
+test('401 refreshes exactly once, replays the same thread request, and rotates the client session', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
+  await seedClientCookies(context, appURL);
   let threadCalls = 0;
   let refreshCalls = 0;
   const authSeen: string[] = [];
@@ -79,7 +84,7 @@ test('401 refreshes exactly once, replays the same thread request, and rotates t
     res.statusCode = 404;
     res.end();
   }, async () => {
-    const response = await context.request.get(`${APP}/api/threads/thread-refresh`, {
+    const response = await context.request.get(`${appURL}/api/threads/thread-refresh`, {
       headers: { 'X-Request-ID': 'browser-refresh-123' },
     });
     expect(response.status()).toBe(200);
@@ -91,14 +96,15 @@ test('401 refreshes exactly once, replays the same thread request, and rotates t
     expect(authSeen).toEqual(['Bearer stale-access', 'Bearer fresh-access']);
     expect(requestIds).toEqual(['browser-refresh-123', 'browser-refresh-123']);
 
-    const cookies = await context.cookies(APP);
+    const cookies = await context.cookies(appURL);
     expect(cookies.find((c) => c.name === 'itrix_client_at')?.value).toBe('fresh-access');
     expect(cookies.find((c) => c.name === 'itrix_client_rt')?.value).toBe('rotated-refresh');
   });
 });
 
-test('403 never triggers refresh', async ({ context }) => {
-  await seedClientCookies(context);
+test('403 never triggers refresh', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
+  await seedClientCookies(context, appURL);
   let refreshCalls = 0;
   let threadCalls = 0;
   await withBackend((req, res) => {
@@ -119,15 +125,16 @@ test('403 never triggers refresh', async ({ context }) => {
     res.statusCode = 404;
     res.end();
   }, async () => {
-    const response = await context.request.get(`${APP}/api/threads/thread-forbidden`);
+    const response = await context.request.get(`${appURL}/api/threads/thread-forbidden`);
     expect(response.status()).toBe(403);
     expect(threadCalls).toBe(1);
     expect(refreshCalls).toBe(0);
   });
 });
 
-test('429 preserves RATE_LIMITED, Retry-After, and backend request id', async ({ context }) => {
-  await seedClientCookies(context, 'valid-access');
+test('429 preserves RATE_LIMITED, Retry-After, and backend request id', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
+  await seedClientCookies(context, appURL, 'valid-access');
   await withBackend((req, res) => {
     if (req.url === '/api/v1/threads/thread-rate/turns/') {
       res.statusCode = 429;
@@ -140,7 +147,7 @@ test('429 preserves RATE_LIMITED, Retry-After, and backend request id', async ({
     res.statusCode = 404;
     res.end();
   }, async () => {
-    const response = await context.request.post(`${APP}/api/threads/thread-rate/turns`, {
+    const response = await context.request.post(`${appURL}/api/threads/thread-rate/turns`, {
       data: { body: 'hello' },
       headers: { 'X-Request-ID': 'browser-rate-123' },
     });
@@ -153,8 +160,9 @@ test('429 preserves RATE_LIMITED, Retry-After, and backend request id', async ({
   });
 });
 
-test('safe backend generation and availability codes survive the BFF without internal leakage', async ({ context }) => {
-  await seedClientCookies(context, 'valid-access');
+test('safe backend generation and availability codes survive the BFF without internal leakage', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
+  await seedClientCookies(context, appURL, 'valid-access');
   const cases = [
     ['thread-missing', 404, 'THREAD_NOT_FOUND_OR_INACCESSIBLE'],
     ['thread-service', 503, 'SERVICE_UNAVAILABLE'],
@@ -177,7 +185,7 @@ test('safe backend generation and availability codes survive the BFF without int
     res.end(JSON.stringify({ detail: 'safe detail', code, retryable: true, internalStack: 'must not be forwarded specially' }));
   }, async () => {
     for (const [id, status, code] of cases) {
-      const response = await context.request.post(`${APP}/api/threads/${id}/turns`, { data: { body: 'x' } });
+      const response = await context.request.post(`${appURL}/api/threads/${id}/turns`, { data: { body: 'x' } });
       expect(response.status()).toBe(status);
       const body = await response.json();
       expect(body).toMatchObject({ code, detail: 'safe detail', requestId: `req-${id}` });
@@ -186,8 +194,9 @@ test('safe backend generation and availability codes survive the BFF without int
   });
 });
 
-test('retry pending is 202 and distinct from model-generation failure', async ({ context }) => {
-  await seedClientCookies(context, 'valid-access');
+test('retry pending is 202 and distinct from model-generation failure', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
+  await seedClientCookies(context, appURL, 'valid-access');
   let mode: 'pending' | 'failed' = 'pending';
   await withBackend((req, res) => {
     if (req.url !== '/api/v1/threads/thread-retry/retry/') {
@@ -204,12 +213,12 @@ test('retry pending is 202 and distinct from model-generation failure', async ({
     res.statusCode = 503;
     res.end(JSON.stringify({ detail: 'saved but generation failed', code: 'MODEL_GENERATION_FAILED', retryable: true }));
   }, async () => {
-    const pending = await context.request.post(`${APP}/api/threads/thread-retry/retry`);
+    const pending = await context.request.post(`${appURL}/api/threads/thread-retry/retry`);
     expect(pending.status()).toBe(202);
     expect(await pending.json()).toMatchObject({ pending: true, code: 'GENERATION_ALREADY_IN_PROGRESS' });
 
     mode = 'failed';
-    const failed = await context.request.post(`${APP}/api/threads/thread-retry/retry`);
+    const failed = await context.request.post(`${appURL}/api/threads/thread-retry/retry`);
     expect(failed.status()).toBe(503);
     expect(await failed.json()).toMatchObject({ code: 'MODEL_GENERATION_FAILED' });
   });

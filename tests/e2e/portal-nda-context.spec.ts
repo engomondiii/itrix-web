@@ -1,7 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
-async function stubPortal(page: Page, documentOverrides: Record<string, unknown> = {}, ndaReply?: { status: number; body: unknown }) {
-  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: 'http://localhost:3000' }]);
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
+
+async function stubPortal(page: Page, appURL: string, documentOverrides: Record<string, unknown> = {}, ndaReply?: { status: number; body: unknown }) {
+  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: appURL }]);
   await page.route('**/api/portal/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     const json = (body: unknown, status = 200) => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
@@ -14,8 +19,8 @@ async function stubPortal(page: Page, documentOverrides: Record<string, unknown>
   });
 }
 
-test('backend context-required response stays editable and is not treated as an NDA request success', async ({ page }) => {
-  await stubPortal(page, {}, { status: 400, body: { contextRequired: true, detail: 'Please add more workload context.' } });
+test('backend context-required response stays editable and is not treated as an NDA request success', async ({ page, baseURL }) => {
+  await stubPortal(page, requireBaseURL(baseURL), {}, { status: 400, body: { contextRequired: true, detail: 'Please add more workload context.' } });
   await page.goto('/workspace/documents');
 
   await page.getByLabel('Problem or challenge').fill('Observation overhead');
@@ -27,8 +32,8 @@ test('backend context-required response stays editable and is not treated as an 
   await expect(page.getByRole('button', { name: 'Request an NDA' })).toBeEnabled();
 });
 
-test('existing non-confidential NDA context is reused without being silently submitted', async ({ page }) => {
-  await stubPortal(page, {
+test('existing non-confidential NDA context is reused without being silently submitted', async ({ page, baseURL }) => {
+  await stubPortal(page, requireBaseURL(baseURL), {
     ndaContextPresent: true,
     ndaProblemContext: 'Existing observation problem',
     ndaWorkloadContext: 'Inference workload A',
@@ -44,8 +49,8 @@ test('existing non-confidential NDA context is reused without being silently sub
   await expect(page.getByRole('button', { name: 'Request an NDA' })).toBeVisible();
 });
 
-test('NDA form is keyboard reachable and exposes validation as an alert', async ({ page }) => {
-  await stubPortal(page);
+test('NDA form is keyboard reachable and exposes validation as an alert', async ({ page, baseURL }) => {
+  await stubPortal(page, requireBaseURL(baseURL));
   await page.goto('/workspace/documents');
 
   const request = page.getByRole('button', { name: 'Request an NDA' });

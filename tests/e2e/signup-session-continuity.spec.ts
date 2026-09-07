@@ -1,9 +1,13 @@
 import { createServer } from 'node:http';
 import { expect, test } from '@playwright/test';
 
-const APP = 'http://localhost:3000';
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
 
-test('the app-generated anonymous visitor binding is forwarded unchanged when registration is accepted', async ({ context }) => {
+test('the app-generated anonymous visitor binding is forwarded unchanged when registration is accepted', async ({ context, baseURL }) => {
+  const appURL = requireBaseURL(baseURL);
   const seenBindings: Array<{ path: string; binding: string | undefined; cookie: string | undefined }> = [];
   const backend = createServer((req, res) => {
     seenBindings.push({
@@ -27,17 +31,17 @@ test('the app-generated anonymous visitor binding is forwarded unchanged when re
   try {
     // No visitor cookie is seeded here. The review BFF must generate its own signed
     // browser binding and persist it on the real browser context.
-    const qualify = await context.request.post(`${APP}/api/review/qualify`, {
+    const qualify = await context.request.post(`${appURL}/api/review/qualify`, {
       data: { sessionId: 'review-e2e', answers: {} },
     });
     expect(qualify.ok()).toBe(true);
 
-    const cookies = await context.cookies(APP);
+    const cookies = await context.cookies(appURL);
     const visitor = cookies.find((cookie) => cookie.name === 'itrix_visitor_session');
     expect(visitor?.value).toBeTruthy();
     expect(visitor?.httpOnly).toBe(true);
 
-    const registration = await context.request.post(`${APP}/api/auth/register`, {
+    const registration = await context.request.post(`${appURL}/api/auth/register`, {
       data: {
         email: 'continuity@example.com',
         password: 'correct horse battery staple',

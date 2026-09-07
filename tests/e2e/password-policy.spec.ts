@@ -116,7 +116,7 @@ test('the account-creation page uses the SAME rules (R52)', async ({ page }) => 
       }),
     }),
   );
-  await page.goto('/c/tok_policy/create-account');
+  await page.goto('/invite/tok_policy/create-account');
   await expect(page.locator('.password-rules__text')).toContainText('At least 12 characters');
   await expect(page.locator('.password-field__input').first()).toHaveAttribute('autocomplete', 'new-password');
 });

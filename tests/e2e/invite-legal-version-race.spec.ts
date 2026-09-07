@@ -73,7 +73,7 @@ test('invite stays on form, refreshes N+1 and requires fresh assent after legal 
     });
   });
 
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
   await expect(page.locator('.assent__label')).toContainText('v1.2');
 
   await page.getByLabel('Full name').fill('Sora Kim');
@@ -88,7 +88,7 @@ test('invite stays on form, refreshes N+1 and requires fresh assent after legal 
   expect(claims[0].assent?.find((row) => row.slug === 'terms')?.version).toBe('1.2');
 
   // The failed attempt did not navigate or turn into the generic invite fallback.
-  await expect(page).toHaveURL(new RegExp(`/c/${INVITE}/create-account$`));
+  await expect(page).toHaveURL(new RegExp(`/invite/${INVITE}/create-account$`));
   await expect(page.getByText('The legal terms changed while you were reviewing them.')).toBeVisible();
   await expect(page.locator('.assent__box')).not.toBeChecked();
   await expect.poll(() => instrumentReads).toBeGreaterThanOrEqual(2);
@@ -122,7 +122,7 @@ test('Korean invite race warning is localized through the shared legal error cop
     }),
   );
 
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
   await page.evaluate(() => localStorage.setItem('itrix-locale', JSON.stringify({ state: { locale: 'ko' }, version: 0 })));
   await page.reload();
 
