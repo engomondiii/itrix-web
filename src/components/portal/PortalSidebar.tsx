@@ -141,7 +141,7 @@ export function PortalSidebar() {
     <aside
       id="portal-sidebar"
       data-open={navOpen ? 'true' : undefined}
-      className="portal-sidebar sticky top-0 flex h-dvh w-60 shrink-0 flex-col gap-5 overflow-hidden border-r border-border-medium bg-surface px-4 py-6"
+      className="portal-sidebar sticky top-0 z-40 flex h-dvh w-60 shrink-0 flex-col gap-5 overflow-hidden border-r border-border-medium bg-surface px-4 py-6"
     >
       <Link href={routes.workspaceOverview} className="flex flex-col gap-1 px-3">
         <ItrixLogo width={112} priority />
@@ -154,7 +154,7 @@ export function PortalSidebar() {
         <SiteLocaleToggle compact />
       </div>
 
-      <nav className="flex flex-col gap-4" aria-label={locale === 'ko' ? '워크스페이스' : 'Workspace'}>
+      <nav className="flex min-h-0 shrink flex-col gap-4 overflow-y-auto" aria-label={locale === 'ko' ? '워크스페이스' : 'Workspace'}>
         {groups.map((group, gi) => (
           <div
             key={group[0].key}
@@ -208,7 +208,7 @@ export function PortalSidebar() {
         </button>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-24 flex-1 flex-col overflow-hidden">
         <PortalConversationList />
       </div>
 
