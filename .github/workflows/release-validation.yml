@@ -1,0 +1,74 @@
+name: Frontend release validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches:
+      - main
+      - mvp-release-hardening-20260907
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_PUBLIC_SITE_URL: https://web-ci.example.com
+  NEXT_PUBLIC_API_URL: https://api-ci.example.com/api/v1
+  API_URL: https://api-ci.example.com/api/v1
+  NEXT_PUBLIC_LEGAL_PUBLISHED: 'true'
+  NEXT_PUBLIC_ENABLE_OPEN_SIGNUP: 'true'
+  NEXT_PUBLIC_ENABLE_REALTIME: 'false'
+  NEXT_PUBLIC_ENABLE_MARKDOWN_TURNS: 'false'
+
+jobs:
+  release-validation:
+    name: frontend-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Source diff hygiene
+        run: git diff --check
+
+      - name: Focused production environment contract
+        run: npm run test:env
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Production build
+        run: npm run build
+
+      - name: Playwright discovery
+        run: npx playwright test --list
+
+      - name: Release matrix integrity
+        run: npm run test:e2e:matrix
+
+      - name: Full Playwright release matrix in Chromium
+        run: npm run test:e2e:release
