@@ -6,8 +6,13 @@ const VIEWPORTS = [
   { name: 'laptop-boundary', width: 1024, height: 768 },
 ] as const;
 
-async function stubPortal(page: Page, evaluation: PortalEvaluation | null = null) {
-  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: 'http://localhost:3000' }]);
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
+
+async function stubPortal(page: Page, appURL: string, evaluation: PortalEvaluation | null = null) {
+  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: appURL }]);
   await page.route('**/api/portal/**', (route) => {
     const path = new URL(route.request().url()).pathname;
     const json = (body: unknown) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
@@ -37,9 +42,9 @@ async function expectNoHorizontalOverflow(page: Page) {
 }
 
 for (const viewport of VIEWPORTS) {
-  test(`NDA documents surface remains usable at ${viewport.name}`, async ({ page }) => {
+  test(`NDA documents surface remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
     await page.setViewportSize(viewport);
-    await stubPortal(page);
+    await stubPortal(page, requireBaseURL(baseURL));
     await page.goto('/workspace/documents');
 
     await expect(page.getByRole('heading', { name: 'Documents' }).last()).toBeVisible();
@@ -50,9 +55,9 @@ for (const viewport of VIEWPORTS) {
     await expectNoHorizontalOverflow(page);
   });
 
-  test(`controlled ASTOP evaluation remains usable at ${viewport.name}`, async ({ page }) => {
+  test(`controlled ASTOP evaluation remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
     await page.setViewportSize(viewport);
-    await stubPortal(page, {
+    await stubPortal(page, requireBaseURL(baseURL), {
       exists: true,
       kind: 'astop',
       stage: 'controlled_evaluation',
@@ -68,9 +73,9 @@ for (const viewport of VIEWPORTS) {
     await expectNoHorizontalOverflow(page);
   });
 
-  test(`ALPHA Compute assessment remains usable at ${viewport.name}`, async ({ page }) => {
+  test(`ALPHA Compute assessment remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
     await page.setViewportSize(viewport);
-    await stubPortal(page, {
+    await stubPortal(page, requireBaseURL(baseURL), {
       exists: true,
       kind: 'alpha_compute',
       stage: 'in_progress',

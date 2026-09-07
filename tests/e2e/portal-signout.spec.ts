@@ -2,8 +2,13 @@ import { expect, test } from '@playwright/test';
 
 const ACCESS_COOKIE = 'itrix_client_at';
 
-test('Sign out clears the client session and the protected workspace cannot remain accessible', async ({ page, context }) => {
-  await context.addCookies([{ name: ACCESS_COOKIE, value: 'e2e-session', url: 'http://localhost:3000' }]);
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
+
+test('Sign out clears the client session and the protected workspace cannot remain accessible', async ({ page, context, baseURL }) => {
+  await context.addCookies([{ name: ACCESS_COOKIE, value: 'e2e-session', url: requireBaseURL(baseURL) }]);
 
   await page.route('**/api/portal/auth/me', (route) => route.fulfill({
     status: 200,

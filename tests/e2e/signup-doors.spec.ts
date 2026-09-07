@@ -71,7 +71,7 @@ test('invitation-code option hands off to the existing assent-gated flow', async
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ usable: true, redeemUrl: '/c/tok_handoff/create-account' }),
+      body: JSON.stringify({ usable: true, redeemUrl: '/invite/tok_handoff/create-account' }),
     }),
   );
 

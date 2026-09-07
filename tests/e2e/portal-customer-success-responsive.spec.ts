@@ -3,8 +3,13 @@ import { expect, test, type Page } from '@playwright/test';
 const LONG_NAME = 'Alexandria Maximiliana von Example-Smith the Third';
 const LONG_ORG = 'International Consortium for Extremely Long Computational Infrastructure Organization Names';
 
-async function stubCustomerPortal(page: Page) {
-  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: 'http://localhost:3000' }]);
+function requireBaseURL(baseURL: string | undefined) {
+  if (!baseURL) throw new Error('Playwright baseURL is required');
+  return baseURL;
+}
+
+async function stubCustomerPortal(page: Page, appURL: string) {
+  await page.context().addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: appURL }]);
   await page.route('**/api/portal/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
     const json = (body: unknown) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
@@ -67,9 +72,9 @@ const VIEWPORTS = [
 ];
 
 for (const viewport of VIEWPORTS) {
-  test(`ASTOP Customer Success remains usable at ${viewport.name}`, async ({ page }) => {
+  test(`ASTOP Customer Success remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await stubCustomerPortal(page);
+    await stubCustomerPortal(page, requireBaseURL(baseURL));
     await page.goto('/workspace/success');
 
     await expect(page.getByRole('heading', { name: 'ASTOP customer success' })).toBeVisible();
@@ -102,8 +107,8 @@ for (const viewport of VIEWPORTS) {
   });
 }
 
-test('Customer Success locale control switches governed state copy to Korean without raw enum leakage', async ({ page }) => {
-  await stubCustomerPortal(page);
+test('Customer Success locale control switches governed state copy to Korean without raw enum leakage', async ({ page, baseURL }) => {
+  await stubCustomerPortal(page, requireBaseURL(baseURL));
   await page.goto('/workspace/success');
   await page.getByRole('button', { name: '한국어로 전환' }).first().click();
   await expect(page.getByRole('heading', { name: 'ASTOP 고객 성공' })).toBeVisible();
@@ -116,9 +121,9 @@ test('Customer Success locale control switches governed state copy to Korean wit
   await expect(page.getByText('워크스페이스', { exact: true }).first()).toBeVisible();
 });
 
-test('long customer name and organization do not create horizontal overflow', async ({ page }) => {
+test('long customer name and organization do not create horizontal overflow', async ({ page, baseURL }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await stubCustomerPortal(page);
+  await stubCustomerPortal(page, requireBaseURL(baseURL));
   await page.goto('/workspace/settings');
   await expect(page.getByLabel('Full name')).toHaveValue(LONG_NAME);
   await expect(page.getByLabel('Organization')).toHaveValue(LONG_ORG);

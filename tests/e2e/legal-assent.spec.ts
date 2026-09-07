@@ -62,7 +62,7 @@ test('no assent is required to send the first turn', async ({ page }) => {
 
 test('the checkbox is unticked by default and names both instruments with versions', async ({ page }) => {
   await stubJourney(page);
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
 
   const box = page.locator('.assent__box');
   await expect(box).toBeVisible();
@@ -78,7 +78,7 @@ test('the checkbox is unticked by default and names both instruments with versio
 
 test('the links open the actual documents in a new tab', async ({ page }) => {
   await stubJourney(page);
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
 
   const terms = page.locator('.assent__label a', { hasText: 'Terms of Service' });
   await expect(terms).toHaveAttribute('href', '/terms');
@@ -95,7 +95,7 @@ test('account creation is blocked without an affirmative tick', async ({ page })
     return route.fulfill({ status: 200, contentType: 'application/json', body: '{}' });
   });
 
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
   await page.getByLabel('Email address').fill('sora@example.com');
@@ -127,7 +127,7 @@ test('assent versions travel inside the invite claim payload', async ({ page }) 
     });
   });
 
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
 
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
@@ -194,7 +194,7 @@ test('invite creation makes NO request to the client-plane assent endpoint', asy
     });
   });
 
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
 
   await page.getByLabel('Full name').fill('Sora Kim');
   await page.getByLabel('Company / organization').fill('Example Corp');
@@ -217,7 +217,7 @@ test('invite creation makes NO request to the client-plane assent endpoint', asy
 
 test('the checkbox is not bundled with a marketing consent', async ({ page }) => {
   await stubJourney(page);
-  await page.goto(`/c/${INVITE}/create-account`);
+  await page.goto(`/invite/${INVITE}/create-account`);
   /* One box, one meaning. A combined agreement is an unprovable one. */
   await expect(page.locator('input[type="checkbox"]')).toHaveCount(1);
   await expect(page.locator('.assent__label')).not.toContainText('updates');

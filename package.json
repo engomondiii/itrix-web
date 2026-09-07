@@ -8,8 +8,16 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:env": "playwright test tests/e2e/production-env-validation.spec.ts --config=playwright.bff.config.ts",
     "test:e2e": "playwright test",
-    "test:e2e:retry": "playwright test tests/e2e/try-again-recovery.spec.ts"
+    "test:e2e:retry": "playwright test tests/e2e/try-again-recovery.spec.ts",
+    "test:e2e:matrix": "node scripts/verify-playwright-release-matrix.mjs",
+    "test:e2e:base": "playwright test --config=playwright.base.config.ts",
+    "test:e2e:bff": "playwright test --config=playwright.bff.config.ts",
+    "test:e2e:realtime": "playwright test --config=playwright.realtime.config.ts",
+    "test:e2e:adaptive": "playwright test --config=playwright.adaptive.config.ts",
+    "test:e2e:accessibility": "playwright test --config=playwright.accessibility.config.ts",
+    "test:e2e:release": "npm run test:e2e:matrix && npm run test:e2e:base && npm run test:e2e:bff && npm run test:e2e:realtime && npm run test:e2e:adaptive && npm run test:e2e:accessibility"
   },
   "dependencies": {
     "next": "16.3.3",

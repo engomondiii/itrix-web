@@ -1,0 +1,65 @@
+{
+  "base": [
+    "alpha-assessment-contract.spec.ts",
+    "alpha-baseline-wording.spec.ts",
+    "arrival-is-bare.spec.ts",
+    "artifact-deeplink-returns-to-thread.spec.ts",
+    "artifact-reference-card.spec.ts",
+    "astop-controlled-access.spec.ts",
+    "astop-customer-success-contract.spec.ts",
+    "carousel.spec.ts",
+    "composer-contract.spec.ts",
+    "content-pane-authorization.spec.ts",
+    "conversation-error-ux.spec.ts",
+    "human-reachable-every-state.spec.ts",
+    "keep-this-work.spec.ts",
+    "korean-naturalness.spec.ts",
+    "markdown-safety.spec.ts",
+    "mode-transition.spec.ts",
+    "new-chat-inherits-state.spec.ts",
+    "no-expansion-during-support-issue.spec.ts",
+    "no-navigation-on-submit.spec.ts",
+    "pane-never-holds-11-6a.spec.ts",
+    "public-product-governance.spec.ts",
+    "rail-authorization.spec.ts",
+    "send-keys.spec.ts",
+    "thread-switching.spec.ts"
+  ],
+  "bff": [
+    "attachment-any-format.spec.ts",
+    "auth-enumeration.spec.ts",
+    "auth-zone.spec.ts",
+    "conversation-bff-reliability.spec.ts",
+    "invite-legal-version-race.spec.ts",
+    "legal-assent.spec.ts",
+    "open-signup-legal-version-race.spec.ts",
+    "password-policy.spec.ts",
+    "password-reset.spec.ts",
+    "portal-conversation-localization.spec.ts",
+    "portal-nda-context.spec.ts",
+    "portal-signout.spec.ts",
+    "production-env-validation.spec.ts",
+    "signup-assent.spec.ts",
+    "signup-doors.spec.ts",
+    "signup-enumeration.spec.ts",
+    "signup-open.spec.ts",
+    "signup-session-continuity.spec.ts",
+    "try-again-recovery.spec.ts",
+    "verify-email.spec.ts"
+  ],
+  "realtime": [
+    "pending-indicator.spec.ts",
+    "streaming-settle.spec.ts"
+  ],
+  "adaptive": [
+    "no-repeat-intake.spec.ts",
+    "no-second-ask.spec.ts",
+    "suggestion-populates-not-submits.spec.ts"
+  ],
+  "accessibility": [
+    "conversation-rename-accessibility.spec.ts",
+    "mobile-contract.spec.ts",
+    "portal-controlled-workspace-responsive.spec.ts",
+    "portal-customer-success-responsive.spec.ts"
+  ]
+}

@@ -1,4 +1,7 @@
 import type { NextConfig } from 'next';
+import { validateFrontendProductionEnv } from './src/config/env.validation';
+
+validateFrontendProductionEnv(process.env);
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
