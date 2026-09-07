@@ -4,10 +4,10 @@ import { useCallback, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authApi } from '@/lib/api/authApi';
 import { useAuthCopy } from '@/lib/i18n/authLocale';
+import { useLegalErrorCopy } from '@/lib/i18n/legalErrorCopy';
 import { siteConfig } from '@/config/site.config';
 import { routes } from '@/constants/routes';
 import { trackEvent } from '@/lib/analytics/trackEvent';
-import { useLocaleStore } from '@/store/localeStore';
 import type { LegalInstrumentVersion } from '@/lib/api/legalApi';
 
 export interface RegisterPayload {
@@ -32,7 +32,7 @@ export interface UseSignUpResult {
 
 export function useSignUp(): UseSignUpResult {
   const authCopy = useAuthCopy();
-  const locale = useLocaleStore((s) => s.locale);
+  const legalErrorCopy = useLegalErrorCopy();
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,18 +74,14 @@ export function useSignUp(): UseSignUpResult {
 
       if (outcome.kind === 'legal_terms_changed') {
         setLegalTermsChanged(true);
-        setError(
-          locale === 'ko'
-            ? '검토하시는 동안 법적 약관이 변경되었습니다. 계속하기 전에 최신 버전을 다시 확인해 주세요.'
-            : 'The legal terms changed while you were reviewing them. Please review the latest version before continuing.',
-        );
+        setError(legalErrorCopy.termsChanged);
         return false;
       }
 
       setError(authCopy.signUp.serviceFailure);
       return false;
     },
-    [authCopy.signUp.serviceFailure, locale, router],
+    [authCopy.signUp.serviceFailure, legalErrorCopy.termsChanged, router],
   );
 
   const redeem = useCallback(
