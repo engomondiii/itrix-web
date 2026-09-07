@@ -139,7 +139,9 @@ test('rename is cancellable, server-persisted, and failure preserves the old tit
   await page.getByRole('menuitem', { name: 'Rename' }).click();
   await page.getByLabel('Conversation name').fill('Should not appear');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('alert')).toContainText('We could not rename that conversation just now.');
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'We could not rename that conversation just now.' }),
+  ).toContainText('We could not rename that conversation just now.');
   await expect(page.getByRole('link', { name: '한국어 · Persisted title!' })).toBeVisible();
   await expect(page.getByText('Internal detail must not render')).toHaveCount(0);
 });
@@ -160,7 +162,9 @@ test('delete requires confirmation, preserves rows on failure, and removes only 
   await openMenu(page, target);
   await page.getByRole('menuitem', { name: 'Delete' }).click();
   await page.getByRole('button', { name: 'Delete' }).last().click();
-  await expect(page.getByRole('alert')).toContainText('We could not delete that conversation just now.');
+  await expect(
+    page.getByRole('alert').filter({ hasText: 'We could not delete that conversation just now.' }),
+  ).toContainText('We could not delete that conversation just now.');
   await expect(page.getByRole('link', { name: target })).toBeVisible();
   await expect(page.getByText('Internal delete failure')).toHaveCount(0);
 
