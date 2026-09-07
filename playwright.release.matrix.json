@@ -32,6 +32,7 @@
     "conversation-bff-reliability.spec.ts",
     "invite-legal-version-race.spec.ts",
     "legal-assent.spec.ts",
+    "open-signup-legal-version-race.spec.ts",
     "password-policy.spec.ts",
     "password-reset.spec.ts",
     "portal-conversation-localization.spec.ts",
