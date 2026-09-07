@@ -13,37 +13,23 @@ interface ClaimBody {
   full_name?: string;
   organization?: string;
   role?: string;
-  /**
-   * v8.0 — the instrument versions the visitor was shown (Architecture v2.9 §19.10, R62).
-   *
-   * This proxy ALLOWLISTS the fields it forwards, so a new field does not arrive by
-   * accident — which is why adding assent to the payload means editing this file too. The
-   * backend stores its OWN versions and uses these only for a mismatch check: a difference
-   * means the visitor read something other than what binds them, and that is worth a loud
-   * log rather than a silent acceptance.
-   */
   assent?: { slug: string; version: string; effective: string }[];
 }
 
-/**
- * POST /api/accounts/invite/[token]/claim — reveal ③.
- * Consumes the single-use account-invite capability token: Django creates the
- * Client from the Lead, mints a client-JWT, and returns it. We store the JWT in an
- * httpOnly cookie server-side (never exposed to JS) and return the client profile.
- * The invite token is authoritative on the backend; a bad/expired/used token 4xxs.
- */
+type ClaimBackend = {
+  client?: InviteClaimResult['client'];
+  access?: string;
+  refresh?: string;
+  requiresPasswordSet?: boolean;
+  setPasswordToken?: string;
+  code?: string;
+};
+
 export async function POST(req: Request, ctx: { params: Promise<{ token: string }> }) {
   const { token } = await ctx.params;
   const body = (await req.json().catch(() => ({}))) as ClaimBody;
 
-  // Unauthenticated call (no client-JWT yet) — the invite token IS the credential.
-  const res = await djangoFetch<{
-    client: InviteClaimResult['client'];
-    access?: string;
-    refresh?: string;
-    requiresPasswordSet?: boolean;
-    setPasswordToken?: string;
-  }>(apiRoutes.accountInviteClaim(token), {
+  const res = await djangoFetch<ClaimBackend>(apiRoutes.accountInviteClaim(token), {
     method: 'POST',
     authed: false,
     body: {
@@ -56,19 +42,20 @@ export async function POST(req: Request, ctx: { params: Promise<{ token: string 
     },
   });
 
+  if (res.status === 409 && res.data?.code === 'LEGAL_TERMS_CHANGED') {
+    return NextResponse.json({ code: 'LEGAL_TERMS_CHANGED' }, { status: 409 });
+  }
   if (res.status === 404 || res.status === 403 || res.status === 410) {
     return NextResponse.json({ error: { detail: 'invite_invalid' } }, { status: 404 });
   }
-  if (!res.ok || !res.data) {
-    return NextResponse.json({ error: { detail: `invite_claim ${res.status}` } }, { status: 502 });
+  if (!res.ok || !res.data?.client) {
+    return NextResponse.json({ error: { detail: 'invite_claim_unavailable' } }, { status: 502 });
   }
 
-  // Store the minted client-JWT in httpOnly cookies (if issued at claim time).
   if (res.data.access) {
     await setClientSession({ accessToken: res.data.access, refreshToken: res.data.refresh ?? null });
   }
   if (res.data.requiresPasswordSet && res.data.setPasswordToken) {
-    // Keep the dedicated first-password capability out of URLs and browser JavaScript.
     await setPasswordSetCapability(res.data.setPasswordToken);
   }
 
