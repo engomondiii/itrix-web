@@ -92,6 +92,12 @@ jobs:
       - name: Release matrix integrity
         run: npm run test:e2e:matrix
 
+      - name: Focused workspace conversation management regression
+        run: >-
+          npx playwright test
+          tests/e2e/workspace-conversation-management.spec.ts
+          --config=playwright.bff.config.ts
+
       - name: Full Playwright release matrix in Chromium
         run: npm run test:e2e:release
 

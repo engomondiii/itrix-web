@@ -31,8 +31,8 @@ const FALLBACK: UseThreadResult = {
   select: () => {},
   switchTo: () => {},
   startNew: () => {},
-  rename: () => {},
-  remove: () => {},
+  rename: async () => false,
+  remove: async () => false,
   refresh: () => {},
 };
 

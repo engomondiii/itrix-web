@@ -45,7 +45,8 @@
     "signup-open.spec.ts",
     "signup-session-continuity.spec.ts",
     "try-again-recovery.spec.ts",
-    "verify-email.spec.ts"
+    "verify-email.spec.ts",
+    "workspace-conversation-management.spec.ts"
   ],
   "realtime": [
     "pending-indicator.spec.ts",

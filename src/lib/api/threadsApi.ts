@@ -119,6 +119,31 @@ export const threadsApi = {
     }
   },
 
+  /** Persist a conversation title on the server. */
+  async rename(threadId: string, title: string): Promise<ApiResult<null>> {
+    const requestId = newConversationRequestId();
+    try {
+      const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}`, {
+        method: 'PATCH',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-Request-ID': requestId,
+        },
+        body: JSON.stringify({ title }),
+      });
+      if (!res.ok) {
+        const failure = await conversationFailureFromResponse(res, requestId);
+        return { data: null, error: failure.detail, failure };
+      }
+      return { data: null, error: null, failure: null };
+    } catch (e) {
+      const failure = networkConversationFailure(requestId);
+      return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
+    }
+  },
+
   /**
    * Delete a thread on the SERVER, session-authorized by Django.
    *
