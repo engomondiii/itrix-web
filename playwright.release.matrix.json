@@ -37,6 +37,7 @@
     "portal-conversation-localization.spec.ts",
     "portal-nda-context.spec.ts",
     "portal-signout.spec.ts",
+    "production-env-validation.spec.ts",
     "signup-assent.spec.ts",
     "signup-doors.spec.ts",
     "signup-enumeration.spec.ts",
