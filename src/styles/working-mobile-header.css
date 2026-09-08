@@ -104,7 +104,10 @@
   .working-mobile-header__language-menu {
     position: absolute;
     top: calc(100% + 8px);
-    right: 0;
+    /* Align the menu's right edge with the header's right content edge, beyond the
+       adjacent 44px navigation control. This keeps a 296px menu inside a 320px
+       viewport instead of letting a centre-anchored popover spill off the left. */
+    right: calc(-44px - 8px);
     z-index: 80;
     width: min(272px, calc(100vw - 24px));
     max-height: min(70dvh, 360px);
@@ -181,6 +184,7 @@
     padding-inline: 7px;
   }
   .working-mobile-header__language-trigger svg { display: none; }
+  .working-mobile-header__language-menu { right: calc(-44px - 6px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
