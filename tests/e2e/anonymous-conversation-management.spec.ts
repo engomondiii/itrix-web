@@ -22,16 +22,21 @@ function submitResult(row: Row, body: string) {
 async function stubAnonymousConversationApi(page: Page): Promise<AnonymousState> {
   const state: AnonymousState = { rows: [], next: 1, failRename: false, failDelete: false };
 
-  await page.route('**/api/shell*', (route) => route.fulfill({
-    status: 200,
-    contentType: 'application/json',
-    body: JSON.stringify({
-      shellMode: 'working', journeyState: 2, relationshipState: 'visitor',
-      conversationRailSections: ['new_chat', 'conversations', 'account'],
-      contentPaneSections: [],
-      conversationHeader: { title: 'Review', stateLabel: 'Review', quickHelp: false },
-    }),
-  }));
+  await page.route('**/api/shell*', (route) => {
+    const working = state.rows.length > 0;
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        shellMode: working ? 'working' : 'arrival',
+        journeyState: working ? 2 : 1,
+        relationshipState: 'visitor',
+        conversationRailSections: working ? ['new_chat', 'conversations', 'account'] : [],
+        contentPaneSections: [],
+        conversationHeader: working ? { title: 'Review', stateLabel: 'Review', quickHelp: false } : null,
+      }),
+    });
+  });
 
   await page.route('**/api/threads**', async (route) => {
     const request = route.request();
@@ -97,8 +102,13 @@ async function stubAnonymousConversationApi(page: Page): Promise<AnonymousState>
   return state;
 }
 
+function railSheet(page: Page) {
+  return page.locator('.rail-sheet');
+}
+
 async function startChat(page: Page, text: string) {
   await page.goto('/');
+  await expect(page.locator('.arrival-page')).toBeVisible();
   const composer = page.locator('textarea.composer-textarea');
   await expect(composer).toBeVisible();
   await composer.fill(text);
@@ -110,21 +120,21 @@ async function openRail(page: Page) {
   const nav = page.getByTestId('working-mobile-header').locator('.working-mobile-header__nav');
   await expect(nav).toBeVisible();
   await nav.click();
-  await expect(page.locator('.rail-sheet')).toBeVisible();
+  await expect(railSheet(page)).toBeVisible();
 }
 
 async function closeRail(page: Page) {
-  await page.getByRole('button', { name: 'Close navigation' }).click();
-  await expect(page.locator('.rail-sheet')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(railSheet(page)).toHaveCount(0);
 }
 
 async function openRename(page: Page, title: string) {
-  await page.getByRole('button', { name: `Rename “${title}”` }).click();
+  await railSheet(page).getByRole('button', { name: `Rename “${title}”` }).click();
   await expect(page.getByRole('dialog', { name: 'Rename conversation' })).toBeVisible();
 }
 
 async function openDelete(page: Page, title: string) {
-  await page.getByRole('button', { name: `Delete “${title}”` }).click();
+  await railSheet(page).getByRole('button', { name: `Delete “${title}”` }).click();
   await expect(page.getByRole('dialog', { name: 'Delete' })).toBeVisible();
 }
 
@@ -139,23 +149,23 @@ test('anonymous visitor management persists across refresh and active delete ret
 
   await page.getByLabel('Conversation name').fill('  한국어 · Persisted anonymous title  ');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-anonymous-renamed.png'), fullPage: false });
   expect(state.rows.find((row) => row.id === 'anon-thread-1')?.title).toBe('한국어 · Persisted anonymous title');
 
   await closeRail(page);
   await page.reload();
   await openRail(page);
-  await expect(page.getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: /New chat/i }).click();
+  await railSheet(page).getByRole('button', { name: /New chat/i }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.locator('textarea.composer-textarea').fill('Second anonymous conversation');
   await page.locator('textarea.composer-textarea').press('Enter');
   await expect(page).toHaveURL(/\/review\/anon-thread-2$/);
 
   await openRail(page);
-  await page.getByRole('button', { name: /New chat/i }).click();
+  await railSheet(page).getByRole('button', { name: /New chat/i }).click();
   await page.locator('textarea.composer-textarea').fill('Third anonymous conversation');
   await page.locator('textarea.composer-textarea').press('Enter');
   await expect(page).toHaveURL(/\/review\/anon-thread-3$/);
@@ -163,23 +173,23 @@ test('anonymous visitor management persists across refresh and active delete ret
   /* Delete the inactive second conversation and prove a refresh cannot restore it. */
   await openRail(page);
   await openDelete(page, 'Anonymous conversation 2');
-  await page.getByRole('button', { name: 'Delete', exact: true }).last().click();
-  await expect(page.getByText('Anonymous conversation 2', { exact: true })).toHaveCount(0);
+  await page.getByRole('dialog', { name: 'Delete' }).getByRole('button', { name: 'Delete', exact: true }).click();
+  await expect(railSheet(page).getByText('Anonymous conversation 2', { exact: true })).toHaveCount(0);
   await closeRail(page);
   await page.reload();
   await openRail(page);
-  await expect(page.getByText('Anonymous conversation 2', { exact: true })).toHaveCount(0);
+  await expect(railSheet(page).getByText('Anonymous conversation 2', { exact: true })).toHaveCount(0);
   expect(state.rows.some((row) => row.id === 'anon-thread-2')).toBe(false);
 
   /* Delete the active third conversation. One survivor remains, so `/` is the
      canonical empty WorkingShell state rather than a dead /review/<id> route. */
   await openDelete(page, 'Anonymous conversation 3');
-  await page.getByRole('button', { name: 'Delete', exact: true }).last().click();
+  await page.getByRole('dialog', { name: 'Delete' }).getByRole('button', { name: 'Delete', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByTestId('working-mobile-header')).toBeVisible();
   await openRail(page);
-  await expect(page.getByText('Anonymous conversation 3', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).getByText('Anonymous conversation 3', { exact: true })).toHaveCount(0);
+  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-anonymous-after-delete.png'), fullPage: false });
 });
 
@@ -193,16 +203,18 @@ test('anonymous management failure never creates false local success or raw erro
   await openRename(page, 'Anonymous conversation 1');
   await page.getByLabel('Conversation name').fill('Must not appear');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('alert')).toContainText('We could not rename that conversation just now.');
-  await expect(page.getByText('Anonymous conversation 1', { exact: true })).toBeVisible();
+  const renameDialog = page.getByRole('dialog', { name: 'Rename conversation' });
+  await expect(renameDialog.getByRole('alert')).toContainText('We could not rename that conversation just now.');
+  await expect(railSheet(page).getByText('Anonymous conversation 1', { exact: true })).toBeVisible();
   await expect(page.getByText('Internal rename detail must not render')).toHaveCount(0);
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  await renameDialog.getByRole('button', { name: 'Cancel' }).click();
 
   state.failDelete = true;
   await openDelete(page, 'Anonymous conversation 1');
-  await page.getByRole('button', { name: 'Delete', exact: true }).last().click();
-  await expect(page.getByRole('alert')).toContainText('We could not delete that conversation just now.');
-  await expect(page.getByText('Anonymous conversation 1', { exact: true })).toBeVisible();
+  const deleteDialog = page.getByRole('dialog', { name: 'Delete' });
+  await deleteDialog.getByRole('button', { name: 'Delete', exact: true }).click();
+  await expect(deleteDialog.getByRole('alert')).toContainText('We could not delete that conversation just now.');
+  await expect(railSheet(page).getByText('Anonymous conversation 1', { exact: true })).toBeVisible();
   await expect(page.getByText('Internal delete detail must not render')).toHaveCount(0);
   expect(state.rows).toHaveLength(1);
 });
