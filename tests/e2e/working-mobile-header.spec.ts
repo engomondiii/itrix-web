@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const now = '2026-09-08T08:00:00.000Z';
 const PHONE_VIEWPORTS = [
@@ -22,6 +22,9 @@ function firstTurn(threadId: string, body: string) {
 
 async function stubWorkingConversation(page: Page) {
   const row = { id: 'thread-mobile-header', title: 'Mobile working review', createdAt: now, lastActivityAt: now };
+  let created = false;
+  let openingBody = 'Start';
+
   await page.route('**/api/shell*', (route) => route.fulfill({
     status: 200,
     contentType: 'application/json',
@@ -34,23 +37,25 @@ async function stubWorkingConversation(page: Page) {
   }));
   await page.route('**/api/threads**', async (route) => {
     const request = route.request();
-    const url = new URL(request.url());
-    const path = url.pathname;
+    const path = new URL(request.url()).pathname;
     if (path === '/api/threads' && request.method() === 'GET') {
-      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ threads: [row] }) });
-    }
-    if (path === '/api/threads' && request.method() === 'POST') {
-      const body = (request.postDataJSON() as { body?: string }).body ?? 'Start';
-      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(firstTurn(row.id, body)) });
-    }
-    if (path === `/api/threads/${row.id}` && request.method() === 'GET') {
       return route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ ...row, turns: firstTurn(row.id, 'Start').visitorTurn ? [
-          firstTurn(row.id, 'Start').visitorTurn,
-          firstTurn(row.id, 'Start').itrixTurn,
-        ] : [] }),
+        body: JSON.stringify({ threads: created ? [row] : [] }),
+      });
+    }
+    if (path === '/api/threads' && request.method() === 'POST') {
+      openingBody = (request.postDataJSON() as { body?: string }).body ?? 'Start';
+      created = true;
+      return route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(firstTurn(row.id, openingBody)) });
+    }
+    if (path === `/api/threads/${row.id}` && request.method() === 'GET' && created) {
+      const result = firstTurn(row.id, openingBody);
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ ...row, turns: [result.visitorTurn, result.itrixTurn], artifacts: [], cards: [] }),
       });
     }
     return route.fallback();
@@ -59,6 +64,7 @@ async function stubWorkingConversation(page: Page) {
 
 async function startConversation(page: Page) {
   await page.goto('/');
+  await expect(page.getByTestId('working-mobile-header')).toBeHidden();
   const composer = page.locator('textarea.composer-textarea');
   await composer.fill('Make this working conversation usable on mobile.');
   await composer.press('Enter');
@@ -144,6 +150,7 @@ for (const viewport of PHONE_VIEWPORTS) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await stubWorkingConversation(page);
     await page.goto('/');
+    await expect(page.getByTestId('working-mobile-header')).toBeHidden();
 
     if (viewport.width === 390) {
       await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-arrival-before-chat.png'), fullPage: false });
