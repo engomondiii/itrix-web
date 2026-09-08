@@ -53,12 +53,12 @@ for (const vp of WIDTHS) {
       expect((composer?.x ?? 0) + (composer?.width ?? 0)).toBeLessThanOrEqual(vp.width + 1);
     });
 
-    test('no rail and no navigation', async ({ page }) => {
+    test('no rail and no product navigation', async ({ page }) => {
       await page.goto('/');
       await expect(page.locator('.conversation-rail')).toHaveCount(0);
       await expect(page.locator('.working-shell')).toHaveCount(0);
-      /* The retired v5.0 chrome, by class, so a reinstated component fails here
-         rather than in a visual review three weeks later. */
+      /* The retired v5.0 product chrome stays gone. The mobile arrival menu only
+         reflows the existing language/account controls; it adds no product links. */
       await expect(page.locator('.arrival-nav')).toHaveCount(0);
       await expect(page.locator('.arrival-rail')).toHaveCount(0);
       await expect(page.locator('.arrival-footer')).toHaveCount(0);
@@ -66,6 +66,11 @@ for (const vp of WIDTHS) {
 
     test('the only outbound links are Sign in, Sign up and the four instruments', async ({ page }) => {
       await page.goto('/');
+      /* Below desktop, the same two account links are deliberately housed in the
+         compact presentation menu, so open it before asserting their destinations. */
+      if (vp.width < 1024) {
+        await page.locator('.arrival-mobile-menu__trigger').click();
+      }
       const hrefs = await page.locator('a[href]').evaluateAll((els) =>
         els.map((el) => (el as HTMLAnchorElement).getAttribute('href') ?? ''),
       );
