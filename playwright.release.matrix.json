@@ -2,6 +2,7 @@
   "base": [
     "alpha-assessment-contract.spec.ts",
     "alpha-baseline-wording.spec.ts",
+    "anonymous-conversation-management.spec.ts",
     "arrival-is-bare.spec.ts",
     "artifact-deeplink-returns-to-thread.spec.ts",
     "artifact-reference-card.spec.ts",
@@ -62,6 +63,7 @@
     "mobile-contract.spec.ts",
     "mobile-responsive-polish.spec.ts",
     "portal-controlled-workspace-responsive.spec.ts",
-    "portal-customer-success-responsive.spec.ts"
+    "portal-customer-success-responsive.spec.ts",
+    "working-mobile-header.spec.ts"
   ]
 }

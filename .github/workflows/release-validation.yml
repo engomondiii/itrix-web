@@ -92,6 +92,37 @@ jobs:
       - name: Release matrix integrity
         run: npm run test:e2e:matrix
 
+      - name: Focused working mobile shell header hotfix
+        run: >-
+          npx playwright test
+          tests/e2e/working-mobile-header.spec.ts
+          --config=playwright.accessibility.config.ts
+          --project=chromium-desktop
+
+      - name: Upload working-shell mobile review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: working-mobile-header-review-${{ github.run_id }}
+          path: test-results/**/hotfix-review-*.png
+          if-no-files-found: warn
+          retention-days: 3
+
+      - name: Focused anonymous conversation management hotfix
+        run: >-
+          npx playwright test
+          tests/e2e/anonymous-conversation-management.spec.ts
+          --config=playwright.base.config.ts
+
+      - name: Upload anonymous management review screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anonymous-conversation-management-review-${{ github.run_id }}
+          path: test-results/**/hotfix-review-*.png
+          if-no-files-found: warn
+          retention-days: 3
+
       - name: Focused mobile responsive polish regression
         run: >-
           npx playwright test

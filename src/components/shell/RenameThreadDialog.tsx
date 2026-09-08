@@ -3,30 +3,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { useCommonCopy } from '@/lib/i18n/commonLocale';
+import { useLocaleStore } from '@/store/localeStore';
 
 /**
  * RENAMING A CONVERSATION, IN A DIALOG.
  *
- * ── WHY THE INLINE INPUT HAD TO GO ──────────────────────────────────────────
- * The rail is a fixed, narrow column, and the input that used to replace the list
- * row inherited that width. A generated title is drawn from the visitor's own
- * opening sentence, so it is routinely 60–80 characters — far more than the field
- * could show. Editing meant scrolling a single-line input horizontally inside a
- * ~230px column, with no way to see the whole name you were changing.
- *
- * A dialog gets the full name on screen at a readable width. It also gives the
- * action a title and an explicit Cancel, so an accidental click is obvious and
- * recoverable rather than a blur away from a silent commit.
- *
- * ── WHAT IS DELIBERATELY PRESERVED ──────────────────────────────────────────
- * Enter saves, Escape cancels (the Modal already binds Escape), and an empty or
- * unchanged name is a no-op rather than an error — the same behaviour the inline
- * editor had. The name is selected on open so the common case, replacing it
- * wholesale, is still one keystroke away.
- *
- * A textarea rather than an input: a long title wraps instead of scrolling out of
- * sight, which is the entire point of moving this out of the rail. Enter is bound
- * to save, so the multi-line affordance never produces a multi-line title.
+ * The backend is authoritative. A successful Save closes the dialog and updates the
+ * local mirror; a failed Save leaves the old title intact and keeps the dialog open
+ * with a localized safe error. No server detail is rendered.
  */
 
 const MAX_LENGTH = 200;
@@ -35,7 +19,7 @@ export interface RenameThreadDialogProps {
   open: boolean;
   currentTitle: string;
   onClose: () => void;
-  onSave: (title: string) => void;
+  onSave: (title: string) => Promise<boolean>;
 }
 
 export function RenameThreadDialog({
@@ -45,15 +29,14 @@ export function RenameThreadDialog({
   onSave,
 }: RenameThreadDialogProps) {
   const copy = useCommonCopy();
+  const locale = useLocaleStore((state) => state.locale);
   const [draft, setDraft] = useState(currentTitle);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const ref = useRef<HTMLTextAreaElement | null>(null);
-
-  /* The draft is seeded from props by `useState` above and never re-synced by an
-     effect. THE CALLER MOUNTS THIS COMPONENT ONLY WHILE THE DIALOG IS OPEN, so each
-     open is a fresh mount with a fresh initial value — the same guarantee a sync
-     effect would give, without the cascading render it costs. It also means a
-     cancelled edit cannot leak into the next one, and a backend re-label mid-edit
-     cannot overwrite what the visitor is typing. */
+  const failure = locale === 'ko'
+    ? '지금은 해당 대화 이름을 변경할 수 없습니다. 잠시 후 다시 시도해 주세요.'
+    : 'We could not rename that conversation just now. Please try again.';
 
   useEffect(() => {
     if (!open) return;
@@ -63,11 +46,23 @@ export function RenameThreadDialog({
     el.select();
   }, [open]);
 
-  function commit() {
+  async function commit() {
+    if (saving) return;
     const next = draft.trim().replace(/\s+/g, ' ').slice(0, MAX_LENGTH);
-    /* Empty or unchanged is a no-op, not an error. */
-    if (next && next !== currentTitle) onSave(next);
-    onClose();
+    if (!next || next === currentTitle) {
+      onClose();
+      return;
+    }
+
+    setSaving(true);
+    setError(null);
+    const saved = await onSave(next);
+    if (saved) {
+      onClose();
+      return;
+    }
+    setSaving(false);
+    setError(failure);
   }
 
   return (
@@ -84,11 +79,12 @@ export function RenameThreadDialog({
           value={draft}
           rows={3}
           maxLength={MAX_LENGTH}
+          disabled={saving}
           onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
-              commit();
+              void commit();
             }
           }}
         />
@@ -96,16 +92,22 @@ export function RenameThreadDialog({
         <p className="rename-dialog__hint">
           {copy.renameHint(draft.trim().length, MAX_LENGTH)}
         </p>
+        {error ? <p role="alert">{error}</p> : null}
 
         <div className="rename-dialog__actions">
-          <button type="button" className="rename-dialog__cancel" onClick={onClose}>
+          <button
+            type="button"
+            className="rename-dialog__cancel"
+            disabled={saving}
+            onClick={onClose}
+          >
             {copy.cancel}
           </button>
           <button
             type="button"
             className="rename-dialog__save"
-            disabled={!draft.trim()}
-            onClick={commit}
+            disabled={saving || !draft.trim()}
+            onClick={() => { void commit(); }}
           >
             {copy.save}
           </button>

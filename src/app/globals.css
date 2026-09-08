@@ -58,3 +58,6 @@
 /* September 2026: final arrival polish is strictly sub-desktop and imported last
    so the existing mobile contract remains the baseline while 1024px+ stays frozen. */
 @import '../styles/mobile-polish.css';
+/* September 2026 working-shell hotfix: intentionally after the existing responsive
+   contracts, scoped to WorkingShell <1024px, with no ArrivalShell or desktop rules. */
+@import '../styles/working-mobile-header.css';
