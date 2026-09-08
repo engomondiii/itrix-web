@@ -6,6 +6,7 @@ import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { ConversationRail } from './ConversationRail';
 import { RailSheet } from './RailSheet';
+import { WorkingMobileHeader } from './WorkingMobileHeader';
 import { useRailStore } from '@/store/railStore';
 import { ContentPane } from '@/components/content-pane/ContentPane';
 import { PaneSheet } from '@/components/content-pane/PaneSheet';
@@ -81,10 +82,18 @@ export function WorkingShell({ children }: { children: ReactNode }) {
       </aside>
 
       <main id="content" className="conversation-main" data-pathname={pathname}>
+        {/* Below 1024px this is the one intentional shell-level header. It owns
+            identity, compact locale access and the single RailSheet opener in normal
+            layout flow. It is CSS-hidden above the breakpoint and therefore adds no
+            desktop geometry. */}
+        <WorkingMobileHeader />
+
+        {/* Desktop keeps its existing locale presentation byte-for-byte. The mobile
+            contract hides this detached control in favour of WorkingMobileHeader. */}
         <div className="working-shell__locale"><SiteLocaleToggle compact /></div>
-        {/* The only way to reach the rail once it becomes a sheet. The
-            conversation header also carries one, but marketing routes have no
-            header — so this lives at the shell level. */}
+        {/* Desktop keeps the existing shell-level rail opener contract. On mobile it
+            is hidden because WorkingMobileHeader is the sole opener; keeping the node
+            avoids changing desktop/route-specific behavior. */}
         <button
           type="button"
           className="conversation-main__nav"
