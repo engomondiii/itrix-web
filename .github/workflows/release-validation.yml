@@ -99,12 +99,6 @@ jobs:
           --config=playwright.accessibility.config.ts
           --project=chromium-desktop
 
-      - name: Focused arrival responsive contract
-        run: >-
-          npx playwright test
-          tests/e2e/arrival-is-bare.spec.ts
-          --config=playwright.base.config.ts
-
       - name: Upload mobile responsive review screenshots
         uses: actions/upload-artifact@v4
         with:
@@ -112,6 +106,12 @@ jobs:
           path: test-results/**/mobile-review-*.png
           if-no-files-found: error
           retention-days: 3
+
+      - name: Focused arrival responsive contract
+        run: >-
+          npx playwright test
+          tests/e2e/arrival-is-bare.spec.ts
+          --config=playwright.base.config.ts
 
       - name: Focused workspace conversation management regression
         run: >-
