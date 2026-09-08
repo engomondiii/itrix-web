@@ -55,3 +55,6 @@
 /* Phase 4. auth.css before mobile.css so the zone's breakpoint sweeps land last. */
 @import '../styles/auth.css';
 @import '../styles/mobile.css';
+/* September 2026: final arrival polish is strictly sub-desktop and imported last
+   so the existing mobile contract remains the baseline while 1024px+ stays frozen. */
+@import '../styles/mobile-polish.css';

@@ -60,6 +60,7 @@
   "accessibility": [
     "conversation-rename-accessibility.spec.ts",
     "mobile-contract.spec.ts",
+    "mobile-responsive-polish.spec.ts",
     "portal-controlled-workspace-responsive.spec.ts",
     "portal-customer-success-responsive.spec.ts"
   ]

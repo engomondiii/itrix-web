@@ -1,0 +1,282 @@
+/* ============================================================================
+   itriX · SEPTEMBER 2026 MOBILE PRESENTATION POLISH
+
+   This file is intentionally imported after the existing mobile contract. Every
+   visual override is scoped below 1024px so the approved desktop presentation is
+   unchanged. It reflows existing controls; it does not change their behavior.
+   ============================================================================ */
+
+/* The mobile trigger must add no desktop geometry. */
+.arrival-mobile-nav { display: none; }
+
+@media (max-width: 1023px) {
+  /* The exact desktop language/auth cluster remains mounted and unchanged, but a
+     narrow header gets one deliberate 44px control instead of squeezing it. */
+  .arrival-bar__desktop-actions { display: none; }
+  .arrival-mobile-nav {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  .arrival-mobile-menu__trigger {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    background: var(--surface-glass);
+    color: var(--ink-primary);
+    cursor: pointer;
+  }
+  .arrival-mobile-menu__trigger:hover { background: var(--surface); }
+  .arrival-mobile-menu__trigger:focus-visible {
+    outline: 2px solid var(--ink-primary);
+    outline-offset: 2px;
+  }
+  .arrival-mobile-menu__trigger svg { width: 22px; height: 22px; }
+
+  .arrival-mobile-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 30;
+    width: min(292px, calc(100vw - 32px));
+    max-height: min(70dvh, 420px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 14px;
+    border: 1px solid var(--border-medium);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: var(--shadow-2, 0 20px 48px rgb(15 23 42 / 14%));
+    text-align: left;
+  }
+  .arrival-mobile-menu__section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .arrival-mobile-menu__section + .arrival-mobile-menu__section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .arrival-mobile-menu__label {
+    margin: 0;
+    color: var(--ink-secondary);
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .arrival-mobile-menu .locale-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+  }
+  .arrival-mobile-menu .locale-toggle button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 6px;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .arrival-mobile-menu .locale-toggle__label {
+    white-space: nowrap;
+    word-break: keep-all;
+    writing-mode: horizontal-tb;
+  }
+
+  .arrival-mobile-menu .sign-in-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+  }
+  .arrival-mobile-menu .sign-in-link,
+  .arrival-mobile-menu .sign-up-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .arrival-mobile-menu .sign-up-link {
+    border: 1px solid var(--border-soft);
+    background: var(--canvas);
+  }
+}
+
+@media (max-width: 767px) {
+  /* A phone bar is logo + one control, with a consistent 16px page axis. */
+  .arrival-bar {
+    gap: 12px;
+    padding: 10px 16px;
+  }
+  .arrival-bar .wordmark {
+    min-width: 0;
+    min-height: 44px;
+    padding-right: 8px;
+  }
+
+  /* Deliberate phone rhythm: strong first question without vertically centering a
+     desktop-sized composition in the remaining viewport. */
+  .arrival-hero {
+    align-items: flex-start;
+    padding: 24px 0 max(22px, env(safe-area-inset-bottom));
+  }
+  .arrival-stage { padding-inline: 16px; }
+  .arrival-center .arrival__question {
+    max-width: 18ch;
+    font-size: clamp(2rem, 9vw, 2.7rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+  }
+
+  /* Keep the editable face at 16px for iOS input-zoom safety while reducing the
+     panel's desktop-scale air. All three controls retain a practical 44px target. */
+  .arrival-center .composer { margin-top: 20px; }
+  .arrival-center .composer-shell {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    column-gap: 6px;
+    align-items: center;
+    padding: 14px;
+    border-radius: 16px;
+  }
+  .arrival-center .composer-shell > .composer-attach {
+    display: inline-flex;
+    grid-column: 1;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .arrival-center .composer-shell > .composer-textarea { grid-column: 2; }
+  .arrival-center .composer-shell > .composer-send {
+    grid-column: 3;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+  .arrival-center .composer-textarea {
+    min-height: 64px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .arrival-center .composer-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  /* Optional question guidance becomes a phone card rather than a compressed
+     desktop row. The icon stays secondary and the sentence owns the wide column. */
+  .prompt-carousel { margin-top: 20px; }
+  .prompt-carousel__head {
+    gap: 8px 10px;
+    margin-bottom: 10px;
+  }
+  .prompt-carousel__label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+  }
+  .prompt-carousel__tools {
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px 8px;
+    min-width: 0;
+  }
+  .prompt-carousel__controls { gap: 2px; }
+  .prompt-carousel__step {
+    width: 44px;
+    height: 44px;
+  }
+  .prompt-carousel__showall {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    white-space: nowrap;
+  }
+  .prompt-card {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    gap: 6px 10px;
+    min-height: 0;
+    padding: 13px 14px;
+    border-radius: 16px;
+  }
+  .prompt-card__glyph {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .prompt-card__glyph > svg { width: 18px; height: 18px; }
+  .prompt-card__label {
+    grid-column: 2;
+    max-width: none;
+    min-width: 0;
+    font-size: 10px;
+    line-height: 1.35;
+    letter-spacing: 0.06em;
+    overflow-wrap: anywhere;
+  }
+  .prompt-card__text {
+    grid-column: 2;
+    min-width: 0;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .arrival-center .arrival__pathway {
+    margin-top: 20px;
+    gap: 6px 10px;
+  }
+}
+
+@media (max-width: 340px) {
+  .arrival-mobile-menu { width: calc(100vw - 32px); }
+  .arrival-center .arrival__question {
+    max-width: 17ch;
+    font-size: clamp(1.85rem, 9.5vw, 2.2rem);
+  }
+  .prompt-carousel__head { align-items: flex-start; }
+  .prompt-carousel__tools {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+}
+
+/* A short landscape phone uses the same composition, just less decorative air. */
+@media (max-width: 1023px) and (max-height: 500px) {
+  .arrival-hero {
+    align-items: flex-start;
+    padding-top: 18px;
+    padding-bottom: max(18px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival-mobile-menu__trigger { transition: none; }
+}
