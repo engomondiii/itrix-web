@@ -1,0 +1,189 @@
+/* ============================================================================
+   itriX · WORKING-SHELL MOBILE HEADER HOTFIX · 2026-09-08
+
+   Scoped to the WorkingShell below 1024px. The approved ArrivalShell mobile bar and
+   every desktop/laptop layout remain untouched. The header is in normal flex layout
+   space: no shell control is absolutely positioned over conversation content.
+   ============================================================================ */
+
+/* Mounted in WorkingShell at every width so mode transitions do not need a second
+   component tree; desktop gets zero geometry. */
+.working-mobile-header { display: none; }
+
+@media (max-width: 1023px) {
+  .working-mobile-header {
+    position: relative;
+    z-index: 20;
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: minmax(96px, 1fr) auto 44px;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    min-height: 60px;
+    padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+    border-bottom: 1px solid var(--border-medium);
+    background: var(--surface-glass);
+    -webkit-backdrop-filter: blur(var(--blur-glass-sm, 10px));
+    backdrop-filter: blur(var(--blur-glass-sm, 10px));
+  }
+
+  .working-mobile-header__brand {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .working-mobile-header__brand .itrix-logo {
+    flex: 0 0 auto;
+    max-width: 96px;
+  }
+
+  .working-mobile-header__language {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .working-mobile-header__language-trigger,
+  .working-mobile-header__nav {
+    min-height: 44px;
+    height: 44px;
+    border: 1px solid var(--border-medium);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink-primary);
+  }
+  .working-mobile-header__language-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 66px;
+    max-width: 112px;
+    padding: 0 9px;
+    white-space: nowrap;
+  }
+  .working-mobile-header__language-flag {
+    flex: 0 0 auto;
+    font-size: 15px;
+    line-height: 1;
+  }
+  .working-mobile-header__language-current {
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    word-break: keep-all;
+    writing-mode: horizontal-tb;
+  }
+  .working-mobile-header__language-trigger svg {
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+  }
+
+  .working-mobile-header__nav {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    min-width: 44px;
+    padding: 0;
+  }
+  .working-mobile-header__nav svg { width: 22px; height: 22px; }
+
+  .working-mobile-header__language-trigger:hover,
+  .working-mobile-header__nav:hover { background: var(--soft); }
+  .working-mobile-header__language-trigger:focus-visible,
+  .working-mobile-header__nav:focus-visible {
+    outline: 2px solid var(--ink-primary);
+    outline-offset: 2px;
+  }
+
+  .working-mobile-header__language-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 80;
+    width: min(272px, calc(100vw - 24px));
+    max-height: min(70dvh, 360px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px;
+    border: 1px solid var(--border-medium);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-2, 0 20px 48px rgb(15 23 42 / 14%));
+  }
+  .working-mobile-header__language-label {
+    margin: 0 0 8px;
+    color: var(--ink-secondary);
+    font-family: var(--font-mono, monospace);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .working-mobile-header__language-menu .locale-toggle {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    width: 100%;
+  }
+  .working-mobile-header__language-menu .locale-toggle button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 8px 6px;
+    white-space: nowrap;
+    word-break: keep-all;
+  }
+  .working-mobile-header__language-menu .locale-toggle__label {
+    white-space: nowrap;
+    word-break: keep-all;
+    writing-mode: horizontal-tb;
+  }
+
+  /* Retire the two detached mobile controls and the route-level duplicate burger.
+     Their desktop presentations remain exactly as before because every rule here is
+     below 1024px. WorkingMobileHeader is the single RailSheet opener on this plane. */
+  .conversation-main > .working-shell__locale,
+  .conversation-main > .conversation-main__nav,
+  .conversation-header > .conversation-header__nav {
+    display: none;
+  }
+
+  /* An active conversation used to claim a full 100dvh below the absolutely
+     positioned controls. Once the real header occupies layout space, let flex own the
+     remaining height so header + transcript + composer fit one viewport. */
+  .conversation-main:has(> .conversation-column--active) {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .conversation-main > .conversation-column--active {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 340px) {
+  .working-mobile-header {
+    grid-template-columns: minmax(90px, 1fr) auto 44px;
+    gap: 6px;
+    padding-inline: 10px;
+  }
+  .working-mobile-header__language-trigger {
+    min-width: 58px;
+    padding-inline: 7px;
+  }
+  .working-mobile-header__language-trigger svg { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .working-mobile-header__language-trigger,
+  .working-mobile-header__nav { transition: none; }
+}
