@@ -92,6 +92,27 @@ jobs:
       - name: Release matrix integrity
         run: npm run test:e2e:matrix
 
+      - name: Focused mobile responsive polish regression
+        run: >-
+          npx playwright test
+          tests/e2e/mobile-responsive-polish.spec.ts
+          --config=playwright.accessibility.config.ts
+          --project=chromium-desktop
+
+      - name: Focused arrival responsive contract
+        run: >-
+          npx playwright test
+          tests/e2e/arrival-is-bare.spec.ts
+          --config=playwright.base.config.ts
+
+      - name: Upload mobile responsive review screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-responsive-review-${{ github.run_id }}
+          path: test-results/**/mobile-review-*.png
+          if-no-files-found: error
+          retention-days: 3
+
       - name: Focused workspace conversation management regression
         run: >-
           npx playwright test
