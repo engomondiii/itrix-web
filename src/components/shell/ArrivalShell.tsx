@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { WordmarkLockup } from './WordmarkLockup';
 import { SignInLink } from './SignInLink';
 import { LegalStrip } from './LegalStrip';
+import { ArrivalMobileMenu } from './ArrivalMobileMenu';
 import { ArrivalMotifs } from '@/components/arrival/ArrivalMotifs';
 import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
 
@@ -45,10 +46,11 @@ export function ArrivalShell({ children }: { children: ReactNode }) {
     <div className="arrival-page" data-journey-state="arrival">
       <header className="arrival-bar">
         <WordmarkLockup variant="arrival" />
-        <div className="flex items-center gap-3">
+        <div className="arrival-bar__desktop-actions flex items-center gap-3">
           <SiteLocaleToggle compact />
           <SignInLink variant="arrival" />
         </div>
+        <ArrivalMobileMenu />
       </header>
 
       <main id="content" className="arrival-hero">
