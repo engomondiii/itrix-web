@@ -29,10 +29,12 @@ async function stubWorkingConversation(page: Page) {
     status: 200,
     contentType: 'application/json',
     body: JSON.stringify({
-      shellMode: 'working', journeyState: 2, relationshipState: 'visitor',
-      conversationRailSections: ['new_chat', 'conversations', 'account'],
+      shellMode: created ? 'working' : 'arrival',
+      journeyState: created ? 2 : 1,
+      relationshipState: 'visitor',
+      conversationRailSections: created ? ['new_chat', 'conversations', 'account'] : [],
       contentPaneSections: [],
-      conversationHeader: { title: 'Review', stateLabel: 'Review', quickHelp: false },
+      conversationHeader: created ? { title: 'Review', stateLabel: 'Review', quickHelp: false } : null,
     }),
   }));
   await page.route('**/api/threads**', async (route) => {
@@ -62,9 +64,18 @@ async function stubWorkingConversation(page: Page) {
   });
 }
 
+async function assertArrivalBeforeChat(page: Page) {
+  await expect(page.locator('.arrival-page')).toBeVisible();
+  await expect(page.locator('.arrival-bar')).toBeVisible();
+  await expect(page.locator('.arrival-mobile-menu__trigger')).toBeVisible();
+  await expect(page.locator('.arrival-center .composer-shell')).toBeVisible();
+  await expect(page.getByTestId('working-mobile-header')).toBeHidden();
+  await expect(page.locator('.working-shell')).toHaveCount(0);
+}
+
 async function startConversation(page: Page) {
   await page.goto('/');
-  await expect(page.getByTestId('working-mobile-header')).toBeHidden();
+  await assertArrivalBeforeChat(page);
   const composer = page.locator('textarea.composer-textarea');
   await composer.fill('Make this working conversation usable on mobile.');
   await composer.press('Enter');
@@ -117,6 +128,58 @@ async function assertWorkingHeader(page: Page, width: number) {
   }
 }
 
+async function assertRailContents(page: Page) {
+  const sheet = page.locator('.rail-sheet');
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole('button', { name: /new chat/i })).toBeVisible();
+  await expect(sheet.getByText('Mobile working review', { exact: true })).toBeVisible();
+  await expect(sheet.getByText('Sign in', { exact: true })).toBeVisible();
+}
+
+async function closeRailWithEscape(page: Page) {
+  const sheet = page.locator('.rail-sheet');
+  await page.keyboard.press('Escape');
+  await expect(sheet).toHaveCount(0);
+}
+
+async function closeRailThroughExposedScrim(page: Page): Promise<boolean> {
+  const sheet = page.locator('.rail-sheet');
+  const panel = page.locator('.rail-sheet__panel');
+  const panelBox = await panel.boundingBox();
+  const viewport = page.viewportSize();
+  expect(panelBox).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  if (!panelBox || !viewport) throw new Error('Rail panel and viewport geometry are required.');
+
+  const panelRight = panelBox.x + panelBox.width;
+  if (panelRight + 4 >= viewport.width) return false;
+
+  const x = Math.min(viewport.width - 4, Math.ceil(panelRight + 12));
+  const y = Math.min(viewport.height - 4, Math.max(4, Math.round(viewport.height / 2)));
+  expect(x).toBeGreaterThan(panelRight);
+  expect(x).toBeLessThan(viewport.width);
+  expect(y).toBeGreaterThanOrEqual(0);
+  expect(y).toBeLessThan(viewport.height);
+
+  const hit = await page.evaluate(({ x: pointX, y: pointY }) => {
+    const target = document.elementFromPoint(pointX, pointY);
+    const panelNode = document.querySelector('.rail-sheet__panel');
+    const scrimNode = document.querySelector('.rail-sheet__scrim');
+    return {
+      hasTarget: Boolean(target),
+      insidePanel: Boolean(target && panelNode?.contains(target)),
+      hitsScrim: Boolean(target && (target === scrimNode || scrimNode?.contains(target))),
+    };
+  }, { x, y });
+  expect(hit.hasTarget).toBe(true);
+  expect(hit.insidePanel).toBe(false);
+  expect(hit.hitsScrim).toBe(true);
+
+  await page.mouse.click(x, y);
+  await expect(sheet).toHaveCount(0);
+  return true;
+}
+
 async function exerciseLanguageAndRail(page: Page, width: number) {
   const header = page.getByTestId('working-mobile-header');
   const language = header.locator('.working-mobile-header__language-trigger');
@@ -135,13 +198,13 @@ async function exerciseLanguageAndRail(page: Page, width: number) {
   await expect(header.locator('.working-mobile-header__language-current')).toHaveText('EN');
 
   await header.locator('.working-mobile-header__nav').click();
-  const sheet = page.locator('.rail-sheet');
-  await expect(sheet).toBeVisible();
-  await expect(sheet.getByRole('button', { name: /new chat/i })).toBeVisible();
-  await expect(sheet.getByText('Mobile working review', { exact: true })).toBeVisible();
-  await expect(sheet.getByText('Sign in', { exact: true })).toBeVisible();
-  await page.getByRole('button', { name: 'Close navigation' }).click();
-  await expect(sheet).toHaveCount(0);
+  await assertRailContents(page);
+  await closeRailWithEscape(page);
+
+  await header.locator('.working-mobile-header__nav').click();
+  await assertRailContents(page);
+  const closedThroughScrim = await closeRailThroughExposedScrim(page);
+  if (!closedThroughScrim) await closeRailWithEscape(page);
   await expectNoOverflow(page);
 }
 
@@ -150,7 +213,7 @@ for (const viewport of PHONE_VIEWPORTS) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await stubWorkingConversation(page);
     await page.goto('/');
-    await expect(page.getByTestId('working-mobile-header')).toBeHidden();
+    await assertArrivalBeforeChat(page);
 
     if (viewport.width === 390) {
       await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-arrival-before-chat.png'), fullPage: false });
@@ -170,7 +233,7 @@ for (const viewport of PHONE_VIEWPORTS) {
       await page.keyboard.press('Escape');
       await page.getByTestId('working-mobile-header').locator('.working-mobile-header__nav').click();
       await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-rail-open.png'), fullPage: false });
-      await page.getByRole('button', { name: 'Close navigation' }).click();
+      await closeRailWithEscape(page);
     }
 
     await exerciseLanguageAndRail(page, viewport.width);
