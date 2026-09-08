@@ -44,6 +44,62 @@ async function openMobileMenu(page: Page) {
   return trigger;
 }
 
+async function clickVisiblePointOutsideMenu(page: Page, menu: Locator) {
+  const menuBox = await menu.boundingBox();
+  const viewport = page.viewportSize();
+  expect(menuBox).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  if (!menuBox || !viewport) throw new Error('Mobile menu and viewport geometry are required for the outside-click contract.');
+
+  const inset = 8;
+  const gap = 12;
+  const centerX = Math.round(viewport.width / 2);
+  const centerY = Math.round(viewport.height / 2);
+  const candidates = [
+    { x: centerX, y: Math.ceil(menuBox.y + menuBox.height + gap) },
+    { x: Math.floor(menuBox.x - gap), y: Math.round(menuBox.y + menuBox.height / 2) },
+    { x: Math.ceil(menuBox.x + menuBox.width + gap), y: Math.round(menuBox.y + menuBox.height / 2) },
+    { x: centerX, y: Math.floor(menuBox.y - gap) },
+    { x: inset, y: centerY },
+    { x: viewport.width - inset - 1, y: centerY },
+    { x: centerX, y: viewport.height - inset - 1 },
+  ];
+
+  const outsideMenu = ({ x, y }: { x: number; y: number }) =>
+    x < menuBox.x ||
+    x > menuBox.x + menuBox.width ||
+    y < menuBox.y ||
+    y > menuBox.y + menuBox.height;
+
+  const visibleCandidates = candidates.filter(
+    ({ x, y }) =>
+      x >= 0 &&
+      x < viewport.width &&
+      y >= 0 &&
+      y < viewport.height &&
+      outsideMenu({ x, y }),
+  );
+
+  let outsidePoint: { x: number; y: number } | undefined;
+  for (const candidate of visibleCandidates) {
+    const hitsOutsideRoot = await page.evaluate(({ x, y }) => {
+      const target = document.elementFromPoint(x, y);
+      const root = document.querySelector('.arrival-mobile-nav');
+      return Boolean(target && root && !root.contains(target));
+    }, candidate);
+    if (hitsOutsideRoot) {
+      outsidePoint = candidate;
+      break;
+    }
+  }
+
+  expect(outsidePoint).toBeDefined();
+  if (!outsidePoint) throw new Error('No visible point outside the mobile menu was available for a real pointer click.');
+  expect(outsideMenu(outsidePoint)).toBe(true);
+
+  await page.mouse.click(outsidePoint.x, outsidePoint.y);
+}
+
 async function captureReviewScreenshots(page: Page, testInfo: TestInfo) {
   await page.screenshot({ path: testInfo.outputPath('mobile-review-390-menu-closed.png'), fullPage: false });
   await openMobileMenu(page);
@@ -93,6 +149,10 @@ for (const viewport of PHONE_VIEWPORTS) {
       expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
     }
 
+    if (viewport.width === 390) {
+      await captureReviewScreenshots(page, testInfo);
+    }
+
     const trigger = await openMobileMenu(page);
     await expect(page.getByRole('button', { name: 'Switch to English' })).toBeVisible();
     await expect(page.getByRole('button', { name: '한국어로 전환' })).toBeVisible();
@@ -111,12 +171,17 @@ for (const viewport of PHONE_VIEWPORTS) {
     await expect(trigger).toBeFocused();
 
     await trigger.click();
-    await page.locator('.arrival__question').click();
-    await expect(page.locator('.arrival-mobile-menu')).toHaveCount(0);
+    const menu = page.locator('.arrival-mobile-menu');
+    await expect(menu).toBeVisible();
+    await clickVisiblePointOutsideMenu(page, menu);
+    await expect(menu).toHaveCount(0);
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 
-    if (viewport.width === 390) {
-      await captureReviewScreenshots(page, testInfo);
-    }
+    await question.click();
+    await textarea.click();
+    await expect(textarea).toBeFocused();
+    await expectInsideViewport(card, viewport.width);
+    await expectNoDocumentOverflow(page);
   });
 }
 
