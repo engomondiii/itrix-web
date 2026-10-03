@@ -31,21 +31,23 @@ export function StructuredData({ data }: { data?: JsonLd }) {
           description: siteConfig.description,
           publisher: { '@id': `${siteConfig.url}#organization` },
         },
+        { '@type': 'Product', name: 'ASTOP', description: 'Observation software using PRISM; implementation demonstrated.' },
+        { '@type': 'Product', name: 'QNTA Runtime', description: 'Runtime software based on QNTA Inference-Based Training Architecture; feasibility demonstrated in selected workloads.' },
         {
           '@type': 'Product',
-          '@id': `${siteConfig.url}/alpha-compute#product`,
-          name: 'ALPHA Compute',
+          '@id': `${siteConfig.url}/axiom-compute#product`,
+          name: 'AXIOM Compute',
           brand: { '@id': `${siteConfig.url}#organization` },
           description:
             'Examines whether a workload can be rewritten into a more efficient representation before it runs, with any benefit validated through evaluation.',
         },
         {
           '@type': 'Product',
-          '@id': `${siteConfig.url}/alpha-core#product`,
-          name: 'ALPHA Core',
+          '@id': `${siteConfig.url}/axiom-core#product`,
+          name: 'AXIOM Core',
           brand: { '@id': `${siteConfig.url}#organization` },
           description:
-            'Executes the reconstructed computation on target hardware and measures the result for the specific workload.',
+            'Planned dedicated hardware or IP for validated AXIOM structures; availability and delivery require separate confirmation.',
         },
       ],
     };

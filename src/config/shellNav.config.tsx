@@ -48,8 +48,10 @@ export const SIDEBAR_EXPLORE: ShellNavGroup[] = [
   {
     title: 'Products',
     items: [
-      { label: 'ALPHA Compute', href: routes.alphaCompute },
-      { label: 'ALPHA Core', href: routes.alphaCore },
+      { label: 'ASTOP', href: routes.astop },
+      { label: 'AXIOM Compute', href: routes.alphaCompute },
+      { label: 'QNTA Runtime', href: routes.qntaRuntime },
+      { label: 'AXIOM Core', href: routes.alphaCore },
     ],
   },
   {

@@ -73,7 +73,7 @@ for (const viewport of VIEWPORTS) {
     await expectNoHorizontalOverflow(page);
   });
 
-  test(`ALPHA Compute assessment remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
+  test(`AXIOM Compute assessment remains usable at ${viewport.name}`, async ({ page, baseURL }) => {
     await page.setViewportSize(viewport);
     await stubPortal(page, requireBaseURL(baseURL), {
       exists: true,
@@ -88,7 +88,7 @@ for (const viewport of VIEWPORTS) {
     });
     await page.goto('/workspace/assessment');
 
-    await expect(page.getByRole('heading', { name: 'ALPHA Compute assessment' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'AXIOM Compute assessment' })).toBeVisible();
     await expect(page.getByText('Assessment status', { exact: true })).toBeVisible();
     await expect(page.getByText('Eligible', { exact: true })).toBeVisible();
     await expect(page.getByText('Paid', { exact: true })).toBeVisible();

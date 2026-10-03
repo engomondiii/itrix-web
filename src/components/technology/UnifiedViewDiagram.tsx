@@ -4,23 +4,24 @@ import { LocalizedText } from '@/components/i18n/LocalizedText';
 const STAGES = [
   { en: 'Representation', ko: '표현' },
   { en: 'Observation', ko: '관측' },
-  { en: 'Transfer', ko: '전달' },
+  { en: 'Learning', ko: '학습' },
   { en: 'Execution', ko: '실행' },
-  { en: 'Reconstruction', ko: '재구성' },
+
 ];
 
-/** The unified pipeline that ties AXIOM, CRE, and FQNM together. */
+/** Independent capability domains; not a required processing or sales sequence. */
 export function UnifiedViewDiagram() {
   return (
     <div className="rounded-lg border border-border-medium bg-surface p-6">
+      <p className="mb-4 text-caption text-ink-secondary"><LocalizedText en="Independent capabilities, not a required sequence." ko="필수 순서가 아닌 독립적인 기능입니다." /></p>
       <div className="flex flex-col gap-3 md:flex-row md:items-stretch md:gap-2">
-        {STAGES.map((stage, i) => (
+        {STAGES.map((stage) => (
           <div key={stage.en} className="flex flex-1 items-center gap-2">
             <div className="flex-1 rounded-md border border-border-medium bg-surface px-3 py-4 text-center">
-              <span className="block font-mono text-micro text-ink-primary">0{i + 1}</span>
+
               <span className="mt-1 block text-secondary font-medium text-ink-primary"><LocalizedText en={stage.en} ko={stage.ko} /></span>
             </div>
-            {i < STAGES.length - 1 ? <span aria-hidden className="hidden text-ink-muted md:inline">→</span> : null}
+
           </div>
         ))}
       </div>

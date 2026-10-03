@@ -3,8 +3,9 @@ export const routes = {
   home: '/',
 
   astop: '/astop',
-  alphaCompute: '/alpha-compute',
-  alphaCore: '/alpha-core',
+  qntaRuntime: '/qnta-runtime',
+  alphaCompute: '/axiom-compute',
+  alphaCore: '/axiom-core',
 
   technology: '/technology',
   prism: '/technology/prism',

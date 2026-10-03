@@ -50,8 +50,8 @@ export const PORTAL_COPY = {
         cta: 'View ASTOP journey',
       },
       consider_alpha_assessment: {
-        title: 'Consider an ALPHA Compute assessment',
-        body: 'A separate, fee-bearing assessment opens only after ASTOP has established value and a deeper computational workload remains.',
+        title: 'Consider an AXIOM Compute assessment',
+        body: 'A separate, fee-bearing assessment requires a defined workload, agreed scope and appropriate technical and commercial qualification. ASTOP is not a prerequisite.',
         cta: 'View assessment',
       },
     },
@@ -64,7 +64,7 @@ export const PORTAL_COPY = {
     suggestedFirst: [
       'What did your review find?',
       'How does ASTOP fit our observation workload?',
-      'When would an ALPHA Compute assessment become appropriate?',
+      'When would an AXIOM Compute assessment become appropriate?',
       'Can we set up an NDA and a technical briefing?',
     ],
     states: {
@@ -192,14 +192,14 @@ export const PORTAL_COPY_KO = {
       read_briefing:{title:'브리핑 읽기',body:'itriX가 이해한 내용, 가능한 병목 지점, 권고 경로를 확인합니다.',cta:'브리핑 열기'},
       talk_to_itrix:{title:'itriX와 대화하기',body:'질문하거나 팀과의 대화를 이어갑니다.',cta:'메시지 열기'},
       consider_astop:{title:'ASTOP 적합성 검토',body:'관측 오버헤드가 실질적이라면 후보 워크플로와 적합성을 확인하는 통제된 다음 단계로 진행할 수 있습니다.',cta:'ASTOP 진행 보기'},
-      consider_alpha_assessment:{title:'ALPHA Compute 평가 검토',body:'ASTOP에서 검증된 가치가 확인되고 별도의 더 깊은 계산 문제가 남아 있을 때 유료 평가를 검토합니다.',cta:'평가 보기'},
+      consider_alpha_assessment:{title:'AXIOM Compute 평가 검토',body:'정의된 워크로드, 합의된 범위, 기술 및 상업적 적합성을 바탕으로 별도 유료 평가를 검토합니다. ASTOP은 필수 선행 조건이 아닙니다.',cta:'평가 보기'},
     },
   },
   messages:{
     labels:{team:'itriX 팀',agent:'itriX 평가',client:'나'},
     greeting:'이곳은 itriX와 직접 대화하는 공간입니다. 리뷰, ASTOP, itriX 제품군, 다음 단계에 대해 질문할 수 있습니다. NDA 체결 전에는 공유 가능한 범위에서 답하고, 기밀 논의가 더 적절한 경우 이를 분명히 안내합니다.',
     greetingConfidentiality:'NDA 체결 전에는 기밀 기술 정보를 공유하지 마세요.',
-    suggestedFirst:['리뷰에서 무엇을 확인했나요?','ASTOP이 우리 관측 워크로드에 어떻게 적용될 수 있나요?','ALPHA Compute 평가는 언제 검토할 수 있나요?','NDA와 기술 브리핑을 준비할 수 있나요?'],
+    suggestedFirst:['리뷰에서 무엇을 확인했나요?','ASTOP이 우리 관측 워크로드에 어떻게 적용될 수 있나요?','AXIOM Compute 평가는 언제 검토할 수 있나요?','NDA와 기술 브리핑을 준비할 수 있나요?'],
     states:{ preparing:'itriX가 답변을 준비하고 있습니다…', underReview:'이 답변은 전달 전에 itriX 팀이 검토하고 있습니다. 잠시 후 여기에서 확인할 수 있습니다.', teamJoined:(name:string)=>`${name}님이 itriX 팀을 대표해 이 대화에 참여했습니다.`, outsideHours:'전문가가 보통 영업일 기준 1일 이내에 이곳에서 답변합니다. 그동안 메시지를 계속 남겨도 됩니다.' },
     redirect:{ body:'NDA 체결 전에는 기밀 기술 정보를 공유하지 마세요. 비기밀 설명으로 계속할 수 있으며 더 깊은 검토가 필요하면 NDA 절차를 진행할 수 있습니다.', button:'NDA 요청', bodyWithNda:'NDA가 체결되어 있습니다. 다만 접근 권한은 명시적인 콘텐츠 승인과 작업 단계에 따라 별도로 결정됩니다. NDA만으로 제한 자료가 자동 승인되지는 않습니다.' },
     tooSensitive:{ body:'이 질문은 기밀 대화에서 다루는 것이 적절합니다. 필요한 NDA와 콘텐츠 승인이 갖춰진 뒤 기술 브리핑에서 논의할 수 있습니다.', button:'기밀 브리핑 준비' },

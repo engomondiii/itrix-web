@@ -23,7 +23,7 @@ export const brand = {
     { char: 't', meaning: 'Transformation' },
     { char: 'r', meaning: 'Reinvention · Rigor · Relevance' },
     { char: 'i', meaning: 'Integrity' },
-    { char: 'X', meaning: 'The reconstruction space — ALPHA Compute × ALPHA Core' },
+    { char: 'X', meaning: 'The reconstruction space — AXIOM Compute × AXIOM Core' },
   ],
   contactEmail: 'team@itrix.ai',
   assessmentTeam: 'itriX Assessment Team',

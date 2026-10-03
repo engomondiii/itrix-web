@@ -22,7 +22,7 @@ test('Korean controlled-workspace copy keeps canonical product names and avoids 
   expect(portalCopySource).not.toContain('다시 오신 것을 환영합니다, ${firstName}.');
   expect(portalCopySource).not.toContain('itriX Specialist와 계속하기');
 
-  expect(portalLocaleSource).toContain("assessment:'ALPHA Compute 평가'");
+  expect(portalLocaleSource).toContain("assessment:'AXIOM Compute 평가'");
   expect(portalLocaleSource).not.toContain("assessment:'ALPHA 평가'");
   expect(portalLocaleSource).not.toContain("assessment:'어세스먼트'");
 

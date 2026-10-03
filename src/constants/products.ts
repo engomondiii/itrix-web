@@ -4,16 +4,16 @@ import type { ProductInfo, Technology, LicensePathway } from '@/types/product.ty
 export const PRODUCTS: Record<'alpha_compute' | 'alpha_core', ProductInfo> = {
   alpha_compute: {
     route: 'alpha_compute',
-    name: 'ALPHA Compute',
-    layer: 'Representation layer',
-    thesis: 'Diagnoses how a workload is represented and proposes a transformation hypothesis before any execution.',
+    name: 'AXIOM Compute',
+    layer: 'Software · validation stage',
+    thesis: 'Software using AXIOM and AXIOM-TENSOR for suitable structured tensor and operator workloads. Benefits require workload-specific validation.',
     buyer: 'CTO, strategy, and licensing leads',
   },
   alpha_core: {
     route: 'alpha_core',
-    name: 'ALPHA Core',
-    layer: 'Runtime / execution layer',
-    thesis: 'Validates whether an ALPHA Compute representation hypothesis can run usefully in the target execution environment. A PoC is a separate, explicitly agreed stage where appropriate.',
+    name: 'AXIOM Core',
+    layer: 'Dedicated hardware / IP · planned',
+    thesis: 'Planned dedicated hardware or IP for validated AXIOM structures. Development, performance and delivery remain subject to validation and agreement.',
     buyer: 'Engineering, infrastructure, and deployment leads',
   },
 };
@@ -63,8 +63,8 @@ export const LICENSE_PATHWAYS: Record<LicensePathway, { label: string; summary: 
 export const PRODUCT_ROUTE_LABEL: Record<string, string> = {
   undetermined: 'Not yet assessed',
   astop: 'ASTOP',
-  alpha_compute: 'ALPHA Compute',
-  alpha_core: 'ALPHA Core',
-  both: 'ALPHA Compute + Core',
+  alpha_compute: 'AXIOM Compute',
+  alpha_core: 'AXIOM Core',
+  both: 'AXIOM Compute + Core',
   general: 'Not yet assessed',
 };
