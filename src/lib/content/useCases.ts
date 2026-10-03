@@ -49,7 +49,7 @@ export const USE_CASES: UseCase[] = [
     situation:
       'You can buy more chips, but you cannot easily buy more power, cooling, or floor space. Energy has become the true ceiling on how much AI capability you can deploy.',
     approach:
-      'itriX explores whether part of the energy burden can be reduced by reconstructing computation before infrastructure is scaled — doing the same work in a form that asks less of the hardware. AXIOM Compute is the first step; AXIOM Core becomes relevant only after a representation hypothesis has been validated and evidence supports testing a deeper execution layer. This is the most direct expression of itriX’s mission: sustainable AI through better structure, not only more power.',
+      'itriX explores whether part of the energy burden can be reduced by reconstructing computation before infrastructure is scaled — doing the same work in a form that asks less of the hardware. AXIOM Compute software validation and planned AXIOM Core dedicated hardware/IP address different scopes; relevance depends on the workload and evidence, rather than a mandatory product sequence. This is the most direct expression of itriX’s mission: sustainable AI through better structure, not only more power.',
     startsWith: 'AXIOM Compute first; AXIOM Core only where validated evidence supports it.',
     ctaLabel: 'Explore sustainable AI infrastructure',
     ctaHref: routes.room('sustainable-ai'),

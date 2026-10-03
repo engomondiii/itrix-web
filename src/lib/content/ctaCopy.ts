@@ -38,7 +38,7 @@ export const CTA = {
   requestAssessment: { label: 'Request an AXIOM Compute Assessment', href: routes.review },
   continueWithSpecialist: { label: 'Continue with an itriX Specialist', href: routes.review },
   discussNonExclusive: { label: 'Discuss a Non-Exclusive Evaluation', href: routes.licensingNonExclusive },
-  discussExclusive: { label: 'Discuss Exclusive ALPHA Rights', href: routes.licensingExclusive },
+  discussExclusive: { label: 'Discuss Exclusive AXIOM Rights', href: routes.licensingExclusive },
   bookConversation: { label: 'Book a confidential conversation', href: routes.review },
   createWorkspace: { label: 'Create your itriX workspace', href: routes.review },
   exploreTechnology: { label: 'Explore the technology', href: routes.technology },

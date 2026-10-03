@@ -49,7 +49,7 @@ export const PRODUCT_ROUTES: Record<ProductRoute, ProductRouteInfo> = {
   general: {
     route: 'general',
     label: 'General enquiry',
-    blurb: 'This legacy general route is treated as not yet assessed, not as an ALPHA qualification.',
+    blurb: 'This legacy general route is treated as not yet assessed, not as an AXIOM qualification.',
     href: routes.technology,
     technologies: ['axiom'],
   },
