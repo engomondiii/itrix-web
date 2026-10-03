@@ -17,24 +17,24 @@ export interface InfoDrawer {
 export const INFO_DRAWERS: InfoDrawer[] = [
   {
     id: 'what-is-alpha-compute',
-    title: 'What is ALPHA Compute?',
+    title: 'What is AXIOM Compute?',
     disclosure: 'public',
     body:
-      'ALPHA Compute is the part of itriX that looks at the form of a computation before it runs. Instead of speeding up the same work, it examines whether the work can be rewritten into a more efficient representation first — with any benefit validated through evaluation, not promised.',
+      'AXIOM Compute is the part of itriX that looks at the form of a computation before it runs. Instead of speeding up the same work, it examines whether the work can be rewritten into a more efficient representation first — with any benefit validated through evaluation, not promised.',
   },
   {
     id: 'what-is-alpha-core',
-    title: 'What is ALPHA Core?',
+    title: 'What is AXIOM Core?',
     disclosure: 'public',
     body:
-      'ALPHA Core is the execution-validation layer considered after ALPHA Compute has established a representation hypothesis. It tests whether that reconstructed form can run usefully in the target environment. It is not an automatic destination and may be unnecessary.',
+      'AXIOM Core is a planned dedicated hardware or IP offering for validated AXIOM structures. Engineering feasibility, scope and delivery require separate validation and agreement. It is not a generally available runtime.',
   },
   {
     id: 'what-is-an-assessment',
-    title: 'What is an ALPHA Compute Assessment?',
+    title: 'What is an AXIOM Compute Assessment?',
     disclosure: 'public',
     body:
-      'An ALPHA Compute Assessment is a focused engineering study of one workload. We look at where computation crosses unnecessary boundaries and produce a Boundary Waste Map, an applicability view, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A controlled evaluation is not a PoC, and either may end with a negative result or no further action.',
+      'An AXIOM Compute Assessment is a focused engineering study of one workload. We look at where computation crosses unnecessary boundaries and produce a Boundary Waste Map, an applicability view, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A controlled evaluation is not a PoC, and either may end with a negative result or no further action.',
   },
   {
     id: 'what-is-a-boundary-waste-map',

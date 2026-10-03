@@ -73,7 +73,7 @@ test('canonical CTA map translates real backend action vocabulary without invent
   expect(getGovernedCta('open_alpha_compute_assessment', 'ko')).toEqual({
     key: 'open_alpha_compute_assessment',
     href: '/workspace/assessment',
-    label: 'ALPHA Compute 평가 확인하기',
+    label: 'AXIOM Compute 평가 확인하기',
   });
   expect(getGovernedCta('none', 'en')).toBeNull();
   expect(getGovernedCta('future_backend_action', 'en')).toEqual({

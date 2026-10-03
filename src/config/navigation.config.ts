@@ -24,8 +24,9 @@ export const primaryNav: NavItem[] = [
     href: routes.astop,
     children: [
       { label: 'ASTOP', href: routes.astop },
-      { label: 'ALPHA Compute', href: routes.alphaCompute },
-      { label: 'ALPHA Core', href: routes.alphaCore },
+      { label: 'AXIOM Compute', href: routes.alphaCompute },
+      { label: 'AXIOM Core', href: routes.alphaCore },
+      { label: 'QNTA Runtime', href: routes.qntaRuntime },
     ],
   },
   {
@@ -58,8 +59,9 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     title: 'Products',
     items: [
       { label: 'ASTOP', href: routes.astop },
-      { label: 'ALPHA Compute', href: routes.alphaCompute },
-      { label: 'ALPHA Core', href: routes.alphaCore },
+      { label: 'AXIOM Compute', href: routes.alphaCompute },
+      { label: 'AXIOM Core', href: routes.alphaCore },
+      { label: 'QNTA Runtime', href: routes.qntaRuntime },
     ],
   },
   {

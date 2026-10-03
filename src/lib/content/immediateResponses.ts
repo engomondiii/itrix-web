@@ -19,7 +19,7 @@ export const PRESSURE_ACK: Record<PressureArea, string> = {
  */
 export const CONVERSATION_LINES = {
   opening:
-    'Welcome to itriX. Tell us where computation is becoming too expensive, too slow, too unstable, or too energy-intensive. Based on your answer, we will map your bottleneck to ALPHA Compute, ALPHA Core, or both. Please avoid confidential technical details until an NDA is in place.',
+    'Welcome to itriX. Tell us where computation is becoming too expensive, too slow, too unstable, or too energy-intensive. Based on your answer, we will map your bottleneck to AXIOM Compute, AXIOM Core, or both. Please avoid confidential technical details until an NDA is in place.',
   acknowledge:
     'We understand. This may involve a structural compute bottleneck. We are preparing a more relevant review.',
   askToContinue:

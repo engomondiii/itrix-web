@@ -1,7 +1,7 @@
 import { cn } from '@/lib/cn';
 
 /**
- * The dimensional X — the reconstruction space where ALPHA Compute meets ALPHA Core.
+ * The dimensional X — the reconstruction space where AXIOM Compute meets AXIOM Core.
  * Two crossing planes (sapphire + indigo) with a gold intersection node.
  */
 export interface XMotifProps {

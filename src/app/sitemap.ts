@@ -27,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const paths = [
-    '', '/astop', '/alpha-compute', '/alpha-core',
+    '', '/astop', '/axiom-compute', '/axiom-core', '/qnta-runtime',
     '/technology', '/technology/prism', '/technology/axiom', '/technology/cre', '/technology/fqnm',
     '/licensing', '/licensing/non-exclusive', '/licensing/exclusive',
     '/about', '/use-cases', '/resources', '/resources/fqnm-paper', '/rooms',

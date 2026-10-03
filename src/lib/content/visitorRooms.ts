@@ -40,7 +40,7 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
       'Start from the workload. Tell us where it runs and what is becoming expensive, and the review returns a structural diagnosis — not a quote.',
     offers: [
       'A representation-level read on where the cost actually sits',
-      'Which ALPHA layer the problem maps to, and why',
+      'Which offering may fit the problem, and why',
       'A conservative view of what may be possible on eligible workloads',
     ],
     ctaLabel: 'Begin the review',
@@ -56,13 +56,13 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     visitorType: 'technical',
     audience: 'Teams ready to test the approach on a real workload',
     intro:
-      'An ALPHA Compute Assessment is a focused engineering study of one workload: where it crosses avoidable computational boundaries, a prioritised Boundary Waste Map, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A PoC is a separate stage only if deliberately selected.',
+      'An AXIOM Compute Assessment is a focused engineering study of one workload: where it crosses avoidable computational boundaries, a prioritised Boundary Waste Map, and a recommendation on the next evidence step. Confidential exchange requires appropriate protection and explicit authorization. A PoC is a separate stage only if deliberately selected.',
     offers: [
       'A Boundary Waste Map of one workload',
-      'A prioritised view of where ALPHA Compute may help',
+      'A prioritised view of where AXIOM Compute may help',
       'A clear recommendation on the next evidence step, including no further action when appropriate',
     ],
-    ctaLabel: 'Request an ALPHA Compute Assessment',
+    ctaLabel: 'Request an AXIOM Compute Assessment',
     ctaHref: routes.review,
   },
   technical: {
@@ -109,10 +109,10 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     visitorType: 'partner',
     audience: 'Semiconductor and accelerator architects',
     intro:
-      'How a stronger, structure-preserving software layer could map to hardware architecture. ALPHA Compute establishes the representation hypothesis first; ALPHA Core is considered only where evidence supports deeper execution validation.',
+      'How a stronger, structure-preserving software layer could map to hardware architecture. AXIOM Compute establishes the representation hypothesis first; AXIOM Core is considered only where evidence supports deeper execution validation.',
     offers: [
       'How representation maps to your architecture',
-      'When ALPHA Core execution validation may be relevant',
+      'When planned AXIOM Core hardware/IP exploration may be relevant',
       'The path from discussion to evaluation',
     ],
     ctaLabel: 'Request an architecture discussion',
@@ -143,7 +143,7 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     visitorType: 'partner',
     audience: 'Hardware, cloud, and platform partners',
     intro:
-      'How representation hypotheses can be evaluated with hardware and runtime partners, when ALPHA Core execution validation is relevant, and which partnership questions would need explicit agreement.',
+      'How representation hypotheses can be evaluated with hardware and runtime partners, when planned AXIOM Core hardware/IP exploration is relevant, and which partnership questions would need explicit agreement.',
     offers: ['Architecture and execution-validation questions', 'Possible collaboration questions', 'What would require a written agreement'],
     ctaLabel: 'Start a partnership conversation',
     ctaHref: routes.review,
@@ -191,7 +191,7 @@ export const VISITOR_ROOMS: Record<RoomId, RoomContent> = {
     offers: [
       'Where energy is spent on avoidable work',
       'How representation-first lowers the ask on hardware',
-      'When ALPHA Core execution validation may be warranted',
+      'When planned AXIOM Core hardware/IP exploration may be warranted',
     ],
     ctaLabel: 'Explore sustainable AI infrastructure',
     ctaHref: routes.review,

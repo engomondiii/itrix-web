@@ -154,7 +154,7 @@ export const SUCCESS_COPY = {
 /** The paid-workspace copy (States 7–9). */
 export const WORKSPACE_COPY = {
   assessment: {
-    title: 'Your ALPHA Compute Assessment',
+    title: 'Your AXIOM Compute Assessment',
     intro:
       'This workspace holds the whole assessment: what we took in, the baseline we agreed, the Boundary Waste Map of your workload, technical feasibility, the benchmark we would design, and what we would recommend proving next.',
     standing: 'You should always know what is happening, why it matters, and who owns the next action.',
@@ -226,7 +226,7 @@ export const SUCCESS_COPY_KO = {
 } as const;
 
 export const WORKSPACE_COPY_KO = {
-  assessment:{title:'ALPHA Compute 평가',intro:'이 워크스페이스에는 입력, 합의된 기준선, Boundary Waste Map, 기술적 타당성, 벤치마크 설계 및 다음 증거 단계 권고가 담깁니다.',standing:'무엇이 진행 중인지, 왜 중요한지, 다음 행동의 담당자가 누구인지 항상 알 수 있어야 합니다.',empty:'아직 평가가 시작되지 않았습니다.',stages:{intake:'입력',baseline:'기준선',boundary_map:'Boundary Waste Map',feasibility:'타당성',benchmark_design:'벤치마크 설계',recommendation:'권고'},boundaryMapTitle:'Boundary Waste Map',boundaryMapIntro:'워크로드에서 표현적 낭비가 있을 수 있는 위치와 이유를 구조적으로 정리합니다. 측정값 자체가 아니며 검증은 별도 증거 단계에서 이루어집니다.',significanceLabel:{low:'낮은 중요도',moderate:'중간 중요도',high:'높은 중요도'},confidenceLabel:{preliminary:'예비',supported:'근거 있음',strong:'강한 근거'}},
+  assessment:{title:'AXIOM Compute 평가',intro:'이 워크스페이스에는 입력, 합의된 기준선, Boundary Waste Map, 기술적 타당성, 벤치마크 설계 및 다음 증거 단계 권고가 담깁니다.',standing:'무엇이 진행 중인지, 왜 중요한지, 다음 행동의 담당자가 누구인지 항상 알 수 있어야 합니다.',empty:'아직 평가가 시작되지 않았습니다.',stages:{intake:'입력',baseline:'기준선',boundary_map:'Boundary Waste Map',feasibility:'타당성',benchmark_design:'벤치마크 설계',recommendation:'권고'},boundaryMapTitle:'Boundary Waste Map',boundaryMapIntro:'워크로드에서 표현적 낭비가 있을 수 있는 위치와 이유를 구조적으로 정리합니다. 측정값 자체가 아니며 검증은 별도 증거 단계에서 이루어집니다.',significanceLabel:{low:'낮은 중요도',moderate:'중간 중요도',high:'높은 중요도'},confidenceLabel:{preliminary:'예비',supported:'근거 있음',strong:'강한 근거'}},
   poc:{title:'워크로드에서 검증하기',intro:'합의된 기준선, KPI 및 통과·부분 결과·부정 결과의 기준입니다. 생성되는 근거가 여기에 표시됩니다.',empty:'현재 진행 중인 PoC가 없습니다.',criterionLabel:'실행 전 합의',outcome:{pass:'통과',partial:'부분',negative:'부정 결과',pending:'아직 측정되지 않음'},decisionTitle:'이 결과의 의미에 대한 합의'},
   integration:{title:'통합 및 상업적 의사결정',intro:'통합 준비 상태, 양측이 수용한 근거, 열린 상업적 의사결정, 진행 중 문서와 결정 기록입니다.',empty:'아직 통합이 시작되지 않았습니다.',readinessTitle:'준비 상태',evidenceTitle:'양측이 수용한 근거',openDecisionsTitle:'열린 결정',documentsTitle:'문서',logTitle:'의사결정 기록',readinessStatus:{not_started:'시작 전',in_progress:'진행 중',complete:'완료',blocked:'차단됨'},documentStatus:{draft:'초안',in_review:'검토 중',signed:'서명됨'}},
 } as const;

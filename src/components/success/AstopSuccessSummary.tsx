@@ -110,7 +110,7 @@ function displayState(value: string | null, locale: 'en' | 'ko', unavailable: st
   const en: Record<string, string> = {
     identify_qualify: 'Identify & qualify', nda_briefing: 'NDA & briefing', controlled_evaluation: 'Controlled evaluation',
     lo_deployment: 'License-Out & deployment', verify_expand: 'Verify & expand', closed: 'Closed',
-    discovery: 'Discovery', sales_platform: 'AI-Powered Sales Platform', astop: 'ASTOP', alpha_compute: 'ALPHA Compute', alpha_core: 'ALPHA Core',
+    discovery: 'Discovery', sales_platform: 'AI-Powered Sales Platform', astop: 'ASTOP', alpha_compute: 'AXIOM Compute', alpha_core: 'AXIOM Core',
     not_started: 'Not started', negotiating: 'In negotiation', executed: 'Executed',
     pending: 'Pending', active: 'Active', expired: 'Expired', revoked: 'Revoked', revoking: 'Revocation in progress',
     suspended: 'Suspended', blocked: 'Blocked — action required', unknown: 'Status unavailable',
@@ -121,7 +121,7 @@ function displayState(value: string | null, locale: 'en' | 'ko', unavailable: st
   const ko: Record<string, string> = {
     identify_qualify: '확인 및 적합성 검토', nda_briefing: 'NDA 및 브리핑', controlled_evaluation: '통제된 평가',
     lo_deployment: 'License-Out 및 배포', verify_expand: '가치 검증 및 확장', closed: '종료',
-    discovery: '탐색', sales_platform: 'AI-Powered Sales Platform', astop: 'ASTOP', alpha_compute: 'ALPHA Compute', alpha_core: 'ALPHA Core',
+    discovery: '탐색', sales_platform: 'AI-Powered Sales Platform', astop: 'ASTOP', alpha_compute: 'AXIOM Compute', alpha_core: 'AXIOM Core',
     not_started: '시작 전', negotiating: '협의 중', executed: '체결 완료',
     pending: '대기 중', active: '활성', expired: '만료', revoked: '취소됨', revoking: '취소 처리 중',
     suspended: '일시 중지', blocked: '차단됨 — 조치 필요', unknown: '상태 확인 불가',

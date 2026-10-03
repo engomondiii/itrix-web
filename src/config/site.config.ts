@@ -168,10 +168,10 @@ export const siteConfig = {
   name: brand.name,
   title: `${brand.name} — ${brand.positioning}`,
   description:
-    'itriX builds computational AI infrastructure for sustainable AI through ASTOP, ALPHA Compute and the separate optional ALPHA Core product.',
+    'itriX builds computational AI infrastructure for sustainable AI through ASTOP, AXIOM Compute, the planned AXIOM Core, and QNTA Runtime.',
   keywords: [
-    'computational AI infrastructure', 'sustainable AI', 'ASTOP', 'ALPHA Compute',
-    'ALPHA Core', 'PRISM', 'AXIOM', 'AXIOM-TENSOR', 'CRE', 'FQNM', 'QNTA', 'compute bottleneck',
+    'computational AI infrastructure', 'sustainable AI', 'ASTOP', 'AXIOM Compute',
+    'AXIOM Core', 'QNTA Runtime', 'PRISM', 'AXIOM', 'AXIOM-TENSOR', 'CRE', 'FQNM', 'QNTA', 'compute bottleneck',
   ],
   url: siteUrl,
   apiUrl,

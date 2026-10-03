@@ -22,15 +22,15 @@ const ASTOP_LABELS: Record<(typeof ASTOP_ORDER)[number], { en: string; ko: strin
 function FeeStatus({ evaluation, ko }: { evaluation: PortalEvaluation; ko: boolean }) {
   const status = evaluation.customerFeeStatus ?? evaluation.feeState ?? evaluation.fee_state ?? '';
   let text = ko
-    ? 'ALPHA Compute 평가는 원칙적으로 유료입니다. 최종 비용 조건은 합의가 확정되면 이곳에 표시됩니다.'
-    : 'An ALPHA Compute assessment is fee-bearing by default. Final fee treatment appears here when terms are finalized.';
-  if (status === 'waived') text = ko ? '최종 조건에 따라 이번 ALPHA Compute 평가 비용은 면제되었습니다.' : 'Under the finalized terms, the fee for this ALPHA Compute assessment is waived.';
-  if (status === 'partially_waived') text = ko ? '이번 ALPHA Compute 평가 비용은 최종 조건에 따라 조정되었습니다.' : 'The fee for this ALPHA Compute assessment has been adjusted under the finalized terms.';
+    ? 'AXIOM Compute 평가는 원칙적으로 유료입니다. 최종 비용 조건은 합의가 확정되면 이곳에 표시됩니다.'
+    : 'An AXIOM Compute assessment is fee-bearing by default. Final fee treatment appears here when terms are finalized.';
+  if (status === 'waived') text = ko ? '최종 조건에 따라 이번 AXIOM Compute 평가 비용은 면제되었습니다.' : 'Under the finalized terms, the fee for this AXIOM Compute assessment is waived.';
+  if (status === 'partially_waived') text = ko ? '이번 AXIOM Compute 평가 비용은 최종 조건에 따라 조정되었습니다.' : 'The fee for this AXIOM Compute assessment has been adjusted under the finalized terms.';
   if (status === 'paid') {
     const amount = evaluation.finalAssessmentFee;
     text = amount !== null && amount !== undefined && amount !== ''
-      ? (ko ? `최종 ALPHA Compute 평가 비용: ${amount}` : `Final ALPHA Compute assessment fee: ${amount}`)
-      : (ko ? '최종 조건에 따라 ALPHA Compute 평가 비용이 적용됩니다.' : 'The ALPHA Compute assessment fee applies under the finalized terms.');
+      ? (ko ? `최종 AXIOM Compute 평가 비용: ${amount}` : `Final AXIOM Compute assessment fee: ${amount}`)
+      : (ko ? '최종 조건에 따라 AXIOM Compute 평가 비용이 적용됩니다.' : 'The AXIOM Compute assessment fee applies under the finalized terms.');
   }
   if (status === 'waiver_pending_finalization') text = ko ? '평가 비용 조건을 확정 중입니다. 확정 전에는 표시된 조건이 최종 조건이 아닙니다.' : 'Assessment fee treatment is being finalized. Any current treatment remains conditional until terms are finalized.';
   return <p className="text-secondary text-ink-secondary">{text}</p>;
@@ -74,7 +74,7 @@ function AstopTracker({ evaluation, ko }: { evaluation: PortalEvaluation; ko: bo
   );
 }
 
-/** Customer-safe tracking for either controlled ASTOP proof or ALPHA Compute assessment. */
+/** Customer-safe tracking for either controlled ASTOP proof or AXIOM Compute assessment. */
 export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
   const portalCopy = usePortalCopy();
   const ko = useLocaleStore((s) => s.locale) === 'ko';
@@ -86,7 +86,7 @@ export function EvalTracker({ evaluation }: { evaluation: PortalEvaluation }) {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-2">
-        <h2 className="text-web-h2 text-structure-900">{ko ? 'ALPHA Compute 평가' : 'ALPHA Compute assessment'}</h2>
+        <h2 className="text-web-h2 text-structure-900">{ko ? 'AXIOM Compute 평가' : 'AXIOM Compute assessment'}</h2>
         <p className="reading text-ink-secondary">{portalCopy.evaluation.intro}</p>
       </header>
       <Card variant="default" className="flex flex-col gap-4">

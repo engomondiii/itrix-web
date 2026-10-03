@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('ALPHA Compute explains a versioned, correctable evaluation baseline', async ({ page }) => {
+test('AXIOM Compute explains a versioned, correctable evaluation baseline', async ({ page }) => {
   await page.goto('/alpha-compute');
   const body = page.locator('body');
   await expect(body).toContainText('baseline is defined and versioned before testing');

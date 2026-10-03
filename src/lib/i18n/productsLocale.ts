@@ -9,8 +9,8 @@ const TECHNOLOGIES_KO: Record<string,Technology> = {
   boundary_aware:{...TECHNOLOGIES.boundary_aware, expansion:'경계 인식 실행', gap:'실행 / 백엔드 간극', oneLiner:'변환된 표현을 하드웨어와 런타임 경계에 맞춰 실제 배포에서도 구조적 이점이 유지되는지 검증합니다.'},
 };
 const PRODUCTS_KO: Record<'alpha_compute'|'alpha_core',ProductInfo> = {
-  alpha_compute:{...PRODUCTS.alpha_compute, layer:'표현 계층', thesis:'워크로드가 어떻게 표현되어 있는지 진단하고 실행 전에 변환 가설을 제시합니다.', buyer:'CTO, 전략 및 라이선싱 담당자'},
-  alpha_core:{...PRODUCTS.alpha_core, layer:'런타임 / 실행 계층', thesis:'ALPHA Compute 표현 가설이 대상 실행 환경에서 유용하게 실행될 수 있는지 검증합니다. PoC는 필요한 경우 별도로 명시적으로 합의하는 단계입니다.', buyer:'엔지니어링, 인프라 및 배포 담당자'},
+  alpha_compute:{...PRODUCTS.alpha_compute, layer:'소프트웨어 · 검증 단계', thesis:'워크로드가 어떻게 표현되어 있는지 진단하고 실행 전에 변환 가설을 제시합니다.', buyer:'CTO, 전략 및 라이선싱 담당자'},
+  alpha_core:{...PRODUCTS.alpha_core, layer:'전용 하드웨어 / IP · 계획 단계', thesis:'검증된 AXIOM 구조를 위한 전용 하드웨어 또는 IP를 계획합니다. 개발, 성능, 제공 조건은 별도 검증 및 합의가 필요합니다.', buyer:'엔지니어링, 인프라 및 배포 담당자'},
 };
 const LICENSE_KO: Record<LicensePathway,{label:string;summary:string}> = {
   non_exclusive:{label:'비독점',summary:'범위와 조건을 서면으로 협의해야 하는 가능한 라이선스 구조입니다.'},
