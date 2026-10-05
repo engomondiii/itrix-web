@@ -3,8 +3,8 @@ import { djangoFetch } from '@/lib/server/proxy';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const uuid = '[0-9a-fA-F-]{36}';
-const read = /^(availability|orders|licenses|branch)$/;
-const write = new RegExp(`^(orders|branch|orders/${uuid}/(accept|checkout|refund)|licenses/${uuid}/(download|activate|seats))$`);
+const read = new RegExp(`^(availability|orders|licenses|branch|licenses/${uuid}/(environments|decisions))$`);
+const write = new RegExp(`^(orders|branch|orders/${uuid}/(accept|checkout|refund)|licenses/${uuid}/(download|activate|seats|decisions))$`);
 async function proxy(request: Request, context: { params: Promise<{ path: string[] }> }) {
   const { path } = await context.params;
   const target = path.join('/');

@@ -1,9 +1,12 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import { AstopJourneyGuide } from '@/components/astop/AstopJourneyGuide';
+import { AstopDecision } from '@/components/astop/AstopDecision';
+import { AstopEnvironments } from '@/components/astop/AstopEnvironments';
 import { LocalizedText as L } from '@/components/i18n/LocalizedText';
 
 type Order = { id: string; status: string; amount: string; seats: number; legal_body: string; legal_hash: string };
-type License = { id: string; status: string; seats: number; assignments: { id: string; email: string }[] };
+type License = { id: string; is_administrator: boolean; status: string; seats: number; assignments: { id: string; email: string }[] };
 type Branch = { status: string; code?: string; agreement_body?: string; agreement_hash?: string };
 async function call<T>(path: string, body?: unknown): Promise<T> {
   const response = await fetch(`/api/commerce/${path}`, { method: body ? 'POST' : 'GET', headers: { 'Content-Type': 'application/json' }, ...(body ? { body: JSON.stringify(body) } : {}) });
@@ -39,6 +42,7 @@ export default function AstopAccessPage() {
   return <main className="space-y-6 p-6 max-w-4xl">
     <h1 className="text-3xl font-semibold"><L en="ASTOP access" ko="ASTOP 접근" /></h1>
     <p><L en="Individual: USD 20 for one seat. Organization: USD 16 per seat, minimum two. Branch discounts do not stack. Before ordering, ask the itriX team to verify your legal identity and email. Do not upload identity documents in chat." ko="개인은 1석 USD 20, 조직은 2석 이상 좌석당 USD 16입니다. Branch 할인은 중복 적용되지 않습니다. 주문 전에 itriX 팀에 법적 신원 및 이메일 확인을 요청하세요. 채팅에 신분증을 업로드하지 마세요." /></p>
+    <AstopJourneyGuide />
     {!available && <p role="status"><L en="Online checkout is not available. Contact the itriX team for access." ko="온라인 결제를 사용할 수 없습니다. 접근은 itriX 팀에 문의하세요." /></p>}
     {error && <p role="alert" className="text-red-700">{error}</p>}
     <form className="flex flex-wrap gap-4" onSubmit={(e) => { e.preventDefault(); void act(() => call('orders', { kind, seats, referral_code: referral })); }}>
@@ -55,14 +59,17 @@ export default function AstopAccessPage() {
       {o.status === 'accepted' && <button className={button} disabled={busy || !available} onClick={() => void act(async () => { const r = await call<{ url: string }>(`orders/${o.id}/checkout`, {}); window.location.assign(r.url); })}><L en="Continue to payment" ko="결제로 계속" /></button>}
       {o.status === 'paid' && <><label className="block"><L en="Refund request reason" ko="환불 요청 사유" /><textarea className="block border w-full p-2" maxLength={4000} value={reason} onChange={(e) => setReason(e.target.value)} /></label><button className={button} disabled={busy || !reason.trim()} onClick={() => void act(() => call(`orders/${o.id}/refund`, { reason }))}><L en="Request refund review" ko="환불 검토 요청" /></button>{branch.status === 'not_applied' && <button className={button} disabled={busy} onClick={() => void act(() => call('branch', { order_id: o.id }))}><L en="Apply to become a Branch" ko="Branch 신청" /></button>}</>}
     </section>)}
-    <p><L en="Standard refund requests: within 30 calendar days. Approval revokes access before or with repayment. Statutory rights remain applicable." ko="표준 환불 요청: 30일 이내. 승인 시 환급 전 또는 동시에 접근 권한을 취소합니다. 법정 권리는 유지됩니다." /></p>
+    <p><L en="Standard refund requests: within 30 calendar days. The License Order and Protection Policy govern approval, access changes and running-session treatment. Recording a refund decision below does not submit a refund request; use Request refund review for the order. Statutory rights remain applicable." ko="표준 환불 요청: 30일 이내. 승인, 접근 변경 및 실행 중인 세션 처리는 License Order와 Protection Policy가 규정합니다. 아래에서 환불 결정을 기록하는 것만으로 환불이 요청되지는 않습니다. 주문의 환불 검토 요청을 사용하세요. 법정 권리는 유지됩니다." /></p>
     <h2 className="text-xl font-semibold"><L en="Licenses and named seats" ko="라이선스 및 지정 좌석" /></h2>
     {licenses.map((l) => <section key={l.id} className="space-y-3 rounded border p-4"><p>{l.id} · {l.status}</p>
       <select aria-label="Platform / 플랫폼" className="border p-2" value={platform} onChange={(e) => setPlatform(e.target.value)}><option value="macos-arm64">Apple silicon Mac</option><option value="linux-x86_64">Linux x86_64 / WSL</option><option value="linux-aarch64">Linux ARM64</option></select>
       <button className={button} disabled={busy || l.status !== 'active'} onClick={() => void act(async () => { const r = await call<{ url: string }>(`licenses/${l.id}/download`, { platform }); window.location.assign(r.url); })}><L en="Download signed build" ko="서명된 빌드 다운로드" /></button>
+      <AstopEnvironments licenseId={l.id} active={l.status === 'active'} />
+      <AstopDecision licenseId={l.id} />
       <ul>{l.assignments.map((s) => <li key={s.id}>{s.email}</li>)}</ul>
-      {l.seats >= 2 && <><label><L en="Named user email" ko="지정 사용자 이메일" /><input type="email" className="block border p-2" value={seatEmail} onChange={(e) => setSeatEmail(e.target.value)} /></label><button className={button} disabled={busy || !seatEmail || l.status !== 'active'} onClick={() => void act(() => call(`licenses/${l.id}/seats`, { email: seatEmail }))}><L en="Assign a seat" ko="좌석 배정" /></button></>}
+      {l.is_administrator && l.seats >= 2 && <><label><L en="Named user email" ko="지정 사용자 이메일" /><input type="email" className="block border p-2" value={seatEmail} onChange={(e) => setSeatEmail(e.target.value)} /></label><button className={button} disabled={busy || !seatEmail || l.status !== 'active'} onClick={() => void act(() => call(`licenses/${l.id}/seats`, { email: seatEmail }))}><L en="Assign a seat" ko="좌석 배정" /></button></>}
     </section>)}
+    <p><L en="Sharing your experience is optional and earns no automatic reward. Becoming a Branch is a separate application and agreement; you do not need to advocate first or become a Branch to use ASTOP." ko="경험 공유는 선택 사항이며 자동 보상을 제공하지 않습니다. Branch 참여에는 별도 신청과 계약이 필요합니다. ASTOP 사용에 홍보 또는 Branch 참여는 필수가 아닙니다." /></p>
     <h2 className="text-xl font-semibold">Branch</h2><p>{branch.status}{branch.code ? ` · ${branch.code}` : ''}</p>
     {branch.status === 'approved' && <><pre className="whitespace-pre-wrap text-sm max-h-96 overflow-auto">{branch.agreement_body}</pre><label className="block"><input type="checkbox" checked={accepted.branch ?? false} onChange={(e) => setAccepted({ ...accepted, branch: e.target.checked })} /> <L en="I accept this separate Branch agreement." ko="이 별도의 Branch 계약에 동의합니다." /></label><button className={button} disabled={busy || !accepted.branch} onClick={() => void act(() => call('branch', { action: 'accept', legal_hash: branch.agreement_hash }))}><L en="Accept Branch agreement" ko="Branch 계약 동의" /></button></>}
   </main>;
