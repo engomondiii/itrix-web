@@ -41,7 +41,7 @@ export function AstopDecision({ licenseId }: { licenseId: string }) {
     finally { setBusy(false); }
   }
   return <details className="space-y-4 rounded border border-border-medium p-4">
-    <summary><L en="Decide — record your workload outcome" ko="결정 — 워크로드 결과 기록" /></summary>
+    <summary><L en="Proof — record your workload outcome" ko="검증 — 워크로드 결과 기록" /></summary>
     <p><L en="Record an honest, workload-specific outcome. Use approved summaries only; do not include raw workloads, secrets or personal data. These are your reported results, not independently verified proof. Recording does not change your license, buy seats, submit a refund request or publish shared knowledge." ko="워크로드별 결과를 정직하게 기록하세요. 승인된 요약만 사용하고 원시 워크로드, 비밀 또는 개인 정보를 포함하지 마세요. 이는 고객 보고이며 독립적으로 검증된 증거가 아닙니다. 기록으로 라이선스 변경, 좌석 구매, 환불 요청 또는 공유 지식 공개가 이루어지지 않습니다." /></p>
     <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); void run(true); }}>
       <label className="block"><L en="Workload label" ko="워크로드 이름" /><input className="block w-full border p-2" value={workload} onChange={(e) => setWorkload(e.target.value)} maxLength={200} required /></label>
