@@ -2,8 +2,8 @@ import { LocalizedText as L } from '@/components/i18n/LocalizedText';
 
 export function AstopJourneyGuide() {
   return <section className="space-y-4 rounded border border-border-medium p-4">
-    <h2 className="text-xl font-semibold"><L en="Discover → Acquire → Activate → Prove → Decide → Continue" ko="탐색 → 구매 → 활성화 → 검증 → 결정 → 지속" /></h2>
-    <p><L en="Discovery checks plausibility, not proven savings. Complete verified identity, exact License Order acceptance and payment before delivery. Activate using the signed production build, your account and License ID." ko="탐색은 가능성을 확인하며 절감 효과를 입증하지 않습니다. 제공 전에 신원 확인, 정확한 License Order 동의 및 결제를 완료하세요. 서명된 배포 빌드, 계정 및 License ID로 활성화하세요." /></p>
+    <h2 className="text-xl font-semibold"><L en="Discover → Enroll → 7-Day Trial & Prove → Join → Continue → Renew" ko="탐색 → 등록 → 7일 체험 및 검증 → 가입 → 지속 → 갱신" /></h2>
+    <p><L en="Discovery checks plausibility, not proven savings. Verify identity and accept the trial terms before protected delivery. The seven-day trial is free, with no payment. Join only after the full trial, explicit annual membership and recurring authorization, and successful payment. Activate using the signed production build, your account and License ID." ko="탐색은 가능성을 확인하며 절감 효과를 입증하지 않습니다. 보호된 제공 전에 신원 확인과 체험 약관 동의를 완료하세요. 7일 무료 체험에는 결제가 없습니다. 전체 체험 후 명시적 연간 멤버십 및 자동 갱신 승인과 결제로 가입하세요. 서명된 배포 빌드, 계정 및 License ID로 활성화하세요." /></p>
     <p><L en="Controlled delivery → Install → Activate → Connect → Run. Check your entitlement status and the renewal and expiry dates shown for your environment. Follow the required activation or replacement action. The Protection Policy governs the detailed controls; the License Order governs your rights." ko="통제된 제공 → 설치 → 활성화 → 연결 → 실행. 권한 상태와 환경에 표시된 갱신·만료일을 확인하고 필요한 활성화 또는 교체 조치를 따르세요. 세부 통제는 Protection Policy, 사용 권리는 License Order가 규정합니다." /></p>
     <details><summary><L en="Prove value on your workload" ko="실제 워크로드에서 가치 검증" /></summary>
       <ol className="mt-3 list-decimal space-y-2 pl-6">
