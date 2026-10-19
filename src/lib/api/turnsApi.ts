@@ -1,3 +1,4 @@
+import { useLocaleStore } from "@/store/localeStore";
 /**
  * Typed client for turn submission (/api/threads/[id]/turns).
  *
@@ -44,7 +45,7 @@ export const turnsApi = {
         method: 'POST',
         cache: 'no-store',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Request-ID': requestId },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body, locale: useLocaleStore.getState().locale }),
       });
       if (!res.ok) {
         const failure = await conversationFailureFromResponse(res, requestId);
