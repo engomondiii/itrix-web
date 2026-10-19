@@ -24,7 +24,7 @@ test('an account holder is not offered a workspace', async ({ page }) => {
     });
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   const body = await page.locator('body').innerText();
   expect(body).not.toMatch(/create (your |a )?workspace/i);
   await expect(page.locator('.keep-work')).toHaveCount(0);

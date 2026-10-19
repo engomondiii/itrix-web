@@ -28,7 +28,7 @@ async function stubThread(page: import('@playwright/test').Page) {
 
 test('a pending turn shows a lattice and a stage label', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Memory movement is limiting capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -40,7 +40,7 @@ test('a pending turn shows a lattice and a stage label', async ({ page }) => {
 
 test('the filled count is conserved as the cell moves', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Our solver is unstable.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -53,7 +53,7 @@ test('the filled count is conserved as the cell moves', async ({ page }) => {
 
 test('the label never advances without a backend stage event', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Our silicon needs a runtime path.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -66,7 +66,7 @@ test('the label never advances without a backend stage event', async ({ page }) 
 
 test('none of the forbidden waiting metaphors appears', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Power is limiting our capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -81,7 +81,7 @@ test('none of the forbidden waiting metaphors appears', async ({ page }) => {
 
 test('the wait is announced once, politely', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Cooling is limiting capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -97,7 +97,7 @@ test.describe('reduced motion', () => {
 
   test('the lattice is static and the label carries the message', async ({ page }) => {
     await stubThread(page);
-    await page.goto('/');
+    await page.goto('/ask-x');
     await page.locator('textarea.composer-textarea').fill('Our training cost is rising.');
     await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -120,7 +120,7 @@ test('a long wait becomes an honest timeout with a retry', async ({ page }) => {
   test.skip(timeoutMs > 5000, 'Build with NEXT_PUBLIC_PENDING_TIMEOUT_MS=1200 to exercise this.');
 
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Reproducibility is a problem for us.');
   await page.locator('textarea.composer-textarea').press('Enter');
 

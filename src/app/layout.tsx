@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from 'next/font/google';
 import './globals.css';
 import { siteConfig } from '@/config/site.config';
@@ -82,9 +83,10 @@ export const viewport: Viewport = {
  * Mounting it per-shell would give each of them its own copy — three artifact
  * subscriptions, and three chances to disagree about whether the pane is visible.
  */
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const language = (await headers()).get("x-itrix-page-language") === "ko" ? "ko" : "en";
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
+    <html lang={language} className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
       <body className="min-h-dvh bg-canvas text-ink-primary antialiased">
         <LocaleDocumentSync />
         <a href="#content" className="skip-link">

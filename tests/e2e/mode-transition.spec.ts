@@ -13,7 +13,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test('both zones are absent at State 1 and present at State 2', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.conversation-rail')).toHaveCount(0);
 
   await page.locator('textarea.composer-textarea').fill(
@@ -26,7 +26,7 @@ test('both zones are absent at State 1 and present at State 2', async ({ page })
 });
 
 test('submitting fires no route transition and keeps the composer mounted', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
 
   /* Tag the live node. If the composer remounts, the marker is gone — a check that
      survives any amount of re-rendering, unlike comparing screenshots. */
@@ -49,7 +49,7 @@ test('submitting fires no route transition and keeps the composer mounted', asyn
 });
 
 test('the visitor turn is still on screen after the zones mount', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const sentence = 'Our solver is slow and difficult to reproduce.';
   await page.locator('textarea.composer-textarea').fill(sentence);
   await page.locator('textarea.composer-textarea').press('Enter');

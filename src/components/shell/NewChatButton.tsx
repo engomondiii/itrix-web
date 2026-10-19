@@ -56,7 +56,7 @@ export function NewChatButton() {
         trackEvent('new_chat.created', {});
         /* Back to the front door. The arrival shell takes focus itself, so
            requestFocus() is not called here — it would fight the new mount. */
-        router.push('/');
+        router.push('/ask-x');
       }}
     >
       <svg

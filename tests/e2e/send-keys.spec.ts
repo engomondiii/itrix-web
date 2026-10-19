@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 const SENTENCE = 'Our training and inference cost is rising faster than the value it creates.';
 
 test('the send control is the itriX X, named "Ask itriX"', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const send = page.getByRole('button', { name: 'Ask itriX' });
   await expect(send).toBeVisible();
   /* Not "Send", and emphatically not a close glyph. */
@@ -23,12 +23,12 @@ test('the send control is the itriX X, named "Ask itriX"', async ({ page }) => {
 });
 
 test('the retired key hint is not rendered below the composer', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.composer-keyhint')).toHaveCount(0);
 });
 
 test('Enter submits and Shift+Enter does not', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const ta = page.locator('textarea.composer-textarea');
   await ta.fill(SENTENCE);
   await ta.press('Shift+Enter');
@@ -38,7 +38,7 @@ test('Enter submits and Shift+Enter does not', async ({ page }) => {
 });
 
 test('Ctrl+X submits when there is no selection', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const ta = page.locator('textarea.composer-textarea');
   await ta.fill(SENTENCE);
   await ta.press('End');
@@ -47,7 +47,7 @@ test('Ctrl+X submits when there is no selection', async ({ page }) => {
 });
 
 test('Ctrl+X with a live selection never submits', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const ta = page.locator('textarea.composer-textarea');
   await ta.fill(SENTENCE);
 
@@ -70,7 +70,7 @@ test('Ctrl+X with a live selection never submits', async ({ page }) => {
 
 test('Cmd+X is never bound', async ({ page, browserName }) => {
   test.skip(browserName !== 'webkit', 'Meta+X only means Cut where the platform says so.');
-  await page.goto('/');
+  await page.goto('/ask-x');
   const ta = page.locator('textarea.composer-textarea');
   await ta.fill(SENTENCE);
   await ta.press('Meta+a');

@@ -1,0 +1,3 @@
+import {ChatEntry} from '@/components/website/ChatEntry';
+export const metadata={robots:{index:false,follow:false}};
+export default function Page(){return <ChatEntry/>;}

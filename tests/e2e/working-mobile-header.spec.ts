@@ -74,7 +74,7 @@ async function assertArrivalBeforeChat(page: Page) {
 }
 
 async function startConversation(page: Page) {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await assertArrivalBeforeChat(page);
   const composer = page.locator('textarea.composer-textarea');
   await composer.fill('Make this working conversation usable on mobile.');
@@ -212,7 +212,7 @@ for (const viewport of PHONE_VIEWPORTS) {
   test(`working shell has one intentional mobile header at ${viewport.name}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await stubWorkingConversation(page);
-    await page.goto('/');
+    await page.goto('/ask-x');
     await assertArrivalBeforeChat(page);
 
     if (viewport.width === 390) {
@@ -265,7 +265,7 @@ for (const viewport of [
   test(`desktop working shell remains on existing chrome at ${viewport.name}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await stubWorkingConversation(page);
-    await page.goto('/');
+    await page.goto('/ask-x');
     const composer = page.locator('textarea.composer-textarea');
     await composer.fill('Desktop must stay unchanged.');
     await composer.press('Enter');

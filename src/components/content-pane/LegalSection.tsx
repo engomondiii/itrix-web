@@ -35,7 +35,7 @@ export function LegalSection() {
       <ul className="pane__legal">
         {LEGAL_INSTRUMENTS.map((instrument) => (
           <li key={instrument.slug}>
-            <Link href={`/${instrument.slug}`} className="pane__legal-link">
+            <Link href={["terms", "privacy"].includes(instrument.slug) ? `/legal/${instrument.slug}` : `/${instrument.slug}`} className="pane__legal-link">
               <span className="pane__legal-title">{instrument.title}</span>
               <span className="pane__legal-version">
                 {copy.version} {instrument.version} · {copy.effective} {instrument.effective}

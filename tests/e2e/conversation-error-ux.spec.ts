@@ -28,7 +28,7 @@ async function openExisting(page: Page) {
     if (route.request().method() !== 'POST') return route.fallback();
     await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(firstTurn('thread-errors', 'Start')) });
   });
-  await page.goto('/');
+  await page.goto('/ask-x');
   const box = page.locator('textarea.composer-textarea');
   await box.fill('Start');
   await box.press('Enter');
@@ -80,7 +80,7 @@ test('Korean locale renders localized rate-limit copy', async ({ page }) => {
     if (route.request().method() !== 'POST') return route.fallback();
     await route.fulfill({ status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '8' }, body: JSON.stringify({ code: 'RATE_LIMITED', retryAfter: 8, retryable: true }) });
   });
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.getByRole('button', { name: /한국어/ }).click();
   const box = page.locator('textarea.composer-textarea');
   await box.fill('질문');

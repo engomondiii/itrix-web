@@ -107,7 +107,7 @@ function railSheet(page: Page) {
 }
 
 async function startChat(page: Page, text: string) {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.arrival-page')).toBeVisible();
   const composer = page.locator('textarea.composer-textarea');
   await expect(composer).toBeVisible();
@@ -159,7 +159,7 @@ test('anonymous visitor management persists across refresh and active delete ret
   await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
 
   await railSheet(page).getByRole('button', { name: /New chat/i }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/ask-x$/);
   await page.locator('textarea.composer-textarea').fill('Second anonymous conversation');
   await page.locator('textarea.composer-textarea').press('Enter');
   await expect(page).toHaveURL(/\/review\/anon-thread-2$/);
@@ -185,7 +185,7 @@ test('anonymous visitor management persists across refresh and active delete ret
      canonical empty WorkingShell state rather than a dead /review/<id> route. */
   await openDelete(page, 'Anonymous conversation 3');
   await page.getByRole('dialog', { name: 'Delete' }).getByRole('button', { name: 'Delete', exact: true }).click();
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/ask-x$/);
   await expect(page.getByTestId('working-mobile-header')).toBeVisible();
   await openRail(page);
   await expect(railSheet(page).getByText('Anonymous conversation 3', { exact: true })).toHaveCount(0);

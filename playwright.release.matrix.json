@@ -24,7 +24,8 @@
     "public-product-governance.spec.ts",
     "rail-authorization.spec.ts",
     "send-keys.spec.ts",
-    "thread-switching.spec.ts"
+    "thread-switching.spec.ts",
+    "website-integration.spec.ts"
   ],
   "bff": [
     "attachment-any-format.spec.ts",

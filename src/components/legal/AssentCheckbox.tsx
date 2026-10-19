@@ -56,11 +56,11 @@ export function AssentCheckbox({ checked, onChange, versions, error = null }: As
         />
         <label htmlFor={id} className="assent__label">
           {ASSENT_COPY.checkboxPrefix}{' '}
-          <Link href="/terms" target="_blank" rel="noopener noreferrer" className="assent__link">
+          <Link href="/legal/terms" target="_blank" rel="noopener noreferrer" className="assent__link">
             {ASSENT_COPY.termsName}
           </Link>
           {terms ? ` (v${terms})` : ''} {ASSENT_COPY.and}{' '}
-          <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="assent__link">
+          <Link href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="assent__link">
             {ASSENT_COPY.privacyName}
           </Link>
           {privacy ? ` (v${privacy})` : ''}.

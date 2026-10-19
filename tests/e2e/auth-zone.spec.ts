@@ -56,7 +56,7 @@ test('every other route reaches sign in', async ({ page }) => {
 });
 
 test('the arrival screen offers both, with Sign in first', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const links = page.locator('.sign-in-group a');
   await expect(links).toHaveCount(2);
   await expect(links.nth(0)).toHaveText('Sign in');
@@ -83,7 +83,7 @@ test('no marketing navigation reaches the zone', async ({ page }) => {
   );
   const allowed = new Set([
     '/', '#content', '/sign-in', '/sign-up', '/forgot-password',
-    '/terms', '/privacy', '/security', '/disclosure-policy',
+    '/legal/terms', '/legal/privacy', '/security', '/disclosure-policy',
   ]);
   for (const href of hrefs) {
     expect(allowed.has(href), `unexpected link in the auth zone: ${href}`).toBe(true);

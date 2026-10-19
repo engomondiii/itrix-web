@@ -28,7 +28,7 @@ test.describe('streamed turns settle safely', () => {
       generationStatus: 'pending',
     });
 
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const composer =
       page.locator('textarea.composer-textarea');
@@ -110,7 +110,7 @@ test.describe('streamed turns settle safely', () => {
       generationStatus: 'pending',
     });
 
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const composer =
       page.locator('textarea.composer-textarea');

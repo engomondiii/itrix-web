@@ -36,7 +36,7 @@ async function stubJourney(page: import('@playwright/test').Page) {
 }
 
 test('no assent is asked for on the arrival screen', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   /* Notice governs the front door: the legal strip plus the confidentiality line. There
      is no checkbox, and there must never be one. */
   await expect(page.locator('input[type="checkbox"]')).toHaveCount(0);
@@ -51,7 +51,7 @@ test('no assent is required to send the first turn', async ({ page }) => {
       body: JSON.stringify(submitResult('thr_x', 'Our inference cost is rising.', '')),
     }),
   );
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Our inference cost is rising.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -81,7 +81,7 @@ test('the links open the actual documents in a new tab', async ({ page }) => {
   await page.goto(`/invite/${INVITE}/create-account`);
 
   const terms = page.locator('.assent__label a', { hasText: 'Terms of Service' });
-  await expect(terms).toHaveAttribute('href', '/terms');
+  await expect(terms).toHaveAttribute('href', '/legal/terms');
   /* A new tab, so reading them does not discard the half-filled form. */
   await expect(terms).toHaveAttribute('target', '_blank');
   await expect(terms).toHaveAttribute('rel', /noopener/);

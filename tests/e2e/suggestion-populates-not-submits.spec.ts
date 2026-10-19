@@ -42,7 +42,7 @@ test(
       questionLoopOpen: true,
     });
 
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const composer =
       page.locator('textarea.composer-textarea');

@@ -15,7 +15,7 @@ const FIXTURES = path.join(process.cwd(), 'tests', 'fixtures');
 
 test.describe('attachments accept anything', () => {
   test('mixed formats stage together and report status per file', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     await page.setInputFiles('input[type="file"]', [
       path.join(FIXTURES, 'workload-notes.txt'),
@@ -55,7 +55,7 @@ test.describe('attachments accept anything', () => {
       });
     });
 
-    await page.goto('/');
+    await page.goto('/ask-x');
     await page.setInputFiles('input[type="file"]', [path.join(FIXTURES, 'capture.bin')]);
 
     // The honest sentence, not an error.
@@ -64,7 +64,7 @@ test.describe('attachments accept anything', () => {
   });
 
   test('a removed attachment disappears and the turn still sends', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
     await page.setInputFiles('input[type="file"]', [path.join(FIXTURES, 'workload-notes.txt')]);
 
     await page.getByRole('button', { name: /Remove attachment: workload-notes\.txt/i }).click();
@@ -77,7 +77,7 @@ test.describe('attachments accept anything', () => {
   });
 
   test('the confidentiality notice appears on first attach', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
     await page.setInputFiles('input[type="file"]', [path.join(FIXTURES, 'workload-notes.txt')]);
     await expect(page.locator('.attachment-tray__notice')).toContainText(
       /do not submit confidential technical information before an NDA/i,

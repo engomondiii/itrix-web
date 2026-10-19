@@ -6,7 +6,7 @@ const portalLocaleSource = readFileSync('src/lib/i18n/portalConfigLocale.ts', 'u
 const astopSuccessCopySource = readFileSync('src/lib/content/astopSuccessCopy.ts', 'utf8');
 
 test('Korean arrival copy reads naturally and persists into the auth zone', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.getByRole('button', { name: '한국어로 전환' }).first().click();
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('컴퓨팅이 무엇을 더 잘해주면 좋을까요?');
   await expect(page.getByText('컴퓨팅 인프라 기업')).toBeVisible();
