@@ -41,7 +41,7 @@ async function stub(page: import('@playwright/test').Page) {
         id: 'thr_m', title: 'HBM traffic',
         createdAt: new Date().toISOString(), lastActivityAt: new Date().toISOString(),
         turns: Array.from({ length: 12 }, (_, i) => ({
-          id: `t${i}`, senderKind: i % 2 ? 'agent' : 'visitor',
+          id: `t${i}`, role: i % 2 ? 'itrix' : 'visitor',
           body: `Turn ${i} with enough text to occupy a line or two of the transcript.`,
           seq: i + 1, status: 'settled',
         })),
@@ -68,29 +68,23 @@ test('guarantee 1 — the composer is on screen and usable at 390px', async ({ p
   expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(PHONE.height + 1);
 });
 
-test('guarantee 2 — only one sheet is open at a time', async ({ page }) => {
+test('guarantee 2 — navigation opens without exposing the disabled reading pane', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
   await page.getByRole('button', { name: /Open navigation/i }).first().click();
   await expect(page.locator('.rail-sheet__panel')).toBeVisible();
-
-  /* Opening the content sheet closes the rail — two stacked overlays over a
-     conversation leave no visible anchor at all on a phone (§25.2). */
-  await page.getByRole('button', { name: /Open content|Hide content/i }).click();
-  await expect(page.locator('.pane-sheet__panel')).toBeVisible();
-  await expect(page.locator('.rail-sheet__panel')).toHaveCount(0);
+  await expect(page.locator('.pane-sheet__panel')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Open content|Hide content/i })).toHaveCount(0);
 });
 
-test('guarantee 2 — Escape closes a sheet and focus returns to the opener', async ({ page }) => {
+test('guarantee 2 — Escape closes navigation and focus returns to the opener', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
-  const opener = page.getByRole('button', { name: /Open content|Hide content/i });
+  const opener = page.getByRole('button', { name: /Open navigation/i }).first();
   await opener.click();
-  await expect(page.locator('.pane-sheet__panel')).toBeVisible();
+  await expect(page.locator('.rail-sheet__panel')).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.locator('.pane-sheet__panel')).toHaveCount(0);
+  await expect(page.locator('.rail-sheet__panel')).toHaveCount(0);
   await expect(opener).toBeFocused();
 });
 
