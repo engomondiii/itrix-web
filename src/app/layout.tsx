@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
-import { Space_Grotesk, Inter, IBM_Plex_Mono } from 'next/font/google';
+import './engine-fonts.css';
 import './globals.css';
 import { siteConfig } from '@/config/site.config';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -22,19 +22,6 @@ import { LocalizedText } from '@/components/i18n/LocalizedText';
  *
  * Pretendard (Korean) is CDN-loaded in globals.css and sits in every stack.
  */
-const spaceGrotesk = Space_Grotesk({
-  subsets: ['latin'], weight: ['500', '600', '700'],
-  variable: '--font-space-grotesk', display: 'swap',
-});
-const inter = Inter({
-  subsets: ['latin'], weight: ['400', '500', '600', '700'],
-  variable: '--font-inter', display: 'swap',
-});
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'], weight: ['400', '500'],
-  variable: '--font-mono', display: 'swap',
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: { default: siteConfig.title, template: `%s · ${siteConfig.name}` },
@@ -86,7 +73,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const language = (await headers()).get("x-itrix-page-language") === "ko" ? "ko" : "en";
   return (
-    <html lang={language} className={`${spaceGrotesk.variable} ${inter.variable} ${mono.variable}`}>
+    <html lang={language}>
       <body className="min-h-dvh bg-canvas text-ink-primary antialiased">
         <LocaleDocumentSync />
         <a href="#content" className="skip-link">
