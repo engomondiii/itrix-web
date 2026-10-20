@@ -113,6 +113,10 @@ test('a half-typed message does not follow the visitor into another thread', asy
 });
 
 test('scroll position is restored on return', async ({ page }) => {
+  await page.route('**/api/threads', route => route.fulfill({ json: { threads: [
+    { id: 'thr_long', title: 'Long', createdAt: now(), lastActivityAt: now() },
+    { id: 'thr_two', title: 'Memory movement', createdAt: now(), lastActivityAt: now() },
+  ] } }));
   /* A long thread, so there is something to scroll. */
   await page.route('**/api/threads/thr_long', (route) =>
     route.fulfill({
