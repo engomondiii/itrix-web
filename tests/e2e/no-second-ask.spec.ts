@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { stubConversation } from './support/conversation';
 
 /**
  * NOBODY IS ASKED TO CREATE WHAT THEY HAVE (Architecture v2.9 R67, §27.8).
@@ -14,17 +15,22 @@ import { test, expect } from '@playwright/test';
  */
 
 test('an account holder is not offered a workspace', async ({ page }) => {
+  await stubConversation(page, { threadId: 'identified-review', assistantBody: 'Your existing workspace is ready.' });
   await page.route('**/api/shell*', async (route) => {
-    const res = await route.fetch();
-    const body = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ ...body, identityState: 'identified', journeyState: 5, stateKey: 'INVITED' }),
+      body: JSON.stringify({
+        shellMode: 'working', identityState: 'identified', journeyState: 5, stateKey: 'INVITED',
+        conversationRailSections: ['new_chat', 'conversations', 'account'], contentPaneSections: [],
+        conversationHeader: { title: 'Existing workspace', stateLabel: 'Invited', quickHelp: false },
+      }),
     });
   });
 
-  await page.goto('/ask-x');
+  await page.goto('/review/identified-review');
+  await expect(page.getByText('Your existing workspace is ready.')).toBeVisible();
+  await expect(page.locator('.conversation-header')).toContainText('Invited');
   const body = await page.locator('body').innerText();
   expect(body).not.toMatch(/create (your |a )?workspace/i);
   await expect(page.locator('.keep-work')).toHaveCount(0);
