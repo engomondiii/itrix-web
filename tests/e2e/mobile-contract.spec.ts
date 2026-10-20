@@ -130,23 +130,24 @@ test('the page never scrolls sideways', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('the pane is a sheet, never a column, at this width', async ({ page }) => {
+test('the disabled reading pane never occupies a mobile column', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
   /* Rendering both would put two copies of the same panel in the tree. */
   await expect(page.locator('aside.content-pane')).toHaveCount(0);
 });
 
-test('touch targets are at least 44px', async ({ page, browserName }) => {
-  test.skip(browserName === 'firefox', 'hasTouch emulation differs; covered on the other engines.');
+test('visible navigation and quick-help targets are at least 44px', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
-  await page.getByRole('button', { name: /Open content|Hide content/i }).click();
-  const targets = page.locator('.pane-sheet__panel .pane__tab');
-  const n = await targets.count();
-  for (let i = 0; i < n; i += 1) {
-    const box = await targets.nth(i).boundingBox();
-    expect(box?.height ?? 0).toBeGreaterThanOrEqual(40);
+  const targets = [
+    page.getByRole('button', { name: /Open navigation/i }).first(),
+    page.getByRole('button', { name: 'Get help' }),
+  ];
+  for (const target of targets) {
+    await expect(target).toBeVisible();
+    const box = await target.boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   }
 });
