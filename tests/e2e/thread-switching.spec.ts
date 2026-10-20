@@ -149,7 +149,7 @@ test('New chat returns to the front door and clears the active thread', async ({
   await page.goto('/review/thr_one');
   await page.getByRole('button', { name: /New chat/i }).click();
 
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/ask-x$/);
   await expect(page.locator('h1')).toHaveText('What would you like computation to do better?');
 });
 

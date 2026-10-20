@@ -43,7 +43,7 @@ export function middleware(req: NextRequest) {
      (Surface 1 v5.0 §1.1). */
   if (pathname === '/review' || pathname === '/review/') {
     const url = req.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/ask-x';
     url.search = '';
     return NextResponse.redirect(url);
   }

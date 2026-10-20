@@ -64,7 +64,7 @@ export function setThreadUrl(threadId: string | null): void {
     ? `${inWorkspace ? '/workspace/review' : '/review'}/${encodeURIComponent(threadId)}`
     : inWorkspace
       ? '/workspace'
-      : '/';
+      : '/ask-x';
   if (window.location.pathname === next) return;
   window.history.replaceState(null, '', next);
 }

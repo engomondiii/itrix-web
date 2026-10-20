@@ -1,20 +1,24 @@
 import { expect, test } from '@playwright/test';
 
-test('ASTOP public page explains controlled access without purchase or download CTAs', async ({ page }) => {
-  await page.goto('/astop');
-  await expect(page.getByRole('heading', { name: 'A System Trans-Observation Projector' })).toBeVisible();
-  await expect(page.getByText(/Verified legal identity, verified email, an accepted License Order and confirmed payment/i)).toBeVisible();
+test.beforeEach(async ({ page }) => {
+  await page.route('**/api/website/config', route => route.fulfill({ json: { notice: null, store: { state: 'pre_launch', stores: [] } } }));
+});
+
+test('ASTOP pre-launch access offers interest registration without checkout or downloads', async ({ page }) => {
+  await page.goto('/en/astop');
+  await expect(page.getByText(/being prepared for Apple App Store/)).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Register interest', exact: true })).toBeVisible();
+  await expect(page.locator('a[href*="apps.apple.com"],a[href*="apps.microsoft.com"]')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /buy astop|checkout|download astop/i })).toHaveCount(0);
   await expect(page.getByRole('button', { name: /buy astop|checkout|download astop/i })).toHaveCount(0);
 });
 
-test('public language control has text identity, flags, and pressed state', async ({ page }) => {
-  await page.goto('/astop');
-  const english = page.getByRole('button', { name: 'Switch to English' }).first();
-  const korean = page.getByRole('button', { name: '한국어로 전환' }).first();
-  await expect(english).toBeVisible();
-  await expect(korean).toBeVisible();
-  await expect(english).toHaveAttribute('aria-pressed', 'true');
-  await korean.click();
-  await expect(page.getByRole('button', { name: '한국어 사용 중' }).first()).toHaveAttribute('aria-pressed', 'true');
+test('public language links preserve the current ASTOP page', async ({ page }) => {
+  await page.goto('/en/astop');
+  await page.getByRole('link', { name: 'KO', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/astop$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
+  await page.getByRole('link', { name: 'EN', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/en\/astop$/);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
