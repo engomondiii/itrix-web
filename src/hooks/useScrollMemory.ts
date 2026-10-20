@@ -36,64 +36,57 @@ export interface UseScrollMemoryOptions {
 
 export function useScrollMemory({ threadId, ref, itemCount }: UseScrollMemoryOptions) {
   const remember = useScrollMemoryStore((s) => s.remember);
-  const anchors = useScrollMemoryStore((s) => s.anchors);
   const lastSave = useRef(0);
   const restoredFor = useRef<string | null>(null);
+  const lastPosition = useRef<{ threadId: string; offset: number; itemCount: number } | null>(null);
 
   /** Call from the container's onScroll. Throttled. */
   const save = useCallback(() => {
     const el = ref.current;
-    if (!el || !threadId) return;
+    if (!el || !threadId || restoredFor.current !== threadId) return;
+    lastPosition.current = { threadId, offset: el.scrollTop, itemCount };
     const now = Date.now();
     if (now - lastSave.current < SAVE_THROTTLE_MS) return;
     lastSave.current = now;
     remember(threadId, { offset: el.scrollTop, itemId: null, itemCount });
   }, [ref, threadId, itemCount, remember]);
 
-  /* Restore on thread change — once per thread, after paint. */
+  /* Restore only after items exist. Cancel both frames when a fetch or another
+     switch changes the content before layout has completed. */
   useEffect(() => {
-    if (!threadId) return;
-    if (restoredFor.current === threadId) return;
-    const el = ref.current;
-    if (!el) return;
-
-    const anchor = anchors[threadId];
-    restoredFor.current = threadId;
-
-    /* Two frames: one for React to commit the new thread's items, one for the
-       browser to lay them out and give the container its real scrollHeight. */
+    if (!threadId) {
+      restoredFor.current = null;
+      return;
+    }
+    if (restoredFor.current === threadId || itemCount === 0) return;
+    const anchor = useScrollMemoryStore.getState().anchors[threadId];
+    let second = 0;
     const first = requestAnimationFrame(() => {
-      const second = requestAnimationFrame(() => {
+      second = requestAnimationFrame(() => {
         const node = ref.current;
         if (!node) return;
-        if (anchor && anchor.itemCount === itemCount) {
-          node.scrollTop = anchor.offset;
-        } else {
-          /* No memory, or the thread grew. The bottom is where the new material is. */
-          node.scrollTop = node.scrollHeight;
-        }
+        node.scrollTop = anchor && anchor.itemCount === itemCount
+          ? anchor.offset : node.scrollHeight;
+        restoredFor.current = threadId;
+        lastPosition.current = { threadId, offset: node.scrollTop, itemCount };
       });
-      /* Cancelling the inner frame on cleanup needs it in scope; the outer handle
-         is returned below and the inner is cancelled with it by the browser when the
-         outer callback never runs. */
-      void second;
     });
-
-    return () => cancelAnimationFrame(first);
-    /* `anchors` is deliberately not a dependency: restoration happens on thread
-       change, not every time a scroll position is saved. */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelAnimationFrame(first);
+      cancelAnimationFrame(second);
+    };
   }, [threadId, ref, itemCount]);
 
-  /* Save on unmount so leaving via a thread switch keeps the position. */
+  /* React has already replaced the DOM by passive-effect cleanup. Reading
+     scrollTop there saves the NEW thread's clamped position under the OLD id.
+     Persist the last observed position instead, including throttled events. */
   useEffect(() => {
-    const el = ref.current;
-    const id = threadId;
     return () => {
-      if (!el || !id) return;
-      remember(id, { offset: el.scrollTop, itemId: null, itemCount });
+      const position = lastPosition.current;
+      if (!threadId || position?.threadId !== threadId) return;
+      remember(threadId, { offset: position.offset, itemId: null, itemCount: position.itemCount });
     };
-  }, [ref, threadId, itemCount, remember]);
+  }, [threadId, remember]);
 
   return { save };
 }

@@ -133,6 +133,8 @@ test('scroll position is restored on return', async ({ page }) => {
     }),
   );
   await page.goto('/review/thr_long');
+  await expect(page.locator('.transcript__log')).toContainText('Turn number 39');
+  await expect.poll(() => page.locator('.transcript').evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
 
   await page.locator('.transcript').evaluate((el) => { el.scrollTop = 420; });
   await page.waitForTimeout(400); // the save is throttled
