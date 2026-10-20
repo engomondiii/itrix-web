@@ -39,7 +39,7 @@ export function RailSheet() {
       // A nested rename/delete dialog owns Escape until it closes.
       const target = e.target instanceof Element ? e.target : null;
       const dialog = target?.closest('[role="dialog"]');
-      if (e.key === 'Escape' && !e.defaultPrevented && dialog === panelRef.current) close();
+      if (e.key === 'Escape' && !e.defaultPrevented && (!dialog || dialog === panelRef.current)) close();
     }
     document.addEventListener('keydown', onKey);
     return () => {
