@@ -28,7 +28,11 @@ test('an account holder is not offered a workspace', async ({ page }) => {
     });
   });
 
-  await page.goto('/review/identified-review');
+  await page.goto('/ask-x');
+  const composer = page.locator('textarea.composer-textarea');
+  await composer.fill('Review the inference workload in my existing workspace.');
+  await composer.press('Enter');
+  await expect(page).toHaveURL('/review/identified-review');
   await expect(page.getByText('Your existing workspace is ready.')).toBeVisible();
   await expect(page.locator('.conversation-header')).toContainText('Invited');
   const body = await page.locator('body').innerText();
