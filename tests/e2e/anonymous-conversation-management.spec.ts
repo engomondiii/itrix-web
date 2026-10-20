@@ -149,14 +149,14 @@ test('anonymous visitor management persists across refresh and active delete ret
 
   await page.getByLabel('Conversation name').fill('  한국어 · Persisted anonymous title  ');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).locator('.rail-thread__title').filter({ hasText: '한국어 · Persisted anonymous title' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-anonymous-renamed.png'), fullPage: false });
   expect(state.rows.find((row) => row.id === 'anon-thread-1')?.title).toBe('한국어 · Persisted anonymous title');
 
   await closeRail(page);
   await page.reload();
   await openRail(page);
-  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).locator('.rail-thread__title').filter({ hasText: '한국어 · Persisted anonymous title' })).toBeVisible();
 
   await railSheet(page).getByRole('button', { name: /New chat/i }).click();
   await expect(page).toHaveURL(/\/ask-x$/);
@@ -189,7 +189,7 @@ test('anonymous visitor management persists across refresh and active delete ret
   await expect(page.getByTestId('working-mobile-header')).toBeVisible();
   await openRail(page);
   await expect(railSheet(page).getByText('Anonymous conversation 3', { exact: true })).toHaveCount(0);
-  await expect(railSheet(page).getByText('한국어 · Persisted anonymous title', { exact: true })).toBeVisible();
+  await expect(railSheet(page).locator('.rail-thread__title').filter({ hasText: '한국어 · Persisted anonymous title' })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('hotfix-review-390-anonymous-after-delete.png'), fullPage: false });
 });
 

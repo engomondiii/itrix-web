@@ -143,9 +143,11 @@ test('scroll position is restored on return', async ({ page }) => {
 
   await page.goBack();
   await expect(page.locator('.transcript__log')).toContainText('Turn number 0');
-  const restored = await page.locator('.transcript').evaluate((el) => el.scrollTop);
-  /* Within a few pixels — the container's height can differ by a hair after relayout. */
-  expect(Math.abs(restored - saved)).toBeLessThan(24);
+  /* Restoration happens after layout; wait for its two animation frames. */
+  await expect.poll(async () => {
+    const restored = await page.locator('.transcript').evaluate((el) => el.scrollTop);
+    return Math.abs(restored - saved);
+  }).toBeLessThan(24);
 });
 
 test('New chat returns to the front door and clears the active thread', async ({ page }) => {
