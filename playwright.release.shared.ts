@@ -84,8 +84,11 @@ export function releaseConfig(partition: Partition): PlaywrightTestConfig {
       video: 'retain-on-failure',
     },
     projects,
+    // Turbopack dev intermittently fails to resolve next/font Google imports.
+    // Use the supported Webpack dev server for browser tests; CI separately
+    // builds the production bundle with the default bundler.
     webServer: {
-      command: `NEXT_PUBLIC_SITE_URL=${baseURL} NEXT_PUBLIC_API_URL=${LOCAL_API_URL} API_URL=${LOCAL_API_URL} ${COMMON} ${FLAGS[partition]} npm run dev -- --hostname 127.0.0.1 -p ${port}`,
+      command: `NEXT_PUBLIC_SITE_URL=${baseURL} NEXT_PUBLIC_API_URL=${LOCAL_API_URL} API_URL=${LOCAL_API_URL} ${COMMON} ${FLAGS[partition]} npm run dev -- --webpack --hostname 127.0.0.1 -p ${port}`,
       url: baseURL,
       reuseExistingServer: false,
       timeout: 120_000,
