@@ -18,14 +18,15 @@ export function ScrollAnchor({ active, dependency, threadId }: {
   active: boolean; dependency: unknown; threadId: string | null;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const previousThread = useRef<string | null | undefined>(undefined);
+  const previous = useRef<{ threadId: string | null; dependency: unknown } | null>(null);
 
   useEffect(() => {
-    const changedThread = previousThread.current !== threadId;
-    previousThread.current = threadId;
+    const prior = previous.current;
+    previous.current = { threadId, dependency };
     // Scroll memory owns initial load and thread changes. Smooth auto-follow
     // must not race its saved offset when returning to an older conversation.
-    if (changedThread || !active) return;
+    if (!prior || prior.threadId !== threadId || prior.dependency === 0 ||
+        prior.dependency === dependency || !active) return;
     const el = ref.current;
     if (!el) return;
     const reduced =
