@@ -61,11 +61,11 @@ test('manual rename has a labelled focus-trapped dialog and remains authoritativ
   await opener.click();
   await field.fill('My inference workload');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.locator('.rail-thread__title')).toHaveText('My inference workload');
+  await expect(page.locator('.rail-thread__title:visible')).toHaveText('My inference workload');
 
   // The server still returns its generated title on refresh; a manual title must win.
   await page.reload();
   await openNavigation();
-  await expect(page.locator('.rail-thread__title')).toHaveText('My inference workload');
-  await expect(page.locator('.rail-thread__title')).not.toContainText('FIRST THREAD SENTENCE');
+  await expect(page.locator('.rail-thread__title:visible')).toHaveText('My inference workload');
+  await expect(page.locator('.rail-thread__title:visible')).not.toContainText('FIRST THREAD SENTENCE');
 });
