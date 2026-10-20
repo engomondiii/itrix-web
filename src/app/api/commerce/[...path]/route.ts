@@ -1,3 +1,4 @@
+import { hasAllowedRequestOrigin } from '@/lib/server/request-origin';
 import { NextResponse } from 'next/server';
 import { djangoFetch } from '@/lib/server/proxy';
 export const runtime = 'nodejs';
@@ -10,7 +11,7 @@ async function proxy(request: Request, context: { params: Promise<{ path: string
   const target = path.join('/');
   const isPost = request.method === 'POST';
   if (!(isPost ? write : read).test(target)) return NextResponse.json({ detail: 'Not found' }, { status: 404 });
-  if (isPost && request.headers.get('origin') !== new URL(request.url).origin) {
+  if (isPost && !hasAllowedRequestOrigin(request)) {
     return NextResponse.json({ detail: 'Invalid origin' }, { status: 403 });
   }
   const result = await djangoFetch<unknown>(`/commerce/${target}/`, {

@@ -56,6 +56,9 @@ jobs:
           API_URL: https://api-ci.example.com/api/v1
         run: npm run test:env
 
+      - name: Reverse proxy origin boundary
+        run: node --test tests/unit/request-origin.test.mjs
+
       - name: TypeScript
         run: npm run typecheck
 

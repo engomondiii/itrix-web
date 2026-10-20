@@ -1,3 +1,4 @@
+import { hasAllowedRequestOrigin } from '@/lib/server/request-origin';
 import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 const paths = /^(config|intake|unsubscribe)$/;
@@ -11,7 +12,7 @@ async function proxy(
     return NextResponse.json({ detail: "Not found" }, { status: 404 });
   if (
     request.method === "POST" &&
-    request.headers.get("origin") !== new URL(request.url).origin
+    !hasAllowedRequestOrigin(request)
   )
     return NextResponse.json({ detail: "Invalid origin" }, { status: 403 });
   const base = (

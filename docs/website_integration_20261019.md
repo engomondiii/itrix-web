@@ -74,3 +74,9 @@ The reference views live in `src/components/website/reference`; `ReferencePage` 
 `export-website-brand.mjs` reproduces the board's PNG sizes and 1200×630 preview using the supplied original symbols and board fonts. It requires font files named in its usage comment; source typography came from the Google Fonts URLs in the supplied board. Raster outputs are checked in, so deployment does not need this export step.
 
 Validation: production build and ESLint pass (warnings remain). Local browser checks cover landing, mobile menu, cookie choice, real embedded chat and required-field form errors. macOS denied the Playwright Chromium launch at its Mach-port boundary before tests ran; GitHub's Linux release matrix must complete before merge. The browser adapter did not honor the requested 390px override, reporting 615px; exact 360/390/820/1440 checks are included in `website-integration.spec.ts` for CI, not claimed as locally passed.
+
+## External static IPv4 edge
+
+The backend branch contains `deploy/edge-proxy` for an optional reserved-IPv4 VM outside Railway. On this web service set `WEBSITE_PUBLIC_URL=https://itrix.co.kr` alongside `NEXT_PUBLIC_SITE_URL` at domain cutover. Website/commerce mutations now validate the explicitly configured public origin, so an edge using the Railway upstream Host does not reject legitimate public-site forms. Arbitrary forwarded hosts do not authorize a request. Keep the real backend API/WS endpoints and dashboard origin. The edge redirects www to apex, preserving paths. No Cloudflare DNS is needed; the existing Turnstile form service is separate from DNS.
+
+Focused check: `node --test tests/unit/request-origin.test.mjs`.
