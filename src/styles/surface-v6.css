@@ -485,3 +485,6 @@
 /* The workspace locale control now lives in the sidebar/mobile bar, so it cannot
    collide with a long client name or organization in a page topbar. */
 .portal-shell__locale { display: none !important; }
+
+/* Keep the existing desktop locale control clear of the conversation's help menu. */
+@media (min-width:1024px){.working-shell .conversation-column--active{padding-top:48px}}

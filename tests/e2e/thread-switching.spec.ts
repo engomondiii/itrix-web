@@ -18,7 +18,7 @@ const now = () => new Date().toISOString();
 function thread(id: string, title: string, body: string) {
   return {
     id, title, createdAt: now(), lastActivityAt: now(),
-    turns: [{ id: `${id}-t1`, senderKind: 'visitor', body, seq: 1, status: 'settled' }],
+    turns: [{ id: `${id}-t1`, role: 'visitor', body, seq: 1, status: 'settled' }],
     artifacts: [], cards: [],
   };
 }
@@ -40,8 +40,8 @@ test.beforeEach(async ({ page }) => {
       status: 200, contentType: 'application/json',
       body: JSON.stringify({
         threads: [
-          { threadId: 'thr_one', title: 'Inference cost', lastActivityAt: now() },
-          { threadId: 'thr_two', title: 'Memory movement', lastActivityAt: now() },
+          { id: 'thr_one', title: 'Inference cost', lastActivityAt: now() },
+          { id: 'thr_two', title: 'Memory movement', lastActivityAt: now() },
         ],
       }),
     }),
@@ -66,14 +66,13 @@ test('selecting a previous conversation swaps the transcript without unmounting 
     if (el) (el as HTMLElement).dataset.probe = 'kept';
   });
 
-  let navigated = false;
-  page.on('framenavigated', () => { navigated = true; });
+  const navigationCount = await page.evaluate(() => performance.getEntriesByType('navigation').length);
 
   await page.locator('.rail-thread__open', { hasText: 'Memory movement' }).click();
 
   await expect(page.locator('.transcript__log')).toContainText('SECOND THREAD SENTENCE');
   await expect(page.locator('.working-shell[data-probe="kept"]')).toHaveCount(1);
-  expect(navigated).toBe(false);
+  expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(navigationCount);
 });
 
 test('Back returns to the previous thread', async ({ page }) => {
@@ -89,7 +88,7 @@ test('Back returns to the previous thread', async ({ page }) => {
 test('a submit does NOT add a history entry', async ({ page }) => {
   await page.route('**/api/threads/thr_one/turns', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json',
-      body: JSON.stringify({ threadId: 'thr_one', turn: { id: 'x', senderKind: 'visitor', body: 'another', seq: 2 } }) }),
+      body: JSON.stringify({ thread: { id: 'thr_one', title: 'Inference cost', createdAt: now(), lastActivityAt: now() }, visitorTurn: { id: 'x', threadId: 'thr_one', role: 'visitor', body: 'One more thing.', seq: 2, status: 'settled', createdAt: now() }, itrixTurn: null, generationStatus: 'ready', degraded: false }) }),
   );
   await page.goto('/review/thr_one');
   const before = await page.evaluate(() => window.history.length);
@@ -121,7 +120,7 @@ test('scroll position is restored on return', async ({ page }) => {
       body: JSON.stringify({
         id: 'thr_long', title: 'Long', createdAt: now(), lastActivityAt: now(),
         turns: Array.from({ length: 40 }, (_, i) => ({
-          id: `l${i}`, senderKind: i % 2 ? 'agent' : 'visitor',
+          id: `l${i}`, role: i % 2 ? 'itrix' : 'visitor',
           body: `Turn number ${i} with enough text to occupy a line or two of the transcript.`,
           seq: i + 1, status: 'settled',
         })),
@@ -161,8 +160,8 @@ test('conversation history uses topic labels and omits relative-time captions', 
       body: JSON.stringify({
         threads: [
           {
-            threadId: 'thr_topic',
-            title: 'How can we reduce HBM traffic on our inference fleet?',
+            id: 'thr_topic',
+            title: 'Reduce HBM traffic on our inference fleet',
             lastActivityAt: now(),
           },
         ],

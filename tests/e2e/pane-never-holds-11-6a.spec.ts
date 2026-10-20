@@ -49,7 +49,7 @@ test.beforeEach(async ({ page }) => {
         title: 'Assessment',
         createdAt: new Date().toISOString(),
         lastActivityAt: new Date().toISOString(),
-        turns: [{ id: 't1', senderKind: 'visitor', body: 'Our solver is slow.', seq: 1, status: 'settled' }],
+        turns: [{ id: 't1', role: 'visitor', body: 'Our solver is slow.', seq: 1, status: 'settled' }],
         artifacts: [
           {
             id: 'art_1', threadId: 'thr_a', type: 'boundary_waste_map', version: 1, payload: {},
@@ -72,7 +72,8 @@ test.beforeEach(async ({ page }) => {
     }),
   );
   await page.goto('/review/thr_a');
-  await expect(page.locator('.content-pane')).toBeVisible();
+  await expect(page.locator('.conversation-header')).toBeVisible();
+  await expect(page.locator('.content-pane')).toHaveCount(0);
 });
 
 test('the pane carries no next-best-action card', async ({ page }) => {
@@ -84,7 +85,7 @@ test('the pane carries no next-best-action card', async ({ page }) => {
 
 test('the confidentiality notice is beneath the composer, never in the pane', async ({ page }) => {
   const notice = 'Please do not submit confidential technical information before an NDA';
-  await expect(page.locator('.content-pane')).not.toContainText(notice);
+  await expect(page.locator('.content-pane')).toHaveCount(0);
   await expect(page.locator('.composer-footer')).toContainText(notice);
 });
 

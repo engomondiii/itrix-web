@@ -19,7 +19,7 @@ const thread = (id: string) => ({
   title: 'Reflection',
   createdAt: new Date().toISOString(),
   lastActivityAt: new Date().toISOString(),
-  turns: [{ id: 't1', senderKind: 'visitor', body: 'Our inference cost is rising.', seq: 1, status: 'settled' }],
+  turns: [{ id: 't1', role: 'visitor', body: 'Our inference cost is rising.', seq: 1, status: 'settled' }],
   artifacts: [
     {
       id: 'art_ref', threadId: id, type: 'reflection', version: 1,
@@ -66,26 +66,26 @@ test('the card cannot be collapsed away', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_ref');
 
-  await page.getByRole('button', { name: /Collapse the reading pane/i }).click();
+  await expect(page.locator('.content-pane')).toHaveCount(0);
   /* The pane folded; the record did not. */
   await expect(page.locator('.transcript__log .artifact-ref')).toHaveCount(1);
 });
 
-test('with the pane visible, Open focuses it there rather than expanding inline', async ({ page }) => {
+test('with the reading pane disabled, Open keeps the artifact in the conversation', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_ref');
 
-  await expect(page.locator('.artifact-ref__open')).toHaveText('Open');
+  await expect(page.locator('.artifact-ref__open')).toHaveText('Open here');
   await page.locator('.artifact-ref__open').click();
-  await expect(page.locator('.content-pane .artifact')).toBeVisible();
-  await expect(page.locator('.artifact-ref__inline')).toHaveCount(0);
+  await expect(page.locator('.content-pane')).toHaveCount(0);
+  await expect(page.locator('.artifact-ref__inline .artifact')).toBeVisible();
 });
 
 test('with the pane collapsed, Open expands the artifact inline', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_ref');
 
-  await page.getByRole('button', { name: /Collapse the reading pane/i }).click();
+  await expect(page.locator('.content-pane')).toHaveCount(0);
   await expect(page.locator('.artifact-ref__open')).toHaveText('Open here');
   await page.locator('.artifact-ref__open').click();
   await expect(page.locator('.artifact-ref__inline .artifact')).toBeVisible();

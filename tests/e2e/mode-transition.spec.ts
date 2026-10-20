@@ -35,14 +35,13 @@ test('submitting fires no route transition and keeps the composer mounted', asyn
     if (el) (el as HTMLElement).dataset.probe = 'kept';
   });
 
-  let navigated = false;
-  page.on('framenavigated', () => { navigated = true; });
+  const navigationCount = await page.evaluate(() => performance.getEntriesByType('navigation').length);
 
   await page.locator('textarea.composer-textarea').fill('Memory movement is limiting our capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
   await expect(page.locator('.working-shell')).toBeVisible();
-  expect(navigated).toBe(false);
+  expect(await page.evaluate(() => performance.getEntriesByType('navigation').length)).toBe(navigationCount);
   await expect(page.locator('textarea.composer-textarea[data-probe="kept"]')).toHaveCount(1);
   /* The URL follows via replaceState, which is a rewrite rather than a navigation. */
   expect(page.url()).toContain('/review/');
