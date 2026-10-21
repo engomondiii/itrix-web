@@ -89,7 +89,7 @@ export function ConversationListItem({ thread }: { thread: ThreadSummary }) {
                  navigation now removes the deleted /review/<id> route segment from
                  browser history and lets the canonical fresh/empty surface render. */
               closeSheet();
-              window.location.replace('/');
+              window.location.replace('/ask-x');
             }
             return deleted;
           }}

@@ -55,7 +55,7 @@ async function stub(page: import('@playwright/test').Page, sections: string[]) {
         createdAt: new Date().toISOString(),
         lastActivityAt: new Date().toISOString(),
         turns: [
-          { id: 't1', senderKind: 'visitor', body: 'Memory movement is limiting capacity.', seq: 1, status: 'settled' },
+          { id: 't1', role: 'visitor', body: 'Memory movement is limiting capacity.', seq: 1, status: 'settled' },
         ],
         artifacts: [artifact('art_1', 'boundary_waste_map', 2), artifact('art_2', 'document', 3)],
         cards: [],
@@ -64,55 +64,17 @@ async function stub(page: import('@playwright/test').Page, sections: string[]) {
   );
 }
 
-test('a section the backend does not authorize does not render', async ({ page }) => {
-  await stub(page, ['artifacts']);
-  await page.goto('/review/thr_test');
-
-  await expect(page.locator('.content-pane')).toBeVisible();
-  /* `documents` was not authorized, so there is no tab for it — even though the
-     thread contains a document artifact that would fill one. */
-  await expect(page.locator('.pane__tab', { hasText: 'Documents' })).toHaveCount(0);
-  await expect(page.locator('.pane__tab', { hasText: 'Your assessment' })).toHaveCount(0);
-});
-
-test('an authorized section renders', async ({ page }) => {
-  await stub(page, ['artifacts', 'documents', 'workspace_assessment']);
-  await page.goto('/review/thr_test');
-
-  for (const label of ['Prepared', 'Documents', 'Your assessment']) {
-    await expect(page.locator('.pane__tab', { hasText: label })).toBeVisible();
-  }
-});
-
-test('an unknown key renders nothing and does not break the pane', async ({ page }) => {
-  await stub(page, ['artifacts', 'not_a_real_section', 'left_rail']);
-  await page.goto('/review/thr_test');
-
-  await expect(page.locator('.content-pane')).toBeVisible();
-  await expect(page.locator('.pane__tab', { hasText: 'not_a_real_section' })).toHaveCount(0);
-  await expect(page.locator('[data-section="not_a_real_section"]')).toHaveCount(0);
-});
-
-test('explore and legal always resolve, so the instruments never disappear', async ({ page }) => {
-  /* §2.4: the four legal instruments are not permitted to disappear at any width. */
-  await stub(page, []);
-  await page.goto('/review/thr_test');
-
-  await expect(page.locator('.pane__tab', { hasText: 'Legal' })).toBeVisible();
-  await page.locator('.pane__tab', { hasText: 'Legal' }).click();
-  for (const label of ['Terms of Service', 'Privacy Policy', 'Security', 'Disclosure Policy']) {
-    await expect(page.locator('.pane__legal').getByText(label)).toBeVisible();
-  }
-});
-
-test('collapsing the pane changes nothing about authorization', async ({ page }) => {
-  await stub(page, ['artifacts', 'documents']);
-  await page.goto('/review/thr_test');
-
-  await page.getByRole('button', { name: /Collapse the reading pane/i }).click();
-  await expect(page.locator('.content-pane[data-collapsed]')).toBeVisible();
-
-  await page.getByRole('button', { name: /Expand the reading pane/i }).click();
-  /* Both sections are still there — nothing was dropped by folding it away. */
-  await expect(page.locator('.pane__tab')).toHaveCount(4); // + explore + legal
-});
+// The established presentation policy disables the reading pane. Backend disclosure
+// still governs delivered artifacts; the website integration must not re-enable it.
+for (const sections of [[], ['artifacts'], ['artifacts', 'documents', 'workspace_assessment'], ['not_a_real_section', 'left_rail']]) {
+  test(`disabled reading pane stays absent for ${JSON.stringify(sections)}`, async ({ page }) => {
+    await stub(page, sections);
+    await page.goto('/review/thr_test');
+    await expect(page.locator('.conversation-header')).toBeVisible();
+    await expect(page.locator('.content-pane')).toHaveCount(0);
+    await expect(page.locator('.pane-sheet')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Collapse the reading pane|Expand the reading pane/i })).toHaveCount(0);
+    const contract = await page.evaluate(async () => (await fetch('/api/shell')).json());
+    expect(contract.contentPaneSections).toEqual(sections);
+  });
+}

@@ -8,7 +8,7 @@ import { test, expect } from '@playwright/test';
  */
 
 test('it carries no commercial content', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const card = page.locator('.keep-work');
   if ((await card.count()) === 0) test.skip(true, 'no anonymous thread with a settled answer in this run');
   const text = await card.innerText();
@@ -17,12 +17,12 @@ test('it carries no commercial content', async ({ page }) => {
 });
 
 test('it is never inside the content pane', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.content-pane .keep-work')).toHaveCount(0);
 });
 
 test('it appears at most once, and never again after dismissal', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const card = page.locator('.keep-work');
   if ((await card.count()) === 0) test.skip(true, 'no anonymous thread with a settled answer in this run');
   await expect(card).toHaveCount(1);

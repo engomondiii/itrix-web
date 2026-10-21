@@ -70,7 +70,7 @@ export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
             startNew();
             clearComposer();
             closeSheet();
-            router.push('/');
+            router.push('/ask-x');
           }}
         />
       </div>

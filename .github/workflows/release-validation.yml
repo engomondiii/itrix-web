@@ -56,6 +56,9 @@ jobs:
           API_URL: https://api-ci.example.com/api/v1
         run: npm run test:env
 
+      - name: Reverse proxy origin boundary
+        run: node --test tests/unit/request-origin.test.mjs
+
       - name: TypeScript
         run: npm run typecheck
 
@@ -68,6 +71,18 @@ jobs:
           NEXT_PUBLIC_API_URL: https://api-ci.example.com/api/v1
           API_URL: https://api-ci.example.com/api/v1
         run: npm run build
+
+      - name: Focused motion and identified-account regression
+        run: |
+          npx playwright test tests/e2e/pending-indicator.spec.ts --config=playwright.realtime.config.ts
+          npx playwright test tests/e2e/no-second-ask.spec.ts --config=playwright.adaptive.config.ts
+
+      - name: Focused navigation accessibility regression
+        run: >-
+          npx playwright test
+          tests/e2e/mobile-contract.spec.ts
+          tests/e2e/conversation-rename-accessibility.spec.ts
+          --config=playwright.accessibility.config.ts
 
       - name: Focused auth, logout and legal-race regressions
         run: >-
@@ -160,6 +175,7 @@ jobs:
           name: playwright-failure-${{ github.run_id }}
           path: |
             playwright-report/
+            release-test-results/
             test-results/
           if-no-files-found: ignore
           retention-days: 1

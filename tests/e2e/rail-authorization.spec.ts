@@ -94,7 +94,7 @@ test('a legacy v6.0 payload maps forward without leaking pane sections', async (
 test('the four legal instruments stay reachable once a thread exists', async ({ page }) => {
   /* They are "not permitted to disappear at any width". In Phase 1 they sit in the
      rail footer; Phase 2 moves them into the content pane's legal section. */
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Memory movement is limiting capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 

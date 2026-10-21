@@ -112,7 +112,7 @@ async function captureReviewScreenshots(page: Page, testInfo: TestInfo) {
 for (const viewport of PHONE_VIEWPORTS) {
   test(`public arrival is intentionally responsive at ${viewport.name}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     await expect(page.locator('.arrival-bar__desktop-actions')).toBeHidden();
     await expect(page.locator('.arrival-mobile-menu')).toHaveCount(0);
@@ -187,7 +187,7 @@ for (const viewport of PHONE_VIEWPORTS) {
 
 test('mobile menu preserves the existing EN/KO locale mechanism', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/ask-x');
   await openMobileMenu(page);
 
   const korean = page.getByRole('button', { name: '한국어로 전환' });
@@ -209,7 +209,7 @@ test('mobile menu preserves the existing EN/KO locale mechanism', async ({ page 
 
 test('mobile Sign in and Sign up retain their existing destinations', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
+  await page.goto('/ask-x');
   await openMobileMenu(page);
   const signIn = page.getByRole('link', { name: 'Sign in', exact: true });
   const signUp = page.getByRole('link', { name: 'Sign up', exact: true });
@@ -218,7 +218,7 @@ test('mobile Sign in and Sign up retain their existing destinations', async ({ p
   await signIn.click();
   await expect(page).toHaveURL(/\/sign-in$/);
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   await openMobileMenu(page);
   await page.getByRole('link', { name: 'Sign up', exact: true }).click();
   await expect(page).toHaveURL(/\/sign-up$/);
@@ -226,7 +226,7 @@ test('mobile Sign in and Sign up retain their existing destinations', async ({ p
 
 test('tablet portrait keeps the compact header without horizontal overflow', async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 });
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.arrival-mobile-menu__trigger')).toBeVisible();
   await expect(page.locator('.arrival-bar__desktop-actions')).toBeHidden();
   await expectNoDocumentOverflow(page);
@@ -236,7 +236,7 @@ test('tablet portrait keeps the compact header without horizontal overflow', asy
 
 test('narrow phone landscape keeps primary controls reachable', async ({ page }) => {
   await page.setViewportSize({ width: 844, height: 390 });
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.locator('.arrival-mobile-menu__trigger')).toBeVisible();
   await expectNoDocumentOverflow(page);
   await expectInsideViewport(page.locator('.arrival__question'), 844);
@@ -248,7 +248,7 @@ test('narrow phone landscape keeps primary controls reachable', async ({ page })
 for (const viewport of DESKTOP_VIEWPORTS) {
   test(`approved desktop arrival remains on the desktop presentation at ${viewport.name}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     await expect(page.locator('.arrival-mobile-menu__trigger')).toBeHidden();
     await expect(page.locator('.arrival-bar__desktop-actions')).toBeVisible();

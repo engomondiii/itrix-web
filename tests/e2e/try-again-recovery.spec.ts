@@ -25,8 +25,12 @@ function submitResult(threadId: string, visitorBody: string, visitorId: string, 
 }
 
 async function send(page: Page, text: string) {
+  // Wait for the locale provider's mount effect before typing into the SSR
+  // textarea; otherwise hydration can replace input before handlers attach.
+  await expect(page.locator('html')).toHaveAttribute('data-locale', 'en');
   const box = page.locator('textarea.composer-textarea');
   await box.fill(text);
+  await expect(page.getByRole('button', { name: 'Ask itriX' })).toBeEnabled();
   await box.press('Enter');
 }
 
@@ -54,7 +58,7 @@ test('Try Again recovers a lost initial create response with the identical idemp
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(submitResult('thread-recovered', text, 'visitor-1', 'Recovered answer.')) });
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   await send(page, text);
   await expect(page.getByText(text, { exact: true })).toHaveCount(1);
   await expect(page.getByRole('button', { name: 'Try again' })).toBeVisible();
@@ -111,7 +115,7 @@ test('Try Again on a persisted thread calls /retry and never reposts the visitor
     });
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   await send(page, first);
   await expect(page.getByText('Initial answer.', { exact: true })).toBeVisible();
   await send(page, second);

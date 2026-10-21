@@ -20,7 +20,7 @@ test.describe('the composer does not navigate', () => {
       threadId: 'thread-no-navigation',
     });
 
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const composer = page.locator('textarea.composer-textarea');
     await expect(composer).toBeVisible();
@@ -53,7 +53,7 @@ test.describe('the composer does not navigate', () => {
   });
 
   test('selecting an example populates the composer and does not submit', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const chosen =
       EXAMPLE_PROMPT_DEFINITIONS[0].prompt.en;
@@ -69,6 +69,6 @@ test.describe('the composer does not navigate', () => {
 
     // Populating is not submitting: no transcript, still on the landing.
     await expect(page.getByRole('log')).toHaveCount(0);
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/ask-x');
   });
 });

@@ -11,23 +11,13 @@ const protectedInternalTerms = [
   'alphaComputeReady',
 ];
 
-test('public ASTOP presents verified retail access alongside enterprise progression', async ({ page }) => {
-  await page.goto('/astop');
-  await expect(page.getByRole('heading', { level: 1, name: 'A System Trans-Observation Projector' })).toBeVisible();
-  await expect(page.getByText('7-Day Trial & Prove', { exact: true })).toBeVisible();
-  await expect(page.getByText(/Try ASTOP for seven days without payment/i)).toBeVisible();
-
-  await expect(page.getByText('Discover', { exact: true })).toBeVisible();
-  await expect(page.getByText('Continue', { exact: true })).toBeVisible();
-  await expect(page.getByText(/This check is not proof/)).toBeVisible();
-  await expect(page.getByText(/Controlled delivery → Install → Activate → Connect → Run/)).toBeVisible();
-  const main = page.locator('#content');
-  await expect(main).toContainText("USD 20 per year");
-  await expect(main).toContainText("14 calendar days");
-  await expect(main).not.toContainText("30 calendar days");
-  await expect(page.getByText('Renew', { exact: true })).toBeVisible();
-  await expect(page.getByRole('button', { name: /buy|checkout|subscribe/i })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /buy|checkout|subscribe/i })).toHaveCount(0);
+test('ASTOP pre-launch routes interest and enterprise requests without selling', async ({ page }) => {
+  await page.route('**/api/website/config', route => route.fulfill({json:{store:{state:'pre_launch',stores:[]},notice:null}}));
+  await page.goto('/en/astop');
+  await expect(page.getByText(/being prepared for Apple App Store/)).toBeVisible();
+  await expect(page.getByRole('link', {name:'Register interest',exact:true})).toBeVisible();
+  await expect(page.locator('a[href*="apps.apple.com"],a[href*="apps.microsoft.com"]')).toHaveCount(0);
+  await expect(page.getByRole('button', {name:/checkout|start free trial/i})).toHaveCount(0);
 });
 
 test('public PRISM remains available as supporting technology without protected ASTOP/ALPHA internals', async ({ page }) => {
@@ -92,32 +82,13 @@ test('ASTOP Decide saves reported feedback without submitting a refund', async (
   await expect(page.getByText('No useful change for this workload.', { exact: false }).last()).toBeVisible();
 });
 
-test('trial enrollment takes no payment and Join waits for the full trial', async ({ page, context, baseURL }) => {
+test('historical account no longer offers website enrollment or checkout', async ({ page, context, baseURL }) => {
   if (!baseURL) throw new Error('baseURL required');
-  await context.addCookies([{ name: 'itrix_client_at', value: 'e2e-session', url: baseURL }]);
-  await page.route('**/api/portal/auth/me', route => route.fulfill({ json: { id: 'c1', email: 'test@example.test', fullName: 'Test', emailVerified: true } }));
-  const writes: string[] = [];
-  let enrolled = false;
-  await page.route('**/api/commerce/**', route => {
-    const req = route.request();
-    const path = new URL(req.url()).pathname;
-    if (req.method() === 'POST') writes.push(path);
-    if (path.endsWith('/availability')) return route.fulfill({ json: { checkout_available: true, trial_available: true } });
-    if (path.endsWith('/branch')) return route.fulfill({ json: { status: 'not_applied' } });
-    if (path.endsWith('/trial')) {
-      if (req.method() === 'POST') {
-        expect(req.postDataJSON()).toMatchObject({ kind: 'individual', seats: 1, legal_hash: 'approved-trial-hash' });
-        enrolled = true;
-      }
-      return route.fulfill({ json: enrolled ? { trial: { ends_at: '2099-01-01T00:00:00Z', joined: false, can_join: false, kind: 'individual', seats: 1 }, terms: null } : { trial: null, terms: { body: 'Exact approved trial agreement', sha256: 'approved-trial-hash', version: 'test' } } });
-    }
-    return route.fulfill({ json: [] });
-  });
+  await context.addCookies([{name:'itrix_client_at',value:'e2e-session',url:baseURL}]);
+  await page.route('**/api/portal/auth/me', route=>route.fulfill({json:{id:'c1',email:'test@example.test',fullName:'Test',emailVerified:true}}));
+  await page.route('**/api/commerce/**',route=>route.fulfill({json:[]}));
+  await page.route('**/api/website/config',route=>route.fulfill({json:{store:{state:'pre_launch',stores:[]},notice:null}}));
   await page.goto('/workspace/astop');
-  await expect(page.getByRole('button', { name: 'Start free trial', exact: true })).toBeDisabled();
-  await page.getByLabel('I accept these trial terms. No payment will be taken.', { exact: true }).check();
-  await page.getByRole('button', { name: 'Start free trial', exact: true }).click();
-  await expect(page.getByText(/No automatic charge/)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Review annual membership', exact: true })).toBeDisabled();
-  expect(writes).toEqual(['/api/commerce/trial']);
+  await expect(page.getByText('Historical accepted agreements remain unchanged.',{exact:false})).toBeVisible();
+  await expect(page.getByRole('button',{name:/Start free trial|Review annual membership|checkout/i})).toHaveCount(0);
 });

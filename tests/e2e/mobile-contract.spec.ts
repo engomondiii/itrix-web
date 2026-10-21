@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
  *   1. the composer is reachable and usable, above the keyboard;
  *   2. the current task is never lost to a layout change;
  *   3. quick help stays one action from a named human (R30);
- *   4. the confidentiality notice stays visible wherever a problem can be described;
+ *   4. disclosure guidance remains available through the composer description and policy;
  *   5. the legal instruments stay reachable.
  */
 
@@ -41,7 +41,7 @@ async function stub(page: import('@playwright/test').Page) {
         id: 'thr_m', title: 'HBM traffic',
         createdAt: new Date().toISOString(), lastActivityAt: new Date().toISOString(),
         turns: Array.from({ length: 12 }, (_, i) => ({
-          id: `t${i}`, senderKind: i % 2 ? 'agent' : 'visitor',
+          id: `t${i}`, role: i % 2 ? 'itrix' : 'visitor',
           body: `Turn ${i} with enough text to occupy a line or two of the transcript.`,
           seq: i + 1, status: 'settled',
         })),
@@ -68,29 +68,23 @@ test('guarantee 1 — the composer is on screen and usable at 390px', async ({ p
   expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(PHONE.height + 1);
 });
 
-test('guarantee 2 — only one sheet is open at a time', async ({ page }) => {
+test('guarantee 2 — navigation opens without exposing the disabled reading pane', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
   await page.getByRole('button', { name: /Open navigation/i }).first().click();
   await expect(page.locator('.rail-sheet__panel')).toBeVisible();
-
-  /* Opening the content sheet closes the rail — two stacked overlays over a
-     conversation leave no visible anchor at all on a phone (§25.2). */
-  await page.getByRole('button', { name: /Open content|Hide content/i }).click();
-  await expect(page.locator('.pane-sheet__panel')).toBeVisible();
-  await expect(page.locator('.rail-sheet__panel')).toHaveCount(0);
+  await expect(page.locator('.pane-sheet__panel')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Open content|Hide content/i })).toHaveCount(0);
 });
 
-test('guarantee 2 — Escape closes a sheet and focus returns to the opener', async ({ page }) => {
+test('guarantee 2 — Escape closes navigation and focus returns to the opener', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
-  const opener = page.getByRole('button', { name: /Open content|Hide content/i });
+  const opener = page.getByRole('button', { name: /Open navigation/i }).first();
   await opener.click();
-  await expect(page.locator('.pane-sheet__panel')).toBeVisible();
+  await expect(page.locator('.rail-sheet__panel')).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.locator('.pane-sheet__panel')).toHaveCount(0);
+  await expect(page.locator('.rail-sheet__panel')).toHaveCount(0);
   await expect(opener).toBeFocused();
 });
 
@@ -105,16 +99,25 @@ test('guarantee 3 — quick help is one action from a named human', async ({ pag
   await expect(page.locator('#quick-help')).toContainText('Message your specialist');
 });
 
-test('guarantee 4 — the confidentiality notice stays visible and legible', async ({ page }) => {
+test('guarantee 4 — disclosure guidance remains accessible without the retired caption', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
-  const note = page.locator('.composer-footer__note');
-  await expect(note).toBeVisible();
-  await expect(note).toContainText('Please do not submit confidential technical information');
-  /* Never below the 13px floor for informational text (§21.12). */
-  const size = await note.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-  expect(size).toBeGreaterThanOrEqual(13);
+  // The approved UI removed the repeated visible caption; its accessible
+  // description and the full disclosure policy remain available.
+  const composer = page.locator('textarea.composer-textarea');
+  await expect(page.getByText('Turn 11 with enough text to occupy a line or two of the transcript.', { exact: true })).toBeVisible();
+  await expect(page.locator('form.composer')).toHaveAttribute('data-variant', 'docked');
+  const descriptions = await composer.evaluate((el) =>
+    (el.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean).map((id) => {
+      const description = document.getElementById(id);
+      return { exists: Boolean(description), text: description?.textContent ?? '' };
+    }));
+  expect(descriptions.length).toBeGreaterThan(0);
+  expect(descriptions.every((description) => description.exists)).toBe(true);
+  expect(descriptions.map((description) => description.text).join(' ')).toContain('Please do not submit confidential technical information');
+  await page.getByRole('button', { name: /Open navigation/i }).first().click();
+  await expect(page.getByRole('link', { name: 'Disclosure policy' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Disclosure policy' })).toHaveAttribute('href', '/disclosure-policy');
 });
 
 test('guarantee 5 — the legal instruments stay reachable', async ({ page }) => {
@@ -136,23 +139,24 @@ test('the page never scrolls sideways', async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test('the pane is a sheet, never a column, at this width', async ({ page }) => {
+test('the disabled reading pane never occupies a mobile column', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
   /* Rendering both would put two copies of the same panel in the tree. */
   await expect(page.locator('aside.content-pane')).toHaveCount(0);
 });
 
-test('touch targets are at least 44px', async ({ page, browserName }) => {
-  test.skip(browserName === 'firefox', 'hasTouch emulation differs; covered on the other engines.');
+test('visible navigation and quick-help targets are at least 44px', async ({ page }) => {
   await stub(page);
   await page.goto('/review/thr_m');
-
-  await page.getByRole('button', { name: /Open content|Hide content/i }).click();
-  const targets = page.locator('.pane-sheet__panel .pane__tab');
-  const n = await targets.count();
-  for (let i = 0; i < n; i += 1) {
-    const box = await targets.nth(i).boundingBox();
-    expect(box?.height ?? 0).toBeGreaterThanOrEqual(40);
+  const targets = [
+    page.getByRole('button', { name: /Open navigation/i }).first(),
+    page.getByRole('button', { name: 'Get help' }),
+  ];
+  for (const target of targets) {
+    await expect(target).toBeVisible();
+    const box = await target.boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
   }
 });

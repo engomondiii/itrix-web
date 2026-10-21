@@ -5,7 +5,7 @@ const now = () => new Date().toISOString();
 function thread(id: string, title: string, body: string) {
   return {
     id, title, createdAt: now(), lastActivityAt: now(),
-    turns: [{ id: `${id}-t1`, senderKind: 'visitor', body, seq: 1, status: 'settled' }],
+    turns: [{ id: `${id}-t1`, role: 'visitor', body, seq: 1, status: 'settled' }],
     artifacts: [], cards: [],
   };
 }
@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
   }));
   await page.route('**/api/threads', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
-    body: JSON.stringify({ threads: [{ threadId: 'thr_one', title: 'Inference cost', lastActivityAt: now() }] }),
+    body: JSON.stringify({ threads: [{ id: 'thr_one', title: 'Inference cost', lastActivityAt: now() }] }),
   }));
   await page.route('**/api/threads/thr_one', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
@@ -32,6 +32,11 @@ test.beforeEach(async ({ page }) => {
 
 test('manual rename has a labelled focus-trapped dialog and remains authoritative after refresh', async ({ page }) => {
   await page.goto('/review/thr_one');
+  const openNavigation = async () => {
+    const toggle = page.getByRole('button', { name: /Open navigation/i }).first();
+    if (await toggle.isVisible()) await toggle.click();
+  };
+  await openNavigation();
   const opener = page.getByRole('button', { name: /Rename.*Inference cost/i });
   await opener.focus();
   await opener.click();
@@ -56,10 +61,11 @@ test('manual rename has a labelled focus-trapped dialog and remains authoritativ
   await opener.click();
   await field.fill('My inference workload');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.locator('.rail-thread__title')).toHaveText('My inference workload');
+  await expect(page.locator('.rail-thread__title:visible')).toHaveText('My inference workload');
 
   // The server still returns its generated title on refresh; a manual title must win.
   await page.reload();
-  await expect(page.locator('.rail-thread__title')).toHaveText('My inference workload');
-  await expect(page.locator('.rail-thread__title')).not.toContainText('FIRST THREAD SENTENCE');
+  await openNavigation();
+  await expect(page.locator('.rail-thread__title:visible')).toHaveText('My inference workload');
+  await expect(page.locator('.rail-thread__title:visible')).not.toContainText('FIRST THREAD SENTENCE');
 });

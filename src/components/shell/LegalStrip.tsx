@@ -37,7 +37,7 @@ export function LegalStrip({ variant = 'arrival' }: { variant?: 'arrival' | 'rai
       <ul>
         {LEGAL_INSTRUMENTS.map((instrument) => (
           <li key={instrument.slug}>
-            <Link href={`/${instrument.slug}`} className="legal-strip__link">
+            <Link href={["terms", "privacy"].includes(instrument.slug) ? `/legal/${instrument.slug}` : `/${instrument.slug}`} className="legal-strip__link">
               {ko ? LEGAL_INSTRUMENTS_KO[instrument.slug].navLabel : instrument.navLabel}
             </Link>
           </li>

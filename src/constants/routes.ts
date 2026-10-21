@@ -19,8 +19,8 @@ export const routes = {
 
   /** The four legal instruments (Architecture v2.7 §19.10). Created in v6.0 —
    *  /privacy and /security did not exist before, which was a release blocker. */
-  terms: '/terms',
-  privacy: '/privacy',
+  terms: '/legal/terms',
+  privacy: '/legal/privacy',
   security: '/security',
   disclosurePolicy: '/disclosure-policy',
 

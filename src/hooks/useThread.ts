@@ -1,7 +1,8 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useThreadStore } from '@/store/threadStore';
+import { useComposerStore } from '@/store/composerStore';
 import { useTranscriptStore } from '@/store/transcriptStore';
 import { useContentPaneStore } from '@/store/contentPaneStore';
 import { useScrollMemoryStore } from '@/store/scrollMemoryStore';
@@ -64,7 +65,7 @@ export function setThreadUrl(threadId: string | null): void {
     ? `${inWorkspace ? '/workspace/review' : '/review'}/${encodeURIComponent(threadId)}`
     : inWorkspace
       ? '/workspace'
-      : '/';
+      : '/ask-x';
   if (window.location.pathname === next) return;
   window.history.replaceState(null, '', next);
 }
@@ -83,6 +84,29 @@ export function useThread(): UseThreadResult {
      the rail re-labels when the backend replaces a provisional title. */
   const { refresh } = useThreadList(activeThreadId);
   const { switchTo } = useThreadSwitch();
+
+  /* History navigation must rebind the store as well as the address bar.
+     Native pushState preserves the mounted route, so its initial threadId prop
+     may remain unchanged when the visitor returns with Back or Forward. */
+  useEffect(() => {
+    const restoreHistoryThread = () => {
+      const path = window.location.pathname;
+      const match = path.match(/^\/(?:workspace\/)?review\/([^/]+)\/?$/);
+      if (!match && path !== '/ask-x' && path !== '/workspace') return;
+      let threadId: string | null = null;
+      try {
+        threadId = match ? decodeURIComponent(match[1]) : null;
+      } catch {
+        return;
+      }
+      if (useThreadStore.getState().activeThreadId === threadId) return;
+      useComposerStore.getState().clear();
+      useContentPaneStore.getState().closeSheet();
+      setActive(threadId);
+    };
+    window.addEventListener('popstate', restoreHistoryThread);
+    return () => window.removeEventListener('popstate', restoreHistoryThread);
+  }, [setActive]);
 
   const select = useCallback(
     (threadId: string | null) => {

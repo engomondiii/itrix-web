@@ -53,8 +53,8 @@ async function stub(page: import('@playwright/test').Page, body: string) {
         id: 'thr_md', title: 'Review',
         createdAt: new Date().toISOString(), lastActivityAt: new Date().toISOString(),
         turns: [
-          { id: 't1', senderKind: 'visitor', body: 'Our inference cost is rising.', seq: 1, status: 'settled' },
-          { id: 't2', senderKind: 'agent', body, seq: 2, status: 'settled' },
+          { id: 't1', role: 'visitor', body: 'Our inference cost is rising.', seq: 1, status: 'settled' },
+          { id: 't2', role: 'itrix', body, seq: 2, status: 'settled' },
         ],
         artifacts: [], cards: [],
       }),

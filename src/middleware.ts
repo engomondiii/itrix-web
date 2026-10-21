@@ -43,7 +43,7 @@ export function middleware(req: NextRequest) {
      (Surface 1 v5.0 §1.1). */
   if (pathname === '/review' || pathname === '/review/') {
     const url = req.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/ask-x';
     url.search = '';
     return NextResponse.redirect(url);
   }
@@ -103,9 +103,11 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  return NextResponse.next();
+  const headers = new Headers(req.headers);
+  headers.set('x-itrix-page-language', pathname === '/en' || pathname.startsWith('/en/') ? 'en' : pathname === '/' || /^\/(astop|poc|contact|privacy|terms|unsubscribe|maintenance)(\/|$)/.test(pathname) ? 'ko' : 'en');
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {
-  matcher: ['/review', '/workspace', '/workspace/:path*', '/sign-in', '/sign-up', '/set-password'],
+  matcher: ['/((?!api|_next|itx-console|.*\\.[^/]+$).*)'],
 };

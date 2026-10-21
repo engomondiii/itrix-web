@@ -43,9 +43,11 @@ test.describe('deep links always lead back to the conversation', () => {
   });
 
   for (const route of ['/workspace/assessment', '/workspace/poc', '/workspace/integration']) {
-    test(`${route} returns to the conversation`, async ({ page }) => {
+    test(`${route} requires sign-in before showing customer material`, async ({ page }) => {
       await page.goto(route);
-      await expect(page.getByRole('link', { name: /back to your conversation/i })).toBeVisible();
+      await expect.poll(() => new URL(page.url()).pathname).toBe('/sign-in');
+      expect(new URL(page.url()).searchParams.get('next')).toBe(route);
+      await expect(page.locator('input[type="email"]')).toBeVisible();
     });
   }
 });

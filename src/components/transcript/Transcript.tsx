@@ -159,7 +159,7 @@ export function Transcript({ items }: TranscriptProps) {
           />
         ) : null}
 
-        <ScrollAnchor active={atBottom} dependency={flow.length} />
+        <ScrollAnchor active={atBottom} dependency={flow.length} threadId={activeThreadId} />
       </section>
 
       {/* The "keep this work" card USED TO SIT HERE and has moved to the composer

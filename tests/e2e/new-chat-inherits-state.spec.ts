@@ -43,7 +43,7 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/threads', (route) =>
     route.fulfill({
       status: 200, contentType: 'application/json',
-      body: JSON.stringify({ threads: [{ threadId: 'thr_cust', title: 'HBM traffic', lastActivityAt: new Date().toISOString() }] }),
+      body: JSON.stringify({ threads: [{ id: 'thr_cust', title: 'HBM traffic', lastActivityAt: new Date().toISOString() }] }),
     }),
   );
   await page.route('**/api/threads/thr_cust', (route) =>
@@ -52,7 +52,7 @@ test.beforeEach(async ({ page }) => {
       body: JSON.stringify({
         id: 'thr_cust', title: 'HBM traffic',
         createdAt: new Date().toISOString(), lastActivityAt: new Date().toISOString(),
-        turns: [{ id: 't1', senderKind: 'visitor', body: 'Where do we stand?', seq: 1, status: 'settled' }],
+        turns: [{ id: 't1', role: 'visitor', body: 'Where do we stand?', seq: 1, status: 'settled' }],
         artifacts: [], cards: [],
       }),
     }),

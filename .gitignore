@@ -237,3 +237,9 @@ itrix-web-round2/
 # Local release overlay artifacts
 itrix-web-astop-review-feedback-overlay.zip
 OVERLAY_MANIFEST.txt
+
+# Per-partition release diagnostics
+/release-test-results/
+
+# Isolated feature-flagged browser builds
+/.next-playwright/

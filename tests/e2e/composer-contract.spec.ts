@@ -10,7 +10,7 @@ import { expect, test } from '@playwright/test';
  */
 test.describe('the composer', () => {
   test('has the icon-only itriX X send control and no labelled start button', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const send = page.getByRole('button', { name: 'Ask itriX' });
     await expect(send).toBeVisible();
@@ -22,7 +22,7 @@ test.describe('the composer', () => {
   });
 
   test('has no character counter and no maxLength', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     const composer = page.locator('textarea.composer-textarea');
     await expect(composer).not.toHaveAttribute('maxlength', /.*/);
@@ -37,7 +37,7 @@ test.describe('the composer', () => {
   });
 
   test('Enter submits and Shift+Enter inserts a newline', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
     const composer = page.locator('textarea.composer-textarea');
 
     await composer.fill('First line of the problem');
@@ -53,7 +53,7 @@ test.describe('the composer', () => {
   });
 
   test('the retired beneath-composer confidentiality captions stay hidden', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/ask-x');
 
     await expect(
       page.getByText('A non-confidential summary is enough to begin.'),

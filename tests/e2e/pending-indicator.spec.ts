@@ -28,7 +28,7 @@ async function stubThread(page: import('@playwright/test').Page) {
 
 test('a pending turn shows a lattice and a stage label', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Memory movement is limiting capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -40,7 +40,7 @@ test('a pending turn shows a lattice and a stage label', async ({ page }) => {
 
 test('the filled count is conserved as the cell moves', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Our solver is unstable.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -53,7 +53,7 @@ test('the filled count is conserved as the cell moves', async ({ page }) => {
 
 test('the label never advances without a backend stage event', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Our silicon needs a runtime path.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -66,7 +66,7 @@ test('the label never advances without a backend stage event', async ({ page }) 
 
 test('none of the forbidden waiting metaphors appears', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Power is limiting our capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -76,12 +76,15 @@ test('none of the forbidden waiting metaphors appears', async ({ page }) => {
   await expect(pending).not.toContainText('%');
   await expect(pending.locator('progress')).toHaveCount(0);
   await expect(pending.locator('[role="progressbar"]')).toHaveCount(0);
-  await expect(pending.locator('img')).toHaveCount(0);
+  // The approved speaker wordmark is not a human avatar.
+  await expect(pending.locator('img')).toHaveCount(1);
+  await expect(pending.locator('.turn__label img')).toHaveAttribute('alt', 'itriX');
+  await expect(pending.locator('.pending__row img')).toHaveCount(0);
 });
 
 test('the wait is announced once, politely', async ({ page }) => {
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Cooling is limiting capacity.');
   await page.locator('textarea.composer-textarea').press('Enter');
 
@@ -96,17 +99,23 @@ test.describe('reduced motion', () => {
   test.use({ reducedMotion: 'reduce' });
 
   test('the lattice is static and the label carries the message', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await stubThread(page);
-    await page.goto('/');
+    await page.goto('/ask-x');
+    expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
     await page.locator('textarea.composer-textarea').fill('Our training cost is rising.');
     await page.locator('textarea.composer-textarea').press('Enter');
 
     await expect(page.locator('.pending__lattice[data-static]')).toBeVisible();
-    const before = await page.locator('.pending__cell[data-filled]').getAttribute('data-filled');
+    const filledIndex = () => page.locator('.pending__cell').evaluateAll((cells) =>
+      cells.findIndex((cell) => cell.hasAttribute('data-filled')));
+    const before = await filledIndex();
     await page.waitForTimeout(2500);
     /* The timer never starts, so the same cell stays filled. */
     await expect(page.locator('.pending__cell[data-filled]')).toHaveCount(1);
-    expect(before).toBeTruthy();
+    expect(before).toBe(4);
+    expect(await filledIndex()).toBe(before);
+    await expect(page.locator('.pending__cell[data-filled]')).toHaveCSS('transform', 'none');
     await expect(page.locator('.pending__label')).toBeVisible();
   });
 });
@@ -120,7 +129,7 @@ test('a long wait becomes an honest timeout with a retry', async ({ page }) => {
   test.skip(timeoutMs > 5000, 'Build with NEXT_PUBLIC_PENDING_TIMEOUT_MS=1200 to exercise this.');
 
   await stubThread(page);
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.locator('textarea.composer-textarea').fill('Reproducibility is a problem for us.');
   await page.locator('textarea.composer-textarea').press('Enter');
 

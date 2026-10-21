@@ -14,7 +14,7 @@ test('the opening sentence is never requested twice', async ({ page }) => {
     assistantBody: 'We can work from that.',
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
 
   const sentence = 'Our solver drifts after a few thousand steps and we cannot reproduce it.';
   const composer = page.locator('textarea.composer-textarea');

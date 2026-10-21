@@ -57,6 +57,7 @@ import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
  */
 const SELF_CHROMED_PREFIXES = [
   '/workspace',
+  '/legal',
   '/sign-in',
   '/sign-up',
   '/set-password',
@@ -79,6 +80,8 @@ export function ShellModeGate({ children }: { children: ReactNode }) {
   const backendMode = useShellContext().shellMode;
   const localArrival = useArrivalMode();
 
+  if (['/', '/en', '/astop', '/poc', '/contact', '/unsubscribe', '/maintenance', '/404', '/500'].includes(pathname) || pathname.startsWith('/en/')) return <>{children}</>;
+
   if (isSelfChromed(pathname)) return <>{children}</>;
   if (LEGAL_PATHS.includes(pathname)) return <>{children}</>;
 
@@ -88,7 +91,7 @@ export function ShellModeGate({ children }: { children: ReactNode }) {
   const mode = localArrival && (backendMode ?? 'arrival') === 'arrival' ? 'arrival' : 'working';
 
   /* The approved front door owns the whole page. */
-  if (pathname === '/' && mode === 'arrival') return <ArrivalShell>{children}</ArrivalShell>;
+  if (pathname === '/ask-x' && mode === 'arrival') return <ArrivalShell>{children}</ArrivalShell>;
 
   /* With the conversation surface off, marketing routes render bare rather than
      inside a half-migrated shell. Unchanged from v5.0, and the reason the phase

@@ -22,7 +22,7 @@ for (const vp of WIDTHS) {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
     test('the deleted framing line is nowhere on the page', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       /* Body text, and the meta description — the sentence lived in both places at
          different points in this project's history. */
       await expect(page.locator('body')).not.toContainText(FRAMING);
@@ -31,20 +31,20 @@ for (const vp of WIDTHS) {
     });
 
     test('there is exactly one h1, and it is the question', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       const h1 = page.locator('h1');
       await expect(h1).toHaveCount(1);
       await expect(h1).toHaveText('What would you like computation to do better?');
     });
 
     test('the retired Mathematical intelligence eyebrow is not shown', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       await expect(page.locator('body')).not.toContainText('Mathematical intelligence');
       await expect(page.locator('.arrival__eyebrow')).toHaveCount(0);
     });
 
     test('the question and composer keep responsive breathing room', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       const question = await page.locator('.arrival__question').boundingBox();
       const composer = await page.locator('.arrival-center .composer-shell').boundingBox();
       expect(question).not.toBeNull();
@@ -54,7 +54,7 @@ for (const vp of WIDTHS) {
     });
 
     test('no rail and no product navigation', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       await expect(page.locator('.conversation-rail')).toHaveCount(0);
       await expect(page.locator('.working-shell')).toHaveCount(0);
       /* The retired v5.0 product chrome stays gone. The mobile arrival menu only
@@ -65,7 +65,7 @@ for (const vp of WIDTHS) {
     });
 
     test('the only outbound links are Sign in, Sign up and the four instruments', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       /* Below desktop, the same two account links are deliberately housed in the
          compact presentation menu, so open it before asserting their destinations. */
       if (vp.width < 1024) {
@@ -76,7 +76,7 @@ for (const vp of WIDTHS) {
       );
       const external = hrefs.filter((h) => h !== '/' && h !== '#content');
       expect(new Set(external)).toEqual(
-        new Set(['/sign-in', '/sign-up', '/terms', '/privacy', '/security', '/disclosure-policy']),
+        new Set(['/sign-in', '/sign-up', '/legal/terms', '/legal/privacy', '/security', '/disclosure-policy']),
       );
       await expect(page.getByRole('link', { name: 'Sign in', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: 'Sign up', exact: true })).toBeVisible();
@@ -85,14 +85,14 @@ for (const vp of WIDTHS) {
     });
 
     test('the four legal links are reachable', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       for (const label of ['Terms', 'Privacy', 'Security', 'Disclosure policy']) {
         await expect(page.locator('.legal-strip').getByRole('link', { name: label })).toBeVisible();
       }
     });
 
     test('the wordmark descriptor no longer says AI', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       const bar = page.locator('.arrival-bar');
       await expect(bar).not.toContainText('Computational AI');
       if (vp.width >= 768) {
@@ -101,7 +101,7 @@ for (const vp of WIDTHS) {
     });
 
     test('nothing scrollable below the pathway hint', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       /* The legal strip is pinned inside the first viewport, so the document must
          still not scroll — that is the distinction R29 draws. */
       const overflow = await page.evaluate(
@@ -112,7 +112,7 @@ for (const vp of WIDTHS) {
     });
 
     test('no counter, no maxlength, no Begin review button', async ({ page }) => {
-      await page.goto('/');
+      await page.goto('/ask-x');
       const textarea = page.locator('textarea.composer-textarea');
       await expect(textarea).toHaveCount(1);
       expect(await textarea.getAttribute('maxlength')).toBeNull();

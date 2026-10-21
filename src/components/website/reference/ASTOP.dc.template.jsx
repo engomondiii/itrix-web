@@ -1,0 +1,1444 @@
+"use client";
+// Converted from the supplied October 16 design; production state is supplied separately.
+import React from "react";
+import { StoreRoutes } from "../StoreRoutes";
+import { css, AskX, NoticePopup, Captcha } from "./reference-style";
+export function Template(values) {
+  const {
+    askAstop,
+    ckAll,
+    ckAnaOn,
+    ckBar,
+    ckClose,
+    ckNec,
+    ckOpen,
+    ckPanel,
+    ckSaveSel,
+    ckTgAna,
+    mnClose,
+    mnOpen,
+    mnShow,
+  } = values;
+  return (
+    <>
+      <style>
+        {
+          ".reference-hover-1:hover{color:#F8FAFC;}\n.reference-hover-2:hover{color:#F8FAFC;}\n.reference-hover-3:hover{color:#F8FAFC;}\n.reference-hover-4:hover{color:#CBD5E1;}\n.reference-hover-5:hover{color:#1F2937;box-shadow:0 0 0 4px rgba(214,230,255,0.64);}\n.reference-hover-6:hover{color:#F8FAFC;box-shadow:0 0 0 4px rgba(214,230,255,0.3);}\n\nhtml,body{margin:0;padding:0;background:#020406;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word;scroll-behavior:smooth;}\n*{box-sizing:border-box;}\na{color:#F8FAFC;text-decoration:none;}\na:hover{color:#D6E6FF;}\n.price-card{transition:border-color .2s ease,box-shadow .2s ease;}\n.price-card .price-label{transition:color .2s ease;}\n.price-card:hover{border-color:#D6E6FF !important;box-shadow:0 0 0 1px #D6E6FF;}\n.price-card:hover .price-label{color:#D6E6FF !important;}\n\n@keyframes astop-slow{\n0.00%{left:0%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n2.54%{left:5%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n4.82%{left:5%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n7.11%{left:5%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n11.68%{left:14%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n13.96%{left:14%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n16.24%{left:14%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n20.81%{left:23%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n23.10%{left:23%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n25.38%{left:23%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n29.95%{left:32%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n32.23%{left:32%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n34.52%{left:32%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n39.09%{left:41%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n41.37%{left:41%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n43.66%{left:41%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n48.22%{left:50%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n50.51%{left:50%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n52.79%{left:50%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n57.36%{left:59%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n59.65%{left:59%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n61.93%{left:59%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n66.50%{left:68%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n68.78%{left:68%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n71.07%{left:68%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n75.64%{left:77%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n77.92%{left:77%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n80.20%{left:77%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n84.77%{left:86%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n87.06%{left:86%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n89.34%{left:86%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n96.45%{left:100%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n98.6%{left:100%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}99.7%{left:100%;opacity:0;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}100%{left:0%;opacity:0;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}}\n@keyframes astop-fast{\n0.00%{left:0%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n23.94%{left:70%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n30.92%{left:70%;opacity:1;box-shadow:0 0 0 14px rgba(214,230,255,0.10),0 0 28px rgba(214,230,255,0.95);}\n37.91%{left:70%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n48.17%{left:100%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}\n98.6%{left:100%;opacity:1;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}99.7%{left:100%;opacity:0;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}100%{left:0%;opacity:0;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);}}\n@keyframes astop-slow-fill{\n0.00%{width:0%;opacity:1;}\n2.54%{width:5%;opacity:1;}\n4.82%{width:5%;opacity:1;}\n7.11%{width:5%;opacity:1;}\n11.68%{width:14%;opacity:1;}\n13.96%{width:14%;opacity:1;}\n16.24%{width:14%;opacity:1;}\n20.81%{width:23%;opacity:1;}\n23.10%{width:23%;opacity:1;}\n25.38%{width:23%;opacity:1;}\n29.95%{width:32%;opacity:1;}\n32.23%{width:32%;opacity:1;}\n34.52%{width:32%;opacity:1;}\n39.09%{width:41%;opacity:1;}\n41.37%{width:41%;opacity:1;}\n43.66%{width:41%;opacity:1;}\n48.22%{width:50%;opacity:1;}\n50.51%{width:50%;opacity:1;}\n52.79%{width:50%;opacity:1;}\n57.36%{width:59%;opacity:1;}\n59.65%{width:59%;opacity:1;}\n61.93%{width:59%;opacity:1;}\n66.50%{width:68%;opacity:1;}\n68.78%{width:68%;opacity:1;}\n71.07%{width:68%;opacity:1;}\n75.64%{width:77%;opacity:1;}\n77.92%{width:77%;opacity:1;}\n80.20%{width:77%;opacity:1;}\n84.77%{width:86%;opacity:1;}\n87.06%{width:86%;opacity:1;}\n89.34%{width:86%;opacity:1;}\n96.45%{width:100%;opacity:1;}\n98.6%{width:100%;opacity:1;}99.7%{width:100%;opacity:0;}100%{width:0%;opacity:0;}}\n@keyframes astop-fast-fill{\n0.00%{width:0%;opacity:1;}\n23.94%{width:70%;opacity:1;}\n30.92%{width:70%;opacity:1;}\n37.91%{width:70%;opacity:1;}\n48.17%{width:100%;opacity:1;}\n98.6%{width:100%;opacity:1;}99.7%{width:100%;opacity:0;}100%{width:0%;opacity:0;}}\n@keyframes tick-flash{0%{background:#F8FAFC;box-shadow:0 0 12px rgba(214,230,255,0.9);transform:scaleY(1.45);}4%{background:rgba(214,230,255,0.75);box-shadow:none;transform:scaleY(1);}100%{background:rgba(214,230,255,0.35);box-shadow:none;transform:scaleY(1);}}\n@keyframes event-pulse{0%{transform:scale(1.7);box-shadow:0 0 0 14px rgba(214,230,255,0.12),0 0 36px rgba(214,230,255,1);}12%{transform:scale(1);box-shadow:0 0 0 6px rgba(214,230,255,0.16),0 0 24px rgba(214,230,255,0.5);}100%{transform:scale(1);box-shadow:0 0 0 6px rgba(214,230,255,0.16),0 0 24px rgba(214,230,255,0.5);}}\n@keyframes label-pop{0%{transform:translateX(-50%) translateY(-4px);box-shadow:0 0 24px rgba(214,230,255,0.8);}12%,100%{transform:translateX(-50%) translateY(0);box-shadow:none;}}\n@keyframes end-fast{0.00%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}3.25%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}5.92%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}9.17%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}11.83%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}15.09%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}17.75%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}21.01%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}23.67%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}26.92%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}29.59%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}32.84%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}35.50%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}51.23%{background:#3B82F6;border-color:#60A5FA;box-shadow:0 0 0 6px rgba(59,130,246,0.22),0 0 22px rgba(59,130,246,0.95);}51.83%,100%{background:transparent;border-color:rgba(214,230,255,0.45);box-shadow:none;}}\n.lane-dot{position:absolute;z-index:3;left:0;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#F8FAFC;box-shadow:0 0 0 4px rgba(214,230,255,0.18),0 0 20px rgba(214,230,255,0.8);animation-duration:8.45s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;}\n.lane-dot.slow{animation-name:astop-slow;}.lane-dot.fast{animation-name:astop-fast;}\n.lane-fill{position:absolute;z-index:1;left:0;top:50%;height:2px;margin-top:-1px;width:0;background:linear-gradient(90deg,rgba(214,230,255,0) 0%,rgba(214,230,255,0.85) 100%);animation-duration:8.45s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;}\n.lane-fill.slow{animation-name:astop-slow-fill;}.lane-fill.fast{animation-name:astop-fast-fill;}\n.lane-tick{position:absolute;z-index:2;top:50%;width:2px;height:26px;margin:-13px 0 0 -1px;border-radius:1px;background:rgba(214,230,255,0.35);animation:tick-flash 8.45s linear infinite;}\n.lane-event{animation:event-pulse 8.45s ease-out infinite;animation-delay:2.02s;}\n.lane-label{animation:label-pop 8.45s ease-out infinite;animation-delay:2.02s;}\n.lane-end{position:absolute;z-index:2;left:100%;top:50%;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;border:1.5px solid rgba(214,230,255,0.45);background:transparent;animation-duration:8.45s;animation-timing-function:steps(1,end);animation-iteration-count:infinite;}\n.lane-end.slow{animation:none;}.lane-end.fast{animation-name:end-fast;animation-delay:4.07s;}\n@media (prefers-reduced-motion: reduce){.lane-dot,.lane-fill,.lane-tick,.lane-event,.lane-label,.lane-end{animation:none;}.lane-dot{left:100%;}.lane-fill{width:100%;}.lane-end.fast{background:#3B82F6;border-color:#60A5FA;}}\n.lane-call{position:absolute;top:50%;transform:translate(-50%,18px);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:11px;letter-spacing:0.04em;color:#94A3B8;white-space:nowrap;pointer-events:none;}\n.lane-token{position:absolute;z-index:3;top:50%;opacity:0;transform:translate(-50%,-34px);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:11px;font-weight:600;letter-spacing:0.02em;color:#D6E6FF;text-shadow:0 0 10px rgba(214,230,255,0.8);white-space:nowrap;pointer-events:none;animation:token-float 8.45s ease-out infinite;}\n@keyframes token-float{0%{opacity:0;transform:translate(-50%,-34px) scale(0.9);}2%{opacity:1;transform:translate(-50%,-34px) scale(1);}9%{opacity:1;transform:translate(-50%,-34px) scale(1);}13%{opacity:0;transform:translate(-50%,-34px) scale(1);}100%{opacity:0;transform:translate(-50%,-34px) scale(1);}}\n.lane-token.side{transform:translate(14px,-50%);animation-name:token-side;}\n@keyframes token-side{0%{opacity:0;transform:translate(14px,-50%);}3%{opacity:1;transform:translate(18px,-50%);}14%{opacity:0;transform:translate(36px,-50%);}100%{opacity:0;transform:translate(36px,-50%);}}\n.lane-idle{position:absolute;top:50%;transform:translate(-50%,18px);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:11px;letter-spacing:0.06em;color:#64748B;white-space:nowrap;pointer-events:none;}\n.lane-result{position:absolute;top:50%;transform:translate(-50%,18px);font-size:12px;font-weight:700;color:#E2E8F0;white-space:nowrap;pointer-events:none;}\n@media (prefers-reduced-motion: reduce){.lane-token{display:none;}}\n.stat-glow{position:relative;overflow:hidden;isolation:isolate;border-color:rgba(234,242,255,0.32) !important;background:radial-gradient(90% 140% at 0% 0%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%), linear-gradient(160deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0) 60%), rgba(4,8,12,0.5) !important;animation:stat-halo 8s ease-in-out infinite;}\n.stat-glow::before{content:'';position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;background:linear-gradient(105deg, rgba(255,255,255,0) 35%, rgba(255,255,255,0.10) 44%, rgba(255,255,255,0.38) 50%, rgba(255,255,255,0.10) 56%, rgba(255,255,255,0) 65%);background-size:260% 100%;background-repeat:no-repeat;mix-blend-mode:screen;background-position:130% 0;}\n.stat-glow::after{content:'';position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 rgba(234,242,255,0.30), inset 0 0 0 1px rgba(255,255,255,0.06);}\n@keyframes stat-sweep{0%{background-position:130% 0;}65%,100%{background-position:-30% 0;}}\n.stat-glow.is-in::before,.stat-glow.is-in .stat-num{animation:stat-sweep 5s cubic-bezier(.45,0,.25,1) 0s infinite both;}\n@keyframes stat-halo{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,0.06), 0 0 40px rgba(255,255,255,0.06), 0 24px 60px rgba(0,0,0,0.4);}50%{box-shadow:0 0 0 1px rgba(255,255,255,0.14), 0 0 80px rgba(255,255,255,0.16), 0 24px 60px rgba(0,0,0,0.4);}}\n.stat-num{background:linear-gradient(105deg, #E2E8F0 0%, #F1F5F9 35%, #FFFFFF 47%, #FFFFFF 53%, #F1F5F9 65%, #E2E8F0 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent !important;font-size:clamp(64px,7vw,96px) !important;font-weight:700 !important;background-position:130% 0;filter:drop-shadow(0 0 22px rgba(255,255,255,0.35));}\n@media (prefers-reduced-motion: reduce){.stat-glow,.stat-glow::before,.stat-num{animation:none;}}\n.askx img{transition:opacity .2s ease;}.askx:hover img{opacity:0.78;}\n.su-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:rgba(214,230,255,0.12);border:1px solid rgba(214,230,255,0.4);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.08em;color:#D6E6FF;}\n@keyframes hbGlow{0%,100%{box-shadow:0 0 0 0 rgba(214,230,255,0);}12%{box-shadow:0 0 0 3px rgba(214,230,255,0.45),0 0 22px rgba(214,230,255,0.28);}26%{box-shadow:0 0 0 0 rgba(214,230,255,0);}}\n.hb{animation:hbGlow 7s ease-in-out infinite;}\n.hb2{animation-delay:1.2s;}.hb3{animation-delay:2.4s;}\n.hb:hover{animation:none;}\n@media (prefers-reduced-motion:reduce){.hb{animation:none;}}\n.navlogin{height:38px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;border:1px solid rgba(214,230,255,0.4);color:#F8FAFC !important;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;white-space:nowrap;transition:background .2s ease,border-color .2s ease;}\n.navlogin:hover{background:rgba(214,230,255,0.08);border-color:rgba(214,230,255,0.8);}\n.navlang{display:inline-flex;padding:3px;border-radius:10px;border:1px solid rgba(214,230,255,0.28);background:rgba(2,4,6,0.5);gap:2px;}\n.navlang a{height:30px;min-width:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 10px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:#94A3B8 !important;transition:background .2s ease,color .2s ease;}\n.navlang a:hover{color:#F8FAFC !important;}\n.navlang a.on{background:#F8FAFC;color:#0B1118 !important;font-weight:500;}\n.navpoc{height:38px;display:inline-flex;align-items:center;padding:0 18px;border-radius:10px;background:#F8FAFC;color:#0B1118 !important;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;white-space:nowrap;transition:box-shadow .2s ease;}\n.navpoc:hover{box-shadow:0 0 0 4px rgba(214,230,255,0.35);color:#0B1118 !important;}\n.ft-links a{color:#CBD5E1;font-size:14px;}.ft-links a:hover{color:#F8FAFC;}\n.ck-bar{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;justify-content:center;padding:0 20px 20px;pointer-events:none;}\n.ck-card{pointer-events:auto;width:min(1040px,100%);display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;padding:22px 26px;border-radius:20px;border:1px solid rgba(214,230,255,0.24);background:rgba(11,17,24,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 24px 70px rgba(0,0,0,0.55);font-family:'Noto Sans KR',sans-serif;}\n.ck-btns{display:flex;flex-wrap:wrap;gap:10px;}\n.ck-b{height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid rgba(214,230,255,0.35);background:transparent;color:#E2E8F0;transition:border-color .2s,background .2s,box-shadow .2s;}\n.ck-b:hover{border-color:rgba(214,230,255,0.8);color:#F8FAFC;}\n.ck-b.pri{background:#F8FAFC;border-color:#F8FAFC;color:#0B1118;font-weight:700;}\n.ck-b.pri:hover{box-shadow:0 0 0 4px rgba(214,230,255,0.3);color:#0B1118;}\n.ck-b.txt{border-color:transparent;color:#94A3B8;text-decoration:underline;text-underline-offset:3px;padding:0 6px;}\n.ck-b.txt:hover{color:#F8FAFC;}\n.ck-wrap{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,4,6,0.66);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);font-family:'Noto Sans KR',sans-serif;}\n.ck-panel{width:min(520px,100%);display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:24px;border:1px solid rgba(214,230,255,0.28);background:#0B1118;box-shadow:0 40px 100px rgba(0,0,0,0.6);}\n.ck-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:16px 0;border-top:1px solid rgba(214,230,255,0.12);}\n.ck-tg{width:48px;height:28px;border-radius:999px;border:1px solid rgba(214,230,255,0.4);background:rgba(214,230,255,0.06);position:relative;cursor:pointer;flex-shrink:0;padding:0;transition:background .2s;}\n.ck-tg::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#94A3B8;transition:left .2s,background .2s;}\n.ck-tg.on{background:rgba(214,230,255,0.3);border-color:#D6E6FF;}\n.ck-tg.on::after{left:23px;background:#F8FAFC;}\n.ck-tg.lock{opacity:0.55;cursor:default;}\n.ft-ck{background:none;border:none;padding:0;cursor:pointer;font:inherit;text-align:left;color:#CBD5E1;}\n.ft-ck:hover{color:#F8FAFC;}\n.nv-m{display:none;align-items:center;gap:10px;}\n.nv-burger{width:42px;height:38px;border-radius:10px;border:1px solid rgba(214,230,255,0.3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;}\n.nv-burger span{width:18px;height:1.5px;background:#F8FAFC;border-radius:2px;}\n.mn-wrap{position:fixed;inset:0;z-index:95;display:flex;flex-direction:column;background:#020406;overflow-y:auto;}\n.mn-top{display:flex;justify-content:space-between;align-items:center;min-height:64px;padding:12px 20px;border-bottom:1px solid rgba(214,230,255,0.14);}\n.mn-x{width:42px;height:38px;border-radius:10px;border:1px solid rgba(214,230,255,0.3);background:transparent;color:#F8FAFC;font-size:18px;cursor:pointer;}\n.mn-list{display:flex;flex-direction:column;padding:12px 20px;}\n.mn-list a.mi{display:flex;justify-content:space-between;align-items:center;height:60px;border-bottom:1px solid rgba(214,230,255,0.1);font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:24px;font-weight:500;color:#F8FAFC;}\n.mn-list a.mi span.ar{color:#64748B;font-size:18px;}\n.mn-foot{display:flex;flex-direction:column;gap:14px;padding:20px 20px 32px;margin-top:auto;}\n.mn-poc{height:54px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#F8FAFC;color:#0B1118 !important;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;}\n@media (max-width:820px){nav .nv-links{display:none !important;}.nv-m{display:flex;}.nv-m .navpoc{height:36px;padding:0 14px;font-size:13px;}nav{min-height:64px !important;}}\n@media (max-width:820px){body{overflow-x:clip;}h1,h2,h3{max-width:100% !important;}h1,h2,h3{width:auto !important;}div[style*=\"span 2\"]{grid-column:auto !important;}section[style*=\"position\"]{max-width:100vw;}}\n@media (max-width:820px){\n.m-x{display:none !important;}\n.lane-wrap-m{margin:0 30px 0 6px !important;}\n.lane-tick.mk1,.lane-call.mk1,.lane-token.mk1{left:5% !important;}.lane-tick.mk1,.lane-token.mk1{animation-delay:0.21s !important;}\n.lane-tick.mk2,.lane-call.mk2,.lane-token.mk2{left:21% !important;}.lane-tick.mk2,.lane-token.mk2{animation-delay:1.58s !important;}\n.lane-tick.mk3,.lane-call.mk3,.lane-token.mk3{left:37% !important;}.lane-tick.mk3,.lane-token.mk3{animation-delay:2.95s !important;}\n.lane-tick.mk4,.lane-call.mk4,.lane-token.mk4{left:53% !important;}.lane-tick.mk4,.lane-token.mk4{animation-delay:4.32s !important;}\n.lane-tick.mk5,.lane-call.mk5,.lane-token.mk5{left:69% !important;}.lane-tick.mk5,.lane-token.mk5{animation-delay:5.69s !important;}\n.lane-tick.mk6,.lane-call.mk6,.lane-token.mk6{left:85% !important;}.lane-tick.mk6,.lane-token.mk6{animation-delay:7.06s !important;}\n.crit-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:8px !important;}\n.crit-grid > div{padding:14px 10px !important;border-radius:14px !important;gap:6px !important;}\n.crit-grid > div > span:nth-child(1){font-size:11px !important;}\n.crit-grid > div > span:nth-child(2){font-size:17px !important;}\n.crit-grid > div > span:nth-child(3){font-size:12px !important;line-height:1.5 !important;}\n}\n"
+        }
+      </style>
+      {"\n"}
+      <div
+        lang={"ko"}
+        style={css(
+          "background: #020406; color: #F8FAFC; font-family: 'Noto Sans KR',sans-serif; min-height: 100vh;",
+        )}
+      >
+        {"\n\n  "}
+        <nav
+          style={css(
+            "position:sticky;top:0;z-index:20;min-height:72px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding:12px clamp(20px,5vw,48px);background:rgba(2,4,6,0.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(214,230,255,0.14);",
+          )}
+        >
+          {"\n    "}
+          <a
+            href={"/"}
+            style={css("display:flex;align-items:center;gap:16px;")}
+          >
+            {"\n      "}
+            <img
+              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              alt={"itriX"}
+              style={css(
+                "width:120px;height:auto;display:block;filter:invert(1);",
+              )}
+            />
+            {"\n    "}
+          </a>
+          {"\n    "}
+          <div
+            className={"nv-links"}
+            style={css(
+              "display:flex;flex-wrap:wrap;align-items:center;gap:8px 32px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:17px;font-weight:500;",
+            )}
+          >
+            {"\n      "}
+            <a
+              href={"/#portfolio"}
+              style={css("color:#F8FAFC;")}
+              className={" reference-hover-1"}
+            >
+              {"Products"}
+            </a>
+            {"\n      "}
+            <a
+              href={"/#technology"}
+              style={css("color:#CBD5E1;")}
+              className={" reference-hover-2"}
+            >
+              {"Technology"}
+            </a>
+            {"\n      "}
+            <a
+              href={"/#why"}
+              style={css("color:#CBD5E1;")}
+              className={" reference-hover-3"}
+            >
+              {"Company"}
+            </a>
+            {"\n      "}
+            <a
+              className={"askx reference-hover-4"}
+              href={"/#ask-chat"}
+              style={css(
+                "display:flex;align-items:center;gap:8px;color:#F8FAFC;",
+              )}
+            >
+              <span
+                style={css(
+                  "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
+                )}
+              >
+                {"Ask"}
+                <img
+                  src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
+                  alt={"X"}
+                  style={css(
+                    "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
+                  )}
+                />
+              </span>
+            </a>
+            {"\n      "}
+            <a className={"navpoc"} href={"/poc"}>
+              {"PoC 신청"}
+            </a>
+            {"\n      "}
+            <span className={"navlang"} role={"group"} aria-label={"Language"}>
+              <a className={"on"} href={"/astop"} lang={"ko"}>
+                {"KO"}
+              </a>
+              <a className={""} href={"/en/astop"} lang={"en"}>
+                {"EN"}
+              </a>
+            </span>
+            {"\n    "}
+          </div>
+          {"\n    "}
+          <div className={"nv-m"}>
+            <a className={"navpoc"} href={"/poc"}>
+              {"PoC 신청"}
+            </a>
+            <button
+              className={"nv-burger"}
+              onClick={mnOpen}
+              aria-label={"메뉴 열기"}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+          {"\n  "}
+        </nav>
+        {"\n\n  "}
+        <section
+          style={css(
+            "position:relative;overflow:hidden;padding:clamp(80px,11vw,160px) clamp(20px,6vw,80px);background:#020406;",
+          )}
+        >
+          {"\n    "}
+          <img
+            src={"/brand/2f7ac2dac19e93fa2824a767d193d084.jpg"}
+            alt={""}
+            style={css(
+              "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;pointer-events:none;",
+            )}
+          />
+          <div
+            style={css(
+              "position:absolute;inset:0;background:linear-gradient(90deg, #020406 0%, rgba(2,4,6,0.88) 35%, rgba(2,4,6,0.4) 75%, rgba(2,4,6,0.25) 100%), linear-gradient(180deg, rgba(2,4,6,0) 60%, rgba(2,4,6,0.7) 100%);pointer-events:none;",
+            )}
+          ></div>
+          {"\n    "}
+          <div
+            style={css(
+              "position:relative;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:32px;",
+            )}
+          >
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;font-weight:500;letter-spacing:0.12em;color:#CBD5E1;",
+              )}
+            >
+              <a href={"/#portfolio"} style={css("color:#CBD5E1;")}>
+                {"PRODUCTS"}
+              </a>
+              <span>{"/"}</span>
+              <span style={css("color:#F8FAFC;")}>{"ASTOP"}</span>
+            </div>
+            {"\n      "}
+            <h1
+              style={css(
+                "margin:0;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:clamp(72px,11vw,144px);font-weight:600;line-height:0.95;letter-spacing:-0.02em;color:#F8FAFC;",
+              )}
+            >
+              {"ASTOP"}
+            </h1>
+            {"\n      "}
+            <div style={css("display:flex;flex-wrap:wrap;gap:8px;")}>
+              {"\n        "}
+              <span
+                style={css(
+                  "padding:4px 8px;border-radius:6px;background:#F8FAFC;font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;letter-spacing:0.06em;color:#1F2937;",
+                )}
+              >
+                {"IMPLEMENTATION DEMONSTRATED"}
+              </span>
+              {"\n        "}
+              <span
+                style={css(
+                  "padding:4px 8px;border-radius:6px;border:1px solid rgba(214,230,255,0.5);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;letter-spacing:0.06em;color:#F8FAFC;",
+                )}
+              >
+                {"AI OBSERVATION & EXECUTION OPTIMIZATION"}
+              </span>
+              {"\n        "}
+              <span
+                style={css(
+                  "padding:4px 8px;border-radius:6px;border:1px solid rgba(214,230,255,0.5);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;letter-spacing:0.06em;color:#F8FAFC;",
+                )}
+              >
+                {"TECH · PRISM"}
+              </span>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              style={css(
+                "max-width:720px;display:flex;flex-direction:column;gap:16px;",
+              )}
+            >
+              {"\n        "}
+              <p
+                style={css(
+                  "margin:0;font-size:clamp(22px,2.2vw,30px);font-weight:700;line-height:1.4;color:#F8FAFC;text-wrap:balance;",
+                )}
+              >
+                {"AI의 반복 비용을 줄여줍니다."}
+              </p>
+              {"\n        "}
+              <p
+                style={css(
+                  "margin:0;font-size:clamp(17px,1.4vw,19px);line-height:1.65;color:#CBD5E1;",
+                )}
+              >
+                {
+                  "ASTOP은 PRISM 기반기술을 적용하여 기존 Agent·자동화 업무에서 반복 관찰과 불필요한 AI 판단 요청을 줄이도록 설계되었습니다."
+                }
+              </p>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div style={css("display:flex;flex-wrap:wrap;gap:16px;")}>
+              {"\n        "}
+              <a
+                className={"hb hb1 reference-hover-5"}
+                href={"/poc"}
+                style={css(
+                  "height:56px;display:flex;align-items:center;gap:8px;padding:0 24px;border-radius:14px;background:#F8FAFC;color:#1F2937;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:17px;font-weight:600;",
+                )}
+              >
+                {"PoC 신청 "}
+                <span>{"→"}</span>
+              </a>
+              {"\n        "}
+              <a
+                className={"hb hb2 reference-hover-6"}
+                href={"/#ask-chat"}
+                onClick={askAstop}
+                style={css(
+                  "height:56px;display:flex;align-items:center;gap:8px;padding:0 24px;border-radius:14px;background:rgba(2,4,6,0.4);border:1px solid rgba(214,230,255,0.5);color:#F8FAFC;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:17px;font-weight:500;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);",
+                )}
+              >
+                <span
+                  style={css(
+                    "display:inline-flex;align-items:center;gap:7px;pointer-events:none;",
+                  )}
+                >
+                  {"Ask"}
+                  <img
+                    src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
+                    alt={"X"}
+                    style={css(
+                      "height:14px;width:auto;display:block;filter:invert(1);",
+                    )}
+                  />
+                  {"about ASTOP"}
+                </span>
+              </a>
+              {"\n      "}
+            </div>
+            {"\n    "}
+          </div>
+          {"\n  "}
+        </section>
+        {"\n\n  "}
+        <section
+          style={css(
+            "padding:clamp(64px,9vw,128px) clamp(20px,6vw,80px);background:#080D10;border-top:1px solid rgba(214,230,255,0.14);",
+          )}
+        >
+          {"\n    "}
+          <div
+            style={css(
+              "max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:56px;",
+            )}
+          >
+            {"\n      "}
+            <div
+              style={css(
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px 96px;align-items:end;",
+              )}
+            >
+              {"\n        "}
+              <div style={css("display:flex;flex-direction:column;gap:24px;")}>
+                {"\n          "}
+                <h2
+                  style={css(
+                    "margin:0;font-size:clamp(28px,3vw,40px);font-weight:700;line-height:1.28;color:#F8FAFC;",
+                  )}
+                >
+                  {"내 워크로드에 맞는 도구인가요?"}
+                </h2>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <p
+                style={css(
+                  "margin:0;max-width:36em;font-size:17px;line-height:1.65;color:#CBD5E1;",
+                )}
+              >
+                {
+                  "AI가 결과를 기다리며 반복 확인하는 업무가 1순위입니다. AI 에이전트·자동화가 늘수록 반복 확인 비용도 함께 커질 수 있습니다."
+                }
+              </p>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              style={css(
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));border-top:1px solid rgba(214,230,255,0.4);",
+              )}
+            >
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:28px 28px 0 0;display:flex;flex-direction:column;gap:14px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#94A3B8;",
+                  )}
+                >
+                  {"01"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-size:18px;font-weight:700;line-height:1.4;color:#F8FAFC;",
+                  )}
+                >
+                  {"소프트웨어 개발 자동화"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:15px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"AI가 테스트 완료를 반복 확인하는 구간"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:28px 28px 0 0;display:flex;flex-direction:column;gap:14px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#94A3B8;",
+                  )}
+                >
+                  {"02"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-size:18px;font-weight:700;line-height:1.4;color:#F8FAFC;",
+                  )}
+                >
+                  {"시스템 운영·모니터링"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:15px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"이상이 생겼을 때만 AI가 판단"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:28px 28px 0 0;display:flex;flex-direction:column;gap:14px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#94A3B8;",
+                  )}
+                >
+                  {"03"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-size:18px;font-weight:700;line-height:1.4;color:#F8FAFC;",
+                  )}
+                >
+                  {"대량 데이터 처리·분석"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:15px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"결과가 나올 때까지 반복 조회하던 구간"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:28px 28px 0 0;display:flex;flex-direction:column;gap:14px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#94A3B8;",
+                  )}
+                >
+                  {"04"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-size:18px;font-weight:700;line-height:1.4;color:#F8FAFC;",
+                  )}
+                >
+                  {"결재·정산·승인 업무"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:15px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"변경·실패·승인 요청이 생길 때만 전달"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n      "}
+            </div>
+            {"\n    "}
+          </div>
+          {"\n  "}
+        </section>
+        {"\n\n  "}
+        <section
+          style={css(
+            "padding:clamp(64px,9vw,128px) clamp(20px,6vw,80px);background:#020406;border-top:1px solid rgba(214,230,255,0.14);",
+          )}
+        >
+          {"\n    "}
+          <div
+            style={css(
+              "max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
+            )}
+          >
+            {"\n      "}
+            <div
+              style={css(
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:24px 96px;align-items:end;",
+              )}
+            >
+              {"\n        "}
+              <div style={css("display:flex;flex-direction:column;gap:24px;")}>
+                {"\n          "}
+                <h2
+                  style={css(
+                    "margin:0;font-size:clamp(28px,3vw,40px);font-weight:700;line-height:1.28;color:#F8FAFC;",
+                  )}
+                >
+                  {"같은 결과, 비용 절감."}
+                  <br />
+                  {"반복 호출을 줄였습니다."}
+                </h2>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <p
+                style={css(
+                  "margin:0;max-width:36em;font-size:17px;line-height:1.65;color:#CBD5E1;",
+                )}
+              >
+                {
+                  "기존 AI 에이전트는 작업이 끝나길 기다리며 같은 확인을 반복하고, 확인할 때마다 사용료가 발생합니다. 같은 작업을 시간 위에 놓고 보면 차이가 분명해집니다. 완료·실패·예외 등 필수 신호는 그대로 보존합니다."
+                }
+              </p>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-direction:column;border-top:1px solid rgba(214,230,255,0.4);",
+              )}
+            >
+              {"\n        "}
+              <div
+                style={css(
+                  "display:flex;flex-wrap:wrap;align-items:center;gap:16px 48px;padding:36px 0 36px 36px;border-bottom:1px solid rgba(214,230,255,0.12);",
+                )}
+              >
+                {"\n          "}
+                <div
+                  style={css(
+                    "flex:1 1 220px;max-width:280px;display:flex;flex-direction:column;gap:6px;",
+                  )}
+                >
+                  {"\n            "}
+                  <span
+                    style={css("font-size:20px;font-weight:700;color:#E2E8F0;")}
+                  >
+                    {"기존 AI 에이전트"}
+                  </span>
+                  {"\n            "}
+                  <span
+                    style={css(
+                      "font-size:14px;line-height:1.55;color:#CBD5E1;",
+                    )}
+                  >
+                    {"변화가 없어도 반복 호출하고, 호출마다 비용이 쌓입니다."}
+                  </span>
+                  {"\n          "}
+                </div>
+                {"\n          "}
+                <div
+                  className={"lane-wrap-m"}
+                  style={css(
+                    "flex:999 1 420px;min-width:0;position:relative;height:72px;margin:0 36px;",
+                  )}
+                >
+                  {"\n            "}
+                  <span
+                    style={css(
+                      "position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(214,230,255,0.22);",
+                    )}
+                  ></span>
+                  <span
+                    className={"lane-fill slow"}
+                    aria-hidden={"true"}
+                  ></span>
+                  <span
+                    className={"lane-tick mk1"}
+                    style={css("left:5%;animation-delay:0.21s;")}
+                  ></span>
+                  <span className={"lane-call mk1"} style={css("left:5%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk1"}
+                    aria-hidden={"true"}
+                    style={css("left:5%;animation-delay:0.21s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick m-x"}
+                    style={css("left:14%;animation-delay:0.99s;")}
+                  ></span>
+                  <span className={"lane-call m-x"} style={css("left:14%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token m-x"}
+                    aria-hidden={"true"}
+                    style={css("left:14%;animation-delay:0.99s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick mk2"}
+                    style={css("left:23%;animation-delay:1.76s;")}
+                  ></span>
+                  <span className={"lane-call mk2"} style={css("left:23%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk2"}
+                    aria-hidden={"true"}
+                    style={css("left:23%;animation-delay:1.76s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick m-x"}
+                    style={css("left:32%;animation-delay:2.53s;")}
+                  ></span>
+                  <span className={"lane-call m-x"} style={css("left:32%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token m-x"}
+                    aria-hidden={"true"}
+                    style={css("left:32%;animation-delay:2.53s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick mk3"}
+                    style={css("left:41%;animation-delay:3.30s;")}
+                  ></span>
+                  <span className={"lane-call mk3"} style={css("left:41%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk3"}
+                    aria-hidden={"true"}
+                    style={css("left:41%;animation-delay:3.30s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick mk4"}
+                    style={css("left:50%;animation-delay:4.08s;")}
+                  ></span>
+                  <span className={"lane-call mk4"} style={css("left:50%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk4"}
+                    aria-hidden={"true"}
+                    style={css("left:50%;animation-delay:4.08s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick m-x"}
+                    style={css("left:59%;animation-delay:4.85s;")}
+                  ></span>
+                  <span className={"lane-call m-x"} style={css("left:59%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token m-x"}
+                    aria-hidden={"true"}
+                    style={css("left:59%;animation-delay:4.85s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick mk5"}
+                    style={css("left:68%;animation-delay:5.62s;")}
+                  ></span>
+                  <span className={"lane-call mk5"} style={css("left:68%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk5"}
+                    aria-hidden={"true"}
+                    style={css("left:68%;animation-delay:5.62s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick m-x"}
+                    style={css("left:77%;animation-delay:6.39s;")}
+                  ></span>
+                  <span className={"lane-call m-x"} style={css("left:77%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token m-x"}
+                    aria-hidden={"true"}
+                    style={css("left:77%;animation-delay:6.39s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span
+                    className={"lane-tick mk6"}
+                    style={css("left:86%;animation-delay:7.16s;")}
+                  ></span>
+                  <span className={"lane-call mk6"} style={css("left:86%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token mk6"}
+                    aria-hidden={"true"}
+                    style={css("left:86%;animation-delay:7.16s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span className={"lane-end slow"} aria-hidden={"true"}></span>
+                  <span className={"lane-result"} style={css("left:100%;")}>
+                    {"같은 결과"}
+                  </span>
+                  <span className={"lane-dot slow"} aria-hidden={"true"}></span>
+                  {"\n          "}
+                </div>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "display:flex;flex-wrap:wrap;align-items:center;gap:16px 48px;padding:36px 0 36px 34px;border-left:2px solid #D6E6FF;background:linear-gradient(90deg, rgba(214,230,255,0.13) 0px, rgba(214,230,255,0.07) 220px, rgba(214,230,255,0) 400px);",
+                )}
+              >
+                {"\n          "}
+                <div
+                  style={css(
+                    "flex:1 1 220px;max-width:280px;display:flex;flex-direction:column;gap:8px;",
+                  )}
+                >
+                  {"\n            "}
+                  <span
+                    style={css(
+                      "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:28px;font-weight:600;line-height:1.1;color:#F8FAFC;",
+                    )}
+                  >
+                    {"ASTOP · PRISM 적용"}
+                  </span>
+                  {"\n            "}
+                  <span
+                    style={css(
+                      "font-size:15px;line-height:1.55;color:#F8FAFC;",
+                    )}
+                  >
+                    {"변화가 생겼을 때만 호출합니다."}
+                  </span>
+                  {"\n          "}
+                </div>
+                {"\n          "}
+                <div
+                  className={"lane-wrap-m"}
+                  style={css(
+                    "flex:999 1 420px;min-width:0;position:relative;height:72px;margin:0 36px;",
+                  )}
+                >
+                  {"\n            "}
+                  <span
+                    style={css(
+                      "position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(214,230,255,0.22);",
+                    )}
+                  ></span>
+                  <span
+                    className={"lane-fill fast"}
+                    aria-hidden={"true"}
+                  ></span>
+                  <span className={"lane-end fast"} aria-hidden={"true"}></span>
+                  <span className={"lane-result"} style={css("left:100%;")}>
+                    {"같은 결과"}
+                  </span>
+                  <span className={"lane-idle"} style={css("left:35%;")}>
+                    {"대기 중 · 호출 없음"}
+                  </span>
+                  <span className={"lane-call"} style={css("left:70%;")}>
+                    {"호출"}
+                  </span>
+                  <span
+                    className={"lane-token side"}
+                    aria-hidden={"true"}
+                    style={css("left:70%;animation-delay:2.02s;")}
+                  >
+                    {"+토큰"}
+                  </span>
+                  <span className={"lane-dot fast"} aria-hidden={"true"}></span>
+                  {"\n            "}
+                  <span
+                    className={"lane-event"}
+                    style={css(
+                      "position:absolute;z-index:2;left:70%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#F8FAFC;box-shadow:0 0 0 6px rgba(214,230,255,0.16),0 0 24px rgba(214,230,255,0.5);",
+                    )}
+                  ></span>
+                  {"\n            "}
+                  <span
+                    className={"lane-label"}
+                    style={css(
+                      "position:absolute;left:70%;bottom:calc(50% + 18px);transform:translateX(-50%);white-space:nowrap;padding:4px 10px;border-radius:999px;background:#F8FAFC;font-size:13px;font-weight:700;color:#1F2937;",
+                    )}
+                  >
+                    {"상태 변화 → AI 판단"}
+                  </span>
+                  {"\n          "}
+                </div>
+                {"\n        "}
+              </div>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-wrap:wrap;gap:16px 64px;font-size:15px;line-height:1.6;color:#CBD5E1;",
+              )}
+            >
+              {"\n        "}
+              <span>
+                <span
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:20px;font-weight:600;color:#F8FAFC;",
+                  )}
+                >
+                  {"ASTOP"}
+                </span>
+                {"  반복 관찰과 불필요한 AI 판단 요청을 줄이는 제품"}
+              </span>
+              {"\n        "}
+              <span>
+                <span
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:20px;font-weight:600;color:#F8FAFC;",
+                  )}
+                >
+                  {"PRISM"}
+                </span>
+                {"  판단에 중요한 변화에 맞춰 AI 호출을 효율화하는 기반기술"}
+              </span>
+              {"\n      "}
+            </div>
+            {"\n    "}
+          </div>
+          {"\n  "}
+        </section>
+        {"\n\n  "}
+        <section
+          style={css(
+            "position:relative;overflow:hidden;padding:clamp(64px,9vw,128px) clamp(20px,6vw,80px);background:#080D10;border-top:1px solid rgba(214,230,255,0.14);",
+          )}
+        >
+          <img
+            src={"/brand/e45ecb3ba7dcb57132ce3d6eeba94c46.jpg"}
+            alt={""}
+            style={css(
+              "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center;pointer-events:none;",
+            )}
+          />
+          <div
+            style={css(
+              "position:absolute;inset:0;background:linear-gradient(90deg, #080D10 0%, rgba(8,13,16,0.78) 30%, rgba(8,13,16,0.3) 70%, rgba(8,13,16,0.15) 100%), linear-gradient(180deg, rgba(8,13,16,0.6) 0%, rgba(8,13,16,0) 35%, rgba(2,4,6,0.7) 78%, #020406 100%);pointer-events:none;",
+            )}
+          ></div>
+          {"\n    "}
+          <div
+            style={css(
+              "position:relative;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
+            )}
+          >
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-direction:column;gap:24px;max-width:760px;",
+              )}
+            >
+              {"\n        "}
+              <h2
+                style={css(
+                  "margin:0;font-size:clamp(28px,3vw,40px);font-weight:700;line-height:1.28;color:#F8FAFC;",
+                )}
+              >
+                {"세 가지 기준으로 평가합니다."}
+              </h2>
+              {"\n        "}
+              <p
+                style={css(
+                  "margin:0;font-size:16px;line-height:1.65;color:#CBD5E1;",
+                )}
+              >
+                {"검증 수치는 측정 지표와 실험 조건을 함께 제시합니다."}
+              </p>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              className={"crit-grid"}
+              style={css(
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;",
+              )}
+            >
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:32px;border-radius:20px;background:linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 38%, rgba(255,255,255,0) 60%), rgba(2,4,6,0.42);border:1px solid rgba(214,230,255,0.26);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 48px rgba(0,0,0,0.35);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);display:flex;flex-direction:column;gap:16px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;color:#94A3B8;",
+                  )}
+                >
+                  {"01"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:32px;font-weight:600;line-height:1.1;color:#F8FAFC;",
+                  )}
+                >
+                  {"Required decisions"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:16px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"워크로드가 실제로 필요로 하는 결정은 무엇인가"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:32px;border-radius:20px;background:linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 38%, rgba(255,255,255,0) 60%), rgba(2,4,6,0.42);border:1px solid rgba(214,230,255,0.26);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 48px rgba(0,0,0,0.35);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);display:flex;flex-direction:column;gap:16px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;color:#94A3B8;",
+                  )}
+                >
+                  {"02"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:32px;font-weight:600;line-height:1.1;color:#F8FAFC;",
+                  )}
+                >
+                  {"Resource impact"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:16px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"그 결정이 계산 자원에 어떤 영향을 주는가"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "padding:32px;border-radius:20px;background:linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 38%, rgba(255,255,255,0) 60%), rgba(2,4,6,0.42);border:1px solid rgba(214,230,255,0.26);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 48px rgba(0,0,0,0.35);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);display:flex;flex-direction:column;gap:16px;",
+                )}
+              >
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;color:#94A3B8;",
+                  )}
+                >
+                  {"03"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:32px;font-weight:600;line-height:1.1;color:#F8FAFC;",
+                  )}
+                >
+                  {"Observer overhead"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("font-size:16px;line-height:1.6;color:#CBD5E1;")}
+                >
+                  {"관찰 자체가 만드는 부담은 얼마인가"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              className={"stat-glow"}
+              style={css(
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:32px 64px;align-items:center;padding:clamp(24px,3vw,40px);border-radius:20px;background:linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 38%, rgba(255,255,255,0) 60%), rgba(2,4,6,0.42);border:1px solid rgba(214,230,255,0.26);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 48px rgba(0,0,0,0.35);backdrop-filter:blur(18px) saturate(1.2);-webkit-backdrop-filter:blur(18px) saturate(1.2);",
+              )}
+            >
+              {"\n        "}
+              <div style={css("display:flex;flex-direction:column;gap:8px;")}>
+                {"\n          "}
+                <span
+                  style={css(
+                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#94A3B8;",
+                  )}
+                >
+                  {"PRISM · 2026 CONTROLLED TEST"}
+                </span>
+                {"\n          "}
+                <span
+                  className={"stat-num"}
+                  style={css(
+                    "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:clamp(56px,6vw,80px);font-weight:600;line-height:1;color:#F8FAFC;",
+                  )}
+                >
+                  {"51.9 ~ 84.5%"}
+                </span>
+                {"\n          "}
+                <span style={css("font-size:17px;color:#F8FAFC;")}>
+                  {"관측·판단 관련 토큰 감소"}
+                </span>
+                {"\n        "}
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:1.6;color:#CBD5E1;",
+                )}
+              >
+                {"\n          "}
+                <span>
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;color:#94A3B8;",
+                    )}
+                  >
+                    {"01 "}
+                  </span>
+                  {"오래 걸리는 AI 작업을 대상으로"}
+                </span>
+                {"\n          "}
+                <span>
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;color:#94A3B8;",
+                    )}
+                  >
+                    {"02 "}
+                  </span>
+                  {"기존 반복 확인 방식과 같은 조건 비교"}
+                </span>
+                {"\n          "}
+                <span>
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;color:#94A3B8;",
+                    )}
+                  >
+                    {"03 "}
+                  </span>
+                  {"2026년 PRISM 내부 통제 실험 총 720회"}
+                </span>
+                {"\n          "}
+                <span
+                  style={css("padding-top:8px;font-size:13px;color:#94A3B8;")}
+                >
+                  {
+                    "선정 조건에서 집계한 관측·판단 관련 토큰이며, 제품 실증 결과가 아닙니다. 고객 환경의 성과는 별도 Technical Validation으로 확인합니다."
+                  }
+                </span>
+                {"\n        "}
+              </div>
+              {"\n      "}
+            </div>
+            {"\n    "}
+          </div>
+          {"\n  "}
+        </section>
+        {"\n\n\n  "}
+        <StoreRoutes language={values.language} />
+        <footer
+          style={css(
+            "background:#020406;border-top:1px solid rgba(214,230,255,0.1);padding:48px clamp(20px,6vw,80px);",
+          )}
+        >
+          {"\n    "}
+          <div
+            style={css(
+              "max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:24px;",
+            )}
+          >
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;",
+              )}
+            >
+              {"\n        "}
+              <a href={"/"}>
+                <img
+                  src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                  alt={"itriX"}
+                  style={css(
+                    "width:120px;height:auto;display:block;filter:invert(1);",
+                  )}
+                />
+              </a>
+              {"\n        "}
+              <nav
+                className={"ft-links"}
+                aria-label={"Footer"}
+                style={css("display:flex;flex-wrap:wrap;gap:8px 24px;")}
+              >
+                <a href={"/contact"}>{"문의하기"}</a>
+                <a href={"/poc"}>{"PoC 신청"}</a>
+                <a href={"/privacy"}>{"개인정보처리방침"}</a>
+                <a href={"/terms"}>{"이용약관"}</a>
+                <button
+                  className={"ft-ck"}
+                  onClick={ckOpen}
+                  style={css("font-size:14px;")}
+                >
+                  {"쿠키 설정"}
+                </button>
+              </nav>
+              {"\n      "}
+            </div>
+            {"\n      "}
+            <div
+              style={css(
+                "display:flex;flex-direction:column;gap:10px;padding-top:20px;border-top:1px solid rgba(214,230,255,0.1);",
+              )}
+            >
+              {"\n        "}
+              <div
+                style={css(
+                  "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
+                )}
+              >
+                <span>{"상호 [법인명]"}</span>
+                <span>{"대표자 강명주"}</span>
+                <span>{"사업자등록번호 [000-00-00000]"}</span>
+                <span>{"서울시 서초구 효령로 55길 19, 611호"}</span>
+                <span>{"admin@itrix.co.kr"}</span>
+              </div>
+              {"\n        "}
+              <div
+                style={css(
+                  "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.08em;color:#64748B;",
+                )}
+              >
+                {"© 2026 itriX ALL RIGHTS RESERVED. · itrix.co.kr"}
+              </div>
+              {"\n      "}
+            </div>
+            {"\n    "}
+          </div>
+          {"\n  "}
+        </footer>
+        {"\n  "}
+        {ckBar && (
+          <>
+            {"\n    "}
+            <div
+              className={"ck-bar"}
+              role={"region"}
+              aria-label={"쿠키 사용 안내"}
+            >
+              <div className={"ck-card"}>
+                {"\n      "}
+                <div
+                  style={css(
+                    "flex:1 1 420px;min-width:0;display:flex;flex-direction:column;gap:6px;",
+                  )}
+                >
+                  {"\n        "}
+                  <span
+                    style={css("font-size:16px;font-weight:700;color:#F8FAFC;")}
+                  >
+                    {"쿠키 사용 안내"}
+                  </span>
+                  {"\n        "}
+                  <span
+                    style={css(
+                      "font-size:14px;line-height:1.65;color:#CBD5E1;",
+                    )}
+                  >
+                    {
+                      "itriX는 사이트 운영에 꼭 필요한 쿠키와, 동의하신 경우에 한해 방문 통계를 위한 분석 쿠키를 사용합니다. 자세한 내용은 "
+                    }
+                    <a
+                      href={"/privacy#s9"}
+                      style={css(
+                        "color:#D6E6FF;text-decoration:underline;text-underline-offset:3px;",
+                      )}
+                    >
+                      {"개인정보처리방침"}
+                    </a>
+                    {"에서 확인할 수 있습니다."}
+                  </span>
+                  {"\n      "}
+                </div>
+                {"\n      "}
+                <div className={"ck-btns"}>
+                  <button className={"ck-b txt"} onClick={ckOpen}>
+                    {"쿠키 설정"}
+                  </button>
+                  <button className={"ck-b"} onClick={ckNec}>
+                    {"필수만 허용"}
+                  </button>
+                  <button className={"ck-b pri"} onClick={ckAll}>
+                    {"모두 허용"}
+                  </button>
+                </div>
+                {"\n    "}
+              </div>
+            </div>
+            {"\n  "}
+          </>
+        )}
+        {"\n  "}
+        {ckPanel && (
+          <>
+            {"\n    "}
+            <div
+              className={"ck-wrap"}
+              role={"dialog"}
+              aria-modal={"true"}
+              aria-label={"쿠키 설정"}
+            >
+              <div className={"ck-panel"}>
+                {"\n      "}
+                <div
+                  style={css(
+                    "display:flex;justify-content:space-between;align-items:flex-start;gap:16px;",
+                  )}
+                >
+                  <div
+                    style={css("display:flex;flex-direction:column;gap:8px;")}
+                  >
+                    <span
+                      style={css(
+                        "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.14em;color:#D6E6FF;",
+                      )}
+                    >
+                      {"COOKIES"}
+                    </span>
+                    <span
+                      style={css(
+                        "font-size:22px;font-weight:700;color:#F8FAFC;",
+                      )}
+                    >
+                      {"쿠키 설정"}
+                    </span>
+                  </div>
+                  <button
+                    className={"ck-b txt"}
+                    onClick={ckClose}
+                    aria-label={"닫기"}
+                    style={css("text-decoration:none;font-size:18px;")}
+                  >
+                    {"✕"}
+                  </button>
+                </div>
+                {"\n      "}
+                <span
+                  style={css("font-size:14px;line-height:1.65;color:#CBD5E1;")}
+                >
+                  {
+                    "사용할 쿠키를 선택해 주세요. 설정은 사이트 하단의 ‘쿠키 설정’에서 언제든 바꿀 수 있습니다."
+                  }
+                </span>
+                {"\n      "}
+                <div style={css("display:flex;flex-direction:column;")}>
+                  {"\n        "}
+                  <div className={"ck-row"}>
+                    <div
+                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                    >
+                      <span
+                        style={css(
+                          "font-size:15px;font-weight:700;color:#F8FAFC;",
+                        )}
+                      >
+                        {"필수 쿠키 "}
+                        <span
+                          style={css(
+                            "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:11px;letter-spacing:0.06em;color:#94A3B8;font-weight:400;margin-left:6px;",
+                          )}
+                        >
+                          {"항상 사용"}
+                        </span>
+                      </span>
+                      <span
+                        style={css(
+                          "font-size:13px;line-height:1.6;color:#94A3B8;",
+                        )}
+                      >
+                        {
+                          "언어 선택, 팝업 표시 여부, 쿠키 동의 상태 등 사이트 기본 기능에 필요합니다."
+                        }
+                      </span>
+                    </div>
+                    <span
+                      className={"ck-tg on lock"}
+                      aria-hidden={"true"}
+                    ></span>
+                  </div>
+                  {"\n        "}
+                  <div
+                    className={"ck-row"}
+                    style={css(
+                      "border-bottom:1px solid rgba(214,230,255,0.12);",
+                    )}
+                  >
+                    <div
+                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                    >
+                      <span
+                        style={css(
+                          "font-size:15px;font-weight:700;color:#F8FAFC;",
+                        )}
+                      >
+                        {"분석 쿠키"}
+                      </span>
+                      <span
+                        style={css(
+                          "font-size:13px;line-height:1.6;color:#94A3B8;",
+                        )}
+                      >
+                        {
+                          "방문 수, 페이지 이용 현황, 유입 경로 등 통계를 수집해 사이트 개선에 활용합니다."
+                        }
+                      </span>
+                    </div>
+                    <button
+                      className={`ck-tg ${ckAnaOn}`}
+                      onClick={ckTgAna}
+                      aria-label={"분석 쿠키"}
+                    ></button>
+                  </div>
+                  {"\n      "}
+                </div>
+                {"\n      "}
+                <div
+                  style={css(
+                    "display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;",
+                  )}
+                >
+                  <button className={"ck-b"} onClick={ckSaveSel}>
+                    {"선택 저장"}
+                  </button>
+                  <button className={"ck-b pri"} onClick={ckAll}>
+                    {"모두 허용"}
+                  </button>
+                </div>
+                {"\n    "}
+              </div>
+            </div>
+            {"\n  "}
+          </>
+        )}
+        {"\n  "}
+        {mnShow && (
+          <>
+            {"\n    "}
+            <div
+              className={"mn-wrap"}
+              role={"dialog"}
+              aria-modal={"true"}
+              aria-label={"Menu"}
+            >
+              {"\n      "}
+              <div className={"mn-top"}>
+                <a href={"/"} onClick={mnClose}>
+                  <img
+                    src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                    alt={"itriX"}
+                    style={css(
+                      "width:104px;height:auto;display:block;filter:invert(1);",
+                    )}
+                  />
+                </a>
+                <button
+                  className={"mn-x"}
+                  onClick={mnClose}
+                  aria-label={"메뉴 닫기"}
+                >
+                  {"✕"}
+                </button>
+              </div>
+              {"\n      "}
+              <div className={"mn-list"}>
+                {"\n        "}
+                <a className={"mi"} href={"/#portfolio"} onClick={mnClose}>
+                  {"Products "}
+                  <span className={"ar"}>{"→"}</span>
+                </a>
+                {"\n        "}
+                <a className={"mi"} href={"/#technology"} onClick={mnClose}>
+                  {"Technology "}
+                  <span className={"ar"}>{"→"}</span>
+                </a>
+                {"\n        "}
+                <a className={"mi"} href={"/#why"} onClick={mnClose}>
+                  {"Company "}
+                  <span className={"ar"}>{"→"}</span>
+                </a>
+                {"\n        "}
+                <a className={"mi"} href={"/#ask-chat"} onClick={mnClose}>
+                  <span
+                    style={css(
+                      "display:inline-flex;align-items:center;gap:9px;",
+                    )}
+                  >
+                    {"Ask"}
+                    <img
+                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
+                      alt={"X"}
+                      style={css(
+                        "height:17px;width:auto;display:block;filter:invert(1);",
+                      )}
+                    />
+                  </span>{" "}
+                  <span className={"ar"}>{"→"}</span>
+                </a>
+                {"\n        "}
+                <a className={"mi"} href={"/contact"} onClick={mnClose}>
+                  {"문의하기 "}
+                  <span className={"ar"}>{"→"}</span>
+                </a>
+                {"\n      "}
+              </div>
+              {"\n      "}
+              <div className={"mn-foot"}>
+                <a className={"mn-poc"} href={"/poc"} onClick={mnClose}>
+                  {"PoC 신청 →"}
+                </a>
+                <div>
+                  <span
+                    className={"navlang"}
+                    role={"group"}
+                    aria-label={"Language"}
+                  >
+                    <a className={"on"} href={"/astop"} lang={"ko"}>
+                      {"KO"}
+                    </a>
+                    <a className={""} href={"/en/astop"} lang={"en"}>
+                      {"EN"}
+                    </a>
+                  </span>
+                </div>
+              </div>
+              {"\n    "}
+            </div>
+            {"\n  "}
+          </>
+        )}
+        {"\n"}
+      </div>
+      {"\n"}
+    </>
+  );
+}

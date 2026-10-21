@@ -1,3 +1,4 @@
+import { useLocaleStore } from "@/store/localeStore";
 /**
  * Typed client for the thread proxies (/api/threads*).
  *
@@ -59,7 +60,7 @@ export const threadsApi = {
           'X-Request-ID': requestId,
           ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ ...body, locale: useLocaleStore.getState().locale }),
       });
       if (!res.ok) {
         const failure = await conversationFailureFromResponse(res, requestId);

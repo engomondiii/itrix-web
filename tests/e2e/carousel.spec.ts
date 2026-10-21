@@ -16,7 +16,7 @@ const korean = EXAMPLE_PROMPT_DEFINITIONS.map((item) => ({
 }));
 
 test('one prompt stays stable until the visitor changes it', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const cards = page.locator('.prompt-carousel__stage .prompt-card');
   await expect(cards).toHaveCount(1);
   const first = await cards.first().innerText();
@@ -25,7 +25,7 @@ test('one prompt stays stable until the visitor changes it', async ({ page }) =>
 });
 
 test('Previous and Next remain available and change the idea manually', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   const card = page.locator('.prompt-carousel__stage .prompt-card').first();
   const first = await card.innerText();
   await page.getByRole('button', { name: 'Next example' }).click();
@@ -35,7 +35,7 @@ test('Previous and Next remain available and change the idea manually', async ({
 });
 
 test('Show all five uses the canonical English source', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.getByRole('button', { name: 'Show all five' }).click();
   const stage = page.locator('.prompt-carousel__stage');
   await expect(stage.locator('.prompt-card')).toHaveCount(5);
@@ -52,7 +52,7 @@ test('English selection populates composer but never submits or changes relation
     await route.fallback();
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.getByRole('button', { name: 'Show all five' }).click();
   const chosen = english[3];
   await page.locator('.prompt-card', { hasText: chosen.prompt }).click();
@@ -70,7 +70,7 @@ test('Korean locale updates all five ideas and Korean selection fills Korean com
     await route.fallback();
   });
 
-  await page.goto('/');
+  await page.goto('/ask-x');
   await page.getByRole('button', { name: '한국어로 전환' }).click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
   await expect(page.getByRole('heading', { name: '질문 아이디어 (선택)' })).toBeVisible();
@@ -97,7 +97,7 @@ test('Korean locale updates all five ideas and Korean selection fills Korean com
 });
 
 test('the controls are named and the carousel has no dwell/progress animation', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/ask-x');
   await expect(page.getByRole('button', { name: 'Previous example' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Next example' })).toBeVisible();
   await expect(page.locator('.prompt-carousel__progress, .prompt-carousel__dwell')).toHaveCount(0);
