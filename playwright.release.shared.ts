@@ -85,7 +85,7 @@ export function releaseConfig(partition: Partition): PlaywrightTestConfig {
     },
     projects,
     webServer: {
-      command: `NEXT_PUBLIC_SITE_URL=${baseURL} NEXT_PUBLIC_API_URL=${LOCAL_API_URL} API_URL=${LOCAL_API_URL} ${COMMON} ${FLAGS[partition]} npm run dev -- --hostname 127.0.0.1 -p ${port}`,
+      command: `PLAYWRIGHT_DIST_DIR=.next-playwright/${partition} NEXT_PUBLIC_SITE_URL=${baseURL} NEXT_PUBLIC_API_URL=${LOCAL_API_URL} API_URL=${LOCAL_API_URL} ${COMMON} ${FLAGS[partition]} npm run dev -- --hostname 127.0.0.1 -p ${port}`,
       url: baseURL,
       reuseExistingServer: false,
       timeout: 120_000,

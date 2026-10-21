@@ -240,3 +240,6 @@ OVERLAY_MANIFEST.txt
 
 # Per-partition release diagnostics
 /release-test-results/
+
+# Isolated feature-flagged browser builds
+/.next-playwright/

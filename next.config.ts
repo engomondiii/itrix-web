@@ -4,6 +4,9 @@ import { validateFrontendProductionEnv } from './src/config/env.validation';
 validateFrontendProductionEnv(process.env);
 
 const nextConfig: NextConfig = {
+  // Keep feature-flagged browser suites from sharing compiled public settings.
+  // Production keeps the standard .next output directory.
+  distDir: process.env.PLAYWRIGHT_DIST_DIR || '.next',
   reactStrictMode: true,
   poweredByHeader: false,
   devIndicators: false,
