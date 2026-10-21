@@ -105,6 +105,8 @@ test('guarantee 4 — disclosure guidance remains accessible without the retired
   // The approved UI removed the repeated visible caption; its accessible
   // description and the full disclosure policy remain available.
   const composer = page.locator('textarea.composer-textarea');
+  await expect(page.getByText('Turn 11 with enough text to occupy a line or two of the transcript.', { exact: true })).toBeVisible();
+  await expect(page.locator('form.composer')).toHaveAttribute('data-variant', 'docked');
   const descriptions = await composer.evaluate((el) =>
     (el.getAttribute('aria-describedby') ?? '').split(/\s+/).filter(Boolean).map((id) => {
       const description = document.getElementById(id);

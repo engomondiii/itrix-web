@@ -25,8 +25,12 @@ function submitResult(threadId: string, visitorBody: string, visitorId: string, 
 }
 
 async function send(page: Page, text: string) {
+  // Wait for the locale provider's mount effect before typing into the SSR
+  // textarea; otherwise hydration can replace input before handlers attach.
+  await expect(page.locator('html')).toHaveAttribute('data-locale', 'en');
   const box = page.locator('textarea.composer-textarea');
   await box.fill(text);
+  await expect(page.getByRole('button', { name: 'Ask itriX' })).toBeEnabled();
   await box.press('Enter');
 }
 

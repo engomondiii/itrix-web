@@ -118,7 +118,9 @@ test('Customer Success locale control switches governed state copy to Korean wit
   await expect(page.getByText('0초', { exact: true })).toBeVisible();
   await expect(page.getByText('LO_DEPLOYMENT', { exact: true })).toHaveCount(0);
   await expect(page.getByText('ENTITLEMENT_ACTIVE', { exact: true })).toHaveCount(0);
-  await expect(page.getByText('워크스페이스', { exact: true }).first()).toBeVisible();
+  const mobileMenu = page.getByRole('button', { name: '워크스페이스 메뉴 열기' });
+  if (await mobileMenu.isVisible()) await mobileMenu.click();
+  await expect(page.locator('#portal-sidebar').getByText('워크스페이스', { exact: true })).toBeVisible();
 });
 
 test('long customer name and organization do not create horizontal overflow', async ({ page, baseURL }) => {
