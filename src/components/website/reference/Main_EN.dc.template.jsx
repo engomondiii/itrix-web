@@ -1,6 +1,7 @@
 "use client";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
+import TrackProjects from "../TrackProjects";
 import { css, AskX, NoticePopup, Captcha } from "./reference-style";
 export function Template(values) {
   const {
@@ -21,6 +22,7 @@ export function Template(values) {
   } = values;
   return (
     <>
+      <style>{`@media(max-width:820px){nav{gap:8px!important}nav>a img{width:88px!important}.nv-m{gap:6px!important}.nv-m .navlang{gap:0;padding:0}.nv-m .navlang a{padding:5px;font-size:12px}.nv-m .navpoc{padding:0 8px!important;font-size:12px!important}}`}</style>
       <style>
         {
           ".reference-hover-1:hover{color:#F8FAFC;}\n.reference-hover-2:hover{color:#F8FAFC;}\n.reference-hover-3:hover{color:#F8FAFC;}\n.reference-hover-4:hover{color:#CBD5E1;}\n.reference-hover-5:hover{color:#1F2937;box-shadow:0 0 0 4px rgba(214,230,255,0.4);transform:translateY(-1px);}\n.reference-hover-6:hover{color:#F8FAFC;box-shadow:0 0 0 4px rgba(214,230,255,0.3);}\n.reference-hover-7:hover{color:#1F2937;box-shadow:0 0 0 4px rgba(214,230,255,0.4);}\n.reference-hover-8:hover{color:#1F2937;border-color:#94A3B8;}\n.reference-hover-9:hover{border-color:#1F2937;box-shadow:0 8px 20px rgba(31,41,55,0.10);transform:translateY(-1px);}\n.reference-hover-10:hover{color:#1F2937;box-shadow:0 0 0 4px rgba(214,230,255,0.4);}\n.reference-hover-11:hover{box-shadow:0 0 0 4px rgba(100,116,139,0.24);}\n.reference-hover-12:hover{color:#1F2937;}\n.reference-hover-13:hover{box-shadow:0 0 0 4px rgba(214,230,255,0.5),0 24px 64px rgba(0,0,0,0.4);transform:translateY(-2px);}\n.reference-hover-14:hover{color:#0B1118;box-shadow:0 0 0 4px rgba(214,230,255,0.4);}\n.reference-hover-15:hover{color:#F8FAFC;border-color:#D6E6FF;}\n.reference-hover-16:hover{color:#D6E6FF;}\n.reference-hover-17:hover{color:#D6E6FF;}\n.reference-hover-18:hover{color:#D6E6FF;}\n.reference-hover-19:hover{color:#D6E6FF;}\n.reference-hover-20:hover{color:#D6E6FF;}\n.reference-hover-21:hover{color:#D6E6FF;}\n.reference-hover-22:hover{color:#D6E6FF;}\n.reference-hover-23:hover{color:#D6E6FF;}\n.reference-hover-24:hover{color:#D6E6FF;}\n\nhtml,body{margin:0;padding:0;background:#020406;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word;scroll-behavior:smooth;}\n*{box-sizing:border-box;}\na{color:#F8FAFC;text-decoration:none;}\na:hover{color:#D6E6FF;}\ninput::placeholder{color:#64748B;}\n.tbc-veil{position:absolute;inset:0;z-index:2;overflow:hidden;border-radius:inherit;pointer-events:none;backdrop-filter:blur(0.3px);-webkit-backdrop-filter:blur(0.3px);background:radial-gradient(120% 80% at 50% 0%, rgba(234,240,255,0.06) 0%, rgba(234,240,255,0.015) 55%, rgba(234,240,255,0) 80%), linear-gradient(180deg, rgba(234,240,255,0.03) 0%, rgba(234,240,255,0) 50%, rgba(234,240,255,0.04) 100%);}\n.tbc-veil::before{content:'';position:absolute;inset:-20% -60%;background:linear-gradient(100deg, rgba(255,255,255,0) 30%, rgba(234,240,255,0.04) 42%, rgba(255,255,255,0.07) 50%, rgba(234,240,255,0.04) 58%, rgba(255,255,255,0) 70%);filter:blur(6px);display:none;}\n.tbc-veil::after{content:'';position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);}\n.tbc-group{grid-column:1 / -1;display:flex;justify-content:center;margin-top:8px;pointer-events:none;}\n.tbc-legend{display:inline-flex;align-items:center;gap:12px;padding:0 16px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:clamp(20px,1.9vw,26px);font-weight:500;letter-spacing:0.03em;color:#EAF0FF;white-space:nowrap;}\n.tbc-legend .tbc-dot{width:7px;height:7px;border-radius:50%;background:#D6E6FF;box-shadow:0 0 10px rgba(214,230,255,0.8);animation:tbc-dot 2.4s ease-in-out infinite;flex-shrink:0;}\n.tbc-arrow{display:none;}\n@media (min-width:1100px){.tbc-group{grid-column:2 / -1;justify-content:flex-start;align-items:center;gap:20px;}.tbc-legend{padding:0;}.tbc-arrow{display:block;position:relative;flex:1;height:1px;margin-right:4px;background:linear-gradient(90deg, rgba(214,230,255,0.15) 0%, rgba(214,230,255,0.75) 100%);overflow:visible;}.tbc-arrow::after{content:'';position:absolute;right:0;top:50%;width:11px;height:11px;border-top:1.5px solid rgba(214,230,255,0.9);border-right:1.5px solid rgba(214,230,255,0.9);transform:translateY(-50%) rotate(45deg);transform-origin:center;}.tbc-arrow::before{content:'';position:absolute;top:-1px;height:3px;width:80px;left:0;border-radius:2px;background:linear-gradient(90deg, rgba(234,240,255,0) 0%, rgba(234,240,255,0.95) 100%);filter:blur(0.5px);animation:tbc-arrow-run 3.2s ease-in-out infinite;}}\n@keyframes tbc-arrow-run{0%{left:0;opacity:0;}15%{opacity:1;}85%{opacity:1;}100%{left:calc(100% - 80px);opacity:0;}}\n@media (prefers-reduced-motion: reduce){.tbc-arrow::before{animation:none;opacity:0;}}\n@keyframes tbc-dot{0%,100%{opacity:.35;}50%{opacity:1;}}\n@keyframes tbc-drift{0%{transform:translateX(-18%) skewX(-4deg);opacity:.7;}100%{transform:translateX(18%) skewX(4deg);opacity:1;}}\n.tbc-track{z-index:3;}\n.tbc-track{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;background:rgba(214,230,255,0.12);pointer-events:none;}\n.tbc-track::after{content:'';position:absolute;top:0;bottom:0;width:38%;left:-40%;background:linear-gradient(90deg, rgba(214,230,255,0) 0%, rgba(214,230,255,0.9) 50%, rgba(214,230,255,0) 100%);display:none;}\n@keyframes tbc-run{0%{left:-40%;}100%{left:100%;}}\n@media (prefers-reduced-motion: reduce){.tbc-track::after{animation:none;left:0;width:30%;}.tbc-veil::before{animation:none;}.tbc-dot{animation:none;}}\n.askx img{transition:opacity .2s ease;}.askx:hover img{opacity:0.78;}\n@property --axa{syntax:'<angle>';inherits:false;initial-value:0deg;}\n.axc-ring{position:absolute;inset:0;z-index:2;border-radius:28px;padding:1.5px;pointer-events:none;background:conic-gradient(from var(--axa), rgba(234,240,255,0) 0deg, rgba(234,240,255,0) 230deg, rgba(214,230,255,0.35) 290deg, rgba(255,255,255,0.95) 340deg, rgba(234,240,255,0) 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);filter:drop-shadow(0 0 6px rgba(214,230,255,0.55));animation:axc-spin 5s linear infinite;opacity:1;transition:opacity .8s ease;}\n#ask-chat:hover .axc-ring,#ask-chat:focus-within .axc-ring{opacity:0;transition:none;}\n@keyframes axc-spin{to{--axa:360deg;}}\n@media (prefers-reduced-motion: reduce){.axc-ring{animation:none;}}\n.axc-skin{position:absolute;inset:0;z-index:20;border-radius:inherit;pointer-events:none;backdrop-filter:invert(1) hue-rotate(180deg) brightness(0.92);-webkit-backdrop-filter:invert(1) hue-rotate(180deg) brightness(0.92);opacity:1;}\n.axc:hover .axc-skin,.axc:focus-within .axc-skin{opacity:0;}\n.ore{position:relative;}\n.ore-rail{position:absolute;top:0;left:calc((100% - 32px) / 6);right:calc((100% - 32px) / 6);height:1px;background:linear-gradient(90deg, rgba(214,230,255,0.15), rgba(214,230,255,0.45) 50%, rgba(214,230,255,0.15));overflow:visible;}\n.ore-run{position:absolute;top:-1px;left:0;width:120px;height:3px;border-radius:2px;background:linear-gradient(90deg, rgba(234,240,255,0) 0%, rgba(234,240,255,0.95) 100%);filter:blur(0.4px);animation:ore-run 4.5s cubic-bezier(.5,0,.3,1) infinite;}\n@keyframes ore-run{0%{left:0;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{left:calc(100% - 120px);opacity:0;}}\n.ore-chev{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;padding:0 8px;background:#020406;}\n.ore-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}\n.ore-card{position:relative;display:flex;flex-direction:column;gap:14px;padding:28px 28px 32px;border-radius:20px;background:linear-gradient(160deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.015) 45%, rgba(255,255,255,0) 70%), rgba(8,13,16,0.55);border:1px solid rgba(214,230,255,0.16);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);transition:border-color .3s ease, transform .3s ease, box-shadow .3s ease;}\n.ore-card:hover{border-color:rgba(214,230,255,0.42);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.14), 0 18px 48px rgba(0,0,0,0.35);}\n.ore-node{position:absolute;top:-35px;left:50%;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:#020406;border:1.5px solid #D6E6FF;box-shadow:0 0 0 4px rgba(214,230,255,0.08), 0 0 12px rgba(214,230,255,0.5);}\n.ore-head{display:flex;align-items:center;justify-content:space-between;}\n.ore-num{font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.14em;color:#94A3B8;}\n.ore-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(214,230,255,0.05);border:1px solid rgba(214,230,255,0.16);}\n.ore-title{margin-top:6px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:32px;font-weight:600;line-height:1.1;color:#F8FAFC;}\n.ore-text{margin:0;font-size:16px;line-height:1.6;color:#CBD5E1;}\n@media (max-width:860px){.ore{padding-top:0;}.ore-rail,.ore-node{display:none;}.ore-grid{grid-template-columns:1fr;}}\n@media (prefers-reduced-motion: reduce){.ore-run{animation:none;opacity:0;}}\n.pt-light{position:absolute;left:0;top:0;width:clamp(760px,75vw,1200px);height:clamp(760px,75vw,1200px);border-radius:50%;pointer-events:none;background:radial-gradient(circle at center, rgba(255,255,255,0.20) 0%, rgba(234,240,255,0.09) 32%, rgba(234,240,255,0) 66%);filter:blur(12px);animation:pt-wander 18s ease-in-out infinite;will-change:transform;}\n@keyframes pt-wander{0%{transform:translate(-20%,-15%);}20%{transform:translate(30%,20%);}40%{transform:translate(85%,-10%);}60%{transform:translate(105%,30%);}80%{transform:translate(35%,40%);}100%{transform:translate(-20%,-15%);}}\n@media (prefers-reduced-motion: reduce){.pt-light{animation:none;transform:translate(20%,0);}}\n.navlogin{height:38px;display:inline-flex;align-items:center;padding:0 16px;border-radius:10px;border:1px solid rgba(214,230,255,0.4);color:#F8FAFC !important;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;white-space:nowrap;transition:background .2s ease,border-color .2s ease;}\n.navlogin:hover{background:rgba(214,230,255,0.08);border-color:rgba(214,230,255,0.8);}\n.navlang{display:inline-flex;padding:3px;border-radius:10px;border:1px solid rgba(214,230,255,0.28);background:rgba(2,4,6,0.5);gap:2px;}\n.navlang a{height:30px;min-width:38px;display:inline-flex;align-items:center;justify-content:center;padding:0 10px;border-radius:7px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;color:#94A3B8 !important;transition:background .2s ease,color .2s ease;}\n.navlang a:hover{color:#F8FAFC !important;}\n.navlang a.on{background:#F8FAFC;color:#0B1118 !important;font-weight:500;}\n@keyframes miGlow{0%,100%{color:#F8FAFC;text-shadow:0 0 0 rgba(214,230,255,0);}10%{color:#FFFFFF;text-shadow:0 0 14px rgba(214,230,255,0.85),0 0 32px rgba(214,230,255,0.45);}24%{color:#F8FAFC;text-shadow:0 0 0 rgba(214,230,255,0);}}\n.mi-name{animation:miGlow 7.5s ease-in-out infinite;}\n.mi2{animation-delay:1.5s;}.mi3{animation-delay:3s;}\n@media (prefers-reduced-motion:reduce){.mi-name{animation:none;}}\n.navpoc{height:38px;display:inline-flex;align-items:center;padding:0 18px;border-radius:10px;background:#F8FAFC;color:#0B1118 !important;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;white-space:nowrap;transition:box-shadow .2s ease;}\n.navpoc:hover{box-shadow:0 0 0 4px rgba(214,230,255,0.35);color:#0B1118 !important;}\n.nt-cta{height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;background:#F8FAFC;color:#0B1118;font-weight:700;font-size:16px;text-decoration:none;transition:background .2s;}.nt-cta:hover{background:#D6E6FF;}.nt-wrap{position:fixed;inset:0;z-index:80;display:flex;align-items:flex-start;justify-content:center;padding:96px 20px 20px;overflow-y:auto;background:rgba(2,4,6,0.66);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}\n.nt-card{width:min(560px,100%);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;border:1px solid rgba(214,230,255,0.28);background:#0B1118;box-shadow:0 40px 100px rgba(0,0,0,0.6);}\n.nt-rows{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6;}\n.nt-rows th{width:28%;text-align:left;vertical-align:top;padding:10px 12px 10px 0;color:#94A3B8;font-weight:500;border-bottom:1px solid rgba(214,230,255,0.1);}\n.nt-rows td{padding:10px 0;color:#E2E8F0;border-bottom:1px solid rgba(214,230,255,0.1);}\n.nt-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 28px;border-top:1px solid rgba(214,230,255,0.12);background:rgba(214,230,255,0.03);}\n.nt-foot button{background:none;border:none;color:#94A3B8;font-family:'Noto Sans KR',sans-serif;font-size:14px;cursor:pointer;padding:6px 0;}\n.nt-foot button:hover{color:#F8FAFC;}\n.ck-bar{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;justify-content:center;padding:0 20px 20px;pointer-events:none;}\n.ck-card{pointer-events:auto;width:min(1040px,100%);display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;padding:22px 26px;border-radius:20px;border:1px solid rgba(214,230,255,0.24);background:rgba(11,17,24,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 24px 70px rgba(0,0,0,0.55);font-family:'Noto Sans KR',sans-serif;}\n.ck-btns{display:flex;flex-wrap:wrap;gap:10px;}\n.ck-b{height:44px;display:inline-flex;align-items:center;justify-content:center;padding:0 18px;border-radius:12px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;border:1px solid rgba(214,230,255,0.35);background:transparent;color:#E2E8F0;transition:border-color .2s,background .2s,box-shadow .2s;}\n.ck-b:hover{border-color:rgba(214,230,255,0.8);color:#F8FAFC;}\n.ck-b.pri{background:#F8FAFC;border-color:#F8FAFC;color:#0B1118;font-weight:700;}\n.ck-b.pri:hover{box-shadow:0 0 0 4px rgba(214,230,255,0.3);color:#0B1118;}\n.ck-b.txt{border-color:transparent;color:#94A3B8;text-decoration:underline;text-underline-offset:3px;padding:0 6px;}\n.ck-b.txt:hover{color:#F8FAFC;}\n.ck-wrap{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,4,6,0.66);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);font-family:'Noto Sans KR',sans-serif;}\n.ck-panel{width:min(520px,100%);display:flex;flex-direction:column;gap:18px;padding:28px;border-radius:24px;border:1px solid rgba(214,230,255,0.28);background:#0B1118;box-shadow:0 40px 100px rgba(0,0,0,0.6);}\n.ck-row{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:16px 0;border-top:1px solid rgba(214,230,255,0.12);}\n.ck-tg{width:48px;height:28px;border-radius:999px;border:1px solid rgba(214,230,255,0.4);background:rgba(214,230,255,0.06);position:relative;cursor:pointer;flex-shrink:0;padding:0;transition:background .2s;}\n.ck-tg::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#94A3B8;transition:left .2s,background .2s;}\n.ck-tg.on{background:rgba(214,230,255,0.3);border-color:#D6E6FF;}\n.ck-tg.on::after{left:23px;background:#F8FAFC;}\n.ck-tg.lock{opacity:0.55;cursor:default;}\n.ft-ck{background:none;border:none;padding:0;cursor:pointer;font:inherit;text-align:left;color:#CBD5E1;}\n.ft-ck:hover{color:#F8FAFC;}\n.nv-m{display:none;align-items:center;gap:10px;}\n.nv-burger{width:42px;height:38px;border-radius:10px;border:1px solid rgba(214,230,255,0.3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0;}\n.nv-burger span{width:18px;height:1.5px;background:#F8FAFC;border-radius:2px;}\n.mn-wrap{position:fixed;inset:0;z-index:95;display:flex;flex-direction:column;background:#020406;overflow-y:auto;}\n.mn-top{display:flex;justify-content:space-between;align-items:center;min-height:64px;padding:12px 20px;border-bottom:1px solid rgba(214,230,255,0.14);}\n.mn-x{width:42px;height:38px;border-radius:10px;border:1px solid rgba(214,230,255,0.3);background:transparent;color:#F8FAFC;font-size:18px;cursor:pointer;}\n.mn-list{display:flex;flex-direction:column;padding:12px 20px;}\n.mn-list a.mi{display:flex;justify-content:space-between;align-items:center;height:60px;border-bottom:1px solid rgba(214,230,255,0.1);font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:24px;font-weight:500;color:#F8FAFC;}\n.mn-list a.mi span.ar{color:#64748B;font-size:18px;}\n.mn-foot{display:flex;flex-direction:column;gap:14px;padding:20px 20px 32px;margin-top:auto;}\n.mn-poc{height:54px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#F8FAFC;color:#0B1118 !important;font-family:'Noto Sans KR',sans-serif;font-size:16px;font-weight:700;}\n@media (max-width:820px){nav .nv-links{display:none !important;}.nv-m{display:flex;}.nv-m .navpoc{height:36px;padding:0 14px;font-size:13px;}nav{min-height:64px !important;}}\n@media (max-width:820px){body{overflow-x:clip;}h1,h2,h3{max-width:100% !important;}h1,h2,h3{width:auto !important;}div[style*=\"span 2\"]{grid-column:auto !important;}section[style*=\"position\"]{max-width:100vw;}}\n@media (max-width:820px){div:has(> .mi-name){grid-template-columns:1fr !important;gap:10px !important;}}\n@media (max-width:820px){.nt-wrap{padding:16px 12px !important;}.nt-rows th{width:30%;}}\n@media (max-width:820px){\n.ore-grid{grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:8px !important;}\n.ore-card{padding:13px 8px 15px !important;gap:8px !important;border-radius:14px !important;animation:ore-pulse 7.5s ease-in-out infinite;}\n.ore-card:nth-child(2){animation-delay:2.5s;}.ore-card:nth-child(3){animation-delay:5s;}\n.ore-card:hover{transform:none;}\n.ore-icon{width:34px !important;height:34px !important;border-radius:10px !important;}.ore-icon svg{width:18px;height:18px;}\n.ore-num{font-size:10px !important;letter-spacing:0.08em !important;}\n.ore-title{font-size:17px !important;margin-top:2px !important;overflow-wrap:normal !important;word-break:keep-all !important;letter-spacing:-0.01em;}\n.ore-text{font-size:12px !important;line-height:1.5 !important;}\n.pf-grid{grid-template-columns:repeat(2,minmax(0,1fr)) !important;gap:10px !important;}\n.pf-grid > :not(.tbc-group){min-height:0 !important;height:auto !important;padding:16px 14px !important;gap:8px !important;border-radius:16px !important;}\n.pf-grid > :not(.tbc-group) > :nth-last-child(4){font-size:10px !important;letter-spacing:0.08em !important;}\n.pf-grid > :not(.tbc-group) > :nth-last-child(3){font-size:22px !important;}\n.pf-grid > :not(.tbc-group) > :nth-last-child(2){font-size:12px !important;line-height:1.4 !important;}\n.pf-grid > :not(.tbc-group) > :nth-last-child(1){padding-top:10px !important;gap:6px !important;}\n.pf-grid > :not(.tbc-group) > :nth-last-child(1) span{font-size:9.5px !important;letter-spacing:0.03em !important;}\n.pf-grid > .tbc-group{grid-column:1 / -1;}\n.ceo-msg{gap:10px !important;}\n.ceo-msg p{font-size:13.5px !important;line-height:1.65 !important;}\n.ceo-msg p:first-of-type{font-size:15px !important;}\n.ceo-msg > span:last-child{font-size:14px !important;}\n.axc-skin{transition:opacity 1.2s ease;}\n.axc.axc-in .axc-skin{opacity:0;}\n#ask-chat:has(.axc-in) .axc-ring{opacity:0;}\n}\n@keyframes ore-pulse{0%,40%,100%{border-color:rgba(214,230,255,0.16);transform:translateY(0);box-shadow:inset 0 1px 0 rgba(255,255,255,0.08);}\n12%,28%{border-color:rgba(214,230,255,0.62);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.16),0 0 0 3px rgba(214,230,255,0.12),0 14px 36px rgba(0,0,0,0.4);}}\n@media (prefers-reduced-motion: reduce){.ore-card{animation:none !important;}}\n"
@@ -117,6 +119,14 @@ export function Template(values) {
           </div>
           {"\n    "}
           <div className={"nv-m"}>
+            <span className={"navlang"} role={"group"} aria-label={"Language"}>
+              <a className={""} href={"/"} lang={"ko"}>
+                {"KO"}
+              </a>
+              <a className={"on"} href={"/en/"} lang={"en"}>
+                {"EN"}
+              </a>
+            </span>
             <a className={"navpoc"} href={"/en/poc"}>
               {"Request a PoC"}
             </a>
@@ -711,7 +721,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "ASTOP addresses the efficiency of AI observation and execution; the AXIOM family covers computation, learning, and hardware implementation. Each product shows its research, validation, or commercialization stage."
+                  "ASTOP addresses efficient observation and inference control driven by state changes; the AXIOM family covers the structural representation and implementation of tensor operations; and QNTA covers a neural network training architecture and runtime built on inference operations. Each product shows its research, validation, or commercialization stage."
                 }
               </p>
               {"\n      "}
@@ -852,7 +862,7 @@ export function Template(values) {
                       "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;color:#CBD5E1;",
                     )}
                   >
-                    {"TECH · AXIOM-TENSOR"}
+                    {"TECH · AXIOM Tensor"}
                   </span>
                   {"\n            "}
                   <span
@@ -923,7 +933,7 @@ export function Template(values) {
                       "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;color:#CBD5E1;",
                     )}
                   >
-                    {"TECH · AXIOM-TENSOR"}
+                    {"TECH · AXIOM Tensor"}
                   </span>
                   {"\n            "}
                   <span
@@ -1103,7 +1113,7 @@ export function Template(values) {
                     </span>
                     <span>
                       {
-                        "Streamlines AI calls around the changes that matter for a decision, validated in customer environments while preserving essential signals such as completion, failure, and exceptions."
+                        "Streamlines AI calls around the changes that matter for a decision, while preserving essential signals such as completion, failure, and exceptions. Its effect will be evaluated in each customer's environment."
                       }
                     </span>
                   </span>
@@ -1122,7 +1132,7 @@ export function Template(values) {
                       "font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:28px;font-weight:600;line-height:1.1;color:#F8FAFC;",
                     )}
                   >
-                    {"AXIOM-TENSOR"}
+                    {"AXIOM Tensor"}
                   </span>
                   {"\n            "}
                   <span
@@ -1746,174 +1756,7 @@ export function Template(values) {
               )}
             >
               {"\n\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:16px;")}>
-                {"\n          "}
-                <span
-                  style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#CBD5E1;",
-                  )}
-                >
-                  {"INDUSTRY PROJECTS"}
-                </span>
-                {"\n          "}
-                <div
-                  style={css(
-                    "display:flex;flex-direction:column;border-top:1px solid rgba(214,230,255,0.4);",
-                  )}
-                >
-                  {"\n            "}
-                  <div
-                    style={css(
-                      "display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid rgba(214,230,255,0.14);",
-                    )}
-                  >
-                    {"\n              "}
-                    <span
-                      style={css(
-                        "align-self:start;justify-self:start;padding:4px 8px;border-radius:6px;background:#F8FAFC;font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;color:#1F2937;",
-                      )}
-                    >
-                      {"Delivered"}
-                    </span>
-                    {"\n              "}
-                    <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
-                    >
-                      <span
-                        style={css(
-                          "font-size:17px;font-weight:700;color:#F8FAFC;",
-                        )}
-                      >
-                        {"Insurance licensing exam item-generation AI"}
-                      </span>
-                      <span
-                        style={css(
-                          "font-size:14px;line-height:1.55;color:#CBD5E1;",
-                        )}
-                      >
-                        {
-                          "Item-generation workflow with expert review and approval built in"
-                        }
-                      </span>
-                    </span>
-                    {"\n            "}
-                  </div>
-                  {"\n            "}
-                  <div
-                    style={css(
-                      "display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid rgba(214,230,255,0.14);",
-                    )}
-                  >
-                    {"\n              "}
-                    <span
-                      style={css(
-                        "align-self:start;justify-self:start;padding:4px 8px;border-radius:6px;border:1px solid rgba(214,230,255,0.5);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;color:#F8FAFC;",
-                      )}
-                    >
-                      {"PoC"}
-                    </span>
-                    {"\n              "}
-                    <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
-                    >
-                      <span
-                        style={css(
-                          "font-size:17px;font-weight:700;color:#F8FAFC;",
-                        )}
-                      >
-                        {"Financial mis-selling detection AI"}
-                      </span>
-                      <span
-                        style={css(
-                          "font-size:14px;line-height:1.55;color:#CBD5E1;",
-                        )}
-                      >
-                        {
-                          "Flags possible compliance breaches in sales conversations via rules, evidence, and cross-checking Judges"
-                        }
-                      </span>
-                    </span>
-                    {"\n            "}
-                  </div>
-                  {"\n            "}
-                  <div
-                    style={css(
-                      "display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid rgba(214,230,255,0.14);",
-                    )}
-                  >
-                    {"\n              "}
-                    <span
-                      style={css(
-                        "align-self:start;justify-self:start;padding:4px 8px;border-radius:6px;border:1px solid rgba(214,230,255,0.5);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;color:#F8FAFC;",
-                      )}
-                    >
-                      {"Applied"}
-                    </span>
-                    {"\n              "}
-                    <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
-                    >
-                      <span
-                        style={css(
-                          "font-size:17px;font-weight:700;color:#F8FAFC;",
-                        )}
-                      >
-                        {"MathGen · Ad-creation AI"}
-                      </span>
-                      <span
-                        style={css(
-                          "font-size:14px;line-height:1.55;color:#CBD5E1;",
-                        )}
-                      >
-                        {
-                          "Helps teachers write and review math items; creates content aligned to brand rules"
-                        }
-                      </span>
-                    </span>
-                    {"\n            "}
-                  </div>
-                  {"\n            "}
-                  <div
-                    style={css(
-                      "display:grid;grid-template-columns:104px minmax(0,1fr);gap:16px;padding:20px 0;border-bottom:1px solid rgba(214,230,255,0.14);",
-                    )}
-                  >
-                    {"\n              "}
-                    <span
-                      style={css(
-                        "align-self:start;justify-self:start;padding:4px 8px;border-radius:6px;border:1px dashed rgba(214,230,255,0.5);font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;font-weight:500;color:#CBD5E1;",
-                      )}
-                    >
-                      {"R&D"}
-                    </span>
-                    {"\n              "}
-                    <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
-                    >
-                      <span
-                        style={css(
-                          "font-size:17px;font-weight:700;color:#F8FAFC;",
-                        )}
-                      >
-                        {"K-EDA electronic design AI"}
-                      </span>
-                      <span
-                        style={css(
-                          "font-size:14px;line-height:1.55;color:#CBD5E1;",
-                        )}
-                      >
-                        {
-                          "R&D roadmap for automating PCB/ECAD placement, routing, and rule checks"
-                        }
-                      </span>
-                    </span>
-                    {"\n            "}
-                  </div>
-                  {"\n          "}
-                </div>
-                {"\n        "}
-              </div>
-              {"\n\n        "}
+              <TrackProjects language={values.language} />
               <div style={css("display:flex;flex-direction:column;gap:16px;")}>
                 {"\n          "}
                 <span
@@ -2113,7 +1956,7 @@ export function Template(values) {
               {"\n        "}
               <div
                 style={css(
-                  "flex:1 1 480px;max-width:680px;display:flex;flex-direction:column;gap:24px;",
+                  "flex:1 1 480px;min-width:0;max-width:680px;display:flex;flex-direction:column;gap:24px;",
                 )}
               >
                 {"\n          "}
@@ -2141,9 +1984,23 @@ export function Template(values) {
                   )}
                 >
                   {
-                    "We select a representative AI or computing workload together and agree on measurable goals and validation criteria. Based on confirmed results, we discuss scope, partnership, and Licensing terms."
+                    "We select the customer’s key AI and computing challenges and set measurable goals and validation criteria. Based on actual validation results, we discuss scope, partnership, and Licensing terms."
                   }
                 </p>
+                <a
+                  className="jr-btn partnership-cta"
+                  href={"/en/partnership"}
+                  style={{
+                    alignSelf: "flex-start",
+                    padding: "14px 20px",
+                    borderRadius: 12,
+                    background: "#F8FAFC",
+                    color: "#0B1118",
+                    fontWeight: 700,
+                  }}
+                >
+                  Partnership inquiry →
+                </a>
                 {"\n          "}
                 <div
                   style={css(
@@ -2381,7 +2238,7 @@ export function Template(values) {
                 </a>
                 {"\n          "}
                 <a
-                  href={"#contact"}
+                  href={"/en/partnership"}
                   style={css("color:#F8FAFC;")}
                   className={" reference-hover-22"}
                 >

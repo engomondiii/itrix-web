@@ -6,7 +6,7 @@ export const PRODUCTS: Record<'alpha_compute' | 'alpha_core', ProductInfo> = {
     route: 'alpha_compute',
     name: 'AXIOM Compute',
     layer: 'Software · validation stage',
-    thesis: 'Software using AXIOM and AXIOM-TENSOR for suitable structured tensor and operator workloads. Benefits require workload-specific validation.',
+    thesis: 'Software using AXIOM and AXIOM Tensor for suitable structured tensor and operator workloads. Benefits require workload-specific validation.',
     buyer: 'CTO, strategy, and licensing leads',
   },
   alpha_core: {

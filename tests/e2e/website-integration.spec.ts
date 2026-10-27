@@ -15,11 +15,10 @@ for (const width of [360,390,820,1440]) {
     }
   });
 }
-test('forms validate locally and never show demo success', async ({ page })=>{
+test('PoC applications open the approved Google Form', async ({ page })=>{
   await page.goto('/en/poc');
-  await page.getByRole('button',{name:/Submit PoC request/}).click();
-  await expect(page.getByText('This field is required.',{exact:true}).first()).toBeVisible();
-  await expect(page.getByText('Please complete the spam check.',{exact:true})).toBeVisible();
+  await expect(page.locator('a[href="https://forms.gle/FoGcs7LHhoTbmhtf8"]')).toHaveAttribute('target','_blank');
+  await expect(page.locator('section input,section textarea')).toHaveCount(0);
 });
 test('same-page language switch and real Ask itriX embedding',async({page})=>{
   await page.goto('/en');

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('itrixNoticeHide',new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())));
   await page.addInitScript(() =>
     localStorage.setItem("itrixCookie", JSON.stringify({ necessary: true })),
   );
