@@ -21,9 +21,9 @@ test('forms validate locally and never show demo success', async ({ page })=>{
   await expect(page.getByText('This field is required.',{exact:true}).first()).toBeVisible();
   await expect(page.getByText('Please complete the spam check.',{exact:true})).toBeVisible();
 });
-test('same-page language switch and real Ask X embedding',async({page})=>{
+test('same-page language switch and real Ask itriX embedding',async({page})=>{
   await page.goto('/en');
-  await expect(page.locator('iframe[title="Ask X AI sales assistant"]')).toHaveAttribute('src',/\/ask-x\?lang=en/);
+  await expect(page.locator('iframe[title="Ask itriX AI sales assistant"]')).toHaveAttribute('src',/\/ask-x\?embed=1&lang=en/);
   await page.goto('/en/astop');
   await page.getByRole('link',{name:'KO',exact:true}).first().click();
   await expect(page).toHaveURL(/\/astop$/);

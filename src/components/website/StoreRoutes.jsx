@@ -25,16 +25,17 @@ export function StoreRoutes({ language = "ko" }) {
           style={{
             fontFamily: "'Saira Condensed','Noto Sans KR',sans-serif",
             fontSize: 42,
+            color: "#F8FAFC",
           }}
         >
           {ko ? "ASTOP 출시 안내" : "ASTOP availability"}
         </h2>
-        <p>
+        <p style={{ color: "#F8FAFC" }}>
           {ko
             ? "예정된 멤버십 가격: 월 USD 10 또는 연 USD 100. 최종 구매 조건은 해당 Store에서 확인하세요."
             : "Working membership pricing: USD 10/month or USD 100/year. Final purchase terms will be confirmed in the relevant Store."}
         </p>
-        <p>
+        <p style={{ color: "#F8FAFC" }}>
           {available.length
             ? ko
               ? "확인된 Store에서 구매 및 설치할 수 있습니다. 다른 플랫폼의 출시는 별도로 안내됩니다."

@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { useRailCopy } from '@/lib/i18n/conversationLocale';
+import { useRailCopy } from "@/lib/i18n/conversationLocale";
 
-import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import { ConversationRail } from './ConversationRail';
-import { RailSheet } from './RailSheet';
-import { WorkingMobileHeader } from './WorkingMobileHeader';
-import { useRailStore } from '@/store/railStore';
-import { ContentPane } from '@/components/content-pane/ContentPane';
-import { PaneSheet } from '@/components/content-pane/PaneSheet';
-import { useContentPaneContext } from '@/context/ContentPaneContext';
-import { VerificationNotice } from '@/components/auth/VerificationNotice';
-import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
-import { useLocaleStore } from '@/store/localeStore';
-import { commonUi } from '@/lib/i18n/siteLocale';
+import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { ConversationRail } from "./ConversationRail";
+import { RailSheet } from "./RailSheet";
+import { WorkingMobileHeader } from "./WorkingMobileHeader";
+import { useRailStore } from "@/store/railStore";
+import { ContentPane } from "@/components/content-pane/ContentPane";
+import { PaneSheet } from "@/components/content-pane/PaneSheet";
+import { useContentPaneContext } from "@/context/ContentPaneContext";
+import { VerificationNotice } from "@/components/auth/VerificationNotice";
+import { SiteLocaleToggle } from "@/components/i18n/SiteLocaleToggle";
+import { useLocaleStore } from "@/store/localeStore";
+import { commonUi } from "@/lib/i18n/siteLocale";
 
 /**
  * THE WORKING SHELL — mounted the moment a thread exists.
@@ -48,7 +48,13 @@ import { commonUi } from '@/lib/i18n/siteLocale';
  * presentation decision only — it shares no auth, no state and no data
  * (Surface 1 v6.0 §7.2).
  */
-export function WorkingShell({ children }: { children: ReactNode }) {
+export function WorkingShell({
+  children,
+  embedded = false,
+}: {
+  children: ReactNode;
+  embedded?: boolean;
+}) {
   const railCopy = useRailCopy();
   const pathname = usePathname();
   const collapsed = useRailStore((s) => s.collapsed);
@@ -64,21 +70,25 @@ export function WorkingShell({ children }: { children: ReactNode }) {
      LEFT conversation rail (the visitor still needs "New chat" and their history) and
      drop only the right pane here. This is presentation scope, not authorization:
      nothing about what the backend authorized changes. */
-  const isClientPage = pathname === '/c' || pathname.startsWith('/c/');
+  const isClientPage = pathname === "/c" || pathname.startsWith("/c/");
 
   /* The third column is present when the pane is available and not folded away. On a
      sheet breakpoint it is never a column — PaneSheet renders it as an overlay
      instead, and rendering both would put two copies of the panel in the tree. */
-  const paneColumn = !isClientPage && pane.available && !pane.collapsed && !pane.isSheetBreakpoint;
+  const paneColumn =
+    !isClientPage &&
+    pane.available &&
+    !pane.collapsed &&
+    !pane.isSheetBreakpoint;
 
   return (
     <div
-      className="working-shell"
-      data-collapsed={collapsed ? 'true' : undefined}
-      data-pane={paneColumn ? 'true' : undefined}
+      className={embedded ? "working-shell embedded-chat" : "working-shell"}
+      data-collapsed={collapsed ? "true" : undefined}
+      data-pane={paneColumn ? "true" : undefined}
     >
       <aside className="conversation-rail" aria-label={common.conversations}>
-        <ConversationRail />
+        <ConversationRail embedded={embedded} />
       </aside>
 
       <main id="content" className="conversation-main" data-pathname={pathname}>
@@ -86,11 +96,15 @@ export function WorkingShell({ children }: { children: ReactNode }) {
             identity, compact locale access and the single RailSheet opener in normal
             layout flow. It is CSS-hidden above the breakpoint and therefore adds no
             desktop geometry. */}
-        <WorkingMobileHeader />
+        {!embedded && <WorkingMobileHeader />}
 
         {/* Desktop keeps its existing locale presentation byte-for-byte. The mobile
             contract hides this detached control in favour of WorkingMobileHeader. */}
-        <div className="working-shell__locale"><SiteLocaleToggle compact /></div>
+        {!embedded && (
+          <div className="working-shell__locale">
+            <SiteLocaleToggle compact />
+          </div>
+        )}
         {/* Desktop keeps the existing shell-level rail opener contract. On mobile it
             is hidden because WorkingMobileHeader is the sole opener; keeping the node
             avoids changing desktop/route-specific behavior. */}
@@ -100,7 +114,15 @@ export function WorkingShell({ children }: { children: ReactNode }) {
           aria-label={railCopy.openNavigation}
           onClick={openSheet}
         >
-          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+          >
             <path d="M4 7h16M4 12h16M4 17h16" />
           </svg>
         </button>
@@ -125,7 +147,7 @@ export function WorkingShell({ children }: { children: ReactNode }) {
           is its own content surface, so the pane beside it is redundant. */}
       {!isClientPage ? <ContentPane /> : null}
 
-      <RailSheet />
+      <RailSheet embedded={embedded} />
       {!isClientPage ? <PaneSheet /> : null}
     </div>
   );

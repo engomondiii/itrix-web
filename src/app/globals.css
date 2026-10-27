@@ -61,3 +61,14 @@
 /* September 2026 working-shell hotfix: intentionally after the existing responsive
    contracts, scoped to WorkingShell <1024px, with no ArrivalShell or desktop rules. */
 @import '../styles/working-mobile-header.css';
+
+/* Website embedded assistant: the parent website owns identity and language. */
+.embedded-chat.arrival-page { min-height: 100dvh; height: auto; }
+.embedded-chat .arrival-hero { min-height: 100dvh; padding: clamp(24px,5vw,64px) 24px; }
+.embedded-chat .arrival-stage, .embedded-chat .arrival-center { width:100%; max-width:1080px; }
+.embedded-chat.working-shell { height:100dvh; min-height:0; }
+@media(max-width:1023px) {
+ .embedded-chat .conversation-main__nav { display:flex; position:relative; top:auto; left:auto; margin:12px; }
+ .embedded-chat .arrival-hero { padding:24px 16px; }
+ .embedded-chat .arrival-center { min-width:0; }
+}

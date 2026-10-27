@@ -107,11 +107,9 @@ export function Template(values) {
             style={css("display:flex;align-items:center;gap:16px;")}
           >
             <img
-              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              src={"/brand/itrix-logo-inverse.svg"}
               alt={"itriX"}
-              style={css(
-                "width:120px;height:auto;display:block;filter:invert(1);",
-              )}
+              style={css("width:120px;height:auto;display:block;")}
             />
           </a>
           {"\n    "}
@@ -154,14 +152,8 @@ export function Template(values) {
                   "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
                 )}
               >
-                {"Ask"}
-                <img
-                  src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                  alt={"X"}
-                  style={css(
-                    "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
-                  )}
-                />
+                {"Ask "}
+                <span>itriX</span>
               </span>
             </a>
             {"\n      "}
@@ -819,7 +811,7 @@ export function Template(values) {
                     style={css("font-size:14px;line-height:1.6;color:#94A3B8;")}
                   >
                     {
-                      "Ask X about PoC scope, supported environments and timeline."
+                      "Ask itriX about PoC scope, supported environments and timeline."
                     }
                   </span>
                   <span
@@ -827,14 +819,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:500;color:#F8FAFC;pointer-events:none;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:12px;width:auto;display:block;filter:invert(1);",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                     {" →"}
                   </span>
                 </a>
@@ -1051,11 +1037,9 @@ export function Template(values) {
               {"\n        "}
               <a href={"/en/"}>
                 <img
-                  src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                  src={"/brand/itrix-logo-inverse.svg"}
                   alt={"itriX"}
-                  style={css(
-                    "width:120px;height:auto;display:block;filter:invert(1);",
-                  )}
+                  style={css("width:120px;height:auto;display:block;")}
                 />
               </a>
               {"\n        "}
@@ -1327,11 +1311,9 @@ export function Template(values) {
               <div className={"mn-top"}>
                 <a href={"/en/"} onClick={mnClose}>
                   <img
-                    src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                    src={"/brand/itrix-logo-inverse.svg"}
                     alt={"itriX"}
-                    style={css(
-                      "width:104px;height:auto;display:block;filter:invert(1);",
-                    )}
+                    style={css("width:104px;height:auto;display:block;")}
                   />
                 </a>
                 <button
@@ -1366,14 +1348,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:9px;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:17px;width:auto;display:block;filter:invert(1);",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                   </span>{" "}
                   <span className={"ar"}>{"→"}</span>
                 </a>

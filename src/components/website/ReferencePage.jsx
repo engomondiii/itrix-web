@@ -25,6 +25,14 @@ export class ReferencePage extends React.Component {
   };
   componentDidMount() {
     this.requestId = crypto.randomUUID();
+    this.scrollToSection = () => {
+      const id = location.hash.slice(1);
+      const target = document.getElementById(id === "ask-chat" ? "ask" : id);
+      if (target)
+        target.scrollIntoView({ block: "start", behavior: "instant" });
+    };
+    this.scrollFrame = requestAnimationFrame(this.scrollToSection);
+    window.addEventListener("hashchange", this.scrollToSection);
     try {
       const saved = JSON.parse(localStorage.getItem("itrixCookie") || "null");
       this.setState({ ckShow: !saved, ckAna: !!saved?.analytics });
@@ -55,6 +63,8 @@ export class ReferencePage extends React.Component {
   }
   componentWillUnmount() {
     this.observer?.disconnect();
+    cancelAnimationFrame(this.scrollFrame);
+    window.removeEventListener("hashchange", this.scrollToSection);
   }
   saveCookies = (analytics) => {
     try {
@@ -114,8 +124,17 @@ export class ReferencePage extends React.Component {
           ] || "";
       } else {
         fields.message = s.v.msg;
+        fields.inquiry_route =
+          this.props.page === "Partnership" ? "partnership" : "contact";
+        if (this.props.page === "Partnership")
+          fields.partnership_type =
+            ["Joint validation", "PoC", "Licensing", "Large-scale deployment"][
+              s.ty
+            ] || "";
         fields.topic =
-          ["Product / install", "PoC", "Technical", "Other"][s.ty] || "";
+          this.props.page === "Partnership"
+            ? "Partnership / Large-scale deployment"
+            : ["Product / install", "PoC", "Technical", "Other"][s.ty] || "";
       }
       const interest =
         !poc &&
@@ -169,7 +188,8 @@ export class ReferencePage extends React.Component {
           el.play().catch(() => {});
         }
       },
-      askAstop: () => {
+      askAstop: (event) => {
+        event.preventDefault();
         location.href =
           (this.props.language === "ko" ? "/" : "/en") +
           "?topic=astop#ask-chat";
@@ -256,7 +276,7 @@ export class ReferencePage extends React.Component {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;700&family=Saira+Condensed:wght@400;500;600;700&display=swap"
         />
-        <style>{`.itrix-reference button{cursor:pointer}.itrix-reference input,.itrix-reference textarea{max-width:100%}.itrix-reference :focus-visible{outline:2px solid #D6E6FF;outline-offset:4px}@media(max-width:820px){.itrix-reference{overflow-x:clip}}`}</style>
+        <style>{`.itrix-reference section[id]{scroll-margin-top:88px}@media(max-width:820px){.itrix-reference section[id]{scroll-margin-top:80px}}.itrix-reference button{cursor:pointer}.itrix-reference input,.itrix-reference textarea{max-width:100%}.itrix-reference :focus-visible{outline:2px solid #D6E6FF;outline-offset:4px}@media(max-width:820px){.itrix-reference{overflow-x:clip}}`}</style>
         {this.state.reference && (
           <div
             role="status"

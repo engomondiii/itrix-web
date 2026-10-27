@@ -44,38 +44,65 @@ export function AskX({ language }) {
       );
     const topicTimer = setTimeout(syncTopic, 0);
     const readyTimer = setTimeout(() => setFailed(true), 20000);
-    const observer = new IntersectionObserver(entries => { if (window.matchMedia('(max-width:820px)').matches && entries.some(e => e.isIntersecting && e.intersectionRatio >= .35)) { panel.current?.classList.add('axc-in'); observer.disconnect(); } }, {threshold:[.35]});
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (
+          window.matchMedia("(max-width:820px)").matches &&
+          entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.35)
+        ) {
+          panel.current?.classList.add("axc-in");
+          observer.disconnect();
+        }
+      },
+      { threshold: [0.35] },
+    );
     if (panel.current) observer.observe(panel.current);
     const onMessage = (e) => {
-      if (e.origin === location.origin && e.source === panel.current?.querySelector('iframe')?.contentWindow && e.data?.type === 'itrix-chat-ready') { clearTimeout(readyTimer); setFailed(false); }
+      if (
+        e.origin === location.origin &&
+        e.source === panel.current?.querySelector("iframe")?.contentWindow &&
+        e.data?.type === "itrix-chat-ready"
+      ) {
+        clearTimeout(readyTimer);
+        setFailed(false);
+      }
     };
     window.addEventListener("message", onMessage);
     return () => {
-      clearTimeout(topicTimer); clearTimeout(readyTimer); observer.disconnect();
+      clearTimeout(topicTimer);
+      clearTimeout(readyTimer);
+      observer.disconnect();
       window.removeEventListener("message", onMessage);
     };
   }, []);
   const prefix = language === "en" ? "/en" : "";
   return (
-    <div ref={panel} className="axc"
-      style={{ position:"relative",
+    <div
+      ref={panel}
+      className="axc"
+      style={{
+        position: "relative",
         border: "1px solid #D6E6FF",
         borderRadius: 28,
         overflow: "hidden",
         background: "#F8FAFC",
       }}
     >
-      <div className="axc-ring"/><div className="axc-skin"/>
+      <div className="axc-ring" />
+      <div className="axc-skin" />
       {!failed && (
         <iframe
+          data-itrix-chat="true"
           title={
-            language === "ko" ? "Ask X AI 상담" : "Ask X AI sales assistant"
+            language === "ko"
+              ? "Ask itriX AI 상담"
+              : "Ask itriX AI sales assistant"
           }
-          src={"/ask-x?lang=" + language + topic}
+          src={"/ask-x?embed=1&lang=" + language + topic}
           style={{
             width: "100%",
             height: "min(760px, 85dvh)",
-            minHeight: 520,
+            minHeight: 420,
             border: 0,
             display: "block",
           }}

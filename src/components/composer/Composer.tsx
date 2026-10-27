@@ -111,6 +111,7 @@ export function Composer({ variant = 'arrival', labelledBy }: ComposerProps) {
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
+        e.stopPropagation();
         void handleSubmit('button');
       }}
     >

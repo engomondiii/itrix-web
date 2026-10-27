@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import { useRailCopy } from '@/lib/i18n/conversationLocale';
+import { useRailCopy } from "@/lib/i18n/conversationLocale";
 
-import { createElement } from 'react';
-import type { ReactElement } from 'react';
-import { useRouter } from 'next/navigation';
-import { useShellContext } from '@/context/ShellContext';
-import { useThreadContext } from '@/context/ThreadContext';
-import { useComposerStore } from '@/store/composerStore';
-import { useRailStore } from '@/store/railStore';
-import { WordmarkLockup } from './WordmarkLockup';
-import { NewChatButton } from './NewChatButton';
-import { ConversationList } from './ConversationList';
-import { RailAccountFooter } from './RailAccountFooter';
-import type { ConversationRailSection } from '@/lib/journey/railSections';
+import { createElement } from "react";
+import type { ReactElement } from "react";
+import { useRouter } from "next/navigation";
+import { useShellContext } from "@/context/ShellContext";
+import { useThreadContext } from "@/context/ThreadContext";
+import { useComposerStore } from "@/store/composerStore";
+import { useRailStore } from "@/store/railStore";
+import { WordmarkLockup } from "./WordmarkLockup";
+import { NewChatButton } from "./NewChatButton";
+import { ConversationList } from "./ConversationList";
+import { RailAccountFooter } from "./RailAccountFooter";
+import type { ConversationRailSection } from "@/lib/journey/railSections";
 
 /**
  * THE CONVERSATION RAIL — navigation between conversations, and nothing else.
@@ -40,13 +40,20 @@ import type { ConversationRailSection } from '@/lib/journey/railSections';
  * inferred organisation, or a surveillance-looking profile of the person reading
  * it.
  */
-const SECTIONS: Readonly<Record<ConversationRailSection, () => ReactElement>> = {
-  new_chat: () => createElement(NewChatButton),
-  conversations: () => createElement(ConversationList),
-  account: () => createElement(RailAccountFooter),
-};
+const SECTIONS: Readonly<Record<ConversationRailSection, () => ReactElement>> =
+  {
+    new_chat: () => createElement(NewChatButton),
+    conversations: () => createElement(ConversationList),
+    account: () => createElement(RailAccountFooter),
+  };
 
-export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
+export function ConversationRail({
+  inSheet = false,
+  embedded = false,
+}: {
+  inSheet?: boolean;
+  embedded?: boolean;
+}) {
   const railCopy = useRailCopy();
   const { conversationRailSections } = useShellContext();
   const { startNew } = useThreadContext();
@@ -58,22 +65,27 @@ export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
 
   /* `account` is pinned to the bottom by the layout, not by reordering the
      contract — the backend's order is preserved for everything above it. */
-  const body = conversationRailSections.filter((k) => k !== 'account');
-  const hasAccount = conversationRailSections.includes('account');
+  const body = conversationRailSections.filter((k) => k !== "account");
+  const hasAccount = conversationRailSections.includes("account");
 
   return (
-    <div className="conversation-rail__inner" data-collapsed={!inSheet && collapsed ? 'true' : undefined}>
-      <div className="conversation-rail__brand">
-        <WordmarkLockup
-          variant="rail"
-          onActivate={() => {
-            startNew();
-            clearComposer();
-            closeSheet();
-            router.push('/ask-x');
-          }}
-        />
-      </div>
+    <div
+      className="conversation-rail__inner"
+      data-collapsed={!inSheet && collapsed ? "true" : undefined}
+    >
+      {!embedded && (
+        <div className="conversation-rail__brand">
+          <WordmarkLockup
+            variant="rail"
+            onActivate={() => {
+              startNew();
+              clearComposer();
+              closeSheet();
+              router.push("/ask-x");
+            }}
+          />
+        </div>
+      )}
 
       <div className="conversation-rail__body">
         {body.map((key) => (
@@ -83,7 +95,7 @@ export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
         ))}
       </div>
 
-      {hasAccount ? (
+      {hasAccount && !embedded ? (
         <div className="conversation-rail__foot">
           <div className="rail-section" data-section="account">
             {SECTIONS.account()}
@@ -98,8 +110,17 @@ export function ConversationRail({ inSheet = false }: { inSheet?: boolean }) {
           aria-label={collapsed ? railCopy.expand : railCopy.collapse}
           onClick={toggleCollapsed}
         >
-          <svg aria-hidden="true" viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-            <path d={collapsed ? 'm10 6 6 6-6 6' : 'm14 6-6 6 6 6'} />
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d={collapsed ? "m10 6 6 6-6 6" : "m14 6-6 6 6 6"} />
           </svg>
         </button>
       ) : null}

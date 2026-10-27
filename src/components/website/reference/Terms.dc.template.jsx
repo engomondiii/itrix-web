@@ -43,11 +43,9 @@ export function Template(values) {
             style={css("display:flex;align-items:center;gap:16px;")}
           >
             <img
-              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              src={"/brand/itrix-logo-inverse.svg"}
               alt={"itriX"}
-              style={css(
-                "width:120px;height:auto;display:block;filter:invert(1);",
-              )}
+              style={css("width:120px;height:auto;display:block;")}
             />
           </a>
           {"\n    "}
@@ -90,14 +88,8 @@ export function Template(values) {
                   "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
                 )}
               >
-                {"Ask"}
-                <img
-                  src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                  alt={"X"}
-                  style={css(
-                    "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
-                  )}
-                />
+                {"Ask "}
+                <span>itriX</span>
               </span>
             </a>
             {"\n      "}
@@ -192,7 +184,7 @@ export function Template(values) {
                 <a href={"#s1"}>{"1. 목적"}</a>
                 <a href={"#s2"}>{"2. 약관의 효력과 변경"}</a>
                 <a href={"#s3"}>{"3. 제공하는 서비스"}</a>
-                <a href={"#s4"}>{"4. AI 안내 기능(Ask X)"}</a>
+                <a href={"#s4"}>{"4. AI 안내 기능(Ask itriX)"}</a>
                 <a href={"#s5"}>{"5. 이용자의 의무"}</a>
                 <a href={"#s6"}>{"6. 지식재산권"}</a>
                 <a href={"#s7"}>{"7. 책임의 제한"}</a>
@@ -210,7 +202,7 @@ export function Template(values) {
                   <ul>
                     <li>
                       {
-                        "이 약관은 회사가 사이트에서 제공하는 정보, PoC 신청, 문의, AI 안내 기능(Ask X)의 이용에 관한 회사와 이용자의 권리와 의무를 정합니다."
+                        "이 약관은 회사가 사이트에서 제공하는 정보, PoC 신청, 문의, AI 안내 기능(Ask itriX)의 이용에 관한 회사와 이용자의 권리와 의무를 정합니다."
                       }
                     </li>
                   </ul>
@@ -233,15 +225,15 @@ export function Template(values) {
                   <ul>
                     <li>{"회사와 제품(ASTOP 등), 기술에 대한 정보 제공"}</li>
                     <li>{"PoC 신청 및 일반 문의 접수"}</li>
-                    <li>{"AI 안내 기능(Ask X)을 통한 안내"}</li>
+                    <li>{"AI 안내 기능(Ask itriX)을 통한 안내"}</li>
                   </ul>
                 </section>
                 <section id={"s4"} className={"lg-sec"}>
-                  <h2>{"4. AI 안내 기능(Ask X)"}</h2>
+                  <h2>{"4. AI 안내 기능(Ask itriX)"}</h2>
                   <ul>
                     <li>
                       {
-                        "Ask X의 답변은 회사가 승인한 자료 범위 안에서 제공되는 참고용 안내입니다."
+                        "Ask itriX의 답변은 회사가 승인한 자료 범위 안에서 제공되는 참고용 안내입니다."
                       }
                     </li>
                     <li>
@@ -307,7 +299,7 @@ export function Template(values) {
                 <section id={"s9"} className={"lg-sec"}>
                   <h2>{"9. 부칙"}</h2>
                   <ul>
-                    <li>{"이 약관은 2026년 [ ]월 [ ]일부터 적용됩니다."}</li>
+                    <li>{"이 약관은 2026년 10월 24일부터 적용됩니다."}</li>
                   </ul>
                 </section>
               </div>
@@ -338,11 +330,9 @@ export function Template(values) {
               {"\n        "}
               <a href={"/"}>
                 <img
-                  src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                  src={"/brand/itrix-logo-inverse.svg"}
                   alt={"itriX"}
-                  style={css(
-                    "width:120px;height:auto;display:block;filter:invert(1);",
-                  )}
+                  style={css("width:120px;height:auto;display:block;")}
                 />
               </a>
               {"\n        "}
@@ -614,11 +604,9 @@ export function Template(values) {
               <div className={"mn-top"}>
                 <a href={"/"} onClick={mnClose}>
                   <img
-                    src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                    src={"/brand/itrix-logo-inverse.svg"}
                     alt={"itriX"}
-                    style={css(
-                      "width:104px;height:auto;display:block;filter:invert(1);",
-                    )}
+                    style={css("width:104px;height:auto;display:block;")}
                   />
                 </a>
                 <button
@@ -653,14 +641,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:9px;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:17px;width:auto;display:block;filter:invert(1);",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                   </span>{" "}
                   <span className={"ar"}>{"→"}</span>
                 </a>
