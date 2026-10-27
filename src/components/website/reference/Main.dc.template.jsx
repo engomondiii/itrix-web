@@ -1348,7 +1348,7 @@ export function Template(values) {
                   <span
                     style={css("font-size:22px;font-weight:400;color:#94A3B8;")}
                   >
-                    {" 건 + 1"}
+                    {" 건"}
                   </span>
                 </span>
                 {"\n          "}
