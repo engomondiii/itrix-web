@@ -178,7 +178,7 @@ export const siteConfig = {
   wsUrl,
   /** The portal lives inside this same site; base kept for absolute links. */
   portalUrl: `${siteUrl}/workspace`,
-  ogImage: '/og-image.png',
+  ogImage: '/og-image-v31-20261027.png',
   thesis: brand.thesis,
   featureFlags,
 } as const;

@@ -43,11 +43,9 @@ export function Template(values) {
             style={css("display:flex;align-items:center;gap:16px;")}
           >
             <img
-              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              src={"/brand/itrix-logo-inverse.svg"}
               alt={"itriX"}
-              style={css(
-                "width:120px;height:auto;display:block;filter:invert(1);",
-              )}
+              style={css("width:120px;height:auto;display:block;")}
             />
           </a>
           {"\n    "}
@@ -90,14 +88,8 @@ export function Template(values) {
                   "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
                 )}
               >
-                {"Ask"}
-                <img
-                  src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                  alt={"X"}
-                  style={css(
-                    "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
-                  )}
-                />
+                {"Ask "}
+                <span>itriX</span>
               </span>
             </a>
             {"\n      "}
@@ -192,7 +184,7 @@ export function Template(values) {
                 <a href={"#s1"}>{"1. Purpose"}</a>
                 <a href={"#s2"}>{"2. Effect and changes"}</a>
                 <a href={"#s3"}>{"3. Services"}</a>
-                <a href={"#s4"}>{"4. AI guide (Ask X)"}</a>
+                <a href={"#s4"}>{"4. AI guide (Ask itriX)"}</a>
                 <a href={"#s5"}>{"5. Your obligations"}</a>
                 <a href={"#s6"}>{"6. Intellectual property"}</a>
                 <a href={"#s7"}>{"7. Limitation of liability"}</a>
@@ -210,7 +202,7 @@ export function Template(values) {
                   <ul>
                     <li>
                       {
-                        "These terms set out your and our rights and obligations when you use the information, PoC requests, inquiries and AI guide (Ask X) on the Site."
+                        "These terms set out your and our rights and obligations when you use the information, PoC requests, inquiries and AI guide (Ask itriX) on the Site."
                       }
                     </li>
                   </ul>
@@ -237,15 +229,15 @@ export function Template(values) {
                       }
                     </li>
                     <li>{"Receiving PoC requests and general inquiries"}</li>
-                    <li>{"Guidance through the AI guide (Ask X)"}</li>
+                    <li>{"Guidance through the AI guide (Ask itriX)"}</li>
                   </ul>
                 </section>
                 <section id={"s4"} className={"lg-sec"}>
-                  <h2>{"4. AI guide (Ask X)"}</h2>
+                  <h2>{"4. AI guide (Ask itriX)"}</h2>
                   <ul>
                     <li>
                       {
-                        "Ask X answers are for reference and stay within materials we have approved."
+                        "Ask itriX answers are for reference and stay within materials we have approved."
                       }
                     </li>
                     <li>
@@ -313,7 +305,7 @@ export function Template(values) {
                 <section id={"s9"} className={"lg-sec"}>
                   <h2>{"9. Effective date"}</h2>
                   <ul>
-                    <li>{"These terms take effect on [Month] [Day], 2026."}</li>
+                    <li>{"These terms take effect on October 24, 2026."}</li>
                   </ul>
                 </section>
               </div>
@@ -344,11 +336,9 @@ export function Template(values) {
               {"\n        "}
               <a href={"/en/"}>
                 <img
-                  src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                  src={"/brand/itrix-logo-inverse.svg"}
                   alt={"itriX"}
-                  style={css(
-                    "width:120px;height:auto;display:block;filter:invert(1);",
-                  )}
+                  style={css("width:120px;height:auto;display:block;")}
                 />
               </a>
               {"\n        "}
@@ -620,11 +610,9 @@ export function Template(values) {
               <div className={"mn-top"}>
                 <a href={"/en/"} onClick={mnClose}>
                   <img
-                    src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                    src={"/brand/itrix-logo-inverse.svg"}
                     alt={"itriX"}
-                    style={css(
-                      "width:104px;height:auto;display:block;filter:invert(1);",
-                    )}
+                    style={css("width:104px;height:auto;display:block;")}
                   />
                 </a>
                 <button
@@ -659,14 +647,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:9px;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:17px;width:auto;display:block;filter:invert(1);",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                   </span>{" "}
                   <span className={"ar"}>{"→"}</span>
                 </a>

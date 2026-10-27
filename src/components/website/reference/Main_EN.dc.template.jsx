@@ -46,11 +46,9 @@ export function Template(values) {
           >
             {"\n      "}
             <img
-              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              src={"/brand/itrix-logo-inverse.svg"}
               alt={"itriX"}
-              style={css(
-                "width:120px;height:auto;display:block;filter:invert(1);",
-              )}
+              style={css("width:120px;height:auto;display:block;")}
             />
             {"\n    "}
           </a>
@@ -98,14 +96,8 @@ export function Template(values) {
                   "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
                 )}
               >
-                {"Ask"}
-                <img
-                  src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                  alt={"X"}
-                  style={css(
-                    "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
-                  )}
-                />
+                {"Ask "}
+                <span>itriX</span>
               </span>
             </a>
             {"\n      "}
@@ -221,14 +213,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:7px;white-space:nowrap;pointer-events:none;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:13px;width:auto;display:block;filter:invert(1);pointer-events:none;",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                   </span>
                 </a>
                 {"\n        "}
@@ -403,13 +389,7 @@ export function Template(values) {
                   {"\n            "}
                   <div className={"ore-head"}>
                     <span className={"ore-icon"}>
-                      <img
-                        src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                        alt={""}
-                        style={css(
-                          "height:22px;width:auto;display:block;filter:invert(1);",
-                        )}
-                      />
+                      <span>itriX</span>
                     </span>
                     <span className={"ore-num"}>{"03"}</span>
                   </div>
@@ -648,7 +628,7 @@ export function Template(values) {
           {"\n    "}
           <div
             style={css(
-              "max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
+              "max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
             )}
           >
             {"\n      "}
@@ -731,7 +711,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "ASTOP addresses the efficiency of AI observation and execution; the AXIOM family covers computation, learning, and hardware implementation. Each product shows its research, validation, or commercialization stage — products in validation or planning are not yet commercially available."
+                  "ASTOP addresses the efficiency of AI observation and execution; the AXIOM family covers computation, learning, and hardware implementation. Each product shows its research, validation, or commercialization stage."
                 }
               </p>
               {"\n      "}
@@ -1084,7 +1064,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "Mathematical Intelligence is itriX’s technology philosophy: we research and develop technologies that raise the efficiency of observation, computation, and learning by analyzing and re-representing mathematical structure. The technologies below underpin our products; a technology on its own is not a product for sale."
+                  "Mathematical Intelligence is itriX’s technology philosophy: we research and develop technologies that raise the efficiency of observation, computation, and learning by analyzing and re-representing mathematical structure. The technologies below underpin our products."
                 }
               </p>
               {"\n      "}
@@ -1155,7 +1135,7 @@ export function Template(values) {
                     </span>
                     <span>
                       {
-                        "A technical direction that converts suitable mathematical structures into more efficient representations to ease compute and memory load. Actual results are validated against the target model and accuracy conditions."
+                        "A technical direction that converts suitable mathematical structures into more efficient representations to ease compute and memory load. "
                       }
                     </span>
                   </span>
@@ -1254,7 +1234,7 @@ export function Template(values) {
                   style={css("font-size:14px;line-height:1.5;color:#94A3B8;")}
                 >
                   {
-                    "Research and enabling technologies, not standalone products. 9 Korean patent applications listed in Portfolio v1.7 (October 2026); applications are not grants"
+                    "Research and enabling technologies, not standalone products. 9 Korean patent applications (October 2026)"
                   }
                 </span>
                 {"\n        "}
@@ -1379,9 +1359,7 @@ export function Template(values) {
                 </span>
                 {"\n          "}
                 <span style={css("font-size:15px;color:#CBD5E1;")}>
-                  {
-                    "Korean patent applications listed in Portfolio v1.7 · not grants"
-                  }
+                  {"Korean patent applications"}
                 </span>
                 {"\n        "}
               </div>
@@ -1534,53 +1512,189 @@ export function Template(values) {
                   </span>
                   {"\n            "}
                   <p
-                    style={css(
-                      "margin:0;font-size:16px;line-height:1.85;color:#F8FAFC;font-weight:700;font-size:18px;",
-                    )}
-                  >
-                    {"Hello, I’m Myungjoo Kang, CEO of itriX."}
-                  </p>
-                  <p
-                    style={css(
-                      "margin:0;font-size:16px;line-height:1.85;color:#CBD5E1;",
-                    )}
+                    style={{
+                      margin: 0,
+                      fontSize: 22,
+                      lineHeight: 1.85,
+                      color: "#F8FAFC",
+                      fontWeight: 700,
+                    }}
                   >
                     {
-                      "AI is now part of almost every kind of work. Yet look closely at how it works and you’ll often find it repeating the same checks when nothing has changed — spending cost and compute every time. We came to see this waste not as a limit of the technology, but as a problem of structure."
+                      "Redesigning the future of AI through mathematical innovation."
                     }
                   </p>
                   <p
-                    style={css(
-                      "margin:0;font-size:16px;line-height:1.85;color:#CBD5E1;",
-                    )}
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {"Hello,"}
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {"I am Myungjoo Kang, CEO of itriX."}
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
                   >
                     {
-                      "itriX looks for the answer in mathematics: distinguishing, mathematically, which changes truly matter, and letting AI decide only when it really needs to. That is where our core technology PRISM begins, and our first product, ASTOP, brings this principle to real AI agents and automation work."
+                      "Artificial intelligence is rapidly transforming our society and every industry. Yet as AI advances, it demands ever greater computing resources and energy, and the efficiency and reliability of computation are becoming the key challenge that will determine whether AI can keep developing sustainably."
                     }
                   </p>
                   <p
-                    style={css(
-                      "margin:0;font-size:16px;line-height:1.85;color:#CBD5E1;",
-                    )}
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
                   >
                     {
-                      "What we want to build is not a single eye-catching feature, but Computational AI Infrastructure that helps AI deliver the same results with fewer resources. That is why we always state the metrics and test conditions behind our numbers, and verify the effect directly in each customer’s environment."
+                      "I believe the answer to this challenge lies not simply in more computation, but in mathematical innovation that looks at the principles of computation in a new way."
                     }
                   </p>
                   <p
-                    style={css(
-                      "margin:0;font-size:16px;line-height:1.85;color:#CBD5E1;",
-                    )}
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
                   >
                     {
-                      "We believe technology matters when it makes people’s work lighter. itriX will keep discovering new value in mathematics — and take responsibility for making that value work in the field. Thank you."
+                      "itriX is a math-based deep-tech company founded on this belief."
                     }
                   </p>
-                  {"\n            "}
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "We aim to go beyond improving existing technologies and to redesign the very way problems are represented and computed. Building on mathematical insight, we are creating next-generation Computational AI Infrastructure that reduces the cost and complexity of AI computation and delivers higher performance and reliability with limited resources."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "To this end, we are researching our own core technologies — from technologies that optimize how AI observes and executes, to innovations in computational structure, efficient AI training, and new numerical computing methods for Physical AI."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "Our goal is not simply to make AI faster. It is to open a future in which AI is more efficient, more trustworthy, and usable by more people."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "To make this happen, itriX pursues both the depth of mathematical theory and the practicality of real-world industry. We will focus on turning academic discoveries into real technologies, verifying their value objectively, and solving the hard problems that our customers and industries face."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "Going forward, AI will do more than drive innovation in science, technology, and industry — it will widen the very range of problems humanity can solve. At the center of this change, itriX aims to grow into a technology company that moves beyond the limits of conventional computation and opens up new possibilities."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "Discovering new principles in mathematics, realizing new possibilities through technology, and building a better future through innovation —"
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {
+                      "this is the value itriX pursues and our promise for the future."
+                    }
+                  </p>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 16,
+                      lineHeight: 1.85,
+                      color: "#CBD5E1",
+                      fontWeight: 400,
+                    }}
+                  >
+                    {"Thank you."}
+                  </p>
                   <span
-                    style={css(
-                      "margin-top:8px;font-size:16px;font-weight:700;color:#F8FAFC;text-align:right;",
-                    )}
+                    style={{
+                      marginTop: 8,
+                      fontSize: 16,
+                      fontWeight: 700,
+                      color: "#F8FAFC",
+                      textAlign: "right",
+                    }}
                   >
                     {"Myungjoo Kang, CEO, itriX"}
                   </span>
@@ -1977,11 +2091,11 @@ export function Template(values) {
           <div className={"pt-light"} aria-hidden={"true"}></div>
           {"\n    "}
           <img
-            src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
+            src={"/brand/itrix-x-inverse.svg"}
             alt={""}
             aria-hidden={"true"}
             style={css(
-              "position:absolute;right:clamp(-80px,-3vw,-24px);top:50%;transform:translateY(-50%);width:clamp(520px,56vw,860px);height:auto;filter:invert(1);opacity:0.05;pointer-events:none;",
+              "position:absolute;right:clamp(-80px,-3vw,-24px);top:50%;transform:translateY(-50%);width:clamp(520px,56vw,860px);height:auto;opacity:0.05;pointer-events:none;",
             )}
           />
           {"\n    "}
@@ -2062,12 +2176,8 @@ export function Template(values) {
                       )}
                       className={" reference-hover-14"}
                     >
-                      {"Ask"}
-                      <img
-                        src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                        alt={"X"}
-                        style={css("height:12px;width:auto;margin-left:-4px;")}
-                      />
+                      {"Ask "}
+                      <span>itriX</span>
                       <span style={css("margin-left:2px;")}>{"→"}</span>
                     </a>
                     <a
@@ -2185,11 +2295,9 @@ export function Template(values) {
               >
                 {"\n          "}
                 <img
-                  src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                  src={"/brand/itrix-logo-inverse.svg"}
                   alt={"itriX"}
-                  style={css(
-                    "width:120px;height:auto;display:block;filter:invert(1);",
-                  )}
+                  style={css("width:120px;height:auto;display:block;")}
                 />
                 {"\n          "}
                 <span
@@ -2237,7 +2345,7 @@ export function Template(values) {
                   style={css("color:#F8FAFC;")}
                   className={" reference-hover-19"}
                 >
-                  {"Ask X"}
+                  {"Ask itriX"}
                 </a>
                 {"\n        "}
               </div>
@@ -2571,11 +2679,9 @@ export function Template(values) {
               <div className={"mn-top"}>
                 <a href={"/en/"} onClick={mnClose}>
                   <img
-                    src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+                    src={"/brand/itrix-logo-inverse.svg"}
                     alt={"itriX"}
-                    style={css(
-                      "width:104px;height:auto;display:block;filter:invert(1);",
-                    )}
+                    style={css("width:104px;height:auto;display:block;")}
                   />
                 </a>
                 <button
@@ -2610,14 +2716,8 @@ export function Template(values) {
                       "display:inline-flex;align-items:center;gap:9px;",
                     )}
                   >
-                    {"Ask"}
-                    <img
-                      src={"/brand/04ab13c455282df4fca1ffc47126b04a.png"}
-                      alt={"X"}
-                      style={css(
-                        "height:17px;width:auto;display:block;filter:invert(1);",
-                      )}
-                    />
+                    {"Ask "}
+                    <span>itriX</span>
                   </span>{" "}
                   <span className={"ar"}>{"→"}</span>
                 </a>

@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { KeyboardEvent } from 'react';
+import { useCallback } from "react";
+import type { KeyboardEvent } from "react";
 
 /**
  * THE COMPOSER KEYBINDINGS (Surface 1 v6.0 §3.6, Architecture v2.7 §16.5, R39).
@@ -37,21 +37,29 @@ export interface UseSendKeysOptions {
   disabled?: boolean;
 }
 
-export function useSendKeys({ onSubmit, disabled = false }: UseSendKeysOptions) {
+export function useSendKeys({
+  onSubmit,
+  disabled = false,
+}: UseSendKeysOptions) {
   const onKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === "Enter" && !e.shiftKey) {
         /* React's synthetic event does not expose isComposing; the native one
            does, and it is the authoritative signal for an IME commit. */
-        if ((e.nativeEvent as unknown as { isComposing?: boolean }).isComposing) return;
+        if ((e.nativeEvent as unknown as { isComposing?: boolean }).isComposing)
+          return;
         e.preventDefault();
+        e.stopPropagation();
         if (!disabled) onSubmit();
         return;
       }
 
       /* Guard 2: literal Control only. metaKey is never bound. */
       const isCtrlX =
-        (e.key === 'x' || e.key === 'X') && e.ctrlKey && !e.metaKey && !e.altKey;
+        (e.key === "x" || e.key === "X") &&
+        e.ctrlKey &&
+        !e.metaKey &&
+        !e.altKey;
       if (!isCtrlX) return;
 
       /* Guard 1: a live selection means the platform Cut wins. No preventDefault
@@ -60,6 +68,7 @@ export function useSendKeys({ onSubmit, disabled = false }: UseSendKeysOptions) 
       if (el.selectionStart !== el.selectionEnd) return;
 
       e.preventDefault();
+      e.stopPropagation();
       if (!disabled) onSubmit();
     },
     [onSubmit, disabled],

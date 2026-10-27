@@ -26,11 +26,9 @@ export function Template(values) {
         >
           <a href={"/"}>
             <img
-              src={"/brand/fa5afd04db046644e14564cf63d6de02.png"}
+              src={"/brand/itrix-logo-inverse.svg"}
               alt={"itriX"}
-              style={css(
-                "width:120px;height:auto;display:block;filter:invert(1);",
-              )}
+              style={css("width:120px;height:auto;display:block;")}
             />
           </a>
           <span className={"navlang"} role={"group"} aria-label={"Language"}>

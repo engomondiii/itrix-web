@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
-import { ArrivalShell } from './ArrivalShell';
-import { WorkingShell } from './WorkingShell';
-import { useShellContext } from '@/context/ShellContext';
-import { useArrivalMode } from '@/hooks/useArrivalMode';
-import { siteConfig } from '@/config/site.config';
-import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
+import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import { ArrivalShell } from "./ArrivalShell";
+import { WorkingShell } from "./WorkingShell";
+import { useShellContext } from "@/context/ShellContext";
+import { useArrivalMode } from "@/hooks/useArrivalMode";
+import { siteConfig } from "@/config/site.config";
+import { LEGAL_INSTRUMENTS } from "@/lib/content/legalCopy";
 
 /**
  * THE SHELL MODE GATE — and the only component that mounts a shell.
@@ -56,31 +56,55 @@ import { LEGAL_INSTRUMENTS } from '@/lib/content/legalCopy';
  * shell around a sign-in form would put a conversation rail beside a password field.
  */
 const SELF_CHROMED_PREFIXES = [
-  '/workspace',
-  '/legal',
-  '/sign-in',
-  '/sign-up',
-  '/set-password',
-  '/forgot-password',
-  '/reset-password',
+  "/workspace",
+  "/legal",
+  "/sign-in",
+  "/sign-up",
+  "/set-password",
+  "/forgot-password",
+  "/reset-password",
   /* v8.0 Phase 5. The confirmation screen belongs to the authentication zone: it is
      chrome-free here so `AuthShell` can give it the wordmark, the geometry and the pinned
      legal strip, exactly like the other five. */
-  '/verify-email',
+  "/verify-email",
 ];
 
 const LEGAL_PATHS = LEGAL_INSTRUMENTS.map((i) => `/${i.slug}`);
 
 function isSelfChromed(pathname: string): boolean {
-  return SELF_CHROMED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  return SELF_CHROMED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
 }
 
 export function ShellModeGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const [embedded, setEmbedded] = useState(false);
+  useEffect(() => {
+    setEmbedded(
+      window.self !== window.top &&
+        window.frameElement?.hasAttribute("data-itrix-chat") === true,
+    );
+  }, []);
   const backendMode = useShellContext().shellMode;
   const localArrival = useArrivalMode();
 
-  if (['/', '/en', '/astop', '/poc', '/contact', '/unsubscribe', '/maintenance', '/404', '/500'].includes(pathname) || pathname.startsWith('/en/')) return <>{children}</>;
+  if (
+    [
+      "/",
+      "/en",
+      "/astop",
+      "/poc",
+      "/contact",
+      "/partnership",
+      "/unsubscribe",
+      "/maintenance",
+      "/404",
+      "/500",
+    ].includes(pathname) ||
+    pathname.startsWith("/en/")
+  )
+    return <>{children}</>;
 
   if (isSelfChromed(pathname)) return <>{children}</>;
   if (LEGAL_PATHS.includes(pathname)) return <>{children}</>;
@@ -88,15 +112,20 @@ export function ShellModeGate({ children }: { children: ReactNode }) {
   /* Arrival requires BOTH to agree. The backend can still promote a visitor to the
      working shell, but it can no longer send someone who has conversations back to a
      screen that has nowhere to list them (see useArrivalMode). */
-  const mode = localArrival && (backendMode ?? 'arrival') === 'arrival' ? 'arrival' : 'working';
+  const mode =
+    localArrival && (backendMode ?? "arrival") === "arrival"
+      ? "arrival"
+      : "working";
 
   /* The approved front door owns the whole page. */
-  if (pathname === '/ask-x' && mode === 'arrival') return <ArrivalShell>{children}</ArrivalShell>;
+  if (pathname === "/ask-x" && mode === "arrival")
+    return <ArrivalShell embedded={embedded}>{children}</ArrivalShell>;
 
   /* With the conversation surface off, marketing routes render bare rather than
      inside a half-migrated shell. Unchanged from v5.0, and the reason the phase
      stays safe to deploy before the flag is flipped. */
-  if (!siteConfig.featureFlags.conversationSurface) return <main id="content">{children}</main>;
+  if (!siteConfig.featureFlags.conversationSurface)
+    return <main id="content">{children}</main>;
 
-  return <WorkingShell>{children}</WorkingShell>;
+  return <WorkingShell embedded={embedded}>{children}</WorkingShell>;
 }

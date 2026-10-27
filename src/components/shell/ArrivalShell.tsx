@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import type { ReactNode } from 'react';
-import { WordmarkLockup } from './WordmarkLockup';
-import { SignInLink } from './SignInLink';
-import { LegalStrip } from './LegalStrip';
-import { ArrivalMobileMenu } from './ArrivalMobileMenu';
-import { ArrivalMotifs } from '@/components/arrival/ArrivalMotifs';
-import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
+import type { ReactNode } from "react";
+import { WordmarkLockup } from "./WordmarkLockup";
+import { SignInLink } from "./SignInLink";
+import { LegalStrip } from "./LegalStrip";
+import { ArrivalMobileMenu } from "./ArrivalMobileMenu";
+import { ArrivalMotifs } from "@/components/arrival/ArrivalMotifs";
+import { SiteLocaleToggle } from "@/components/i18n/SiteLocaleToggle";
 
 /**
  * THE ARRIVAL SHELL — the front door, before the visitor has spoken.
@@ -41,24 +41,35 @@ import { SiteLocaleToggle } from '@/components/i18n/SiteLocaleToggle';
  * renders this or the working shell, never both — that single-owner rule is what
  * prevents the duplicate-rail class of bug this surface has hit before.
  */
-export function ArrivalShell({ children }: { children: ReactNode }) {
+export function ArrivalShell({
+  children,
+  embedded = false,
+}: {
+  children: ReactNode;
+  embedded?: boolean;
+}) {
   return (
-    <div className="arrival-page" data-journey-state="arrival">
-      <header className="arrival-bar">
-        <WordmarkLockup variant="arrival" />
-        <div className="arrival-bar__desktop-actions flex items-center gap-3">
-          <SiteLocaleToggle compact />
-          <SignInLink variant="arrival" />
-        </div>
-        <ArrivalMobileMenu />
-      </header>
+    <div
+      className={embedded ? "arrival-page embedded-chat" : "arrival-page"}
+      data-journey-state="arrival"
+    >
+      {!embedded && (
+        <header className="arrival-bar">
+          <WordmarkLockup variant="arrival" />
+          <div className="arrival-bar__desktop-actions flex items-center gap-3">
+            <SiteLocaleToggle compact />
+            <SignInLink variant="arrival" />
+          </div>
+          <ArrivalMobileMenu />
+        </header>
+      )}
 
       <main id="content" className="arrival-hero">
         <ArrivalMotifs />
         <div className="arrival-stage">{children}</div>
       </main>
 
-      <LegalStrip variant="arrival" />
+      {!embedded && <LegalStrip variant="arrival" />}
     </div>
   );
 }

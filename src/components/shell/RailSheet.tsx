@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useRailCopy } from '@/lib/i18n/conversationLocale';
+import { useRailCopy } from "@/lib/i18n/conversationLocale";
 
-import { useEffect, useRef } from 'react';
-import { useRailStore } from '@/store/railStore';
-import { ConversationRail } from './ConversationRail';
+import { useEffect, useRef } from "react";
+import { useRailStore } from "@/store/railStore";
+import { ConversationRail } from "./ConversationRail";
 
 /**
  * The conversation rail as a slide-over, for tablet and mobile.
@@ -23,7 +23,7 @@ import { ConversationRail } from './ConversationRail';
  * Escape closes it. A slide-over that traps a keyboard user is worse than no
  * slide-over at all.
  */
-export function RailSheet() {
+export function RailSheet({ embedded = false }: { embedded?: boolean }) {
   const railCopy = useRailCopy();
   const open = useRailStore((s) => s.sheetOpen);
   const close = useRailStore((s) => s.closeSheet);
@@ -39,11 +39,16 @@ export function RailSheet() {
       // A nested rename/delete dialog owns Escape until it closes.
       const target = e.target instanceof Element ? e.target : null;
       const dialog = target?.closest('[role="dialog"]');
-      if (e.key === 'Escape' && !e.defaultPrevented && (!dialog || dialog === panelRef.current)) close();
+      if (
+        e.key === "Escape" &&
+        !e.defaultPrevented &&
+        (!dialog || dialog === panelRef.current)
+      )
+        close();
     }
-    document.addEventListener('keydown', onKey);
+    document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener("keydown", onKey);
       returnTo.current?.focus?.();
     };
   }, [open, close]);
@@ -66,7 +71,7 @@ export function RailSheet() {
         tabIndex={-1}
         className="rail-sheet__panel"
       >
-        <ConversationRail inSheet />
+        <ConversationRail inSheet embedded={embedded} />
       </div>
     </div>
   );

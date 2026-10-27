@@ -30,9 +30,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website', siteName: siteConfig.name, title: siteConfig.title,
     description: siteConfig.description, url: siteConfig.url,
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: siteConfig.name }],
+    images: [{ url: '/og-image-v31-20261027.png', width: 1200, height: 630, alt: siteConfig.name }],
   },
-  twitter: { card: 'summary_large_image', title: siteConfig.title, description: siteConfig.description },
+  twitter: { images: ['/og-image-v31-20261027.png'], card: 'summary_large_image', title: siteConfig.title, description: siteConfig.description },
   robots: { index: true, follow: true },
 };
 
