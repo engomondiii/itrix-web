@@ -18,21 +18,18 @@ for (const prefix of ["", "/en"]) {
   test(`${prefix || "ko"} cross-page links reach sections`, async ({
     page,
   }) => {
-    await page.goto(prefix + "/contact");
+    await page.goto(prefix + "/contact", { waitUntil: "domcontentloaded" });
     await page.locator(`nav a[href="${prefix}/#technology"]`).first().click();
     await expect(page.locator("#technology")).toBeInViewport();
-    const y = await page
-      .locator("#technology")
-      .evaluate((e) => e.getBoundingClientRect().top);
-    expect(y).toBeGreaterThanOrEqual(70);
-    await page.goto(prefix + "/astop");
+    await expect.poll(() => page.locator("#technology").evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThanOrEqual(70);
+    await page.goto(prefix + "/astop", { waitUntil: "domcontentloaded" });
     await page.locator("a.hb2").click();
     await expect(page.locator("#ask")).toBeInViewport();
   });
   test(`${prefix || "ko"} revision copy and partnership route`, async ({
     page,
   }) => {
-    await page.goto(prefix + "/terms");
+    await page.goto(prefix + "/terms", { waitUntil: "domcontentloaded" });
     await expect(
       page.getByText(
         prefix
@@ -41,13 +38,13 @@ for (const prefix of ["", "/en"]) {
         { exact: true },
       ),
     ).toBeVisible();
-    await page.goto(prefix + "/partnership");
-    await expect(page.locator("h1")).toHaveText(
+    await page.goto(prefix + "/partnership", { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1:visible")).toHaveText(
       prefix
         ? "Partnership / Large-scale deployment"
         : "파트너십 / 대규모 도입",
     );
-    await page.goto(prefix || "/");
+    await page.goto(prefix || "/", { waitUntil: "domcontentloaded" });
     await expect(page.locator(".ceo-msg p")).toHaveCount(14);
     await expect(page.locator(".ceo-msg p").first()).toHaveText(
       prefix
@@ -63,7 +60,7 @@ for (const prefix of ["", "/en"]) {
 for (const width of [360, 820, 1440]) {
   test(`embedded assistant responsive at ${width}`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/en#ask");
+    await page.goto("/en#ask", { waitUntil: "domcontentloaded" });
     const frame = page.frameLocator(
       'iframe[title="Ask itriX AI sales assistant"]',
     );
