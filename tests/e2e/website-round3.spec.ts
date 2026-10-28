@@ -50,6 +50,7 @@ for (const width of [360, 820, 1440]) {
       ),
     ).toBe(true);
     await page.goto("/en");
+    await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
     await page.locator("#contact").scrollIntoViewIfNeeded();
     const box = await page.locator("#contact").boundingBox();
@@ -85,13 +86,15 @@ test("notice qualifies savings, applies externally and remembers today", async (
 });
 test("header language reaches the embedded assistant", async ({ page }) => {
   await page.goto("/en");
+  await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(
     page.locator('iframe[title="Ask itriX AI sales assistant"]'),
   ).toHaveAttribute("src", /lang=en/);
   await page.locator('nav .nv-links a[lang="ko"]').click();
+  await expect(page.getByRole("dialog")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(
-    page.locator('iframe[title="Ask itriX AI sales assistant"]'),
+    page.locator('iframe[title="Ask itriX AI 상담"]'),
   ).toHaveAttribute("src", /lang=ko/);
 });

@@ -1,6 +1,16 @@
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => localStorage.setItem('itrixNoticeHide',new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())));
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "itrixNoticeHide",
+      new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Seoul",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date()),
+    ),
+  );
   await page.addInitScript(() =>
     localStorage.setItem("itrixCookie", JSON.stringify({ necessary: true })),
   );
@@ -22,7 +32,13 @@ for (const prefix of ["", "/en"]) {
     await page.goto(prefix + "/contact", { waitUntil: "domcontentloaded" });
     await page.locator(`nav a[href="${prefix}/#technology"]`).first().click();
     await expect(page.locator("#technology")).toBeInViewport();
-    await expect.poll(() => page.locator("#technology").evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThanOrEqual(70);
+    await expect
+      .poll(() =>
+        page
+          .locator("#technology")
+          .evaluate((e) => e.getBoundingClientRect().top),
+      )
+      .toBeGreaterThanOrEqual(70);
     await page.goto(prefix + "/astop", { waitUntil: "domcontentloaded" });
     await page.locator("a.hb2").click();
     await expect(page.locator("#ask")).toBeInViewport();
@@ -41,9 +57,7 @@ for (const prefix of ["", "/en"]) {
     ).toBeVisible();
     await page.goto(prefix + "/partnership", { waitUntil: "domcontentloaded" });
     await expect(page.locator("h1:visible")).toHaveText(
-      prefix
-        ? "Partnership / Large-scale deployment"
-        : "파트너십 / 대규모 도입",
+      prefix ? "Partnership / Large-scale adoption" : "파트너십 · 대규모 도입",
     );
     await page.goto(prefix || "/", { waitUntil: "domcontentloaded" });
     await expect(page.locator(".ceo-msg p")).toHaveCount(14);
@@ -80,9 +94,15 @@ for (const width of [360, 820, 1440]) {
       "Tell me about ASTOP\n",
     );
     await frame.locator("textarea").press("Enter");
-    await expect(frame.locator('.working-shell.embedded-chat')).toBeVisible();
-      await expect(frame.locator('.transcript__log')).toContainText('Tell me about ASTOP');
-      await expect(frame.locator('.conversation-rail__brand, .conversation-rail__foot, .working-shell__locale')).toHaveCount(0);
+    await expect(frame.locator(".working-shell.embedded-chat")).toBeVisible();
+    await expect(frame.locator(".transcript__log")).toContainText(
+      "Tell me about ASTOP",
+    );
+    await expect(
+      frame.locator(
+        ".conversation-rail__brand, .conversation-rail__foot, .working-shell__locale",
+      ),
+    ).toHaveCount(0);
     expect(page.url()).not.toContain("/astop");
     expect(page.url()).toContain("/en");
   });

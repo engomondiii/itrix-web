@@ -174,7 +174,7 @@ export function Template(values) {
         {"\n  "}
         <style>
           {
-            ' .rq-card{position:relative;overflow:hidden}.rq-card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 25%,rgba(214,230,255,.18) 48%,transparent 70%);transform:translateX(-140%);animation:request-shimmer 6s ease-in-out infinite}.rq-card.r2::after{animation-delay:1.4s}@keyframes request-shimmer{0%,65%,100%{transform:translateX(-140%)}20%,35%{transform:translateX(140%)}}@media(prefers-reduced-motion:reduce){.rq-card::after{animation:none;display:none}}'
+            '.rq-card{position:relative;overflow:hidden;isolation:isolate;animation:rqGlow 6s ease-in-out infinite;}.rq-card::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:50%;background:linear-gradient(105deg,rgba(214,230,255,0) 0%,rgba(214,230,255,0.16) 50%,rgba(214,230,255,0) 100%);transform:skewX(-18deg);animation:rqShine 6s ease-in-out infinite;pointer-events:none;z-index:-1;}.rq-card.r2,.rq-card.r2::after{animation-delay:1.4s;}@keyframes rqShine{0%{left:-60%;}22%{left:130%;}100%{left:130%;}}@keyframes rqGlow{0%,100%{border-color:rgba(214,230,255,0.18);box-shadow:none;}11%{border-color:rgba(214,230,255,0.6);box-shadow:0 0 24px rgba(214,230,255,0.14);}24%{border-color:rgba(214,230,255,0.18);box-shadow:none;}}@media (prefers-reduced-motion:reduce){.rq-card,.rq-card::after{animation:none;}}'
           }
         </style>
         <section
