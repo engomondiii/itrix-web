@@ -24,6 +24,7 @@ export class ReferencePage extends React.Component {
     unsubscribe: "confirm",
   };
   componentDidMount() {
+    this.unmounted = false;
     this.requestId = crypto.randomUUID();
     this.scrollToSection = () => {
       const id = location.hash.slice(1);
