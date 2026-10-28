@@ -171,7 +171,7 @@ export const siteConfig = {
     'itriX builds computational AI infrastructure for sustainable AI through ASTOP, AXIOM Compute, the planned AXIOM Core, and QNTA Runtime.',
   keywords: [
     'computational AI infrastructure', 'sustainable AI', 'ASTOP', 'AXIOM Compute',
-    'AXIOM Core', 'QNTA Runtime', 'PRISM', 'AXIOM', 'AXIOM-TENSOR', 'CRE', 'FQNM', 'QNTA', 'compute bottleneck',
+    'AXIOM Core', 'QNTA Runtime', 'PRISM', 'AXIOM', 'AXIOM Tensor', 'CRE', 'FQNM', 'QNTA', 'compute bottleneck',
   ],
   url: siteUrl,
   apiUrl,

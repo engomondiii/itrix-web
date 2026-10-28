@@ -24,6 +24,7 @@ export class ReferencePage extends React.Component {
     unsubscribe: "confirm",
   };
   componentDidMount() {
+    this.unmounted = false;
     this.requestId = crypto.randomUUID();
     this.scrollToSection = () => {
       const id = location.hash.slice(1);
@@ -32,6 +33,17 @@ export class ReferencePage extends React.Component {
         target.scrollIntoView({ block: "start", behavior: "instant" });
     };
     this.scrollFrame = requestAnimationFrame(this.scrollToSection);
+    // Web fonts can change the height of every section above a deep link.
+    // Re-align once the initial layout has settled, including Firefox's load scroll.
+    const initialHash = location.hash;
+    this.alignInitialSection = () => {
+      if (!this.unmounted && initialHash && location.hash === initialHash) {
+        cancelAnimationFrame(this.scrollFrame);
+        this.scrollFrame = requestAnimationFrame(this.scrollToSection);
+      }
+    };
+    window.addEventListener("load", this.alignInitialSection, { once: true });
+    document.fonts?.ready.then(this.alignInitialSection);
     window.addEventListener("hashchange", this.scrollToSection);
     try {
       const saved = JSON.parse(localStorage.getItem("itrixCookie") || "null");
@@ -62,6 +74,8 @@ export class ReferencePage extends React.Component {
       .forEach((el) => this.observer.observe(el));
   }
   componentWillUnmount() {
+    this.unmounted = true;
+    window.removeEventListener("load", this.alignInitialSection);
     this.observer?.disconnect();
     cancelAnimationFrame(this.scrollFrame);
     window.removeEventListener("hashchange", this.scrollToSection);

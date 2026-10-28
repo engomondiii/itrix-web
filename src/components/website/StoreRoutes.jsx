@@ -72,7 +72,7 @@ export function StoreRoutes({ language = "ko" }) {
             {ko ? "출시 알림 신청" : "Register interest"}
           </a>
           <a
-            href={prefix + "/poc"}
+            href={prefix + "/partnership"}
             style={{
               padding: "14px 24px",
               border: "1px solid #D6E6FF",

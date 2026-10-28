@@ -26,7 +26,8 @@
     "send-keys.spec.ts",
     "thread-switching.spec.ts",
     "website-integration.spec.ts",
-    "website-revisions.spec.ts"
+    "website-revisions.spec.ts",
+    "website-round3.spec.ts"
   ],
   "bff": [
     "attachment-any-format.spec.ts",
