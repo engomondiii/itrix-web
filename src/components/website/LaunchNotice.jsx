@@ -107,7 +107,7 @@ export default function LaunchNotice({ language }) {
             </p>
           </div>
           <div className="r3nt-btns">
-            <a className="r3nt-btn sub" href={(ko ? "" : "/en") + "/poc"}>
+            <a className="r3nt-btn sub" href="#astop" onClick={() => close(false)}>
               {ko ? "실증 프로그램 자세히 보기" : "Learn about the program"}
             </a>
             <a
