@@ -436,9 +436,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"[Legal entity name]"}</span>
+                <span>{"iTrix Inc."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
-                <span>{"Business Reg. No. [000-00-00000]"}</span>
+                <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>

@@ -174,9 +174,6 @@ export function Template(values) {
                   "itriX (“we”) processes personal information in accordance with applicable law, including Korea’s Personal Information Protection Act, as described below."
                 }
               </p>
-              <span className={"lg-draft"}>
-                {"DRAFT · pending legal review · fill in [ ] items"}
-              </span>
             </div>
             {"\n      "}
             <div
@@ -214,13 +211,13 @@ export function Template(values) {
                     <li>
                       <b>{"PoC requests"}</b>
                       {
-                        " — Required: company, contact name, work email, target workload / Optional: team/title, phone, industry, tools used, preferred start"
+                        " — Required: company, contact name, work email, target workload / Optional: team/title, phone, industry, AI and automation tools in use, preferred start"
                       }
                     </li>
                     <li>
-                      <b>{"Inquiries"}</b>
+                      <b>{"General inquiries"}</b>
                       {
-                        " — Required: name, email, message / Optional: company, topic"
+                        " — Required: name, email, message / Optional: topic, company"
                       }
                     </li>
                     <li>
@@ -231,6 +228,12 @@ export function Template(values) {
                       <b>{"Collected automatically"}</b>
                       {
                         " — access logs, IP address, browser information, cookies (for operation and security)"
+                      }
+                    </li>
+                    <li>
+                      <b>{"Partnership & large-scale adoption"}</b>
+                      {
+                        " — Required: company or organization, contact name, work email, type of partnership, target workload / Optional: team/title, phone, industry, organization size, products of interest, adoption scale, preferred timeline"
                       }
                     </li>
                   </ul>
@@ -246,6 +249,11 @@ export function Template(values) {
                       {"To send ASTOP updates and company news if you opted in"}
                     </li>
                     <li>{"To prevent abuse and keep the service stable"}</li>
+                    <li>
+                      {
+                        "To review partnership and large-scale adoption inquiries and contact you"
+                      }
+                    </li>
                   </ul>
                 </section>
                 <section id={"s3"} className={"lg-sec"}>
@@ -259,6 +267,11 @@ export function Template(values) {
                     <li>{"Inquiries: [1 year] after we reply"}</li>
                     <li>{"News emails: until you withdraw consent"}</li>
                     <li>{"Longer where a law requires us to keep records."}</li>
+                    <li>
+                      {
+                        "Partnership & large-scale adoption inquiries: [1 year] after we reply"
+                      }
+                    </li>
                   </ul>
                 </section>
                 <section id={"s4"} className={"lg-sec"}>
@@ -276,7 +289,7 @@ export function Template(values) {
                   <ul>
                     <li>
                       {
-                        "Server hosting: [hosting provider, e.g. Gabia] — website operation and data storage"
+                        "Server hosting: IWL servers such as Railway — website operation and data storage"
                       }
                     </li>
                     <li>
@@ -443,9 +456,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"[Legal entity name]"}</span>
+                <span>{"iTrix Inc."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
-                <span>{"Business Reg. No. [000-00-00000]"}</span>
+                <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>

@@ -174,9 +174,6 @@ export function Template(values) {
                   "itriX(이하 “회사”)는 개인정보 보호법 등 관련 법령을 지키며, 이용자의 개인정보를 다음과 같이 처리합니다."
                 }
               </p>
-              <span className={"lg-draft"}>
-                {"초안 · 법무 검토 전 · [ ] 항목을 채워 주세요"}
-              </span>
             </div>
             {"\n      "}
             <div
@@ -214,13 +211,13 @@ export function Template(values) {
                     <li>
                       <b>{"PoC 신청"}</b>
                       {
-                        " — 필수: 회사명, 담당자 이름, 업무용 이메일, 적용하려는 업무 / 선택: 부서·직책, 연락처, 업종, 사용 중인 도구, 희망 시작 시기"
+                        " — 필수: 회사명, 담당자 이름, 업무용 이메일, 적용하려는 업무 / 선택: 부서·직책, 연락처, 업종, 사용 중인 AI·자동화 도구, 희망 시작 시기"
                       }
                     </li>
                     <li>
-                      <b>{"문의"}</b>
+                      <b>{"일반 문의"}</b>
                       {
-                        " — 필수: 이름, 이메일, 문의 내용 / 선택: 회사명, 문의 유형"
+                        " — 필수: 이름, 이메일, 문의 내용 / 선택: 문의 유형, 회사명"
                       }
                     </li>
                     <li>
@@ -231,6 +228,12 @@ export function Template(values) {
                       <b>{"자동 수집"}</b>
                       {
                         " — 접속 기록, IP 주소, 브라우저 정보, 쿠키 (서비스 운영·보안 목적)"
+                      }
+                    </li>
+                    <li>
+                      <b>{"파트너십·대규모 도입"}</b>
+                      {
+                        " — 필수: 회사·기관명, 담당자 이름, 업무용 이메일, 협력 형태, 적용하려는 업무 / 선택: 부서·직책, 연락처, 업종, 조직 규모, 관심 제품, 도입 규모, 희망 일정"
                       }
                     </li>
                   </ul>
@@ -244,6 +247,9 @@ export function Template(values) {
                       {"수신에 동의한 경우 ASTOP 업데이트와 회사 소식 안내"}
                     </li>
                     <li>{"부정 이용 방지와 서비스 안정성 확보"}</li>
+                    <li>
+                      {"파트너십·대규모 도입 문의 검토 및 협의 관련 연락"}
+                    </li>
                   </ul>
                 </section>
                 <section id={"s3"} className={"lg-sec"}>
@@ -260,6 +266,9 @@ export function Template(values) {
                       {
                         "관련 법령에 따라 보존이 필요한 경우 해당 법령에서 정한 기간 동안 보관합니다."
                       }
+                    </li>
+                    <li>
+                      {"파트너십·대규모 도입 문의 정보: 답변 완료 후 [1년]"}
                     </li>
                   </ul>
                 </section>
@@ -278,7 +287,7 @@ export function Template(values) {
                   <ul>
                     <li>
                       {
-                        "서버 호스팅: [가비아 등 위탁 업체명] — 웹사이트 운영 및 데이터 보관"
+                        "서버 호스팅: Railway 등 IWL 서버 — 웹사이트 운영 및 데이터 보관"
                       }
                     </li>
                     <li>
@@ -448,9 +457,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"상호 [법인명]"}</span>
+                <span>{"상호 주식회사 아이트릭스"}</span>
                 <span>{"대표자 강명주"}</span>
-                <span>{"사업자등록번호 [000-00-00000]"}</span>
+                <span>{"사업자등록번호 119-87-03826"}</span>
                 <span>{"서울시 서초구 효령로 55길 19, 611호"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>

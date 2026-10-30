@@ -1013,13 +1013,7 @@ export function Template(values) {
                 {"\n        "}
               </div>
               {"\n        "}
-              <div className={"tbc-group"}>
-                <span className={"tbc-legend"}>
-                  <span className={"tbc-dot"} aria-hidden={"true"}></span>
-                  <span>{"More services on the way."}</span>
-                </span>
-                <span className={"tbc-arrow"} aria-hidden={"true"}></span>
-              </div>
+
               {"\n      "}
             </div>
             {"\n    "}
@@ -1237,9 +1231,7 @@ export function Template(values) {
                 <span
                   style={css("font-size:14px;line-height:1.5;color:#94A3B8;")}
                 >
-                  {
-                    "연구·기반 기술이며 현재 독립 제품이 아닙니다. 국내 특허출원 9건 (2026년 10월). "
-                  }
+                  {"국내 특허출원 9건 (2026년 10월). "}
                 </span>
                 {"\n        "}
               </div>
@@ -1866,11 +1858,11 @@ export function Template(values) {
                         "font-family:'IBM Plex Mono','Noto Sans KR',monospace;color:#D6E6FF;",
                       )}
                     >
-                      {"2026 · PAKDD"}
+                      {"2025 · ICML"}
                     </span>
                     <span style={css("color:#CBD5E1;")}>
                       {
-                        "Divergence-Based Similarity Function for Multi-View Contrastive Learning"
+                        "Unpaired Point Cloud Completion via Unbalanced Optimal Transport"
                       }
                     </span>
                   </span>
@@ -2121,7 +2113,7 @@ export function Template(values) {
             {"\n      "}
             <div
               style={css(
-                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:32px;",
+                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:32px;",
               )}
             >
               {"\n        "}
@@ -2187,45 +2179,7 @@ export function Template(values) {
                 {"\n        "}
               </div>
               {"\n        "}
-              <div
-                style={css(
-                  "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                )}
-              >
-                {"\n          "}
-                <span
-                  style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
-                  )}
-                >
-                  {"ASTOP"}
-                </span>
-                {"\n          "}
-                <a
-                  href={"/astop"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-20"}
-                >
-                  {"ASTOP overview"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/contact"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-21"}
-                >
-                  {"Contact itriX"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/partnership"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-22"}
-                >
-                  {"Technical Validation"}
-                </a>
-                {"\n        "}
-              </div>
+
               {"\n        "}
               <div
                 style={css(
@@ -2279,9 +2233,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"상호 [법인명]"}</span>
+                <span>{"상호 주식회사 아이트릭스"}</span>
                 <span>{"대표자 강명주"}</span>
-                <span>{"사업자등록번호 [000-00-00000]"}</span>
+                <span>{"사업자등록번호 119-87-03826"}</span>
                 <span>{"서울시 서초구 효령로 55길 19, 611호"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>
