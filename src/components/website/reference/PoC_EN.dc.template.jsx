@@ -241,8 +241,15 @@ export function Template(values) {
                 )}
               >
                 {
-                  "Apply for a proof of concept (PoC) to evaluate ASTOP together in your real work environment. Our team will review your application and contact you within 3 business days."
+                  "Apply for a proof of concept to see ASTOP’s effect in your real work environment."
                 }
+              </p>
+              <p
+                style={css(
+                  "margin:0;font-size:16px;font-weight:700;line-height:1.6;color:#F8FAFC;",
+                )}
+              >
+                {"Applications: November 2 (Mon) – November 13 (Fri), 2026"}
               </p>
             </div>
             <div
@@ -276,60 +283,10 @@ export function Template(values) {
                       )}
                     >
                       {
-                        "PoC applications are collected through Google Forms. The button below opens the application in a new tab. It takes about 5 minutes and does not require sign-in."
+                        "PoC requests are taken through Google Forms. The button below opens the form in a new tab."
                       }
                     </p>
-                    <div
-                      style={css(
-                        "display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:16px;border:1px solid rgba(214,230,255,0.16);background:rgba(214,230,255,0.03);",
-                      )}
-                    >
-                      <span className={"jr-k"}>{"What the form asks"}</span>
-                      <div
-                        style={css(
-                          "display:flex;align-items:flex-start;gap:14px;",
-                        )}
-                      >
-                        <span
-                          style={css(
-                            "display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:52px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(214,230,255,0.14);border:1px solid rgba(214,230,255,0.5);color:#D6E6FF;",
-                          )}
-                        >
-                          {"Required"}
-                        </span>
-                        <span
-                          style={css(
-                            "font-size:15px;line-height:1.6;color:#E2E8F0;",
-                          )}
-                        >
-                          {
-                            "Company · Contact name · Work email · Target workload"
-                          }
-                        </span>
-                      </div>
-                      <div
-                        style={css(
-                          "display:flex;align-items:flex-start;gap:14px;",
-                        )}
-                      >
-                        <span
-                          style={css(
-                            "display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:52px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid rgba(214,230,255,0.24);color:#94A3B8;",
-                          )}
-                        >
-                          {"Optional"}
-                        </span>
-                        <span
-                          style={css(
-                            "font-size:15px;line-height:1.6;color:#E2E8F0;",
-                          )}
-                        >
-                          {
-                            "Department / title, phone, industry, AI / automation tools in use, preferred start date"
-                          }
-                        </span>
-                      </div>
-                    </div>
+
                     <div
                       style={css(
                         "display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;",
@@ -345,7 +302,9 @@ export function Template(values) {
                         <span aria-hidden={"true"}>{"↗"}</span>
                       </a>
                       <span style={css("font-size:14px;color:#94A3B8;")}>
-                        {"Google Forms opens in a new tab"}
+                        {
+                          "* We will notify each applicant by email on November 17 (Tue)."
+                        }
                       </span>
                     </div>
                     <span
@@ -628,9 +587,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"[Legal entity name]"}</span>
+                <span>{"iTrix Inc."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
-                <span>{"Business Reg. No. [000-00-00000]"}</span>
+                <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>

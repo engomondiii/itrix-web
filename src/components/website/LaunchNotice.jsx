@@ -106,8 +106,61 @@ export default function LaunchNotice({ language }) {
                 : "Up to 78% lower AI usage costs in our internal tests — see it for yourself with one of your own workflows."}
             </p>
           </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "baseline",
+                gap: "6px 12px",
+                padding: "14px 18px",
+                borderRadius: 14,
+                border: "1px solid rgba(214,230,255,0.28)",
+                background: "rgba(214,230,255,0.06)",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "'IBM Plex Mono','Noto Sans KR',monospace",
+                  fontSize: 12,
+                  letterSpacing: "0.12em",
+                  color: "#94A3B8",
+                }}
+              >
+                {ko ? "신청 기간" : "Applications"}
+              </span>
+              <span
+                style={{
+                  fontSize: 16,
+                  fontWeight: 700,
+                  lineHeight: 1.5,
+                  color: "#F8FAFC",
+                }}
+              >
+                {ko
+                  ? "2026년 11월 2일(월) ~ 11월 13일(금)"
+                  : "November 2 (Mon) – November 13 (Fri), 2026"}
+              </span>
+            </div>
+            <span
+              style={{
+                fontSize: 13,
+                lineHeight: 1.6,
+                color: "#94A3B8",
+                paddingLeft: 2,
+              }}
+            >
+              {ko
+                ? "* 이메일로 11월 17일(화)에 개별 통지 드리겠습니다."
+                : "* We will notify each applicant by email on November 17 (Tue)."}
+            </span>
+          </div>
           <div className="r3nt-btns">
-            <a className="r3nt-btn sub" href="#astop" onClick={() => close(false)}>
+            <a
+              className="r3nt-btn sub"
+              href="#astop"
+              onClick={() => close(false)}
+            >
               {ko ? "실증 프로그램 자세히 보기" : "Learn about the program"}
             </a>
             <a

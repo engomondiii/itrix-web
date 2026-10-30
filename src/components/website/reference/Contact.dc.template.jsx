@@ -254,55 +254,7 @@ export function Template(values) {
                         "문의는 Google Forms로 받습니다. 아래 버튼을 누르면 새 창에서 문의서가 열리며, 로그인 없이 약 2분이면 작성할 수 있습니다."
                       }
                     </p>
-                    <div
-                      style={css(
-                        "display:flex;flex-direction:column;gap:14px;padding:22px 24px;border-radius:16px;border:1px solid rgba(214,230,255,0.16);background:rgba(214,230,255,0.03);",
-                      )}
-                    >
-                      <span className={"jr-k"}>
-                        {"신청서에서 여쭤보는 내용"}
-                      </span>
-                      <div
-                        style={css(
-                          "display:flex;align-items:flex-start;gap:14px;",
-                        )}
-                      >
-                        <span
-                          style={css(
-                            "display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:52px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(214,230,255,0.14);border:1px solid rgba(214,230,255,0.5);color:#D6E6FF;",
-                          )}
-                        >
-                          {"필수"}
-                        </span>
-                        <span
-                          style={css(
-                            "font-size:15px;line-height:1.6;color:#E2E8F0;",
-                          )}
-                        >
-                          {"이름 · 이메일 · 문의 내용"}
-                        </span>
-                      </div>
-                      <div
-                        style={css(
-                          "display:flex;align-items:flex-start;gap:14px;",
-                        )}
-                      >
-                        <span
-                          style={css(
-                            "display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;min-width:52px;height:24px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid rgba(214,230,255,0.24);color:#94A3B8;",
-                          )}
-                        >
-                          {"선택"}
-                        </span>
-                        <span
-                          style={css(
-                            "font-size:15px;line-height:1.6;color:#E2E8F0;",
-                          )}
-                        >
-                          {"문의 유형(제품·설치 / 기술 / 기타), 회사명"}
-                        </span>
-                      </div>
-                    </div>
+
                     <div
                       style={css(
                         "display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;",
@@ -492,9 +444,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"상호 [법인명]"}</span>
+                <span>{"상호 주식회사 아이트릭스"}</span>
                 <span>{"대표자 강명주"}</span>
-                <span>{"사업자등록번호 [000-00-00000]"}</span>
+                <span>{"사업자등록번호 119-87-03826"}</span>
                 <span>{"서울시 서초구 효령로 55길 19, 611호"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>

@@ -436,9 +436,9 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"상호 [법인명]"}</span>
+                <span>{"상호 주식회사 아이트릭스"}</span>
                 <span>{"대표자 강명주"}</span>
-                <span>{"사업자등록번호 [000-00-00000]"}</span>
+                <span>{"사업자등록번호 119-87-03826"}</span>
                 <span>{"서울시 서초구 효령로 55길 19, 611호"}</span>
                 <span>{"admin@itrix.co.kr"}</span>
               </div>
