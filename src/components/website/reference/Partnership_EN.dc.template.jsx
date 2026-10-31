@@ -226,7 +226,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "If you are considering joint validation, Technical Validation, Licensing or large-scale organizational adoption, send us an inquiry. Our team will review it and contact you within 3 business days."
+                  "If you are considering joint validation, Technical Validation, Licensing or large-scale organizational adoption, send us an inquiry."
                 }
               </p>
             </div>
@@ -251,9 +251,7 @@ export function Template(values) {
                     >
                       {"Partnership / Large-scale adoption inquiry"}
                     </span>
-                    <span style={css("font-size:15px;color:#94A3B8;")}>
-                      {"Our team will contact you within 3 business days."}
-                    </span>
+
                   </div>
                   <div
                     style={css(
@@ -266,7 +264,7 @@ export function Template(values) {
                       )}
                     >
                       {
-                        "Partnership and large-scale adoption inquiries are collected through Google Forms. The button below opens the form in a new tab. It takes about 5 minutes and does not require sign-in."
+                        "Partnership and large-scale adoption inquiries are collected through Google Forms. The button below opens the form in a new tab."
                       }
                     </p>
                     <div
@@ -306,9 +304,7 @@ export function Template(values) {
                       >
                         {"Send a partnership inquiry ↗"}
                       </a>
-                      <span style={css("font-size:14px;color:#94A3B8;")}>
-                        {"Google Forms opens in a new tab"}
-                      </span>
+
                     </div>
                     <span
                       style={css(

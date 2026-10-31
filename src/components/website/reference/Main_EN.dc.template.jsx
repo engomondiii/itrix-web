@@ -1,4 +1,5 @@
 "use client";
+import { FooterLinks } from "../FooterLinks";
 import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
@@ -2185,86 +2186,7 @@ export function Template(values) {
                 </span>
                 {"\n        "}
               </div>
-              <div className="ft-cols">
-                <div
-                  style={css(
-                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                  )}
-                >
-                  {"\n          "}
-                  <span
-                    style={css(
-                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
-                    )}
-                  >
-                    {"COMPANY"}
-                  </span>
-                  {"\n          "}
-                  <a
-                    href={"#why"}
-                    style={css("color:#F8FAFC;")}
-                    className={" reference-hover-17"}
-                  >
-                    {"Leadership"}
-                  </a>
-                  {"\n          "}
-                  <a
-                    href={"/en/contact"}
-                    style={css("color:#F8FAFC;")}
-                    className={" reference-hover-18"}
-                  >
-                    {"General inquiry"}
-                  </a>
-                  {"\n          "}
-                  <a
-                    href={"#ask-chat"}
-                    style={css("color:#F8FAFC;")}
-                    className={" reference-hover-19"}
-                  >
-                    {"Ask itriX"}
-                  </a>
-                  {"\n        "}
-                </div>
-                <div
-                  style={css(
-                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                  )}
-                >
-                  {"\n          "}
-                  <span
-                    style={css(
-                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
-                    )}
-                  >
-                    {"LEGAL"}
-                  </span>
-                  {"\n          "}
-                  <a
-                    href={"/en/privacy"}
-                    style={css("color:#F8FAFC;")}
-                    className={" reference-hover-23"}
-                  >
-                    {"Privacy Policy"}
-                  </a>
-                  {"\n          "}
-                  <a
-                    href={"/en/terms"}
-                    style={css("color:#F8FAFC;")}
-                    className={" reference-hover-24"}
-                  >
-                    {"Terms of Use"}
-                  </a>
-                  {"\n          "}
-                  <button
-                    className={"ft-ck"}
-                    onClick={ckOpen}
-                    style={css("color:#F8FAFC;font-size:16px;")}
-                  >
-                    {"Cookie settings"}
-                  </button>
-                  {"\n        "}
-                </div>
-              </div>
+              <FooterLinks language={values.language} onCookieSettings={ckOpen} />
             </div>
             {"\n      "}
             <div
