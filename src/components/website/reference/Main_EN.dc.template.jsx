@@ -1,4 +1,5 @@
 "use client";
+import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import TrackProjects from "../TrackProjects";
@@ -103,8 +104,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -127,8 +133,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -142,6 +153,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n\n  "}
         <section
           id={"top"}
@@ -268,7 +280,9 @@ export function Template(values) {
               )}
             >
               {"\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:24px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:24px;")}
+              >
                 {"\n          "}
                 <h2
                   style={css(
@@ -516,8 +530,9 @@ export function Template(values) {
             </div>
             {"\n      "}
             <div
+              className="astop-figures"
               style={css(
-                "position:relative;display:flex;flex-wrap:wrap;border-top:1px solid rgba(214,230,255,0.4);",
+                "position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(214,230,255,0.4);",
               )}
             >
               {"\n        "}
@@ -579,7 +594,9 @@ export function Template(values) {
                 >
                   {"720"}
                   <span
-                    style={css("font-size:20px;font-weight:400;color:#94A3B8;")}
+                    style={css(
+                      "font-size:20px;font-weight:400;color:#94A3B8;",
+                    )}
                   >
                     {" runs"}
                   </span>
@@ -1180,7 +1197,9 @@ export function Template(values) {
                 {"\n        "}
               </div>
               {"\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:16px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:16px;")}
+              >
                 {"\n          "}
                 <span
                   style={css(
@@ -1354,7 +1373,9 @@ export function Template(values) {
                 >
                   {"9"}
                   <span
-                    style={css("font-size:22px;font-weight:400;color:#94A3B8;")}
+                    style={css(
+                      "font-size:22px;font-weight:400;color:#94A3B8;",
+                    )}
                   >
                     {" applications"}
                   </span>
@@ -1749,7 +1770,9 @@ export function Template(values) {
             >
               {"\n\n        "}
               <TrackProjects language={values.language} />
-              <div style={css("display:flex;flex-direction:column;gap:16px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:16px;")}
+              >
                 {"\n          "}
                 <span
                   style={css(
@@ -1794,7 +1817,9 @@ export function Template(values) {
                   >
                     {"\n              "}
                     <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                      style={css(
+                        "display:flex;flex-direction:column;gap:4px;",
+                      )}
                     >
                       <span
                         style={css(
@@ -1809,7 +1834,9 @@ export function Template(values) {
                     </span>
                     {"\n              "}
                     <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                      style={css(
+                        "display:flex;flex-direction:column;gap:4px;",
+                      )}
                     >
                       <span
                         style={css(
@@ -1826,7 +1853,9 @@ export function Template(values) {
                   </div>
                   {"\n            "}
                   <span
-                    style={css("font-size:12px;line-height:1.5;color:#94A3B8;")}
+                    style={css(
+                      "font-size:12px;line-height:1.5;color:#94A3B8;",
+                    )}
                   >
                     {
                       "Cumulative figures from NCIA LAB materials; separate from itriX’s own track record."
@@ -1930,7 +1959,7 @@ export function Template(values) {
             alt={""}
             aria-hidden={"true"}
             style={css(
-              "position:absolute;right:clamp(-80px,-3vw,-24px);top:50%;transform:translateY(-50%);width:clamp(520px,56vw,860px);height:auto;opacity:0.05;pointer-events:none;",
+              "position:absolute;right:0;top:50%;transform:translateY(-50%);width:min(56vw,860px);max-width:100%;height:auto;opacity:0.05;pointer-events:none;",
             )}
           />
           {"\n    "}
@@ -1942,7 +1971,7 @@ export function Template(values) {
             {"\n      "}
             <div
               style={css(
-                "display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:56px 96px;",
+                "display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:end;gap:clamp(24px,5vw,72px);",
               )}
             >
               {"\n        "}
@@ -2007,7 +2036,9 @@ export function Template(values) {
                     {"NOT A PARTNERSHIP INQUIRY?"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#CBD5E1;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#CBD5E1;",
+                    )}
                   >
                     {
                       "For product, PoC or install questions, this is the fastest route."
@@ -2036,7 +2067,7 @@ export function Template(values) {
                       )}
                       className={" reference-hover-15"}
                     >
-                      {"Contact itriX "}
+                      {"General inquiry "}
                       <span>{"→"}</span>
                     </a>
                   </div>
@@ -2073,7 +2104,7 @@ export function Template(values) {
                   >
                     {"admin@itrix.co.kr"}
                     <span style={css("font-size:16px;color:#94A3B8;")}>
-                      {"↗"}
+                      {"→"}
                     </span>
                   </span>
                   {"\n          "}
@@ -2118,6 +2149,7 @@ export function Template(values) {
           {"\n  "}
         </section>
         {"\n\n  "}
+      </main>
         <footer
           id={"site-footer"}
           style={css(
@@ -2131,12 +2163,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:32px;",
-              )}
-            >
-              {"\n        "}
+            <div className="ft-top">
               <div
                 style={css(
                   "display:flex;flex-direction:column;gap:16px;grid-column:span 2;min-width:0;",
@@ -2158,89 +2185,86 @@ export function Template(values) {
                 </span>
                 {"\n        "}
               </div>
-              {"\n        "}
-              <div
-                style={css(
-                  "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                )}
-              >
-                {"\n          "}
-                <span
+              <div className="ft-cols">
+                <div
                   style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
                   )}
                 >
-                  {"COMPANY"}
-                </span>
-                {"\n          "}
-                <a
-                  href={"#why"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-17"}
-                >
-                  {"Leadership"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/en/contact"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-18"}
-                >
-                  {"Contact"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"#ask-chat"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-19"}
-                >
-                  {"Ask itriX"}
-                </a>
-                {"\n        "}
-              </div>
-              {"\n        "}
-
-              {"\n        "}
-              <div
-                style={css(
-                  "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                )}
-              >
-                {"\n          "}
-                <span
+                  {"\n          "}
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    )}
+                  >
+                    {"COMPANY"}
+                  </span>
+                  {"\n          "}
+                  <a
+                    href={"#why"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-17"}
+                  >
+                    {"Leadership"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"/en/contact"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-18"}
+                  >
+                    {"General inquiry"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"#ask-chat"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-19"}
+                  >
+                    {"Ask itriX"}
+                  </a>
+                  {"\n        "}
+                </div>
+                <div
                   style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
                   )}
                 >
-                  {"LEGAL"}
-                </span>
-                {"\n          "}
-                <a
-                  href={"/en/privacy"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-23"}
-                >
-                  {"Privacy Policy"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/en/terms"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-24"}
-                >
-                  {"Terms of Use"}
-                </a>
-                {"\n          "}
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("color:#F8FAFC;font-size:16px;")}
-                >
-                  {"Cookie settings"}
-                </button>
-                {"\n        "}
+                  {"\n          "}
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    )}
+                  >
+                    {"LEGAL"}
+                  </span>
+                  {"\n          "}
+                  <a
+                    href={"/en/privacy"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-23"}
+                  >
+                    {"Privacy Policy"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"/en/terms"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-24"}
+                  >
+                    {"Terms of Use"}
+                  </a>
+                  {"\n          "}
+                  <button
+                    className={"ft-ck"}
+                    onClick={ckOpen}
+                    style={css("color:#F8FAFC;font-size:16px;")}
+                  >
+                    {"Cookie settings"}
+                  </button>
+                  {"\n        "}
+                </div>
               </div>
-              {"\n      "}
             </div>
             {"\n      "}
             <div
@@ -2253,7 +2277,7 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"iTrix Inc."}</span>
+                <span>{"itriX Co., Ltd."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
                 <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
@@ -2272,7 +2296,10 @@ export function Template(values) {
           {"\n  "}
         </footer>
         {"\n  "}
-        <NoticePopup language={values.language} />
+        <NoticePopup
+          language={values.language}
+          onOpenChange={values.noticeChanged}
+        />
         {"\n  "}
         {ckBar && (
           <>
@@ -2541,8 +2568,14 @@ export function Template(values) {
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/en/poc"} onClick={mnClose}>
-                  {"Request a PoC →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.en.poc}
+                  onClick={mnClose}
+                >
+                  {"Request a PoC ↗"}
                 </a>
                 <div>
                   <span

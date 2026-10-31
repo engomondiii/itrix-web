@@ -8,13 +8,13 @@
  * three lines down and propagated into the OG card and the page copy.
  *
  * `legalEntity` is deliberately different and is NOT a casing mistake: the
- * registered company is "iTrix Co., Ltd (주식회사 아이트릭스)". Use the wordmark
+ * registered company is "itriX Co., Ltd. (주식회사 아이트릭스)". Use the wordmark
  * for the brand, the legal entity only where the legal entity is meant.
  */
 export const brand = {
   name: 'itriX',
   wordmark: 'itriX',
-  legalEntity: 'iTrix Co., Ltd',
+  legalEntity: 'itriX Co., Ltd.',
   positioning: 'Computational AI Infrastructure for Sustainable AI',
   thesis: 'Do not scale inefficient computation. Make computation worth scaling first.',
   tagline: 'Representation before execution.',

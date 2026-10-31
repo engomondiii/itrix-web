@@ -1,4 +1,5 @@
 "use client";
+import { FORM_LINKS } from "./formLinks";
 import { useEffect, useRef, useState } from "react";
 const day = () =>
   new Intl.DateTimeFormat("en-CA", {
@@ -7,27 +8,33 @@ const day = () =>
     month: "2-digit",
     day: "2-digit",
   }).format(new Date());
-export default function LaunchNotice({ language }) {
+export default function LaunchNotice({ language, onOpenChange }) {
   const [open, setOpen] = useState(false);
   const dialog = useRef(null);
   const ko = language === "ko";
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        setOpen(localStorage.getItem("itrixNoticeHide") !== day());
+        const visible = localStorage.getItem("itrixNoticeHide") !== day();
+        setOpen(visible);
+        onOpenChange?.(visible);
       } catch {
         setOpen(true);
+        onOpenChange?.(true);
       }
     });
     return () => cancelAnimationFrame(frame);
-  }, []);
+  }, [onOpenChange]);
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement;
     const first = dialog.current?.querySelector("a,button");
     first?.focus();
     const onKey = (e) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") {
+        setOpen(false);
+        onOpenChange?.(false);
+      }
       if (e.key === "Tab") {
         const items = dialog.current?.querySelectorAll("a,button");
         if (!items?.length) return;
@@ -47,13 +54,14 @@ export default function LaunchNotice({ language }) {
       document.removeEventListener("keydown", onKey);
       previous?.focus?.();
     };
-  }, [open]);
+  }, [open, onOpenChange]);
   function close(today) {
     if (today)
       try {
         localStorage.setItem("itrixNoticeHide", day());
       } catch {}
     setOpen(false);
+    onOpenChange?.(false);
   }
   if (!open) return null;
   return (
@@ -158,14 +166,14 @@ export default function LaunchNotice({ language }) {
           <div className="r3nt-btns">
             <a
               className="r3nt-btn sub"
-              href="#astop"
+              href={ko ? "/astop" : "/en/astop"}
               onClick={() => close(false)}
             >
-              {ko ? "실증 프로그램 자세히 보기" : "Learn about the program"}
+              {ko ? "실증 프로그램 자세히 보기" : "Learn about the program"} →
             </a>
             <a
               className="r3nt-btn pri"
-              href="https://forms.gle/FoGcs7LHhoTbmhtf8"
+              href={FORM_LINKS[ko ? "ko" : "en"].poc}
               target="_blank"
               rel="noopener"
             >

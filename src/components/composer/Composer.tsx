@@ -21,7 +21,7 @@ import { trackEvent } from '@/lib/analytics/trackEvent';
  * THE COMPOSER — one component at every state.
  *
  * Only the LABEL changes (Surface 1 v6.0 §3.5):
- *   1      What would you like computation to do better?   → creates the thread
+ *   1      What brings you to itriX?   → creates the thread
  *   2–9    Ask itriX                                       → the Concierge
  *   10     What can we improve for you?                    → improvement router
  *

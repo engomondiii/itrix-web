@@ -1,11 +1,13 @@
 "use client";
 import React from "react";
+import "./round5.css";
 import { website } from "./reference/reference-style";
 
 // Shared real state for the client-supplied view templates. No design-tool runtime or eval.
 export class ReferencePage extends React.Component {
   state = {
     ckShow: false,
+    noticeOpen: this.props.page === "Main",
     ckPanel: false,
     ckAna: false,
     mn: false,
@@ -23,6 +25,24 @@ export class ReferencePage extends React.Component {
     failure: "",
     unsubscribe: "confirm",
   };
+  root = React.createRef();
+  noticeChanged = (noticeOpen) => this.setState({ noticeOpen });
+  componentDidUpdate() {
+    const banner = this.root.current?.querySelector(".ck-bar");
+    if (banner === this.cookieBanner) return;
+    this.cookieResize?.disconnect();
+    this.cookieBanner = banner;
+    const measure = () =>
+      this.root.current?.style.setProperty(
+        "--cookie-banner-height",
+        `${banner?.getBoundingClientRect().height || 0}px`,
+      );
+    measure();
+    if (banner) {
+      this.cookieResize = new ResizeObserver(measure);
+      this.cookieResize.observe(banner);
+    }
+  }
   componentDidMount() {
     this.unmounted = false;
     this.requestId = crypto.randomUUID();
@@ -77,6 +97,7 @@ export class ReferencePage extends React.Component {
     this.unmounted = true;
     window.removeEventListener("load", this.alignInitialSection);
     this.observer?.disconnect();
+    this.cookieResize?.disconnect();
     cancelAnimationFrame(this.scrollFrame);
     window.removeEventListener("hashchange", this.scrollToSection);
   }
@@ -183,8 +204,9 @@ export class ReferencePage extends React.Component {
     const values = {
       language: this.props.language,
       maskedEmail: s.maskedEmail || "",
-      ckBar: s.ckShow && !s.ckPanel,
-      ckPanel: s.ckPanel,
+      ckBar: s.ckShow && !s.ckPanel && !s.noticeOpen,
+      noticeChanged: this.noticeChanged,
+      ckPanel: s.ckPanel && !s.noticeOpen,
       ckAnaOn: s.ckAna ? "on" : "",
       ckTgAna: () => this.setState({ ckAna: !s.ckAna }),
       ckAll: () => this.saveCookies(true),
@@ -279,6 +301,7 @@ export class ReferencePage extends React.Component {
     const Template = this.props.template;
     return (
       <div
+        ref={this.root}
         className="itrix-reference"
         style={{
           background: "#020406",

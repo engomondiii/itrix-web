@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-dvh bg-canvas text-ink-primary antialiased">
         <LocaleDocumentSync />
         <a href="#content" className="skip-link">
-          <LocalizedText en="Skip to the assessment" ko="평가로 건너뛰기" />
+          <LocalizedText en="Skip to main content" ko="본문 바로가기" />
         </a>
         <ThemeProvider>
           <VisitorProvider>

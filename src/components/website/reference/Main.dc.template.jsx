@@ -1,4 +1,5 @@
 "use client";
+import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import TrackProjects from "../TrackProjects";
@@ -103,8 +104,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -127,8 +133,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -142,6 +153,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n\n  "}
         <section
           id={"top"}
@@ -268,7 +280,9 @@ export function Template(values) {
               )}
             >
               {"\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:24px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:24px;")}
+              >
                 {"\n          "}
                 <h2
                   style={css(
@@ -512,8 +526,9 @@ export function Template(values) {
             </div>
             {"\n      "}
             <div
+              className="astop-figures"
               style={css(
-                "position:relative;display:flex;flex-wrap:wrap;border-top:1px solid rgba(214,230,255,0.4);",
+                "position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid rgba(214,230,255,0.4);",
               )}
             >
               {"\n        "}
@@ -573,7 +588,9 @@ export function Template(values) {
                 >
                   {"720"}
                   <span
-                    style={css("font-size:20px;font-weight:400;color:#94A3B8;")}
+                    style={css(
+                      "font-size:20px;font-weight:400;color:#94A3B8;",
+                    )}
                   >
                     {" 회"}
                   </span>
@@ -647,7 +664,7 @@ export function Template(values) {
                   "margin:0;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:clamp(42px,4.6vw,56px);font-weight:600;line-height:1.05;letter-spacing:-0.01em;color:#F8FAFC;",
                 )}
               >
-                {"What brings you to itriX?"}
+                {"itriX를 찾아오신 목적을 알려 주세요."}
               </h2>
               {"\n        "}
               <p
@@ -1174,7 +1191,9 @@ export function Template(values) {
                 {"\n        "}
               </div>
               {"\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:16px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:16px;")}
+              >
                 {"\n          "}
                 <span
                   style={css(
@@ -1348,7 +1367,9 @@ export function Template(values) {
                 >
                   {"9"}
                   <span
-                    style={css("font-size:22px;font-weight:400;color:#94A3B8;")}
+                    style={css(
+                      "font-size:22px;font-weight:400;color:#94A3B8;",
+                    )}
                   >
                     {" 건"}
                   </span>
@@ -1660,7 +1681,9 @@ export function Template(values) {
                       fontWeight: 400,
                     }}
                   >
-                    {"이것이 itriX가 추구하는 가치이자 미래를 향한 약속입니다."}
+                    {
+                      "이것이 itriX가 추구하는 가치이자 미래를 향한 약속입니다."
+                    }
                   </p>
                   <p
                     style={{
@@ -1731,7 +1754,9 @@ export function Template(values) {
             >
               {"\n\n        "}
               <TrackProjects language={values.language} />
-              <div style={css("display:flex;flex-direction:column;gap:16px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:16px;")}
+              >
                 {"\n          "}
                 <span
                   style={css(
@@ -1774,7 +1799,9 @@ export function Template(values) {
                   >
                     {"\n              "}
                     <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                      style={css(
+                        "display:flex;flex-direction:column;gap:4px;",
+                      )}
                     >
                       <span
                         style={css(
@@ -1789,7 +1816,9 @@ export function Template(values) {
                     </span>
                     {"\n              "}
                     <span
-                      style={css("display:flex;flex-direction:column;gap:4px;")}
+                      style={css(
+                        "display:flex;flex-direction:column;gap:4px;",
+                      )}
                     >
                       <span
                         style={css(
@@ -1806,7 +1835,9 @@ export function Template(values) {
                   </div>
                   {"\n            "}
                   <span
-                    style={css("font-size:12px;line-height:1.5;color:#94A3B8;")}
+                    style={css(
+                      "font-size:12px;line-height:1.5;color:#94A3B8;",
+                    )}
                   >
                     {
                       "NCIA LAB 소개자료 기준 누적 성과이며, 회사 직접 실적과는 별개입니다."
@@ -1910,7 +1941,7 @@ export function Template(values) {
             alt={""}
             aria-hidden={"true"}
             style={css(
-              "position:absolute;right:clamp(-80px,-3vw,-24px);top:50%;transform:translateY(-50%);width:clamp(520px,56vw,860px);height:auto;opacity:0.05;pointer-events:none;",
+              "position:absolute;right:0;top:50%;transform:translateY(-50%);width:min(56vw,860px);max-width:100%;height:auto;opacity:0.05;pointer-events:none;",
             )}
           />
           {"\n    "}
@@ -1922,7 +1953,7 @@ export function Template(values) {
             {"\n      "}
             <div
               style={css(
-                "display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:56px 96px;",
+                "display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:end;gap:clamp(24px,5vw,72px);",
               )}
             >
               {"\n        "}
@@ -1987,7 +2018,9 @@ export function Template(values) {
                     {"파트너십 외 문의"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#CBD5E1;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#CBD5E1;",
+                    )}
                   >
                     {
                       "제품·PoC·설치 관련 질문은 아래 순서로 가장 빠르게 해결할 수 있습니다."
@@ -2016,7 +2049,7 @@ export function Template(values) {
                       )}
                       className={" reference-hover-15"}
                     >
-                      {"Contact itriX "}
+                      {"일반 문의 "}
                       <span>{"→"}</span>
                     </a>
                   </div>
@@ -2053,7 +2086,7 @@ export function Template(values) {
                   >
                     {"admin@itrix.co.kr"}
                     <span style={css("font-size:16px;color:#94A3B8;")}>
-                      {"↗"}
+                      {"→"}
                     </span>
                   </span>
                   {"\n          "}
@@ -2098,6 +2131,7 @@ export function Template(values) {
           {"\n  "}
         </section>
         {"\n\n  "}
+      </main>
         <footer
           id={"site-footer"}
           style={css(
@@ -2111,12 +2145,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:32px;",
-              )}
-            >
-              {"\n        "}
+            <div className="ft-top">
               <div
                 style={css(
                   "display:flex;flex-direction:column;gap:16px;grid-column:span 2;min-width:0;",
@@ -2138,89 +2167,86 @@ export function Template(values) {
                 </span>
                 {"\n        "}
               </div>
-              {"\n        "}
-              <div
-                style={css(
-                  "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                )}
-              >
-                {"\n          "}
-                <span
+              <div className="ft-cols">
+                <div
                   style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
                   )}
                 >
-                  {"COMPANY"}
-                </span>
-                {"\n          "}
-                <a
-                  href={"#why"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-17"}
-                >
-                  {"Leadership"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/contact"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-18"}
-                >
-                  {"Contact"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"#ask-chat"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-19"}
-                >
-                  {"Ask itriX"}
-                </a>
-                {"\n        "}
-              </div>
-              {"\n        "}
-
-              {"\n        "}
-              <div
-                style={css(
-                  "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
-                )}
-              >
-                {"\n          "}
-                <span
+                  {"\n          "}
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    )}
+                  >
+                    {"COMPANY"}
+                  </span>
+                  {"\n          "}
+                  <a
+                    href={"#why"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-17"}
+                  >
+                    {"Leadership"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"/contact"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-18"}
+                  >
+                    {"Contact"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"#ask-chat"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-19"}
+                  >
+                    {"Ask itriX"}
+                  </a>
+                  {"\n        "}
+                </div>
+                <div
                   style={css(
-                    "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    "display:flex;flex-direction:column;gap:8px;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:16px;",
                   )}
                 >
-                  {"LEGAL"}
-                </span>
-                {"\n          "}
-                <a
-                  href={"/privacy"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-23"}
-                >
-                  {"개인정보처리방침"}
-                </a>
-                {"\n          "}
-                <a
-                  href={"/terms"}
-                  style={css("color:#F8FAFC;")}
-                  className={" reference-hover-24"}
-                >
-                  {"이용약관"}
-                </a>
-                {"\n          "}
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("color:#F8FAFC;font-size:16px;")}
-                >
-                  {"쿠키 설정"}
-                </button>
-                {"\n        "}
+                  {"\n          "}
+                  <span
+                    style={css(
+                      "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:12px;letter-spacing:0.12em;color:#94A3B8;padding-bottom:8px;",
+                    )}
+                  >
+                    {"LEGAL"}
+                  </span>
+                  {"\n          "}
+                  <a
+                    href={"/privacy"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-23"}
+                  >
+                    {"개인정보처리방침"}
+                  </a>
+                  {"\n          "}
+                  <a
+                    href={"/terms"}
+                    style={css("color:#F8FAFC;")}
+                    className={" reference-hover-24"}
+                  >
+                    {"이용약관"}
+                  </a>
+                  {"\n          "}
+                  <button
+                    className={"ft-ck"}
+                    onClick={ckOpen}
+                    style={css("color:#F8FAFC;font-size:16px;")}
+                  >
+                    {"쿠키 설정"}
+                  </button>
+                  {"\n        "}
+                </div>
               </div>
-              {"\n      "}
             </div>
             {"\n      "}
             <div
@@ -2252,7 +2278,10 @@ export function Template(values) {
           {"\n  "}
         </footer>
         {"\n  "}
-        <NoticePopup language={values.language} />
+        <NoticePopup
+          language={values.language}
+          onOpenChange={values.noticeChanged}
+        />
         {"\n  "}
         {ckBar && (
           <>
@@ -2514,15 +2543,21 @@ export function Template(values) {
                 </a>
                 {"\n        "}
                 <a className={"mi"} href={"/contact"} onClick={mnClose}>
-                  {"문의하기 "}
+                  {"일반 문의 "}
                   <span className={"ar"}>{"→"}</span>
                 </a>
                 {"\n      "}
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/poc"} onClick={mnClose}>
-                  {"PoC 신청 →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.ko.poc}
+                  onClick={mnClose}
+                >
+                  {"PoC 신청 ↗"}
                 </a>
                 <div>
                   <span

@@ -1,4 +1,6 @@
 "use client";
+import { FooterLinks } from "../FooterLinks";
+import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import { css, AskX, NoticePopup, Captcha } from "./reference-style";
@@ -132,8 +134,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -156,8 +163,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -171,6 +183,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n  "}
         <style>
           {
@@ -198,7 +211,7 @@ export function Template(values) {
                   "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#D6E6FF;",
                 )}
               >
-                {"문의하기"}
+                {"일반 문의"}
               </span>
               <h1
                 style={css(
@@ -236,14 +249,16 @@ export function Template(values) {
                         "font-size:24px;font-weight:700;color:#F8FAFC;",
                       )}
                     >
-                      {"문의"}
+                      {"일반 문의"}
                     </span>
                     <span style={css("font-size:15px;color:#94A3B8;")}>
                       {"영업일 기준 2일 이내에 이메일로 답변드립니다."}
                     </span>
                   </div>
                   <div
-                    style={css("display:flex;flex-direction:column;gap:22px;")}
+                    style={css(
+                      "display:flex;flex-direction:column;gap:22px;",
+                    )}
                   >
                     <p
                       style={css(
@@ -261,13 +276,12 @@ export function Template(values) {
                       )}
                     >
                       <a
+                        target="_blank"
+                        rel="noopener"
                         className={"jr-btn"}
-                        href={"https://forms.gle/PCW2J9SF4wjDcPtA6"}
-                        target={"_blank"}
-                        rel={"noopener"}
+                        href={FORM_LINKS.ko.contact}
                       >
-                        {"문의하기"}
-                        <span aria-hidden={"true"}>{"↗"}</span>
+                        {"일반 문의 신청 ↗"}
                       </a>
                       <span style={css("font-size:14px;color:#94A3B8;")}>
                         {"새 창에서 Google Forms가 열립니다"}
@@ -335,51 +349,67 @@ export function Template(values) {
                 )}
               >
                 <a
-                  href={"/poc"}
+                  target="_blank"
+                  rel="noopener"
+                  href={FORM_LINKS.ko.poc}
                   className={"jr-pn rq-card"}
                   style={css("gap:10px;padding:28px;")}
                 >
                   <span className={"jr-k"}>{"PoC"}</span>
                   <span
-                    style={css("font-size:20px;font-weight:700;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:20px;font-weight:700;color:#F8FAFC;",
+                    )}
                   >
-                    {"ASTOP PoC 신청"}
+                    {"PoC 신청"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#94A3B8;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#94A3B8;",
+                    )}
                   >
                     {
                       "우리 업무에서 ASTOP을 검증해 보고 싶다면 PoC 신청서를 남겨 주세요."
                     }
                   </span>
                   <span
-                    style={css("font-size:15px;font-weight:500;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:15px;font-weight:500;color:#F8FAFC;",
+                    )}
                   >
-                    {"PoC 신청하기 →"}
+                    {"PoC 신청 ↗"}
                   </span>
                 </a>
                 <a
-                  href={"/partnership"}
+                  target="_blank"
+                  rel="noopener"
+                  href={FORM_LINKS.ko.partnership}
                   className={"jr-pn rq-card r2"}
                   style={css("gap:10px;padding:28px;")}
                 >
                   <span className={"jr-k"}>{"PARTNERSHIP"}</span>
                   <span
-                    style={css("font-size:20px;font-weight:700;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:20px;font-weight:700;color:#F8FAFC;",
+                    )}
                   >
-                    {"파트너십 · 대규모 도입"}
+                    {"파트너십 문의"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#94A3B8;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#94A3B8;",
+                    )}
                   >
                     {
                       "공동 실증, Technical Validation, Licensing, 대규모 조직 도입을 문의해 주세요."
                     }
                   </span>
                   <span
-                    style={css("font-size:15px;font-weight:500;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:15px;font-weight:500;color:#F8FAFC;",
+                    )}
                   >
-                    {"파트너십 문의 →"}
+                    {"파트너십 문의 신청 ↗"}
                   </span>
                 </a>
               </div>
@@ -387,6 +417,7 @@ export function Template(values) {
           </div>
         </section>
         {"\n  "}
+      </main>
         <footer
           style={css(
             "background:#020406;border-top:1px solid rgba(214,230,255,0.1);padding:48px clamp(20px,6vw,80px);",
@@ -399,11 +430,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;",
-              )}
-            >
+            <div className="ft-top">
               {"\n        "}
               <a href={"/"}>
                 <img
@@ -413,23 +440,7 @@ export function Template(values) {
                 />
               </a>
               {"\n        "}
-              <nav
-                className={"ft-links"}
-                aria-label={"Footer"}
-                style={css("display:flex;flex-wrap:wrap;gap:8px 24px;")}
-              >
-                <a href={"/contact"}>{"문의하기"}</a>
-                <a href={"/poc"}>{"PoC 신청"}</a>
-                <a href={"/privacy"}>{"개인정보처리방침"}</a>
-                <a href={"/terms"}>{"이용약관"}</a>
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("font-size:14px;")}
-                >
-                  {"쿠키 설정"}
-                </button>
-              </nav>
+              <FooterLinks language={values.language} onCookieSettings={ckOpen} />
               {"\n      "}
             </div>
             {"\n      "}
@@ -725,15 +736,21 @@ export function Template(values) {
                 </a>
                 {"\n        "}
                 <a className={"mi"} href={"/contact"} onClick={mnClose}>
-                  {"문의하기 "}
+                  {"일반 문의 "}
                   <span className={"ar"}>{"→"}</span>
                 </a>
                 {"\n      "}
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/poc"} onClick={mnClose}>
-                  {"PoC 신청 →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.ko.poc}
+                  onClick={mnClose}
+                >
+                  {"PoC 신청 ↗"}
                 </a>
                 <div>
                   <span

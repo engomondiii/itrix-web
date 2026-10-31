@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { FORM_LINKS } from "../../src/components/website/formLinks";
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() =>
     localStorage.setItem("itrixCookie", JSON.stringify({ necessary: true })),
@@ -14,16 +15,13 @@ test.beforeEach(async ({ page }) => {
   );
 });
 for (const prefix of ["", "/en"]) {
-  for (const [path, id] of [
-    ["poc", "FoGcs7LHhoTbmhtf8"],
-    ["contact", "PCW2J9SF4wjDcPtA6"],
-    ["partnership", "aACxKK1oggHiA8ueA"],
-  ]) {
+  for (const path of ["contact", "partnership"] as const) {
+    const link = FORM_LINKS[prefix ? "en" : "ko"][path];
     test(`${prefix || "ko"} ${path} uses approved Google Form`, async ({
       page,
     }) => {
       await page.goto(`${prefix}/${path}`);
-      const apply = page.locator(`section a[href="https://forms.gle/${id}"]`);
+      const apply = page.locator(`section a[href="${link}"]`);
       await expect(apply).toHaveCount(1);
       await expect(apply).toHaveAttribute("target", "_blank");
       await expect(apply).toHaveAttribute("rel", /noopener/);
@@ -72,11 +70,8 @@ test("notice qualifies savings, applies externally and remembers today", async (
   const modal = page.getByRole("dialog");
   await expect(modal).toContainText("in our internal tests");
   const apply = modal.getByRole("link", { name: /Apply now/ });
-  await expect(apply).toHaveAttribute(
-    "href",
-    "https://forms.gle/FoGcs7LHhoTbmhtf8",
-  );
-  const learn = modal.getByRole("link", { name: "Learn about the program" });
+  await expect(apply).toHaveAttribute("href", FORM_LINKS.en.poc);
+  const learn = modal.getByRole("link", { name: /Learn about the program/ });
   expect((await apply.boundingBox())!.y).toBeLessThan(
     (await learn.boundingBox())!.y,
   );
