@@ -15,12 +15,16 @@ export default function LaunchNotice({ language, onOpenChange }) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       try {
-        const visible = localStorage.getItem("itrixNoticeHide") !== day();
+        // Leadership is an intentional section visit, not a fresh home-page arrival.
+        const visible =
+          location.hash !== "#why" &&
+          localStorage.getItem("itrixNoticeHide") !== day();
         setOpen(visible);
         onOpenChange?.(visible);
       } catch {
-        setOpen(true);
-        onOpenChange?.(true);
+        const visible = location.hash !== "#why";
+        setOpen(visible);
+        onOpenChange?.(visible);
       }
     });
     return () => cancelAnimationFrame(frame);

@@ -226,7 +226,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "Send us questions about products, installation or other topics. We reply by email within 2 business days."
+                  "Send us questions about products, installation or other topics."
                 }
               </p>
             </div>
@@ -251,9 +251,7 @@ export function Template(values) {
                     >
                       {"General inquiry"}
                     </span>
-                    <span style={css("font-size:15px;color:#94A3B8;")}>
-                      {"We reply by email within 2 business days."}
-                    </span>
+
                   </div>
                   <div
                     style={css(
@@ -266,7 +264,7 @@ export function Template(values) {
                       )}
                     >
                       {
-                        "Inquiries are collected through Google Forms. The button below opens the form in a new tab. It takes about 2 minutes and does not require sign-in."
+                        "Inquiries are collected through Google Forms. The button below opens the form in a new tab."
                       }
                     </p>
 
@@ -283,9 +281,7 @@ export function Template(values) {
                       >
                         {"Send a general inquiry ↗"}
                       </a>
-                      <span style={css("font-size:14px;color:#94A3B8;")}>
-                        {"Google Forms opens in a new tab"}
-                      </span>
+
                     </div>
                     <span
                       style={css(

@@ -226,7 +226,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "제품, 설치, 기타 문의를 남겨 주세요. 영업일 기준 2일 이내에 이메일로 답변드립니다."
+                  "제품, 설치, 기타 문의를 남겨 주세요."
                 }
               </p>
             </div>
@@ -251,9 +251,7 @@ export function Template(values) {
                     >
                       {"일반 문의"}
                     </span>
-                    <span style={css("font-size:15px;color:#94A3B8;")}>
-                      {"영업일 기준 2일 이내에 이메일로 답변드립니다."}
-                    </span>
+
                   </div>
                   <div
                     style={css(
@@ -266,7 +264,7 @@ export function Template(values) {
                       )}
                     >
                       {
-                        "문의는 Google Forms로 받습니다. 아래 버튼을 누르면 새 창에서 문의서가 열리며, 로그인 없이 약 2분이면 작성할 수 있습니다."
+                        "문의는 Google Forms로 받습니다. 아래 버튼을 누르면 새 창에서 문의서가 열립니다."
                       }
                     </p>
 
@@ -283,9 +281,7 @@ export function Template(values) {
                       >
                         {"일반 문의 신청 ↗"}
                       </a>
-                      <span style={css("font-size:14px;color:#94A3B8;")}>
-                        {"새 창에서 Google Forms가 열립니다"}
-                      </span>
+
                     </div>
                     <span
                       style={css(

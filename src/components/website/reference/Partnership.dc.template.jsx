@@ -226,7 +226,7 @@ export function Template(values) {
                 )}
               >
                 {
-                  "공동 실증, Technical Validation, Licensing, 대규모 조직 도입을 검토하고 계신다면 문의서를 남겨 주세요. 담당자가 검토한 뒤 영업일 기준 3일 이내에 연락드립니다."
+                  "공동 실증, Technical Validation, Licensing, 대규모 조직 도입을 검토하고 계신다면 문의서를 남겨 주세요."
                 }
               </p>
             </div>
@@ -251,9 +251,7 @@ export function Template(values) {
                     >
                       {"파트너십 문의"}
                     </span>
-                    <span style={css("font-size:15px;color:#94A3B8;")}>
-                      {"영업일 기준 3일 이내에 담당자가 연락드립니다."}
-                    </span>
+
                   </div>
                   <div
                     style={css(
@@ -266,7 +264,7 @@ export function Template(values) {
                       )}
                     >
                       {
-                        "파트너십 · 대규모 도입 문의는 Google Forms로 받습니다. 아래 버튼을 누르면 새 창에서 문의서가 열리며, 로그인 없이 약 5분이면 작성할 수 있습니다."
+                        "파트너십 · 대규모 도입 문의는 Google Forms로 받습니다. 아래 버튼을 누르면 새 창에서 문의서가 열립니다."
                       }
                     </p>
                     <div
@@ -302,9 +300,7 @@ export function Template(values) {
                       >
                         {"파트너십 문의 신청 ↗"}
                       </a>
-                      <span style={css("font-size:14px;color:#94A3B8;")}>
-                        {"새 창에서 Google Forms가 열립니다"}
-                      </span>
+
                     </div>
                     <span
                       style={css(
