@@ -81,7 +81,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
       {
         heading: 'Who we are, and what this covers',
         body: [
-          'These Terms are a binding agreement between you and iTrix Co., Ltd (주식회사 아이트릭스), a company incorporated in the Republic of Korea. They apply to the itriX platform operated for professional and organisational use.',
+          'These Terms are a binding agreement between you and itriX Co., Ltd. (주식회사 아이트릭스), a company incorporated in the Republic of Korea. They apply to the itriX platform operated for professional and organisational use.',
           'They govern the itriX website, the conversational assessment surface, any workspace we make available to you, and anything we prepare and deliver to you through those surfaces.',
           'They do not govern a signed non-disclosure, evaluation, proof-of-concept or licence agreement between us. Those govern themselves, and where they conflict with these Terms, they prevail.',
           'If you are using the platform for an organisation, you confirm you have authority to bind it, and "you" means both you and that organisation.',
@@ -224,7 +224,7 @@ export const LEGAL_INSTRUMENTS: readonly LegalInstrument[] = [
         heading: 'Our position, in one paragraph',
         body: [
           'We collect what we need to answer you, and we do not use what you tell us to train anything or to answer anybody else. A conversation you start without an account is kept against your browser session for a limited period and then deleted. Files you attach are scanned, read for text, kept for a short window if you send them before an NDA, and deleted whenever you ask.',
-          'iTrix Co., Ltd (주식회사 아이트릭스), incorporated in the Republic of Korea, is the controller. Privacy contact: itrix@gpslab.org.',
+          'itriX Co., Ltd. (주식회사 아이트릭스), incorporated in the Republic of Korea, is the controller. Privacy contact: itrix@gpslab.org.',
         ],
       },
       {

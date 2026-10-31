@@ -7,7 +7,7 @@ import { useCenterCopy } from '@/lib/i18n/conversationLocale';
  * THE MAIN QUESTION — the single most important sentence on the platform, and
  * from v6.0 the arrival route's ONLY h1.
  *
- *   "What would you like computation to do better?"
+ *   "What brings you to itriX?"
  *
  * ── WHAT CHANGED, AND WHY IT IS NOT A SIZE SWAP ─────────────────────────────
  * v5.0 put the SITUATION FRAMING in the h1 and rendered this as a prominent

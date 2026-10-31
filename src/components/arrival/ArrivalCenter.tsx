@@ -11,7 +11,7 @@ import { Composer } from '@/components/composer/Composer';
  * The order (Surface 1 v6.0 §2.1, elements 3–8; the wordmark, Sign in and the
  * legal strip are the shell's, not the centre's):
  *
- *   3  main question    "What would you like computation to do better?" — the H1
+ *   3  main question    "What brings you to itriX?" — the H1
  *   5  composer         attach + the itriX X, NO counter, NO "Begin review"
  *   6  safety notice    (inside the composer footer)
  *   7  rotating prompts one at a time, five in the cycle, one per family

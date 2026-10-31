@@ -62,16 +62,6 @@ export function StoreRoutes({ language = "ko" }) {
             </a>
           ))}
           <a
-            href={prefix + "/contact?topic=interest"}
-            style={{
-              padding: "14px 24px",
-              border: "1px solid #D6E6FF",
-              borderRadius: 30,
-            }}
-          >
-            {ko ? "출시 알림 신청" : "Register interest"}
-          </a>
-          <a
             href={prefix + "/partnership"}
             style={{
               padding: "14px 24px",
@@ -79,9 +69,7 @@ export function StoreRoutes({ language = "ko" }) {
               borderRadius: 30,
             }}
           >
-            {ko
-              ? "전략적 기업 검증 요청"
-              : "Request Strategic Enterprise Validation"}
+            {ko ? "파트너십 문의 →" : "Partnership inquiry →"}
           </a>
         </div>
       </div>

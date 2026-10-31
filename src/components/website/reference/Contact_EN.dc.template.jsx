@@ -1,4 +1,6 @@
 "use client";
+import { FooterLinks } from "../FooterLinks";
+import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import { css, AskX, NoticePopup, Captcha } from "./reference-style";
@@ -132,8 +134,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -156,8 +163,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -171,6 +183,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n  "}
         <style>
           {
@@ -178,7 +191,7 @@ export function Template(values) {
           }
         </style>
         <section
-          data-screen-label={"Contact"}
+          data-screen-label={"General inquiry"}
           style={css(
             "padding:clamp(48px,6vw,88px) clamp(20px,6vw,80px) clamp(64px,8vw,112px);background:radial-gradient(60% 60% at 90% 0%, rgba(120,160,175,0.14) 0%, rgba(2,4,6,0) 70%), #020406;",
           )}
@@ -198,7 +211,7 @@ export function Template(values) {
                   "font-family:'IBM Plex Mono','Noto Sans KR',monospace;font-size:13px;letter-spacing:0.12em;color:#D6E6FF;",
                 )}
               >
-                {"Contact us"}
+                {"General inquiry"}
               </span>
               <h1
                 style={css(
@@ -236,14 +249,16 @@ export function Template(values) {
                         "font-size:24px;font-weight:700;color:#F8FAFC;",
                       )}
                     >
-                      {"Inquiry"}
+                      {"General inquiry"}
                     </span>
                     <span style={css("font-size:15px;color:#94A3B8;")}>
                       {"We reply by email within 2 business days."}
                     </span>
                   </div>
                   <div
-                    style={css("display:flex;flex-direction:column;gap:22px;")}
+                    style={css(
+                      "display:flex;flex-direction:column;gap:22px;",
+                    )}
                   >
                     <p
                       style={css(
@@ -261,13 +276,12 @@ export function Template(values) {
                       )}
                     >
                       <a
+                        target="_blank"
+                        rel="noopener"
                         className={"jr-btn"}
-                        href={"https://forms.gle/PCW2J9SF4wjDcPtA6"}
-                        target={"_blank"}
-                        rel={"noopener"}
+                        href={FORM_LINKS.en.contact}
                       >
-                        {"Contact us"}
-                        <span aria-hidden={"true"}>{"↗"}</span>
+                        {"Send a general inquiry ↗"}
                       </a>
                       <span style={css("font-size:14px;color:#94A3B8;")}>
                         {"Google Forms opens in a new tab"}
@@ -337,51 +351,67 @@ export function Template(values) {
                 )}
               >
                 <a
-                  href={"/en/poc"}
+                  target="_blank"
+                  rel="noopener"
+                  href={FORM_LINKS.en.poc}
                   className={"jr-pn rq-card"}
                   style={css("gap:10px;padding:28px;")}
                 >
                   <span className={"jr-k"}>{"PoC"}</span>
                   <span
-                    style={css("font-size:20px;font-weight:700;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:20px;font-weight:700;color:#F8FAFC;",
+                    )}
                   >
-                    {"ASTOP PoC application"}
+                    {"Request a PoC"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#94A3B8;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#94A3B8;",
+                    )}
                   >
                     {
                       "Apply for a PoC if you would like to validate ASTOP on your own workload."
                     }
                   </span>
                   <span
-                    style={css("font-size:15px;font-weight:500;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:15px;font-weight:500;color:#F8FAFC;",
+                    )}
                   >
-                    {"Apply for a PoC →"}
+                    {"Request a PoC ↗"}
                   </span>
                 </a>
                 <a
-                  href={"/en/partnership"}
+                  target="_blank"
+                  rel="noopener"
+                  href={FORM_LINKS.en.partnership}
                   className={"jr-pn rq-card r2"}
                   style={css("gap:10px;padding:28px;")}
                 >
                   <span className={"jr-k"}>{"PARTNERSHIP"}</span>
                   <span
-                    style={css("font-size:20px;font-weight:700;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:20px;font-weight:700;color:#F8FAFC;",
+                    )}
                   >
-                    {"Partnership / Large-scale adoption"}
+                    {"Partnership inquiry"}
                   </span>
                   <span
-                    style={css("font-size:14px;line-height:1.6;color:#94A3B8;")}
+                    style={css(
+                      "font-size:14px;line-height:1.6;color:#94A3B8;",
+                    )}
                   >
                     {
                       "Contact us about joint validation, Technical Validation, Licensing or large-scale organizational adoption."
                     }
                   </span>
                   <span
-                    style={css("font-size:15px;font-weight:500;color:#F8FAFC;")}
+                    style={css(
+                      "font-size:15px;font-weight:500;color:#F8FAFC;",
+                    )}
                   >
-                    {"Partnership inquiry →"}
+                    {"Send a partnership inquiry ↗"}
                   </span>
                 </a>
               </div>
@@ -389,6 +419,7 @@ export function Template(values) {
           </div>
         </section>
         {"\n  "}
+      </main>
         <footer
           style={css(
             "background:#020406;border-top:1px solid rgba(214,230,255,0.1);padding:48px clamp(20px,6vw,80px);",
@@ -401,11 +432,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;",
-              )}
-            >
+            <div className="ft-top">
               {"\n        "}
               <a href={"/en/"}>
                 <img
@@ -415,23 +442,7 @@ export function Template(values) {
                 />
               </a>
               {"\n        "}
-              <nav
-                className={"ft-links"}
-                aria-label={"Footer"}
-                style={css("display:flex;flex-wrap:wrap;gap:8px 24px;")}
-              >
-                <a href={"/en/contact"}>{"Contact"}</a>
-                <a href={"/en/poc"}>{"Request a PoC"}</a>
-                <a href={"/en/privacy"}>{"Privacy Policy"}</a>
-                <a href={"/en/terms"}>{"Terms of Use"}</a>
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("font-size:14px;")}
-                >
-                  {"Cookie settings"}
-                </button>
-              </nav>
+              <FooterLinks language={values.language} onCookieSettings={ckOpen} />
               {"\n      "}
             </div>
             {"\n      "}
@@ -446,7 +457,7 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"iTrix Inc."}</span>
+                <span>{"itriX Co., Ltd."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
                 <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
@@ -734,8 +745,14 @@ export function Template(values) {
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/en/poc"} onClick={mnClose}>
-                  {"Request a PoC →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.en.poc}
+                  onClick={mnClose}
+                >
+                  {"Request a PoC ↗"}
                 </a>
                 <div>
                   <span

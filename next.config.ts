@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000/api/v1',
   },
+  async redirects() {
+    return [
+      { source: '/poc', destination: '/astop', statusCode: 301 },
+      { source: '/en/poc', destination: '/en/astop', statusCode: 301 },
+    ];
+  },
   async rewrites() {
     const dashboard = process.env.DASHBOARD_ORIGIN || 'https://itrix-dashboard-production.up.railway.app';
     return [

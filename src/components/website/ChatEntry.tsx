@@ -17,8 +17,8 @@ export function ChatEntry() {
         .getState()
         .populate(
           language === "ko"
-            ? "ASTOP이 제 작업에 적합한지와 출시 알림 신청 방법을 알고 싶습니다."
-            : "I would like to understand whether ASTOP fits my workload and how to register interest.",
+            ? "ASTOP이 제 작업에 적합한지와 PoC 신청 방법을 알고 싶습니다."
+            : "I would like to understand whether ASTOP fits my workload and how to request a PoC.",
         );
     window.parent.postMessage({ type: "itrix-chat-ready" }, location.origin);
   }, []);

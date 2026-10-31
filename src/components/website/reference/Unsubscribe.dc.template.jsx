@@ -1,4 +1,6 @@
 "use client";
+import { FooterLinks } from "../FooterLinks";
+import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import { css, AskX, NoticePopup, Captcha } from "./reference-style";
@@ -101,8 +103,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -125,8 +132,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/poc"}>
-              {"PoC 신청"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.ko.poc}
+            >
+              {"PoC 신청 ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -140,6 +152,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n  "}
         <section
           style={css(
@@ -379,6 +392,7 @@ export function Template(values) {
           {"\n  "}
         </section>
         {"\n  "}
+      </main>
         <footer
           style={css(
             "background:#020406;border-top:1px solid rgba(214,230,255,0.1);padding:48px clamp(20px,6vw,80px);",
@@ -391,11 +405,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;",
-              )}
-            >
+            <div className="ft-top">
               {"\n        "}
               <a href={"/"}>
                 <img
@@ -405,23 +415,7 @@ export function Template(values) {
                 />
               </a>
               {"\n        "}
-              <nav
-                className={"ft-links"}
-                aria-label={"Footer"}
-                style={css("display:flex;flex-wrap:wrap;gap:8px 24px;")}
-              >
-                <a href={"/contact"}>{"문의하기"}</a>
-                <a href={"/poc"}>{"PoC 신청"}</a>
-                <a href={"/privacy"}>{"개인정보처리방침"}</a>
-                <a href={"/terms"}>{"이용약관"}</a>
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("font-size:14px;")}
-                >
-                  {"쿠키 설정"}
-                </button>
-              </nav>
+              <FooterLinks language={values.language} onCookieSettings={ckOpen} />
               {"\n      "}
             </div>
             {"\n      "}
@@ -717,15 +711,21 @@ export function Template(values) {
                 </a>
                 {"\n        "}
                 <a className={"mi"} href={"/contact"} onClick={mnClose}>
-                  {"문의하기 "}
+                  {"일반 문의 "}
                   <span className={"ar"}>{"→"}</span>
                 </a>
                 {"\n      "}
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/poc"} onClick={mnClose}>
-                  {"PoC 신청 →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.ko.poc}
+                  onClick={mnClose}
+                >
+                  {"PoC 신청 ↗"}
                 </a>
                 <div>
                   <span

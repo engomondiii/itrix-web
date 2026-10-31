@@ -8,7 +8,7 @@ export function localized<T>(locale: AppLocale, en: T, ko: T): T {
 export const COMMON_UI = {
   en: {
     language: 'Language', english: 'English', korean: '한국어',
-    skip: 'Skip to the assessment', openNavigation: 'Open navigation', closeNavigation: 'Close navigation',
+    skip: 'Skip to main content', openNavigation: 'Open navigation', closeNavigation: 'Close navigation',
     loading: 'Loading…', retry: 'Try again', retrying: 'Retrying…', back: 'Back', close: 'Close', open: 'Open',
     continue: 'Continue', cancel: 'Cancel', save: 'Save', saving: 'Saving…', send: 'Send', sending: 'Sending…',
     signIn: 'Sign in', signUp: 'Sign up', signOut: 'Sign out', workspace: 'Workspace',
@@ -17,7 +17,7 @@ export const COMMON_UI = {
   },
   ko: {
     language: '언어', english: 'English', korean: '한국어',
-    skip: '평가로 건너뛰기', openNavigation: '탐색 메뉴 열기', closeNavigation: '탐색 메뉴 닫기',
+    skip: '본문 바로가기', openNavigation: '탐색 메뉴 열기', closeNavigation: '탐색 메뉴 닫기',
     loading: '불러오는 중…', retry: '다시 시도', retrying: '다시 시도 중…', back: '뒤로', close: '닫기', open: '열기',
     continue: '계속', cancel: '취소', save: '저장', saving: '저장 중…', send: '보내기', sending: '보내는 중…',
     signIn: '로그인', signUp: '회원가입', signOut: '로그아웃', workspace: '워크스페이스',

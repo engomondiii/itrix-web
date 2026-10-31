@@ -1,4 +1,6 @@
 "use client";
+import { FooterLinks } from "../FooterLinks";
+import { FORM_LINKS } from "../formLinks";
 import EmptyCalls from "../EmptyCalls";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
@@ -103,8 +105,13 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
@@ -127,8 +134,13 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a className={"navpoc"} href={"/en/poc"}>
-              {"Request a PoC"}
+            <a
+              target="_blank"
+              rel="noopener"
+              className={"navpoc"}
+              href={FORM_LINKS.en.poc}
+            >
+              {"Request a PoC ↗"}
             </a>
             <button
               className={"nv-burger"}
@@ -142,6 +154,7 @@ export function Template(values) {
           </div>
           {"\n  "}
         </nav>
+        <main id="content" tabIndex={-1}>
         {"\n\n  "}
         <section
           style={css(
@@ -245,14 +258,15 @@ export function Template(values) {
             <div style={css("display:flex;flex-wrap:wrap;gap:16px;")}>
               {"\n        "}
               <a
+                target="_blank"
+                rel="noopener"
                 className={"hb hb1 reference-hover-5"}
-                href={"/en/poc"}
+                href={FORM_LINKS.en.poc}
                 style={css(
                   "height:56px;display:flex;align-items:center;gap:8px;padding:0 24px;border-radius:14px;background:#F8FAFC;color:#1F2937;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:17px;font-weight:600;",
                 )}
               >
-                {"Request a PoC "}
-                <span>{"→"}</span>
+                {"Request a PoC ↗"}
               </a>
               {"\n        "}
               <a
@@ -298,7 +312,9 @@ export function Template(values) {
               )}
             >
               {"\n        "}
-              <div style={css("display:flex;flex-direction:column;gap:24px;")}>
+              <div
+                style={css("display:flex;flex-direction:column;gap:24px;")}
+              >
                 {"\n          "}
                 <h2
                   style={css(
@@ -443,7 +459,9 @@ export function Template(values) {
                 <span
                   style={css("font-size:15px;line-height:1.6;color:#CBD5E1;")}
                 >
-                  {"Escalates only on changes, failures, or approval requests"}
+                  {
+                    "Escalates only on changes, failures, or approval requests"
+                  }
                 </span>
                 {"\n        "}
               </div>
@@ -660,7 +678,9 @@ export function Template(values) {
                   >
                     {"02 "}
                   </span>
-                  {"Compared with repeated polling under identical conditions"}
+                  {
+                    "Compared with repeated polling under identical conditions"
+                  }
                 </span>
                 {"\n          "}
                 <span>
@@ -691,6 +711,7 @@ export function Template(values) {
         </section>
         {"\n\n\n  "}
         <StoreRoutes language={values.language} />
+      </main>
         <footer
           style={css(
             "background:#020406;border-top:1px solid rgba(214,230,255,0.1);padding:48px clamp(20px,6vw,80px);",
@@ -703,11 +724,7 @@ export function Template(values) {
             )}
           >
             {"\n      "}
-            <div
-              style={css(
-                "display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px;",
-              )}
-            >
+            <div className="ft-top">
               {"\n        "}
               <a href={"/en/"}>
                 <img
@@ -717,23 +734,7 @@ export function Template(values) {
                 />
               </a>
               {"\n        "}
-              <nav
-                className={"ft-links"}
-                aria-label={"Footer"}
-                style={css("display:flex;flex-wrap:wrap;gap:8px 24px;")}
-              >
-                <a href={"/en/contact"}>{"Contact"}</a>
-                <a href={"/en/poc"}>{"Request a PoC"}</a>
-                <a href={"/en/privacy"}>{"Privacy Policy"}</a>
-                <a href={"/en/terms"}>{"Terms of Use"}</a>
-                <button
-                  className={"ft-ck"}
-                  onClick={ckOpen}
-                  style={css("font-size:14px;")}
-                >
-                  {"Cookie settings"}
-                </button>
-              </nav>
+              <FooterLinks language={values.language} onCookieSettings={ckOpen} />
               {"\n      "}
             </div>
             {"\n      "}
@@ -748,7 +749,7 @@ export function Template(values) {
                   "display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;line-height:1.6;color:#64748B;",
                 )}
               >
-                <span>{"iTrix Inc."}</span>
+                <span>{"itriX Co., Ltd."}</span>
                 <span>{"CEO Myungjoo Kang"}</span>
                 <span>{"Business Reg. No. 119-87-03826"}</span>
                 <span>{"611, 19 Hyoryeong-ro 55-gil, Seocho-gu, Seoul"}</span>
@@ -1036,8 +1037,14 @@ export function Template(values) {
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a className={"mn-poc"} href={"/en/poc"} onClick={mnClose}>
-                  {"Request a PoC →"}
+                <a
+                  target="_blank"
+                  rel="noopener"
+                  className={"mn-poc"}
+                  href={FORM_LINKS.en.poc}
+                  onClick={mnClose}
+                >
+                  {"Request a PoC ↗"}
                 </a>
                 <div>
                   <span

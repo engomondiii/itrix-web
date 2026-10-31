@@ -38,9 +38,9 @@ export const CENTER_COPY = {
    * / 32px mobile.
    *
    * It invites a problem; it does not announce a product.
-   * Approved 2026-07. Requires Brand & Messaging + Park Dae-hyuk sign-off to change.
+   * Opening question approved in the client’s Round 5 website revisions (October 2026).
    */
-  mainQuestion: 'What would you like computation to do better?',
+  mainQuestion: 'What brings you to itriX?',
 
   /** Placeholder inside the composer. Grey hint text, never a label. */
   promptPlaceholder: 'Type your message here, then press Enter to send.',
@@ -128,7 +128,7 @@ export const REVIEW_COPY = {
 } as const;
 
 export const CENTER_COPY_KO = {
-  mainQuestion:'컴퓨팅이 무엇을 더 잘해주면 좋을까요?',
+  mainQuestion:'itriX를 찾아오신 목적을 알려 주세요.',
   promptPlaceholder:'메시지를 입력한 뒤 Enter를 눌러 보내세요.',
   promptAriaLabel:'컴퓨팅 과제 설명',
   safetyNote:'시작할 때는 비기밀 요약이면 충분합니다.',
