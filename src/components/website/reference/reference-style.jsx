@@ -83,8 +83,9 @@ export function AskX({ language }) {
       className="axc"
       style={{
         position: "relative",
-        border: "1px solid #D6E6FF",
-        borderRadius: 28,
+        borderTop: "1px solid #D6E6FF",
+        borderBottom: "1px solid #D6E6FF",
+        borderRadius: 0,
         overflow: "hidden",
         background: "#F8FAFC",
       }}
@@ -110,7 +111,7 @@ export function AskX({ language }) {
           onError={() => setFailed(true)}
         />
       )}
-      <p style={{ padding: 16, margin: 0, color: "#1F2937", fontSize: 14 }}>
+      <p style={{ padding: "16px clamp(20px,6vw,80px)", margin: 0, color: "#1F2937", fontSize: 14 }}>
         {failed
           ? language === "ko"
             ? "현재 상담을 연결할 수 없습니다. "

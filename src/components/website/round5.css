@@ -152,3 +152,7 @@
     box-sizing: border-box;
   }
 }
+
+/* Round 7: the home assistant reaches the viewport edges. */
+.itrix-reference #ask .axc-ring,
+.itrix-reference #ask .axc-skin { border-radius: 0 !important; }

@@ -249,7 +249,8 @@ export function InlineNodes({ nodes }: { nodes: InlineNode[] }) {
             return <br key={i} />;
           case 'link':
             return (
-              <ExternalLink key={i} href={node.href} allowed={node.allowed}>
+              <ExternalLink key={i} href={node.href} allowed={node.allowed}
+                recommended={node.children.length === 1 && node.children[0].kind === 'text' && node.children[0].value === 'RECOMMENDED ROUTE →'}>
                 <InlineNodes nodes={node.children} />
               </ExternalLink>
             );

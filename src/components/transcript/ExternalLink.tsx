@@ -23,10 +23,11 @@ import { useCommonCopy } from '@/lib/i18n/commonLocale';
 export interface ExternalLinkProps {
   href: string;
   allowed: boolean;
+  recommended?: boolean;
   children: React.ReactNode;
 }
 
-export function ExternalLink({ href, allowed, children }: ExternalLinkProps) {
+export function ExternalLink({ href, allowed, children, recommended = false }: ExternalLinkProps) {
   const copy = useCommonCopy();
   if (!allowed) {
     return (
@@ -39,6 +40,9 @@ export function ExternalLink({ href, allowed, children }: ExternalLinkProps) {
 
   const internal = internalHref(href);
   if (internal) {
+    if (recommended && (internal === '/astop' || internal === '/en/astop')) {
+      return <a href={internal} target="_top" className="turn-link turn-link--recommended">{children}</a>;
+    }
     return (
       <Link href={internal} className="turn-link">
         {children}

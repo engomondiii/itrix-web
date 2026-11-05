@@ -17,6 +17,9 @@
  */
 
 import { isSafeHref } from './sanitize';
+import { FORM_LINKS } from '@/components/website/formLinks';
+
+const approvedForms = new Set<string>(Object.values(FORM_LINKS).flatMap((links) => Object.values(links)));
 
 function configuredHosts(): string[] {
   const raw = process.env.NEXT_PUBLIC_MARKDOWN_LINK_ALLOWED_HOSTS ?? '';
@@ -52,6 +55,7 @@ export function isInternalHref(href: string): boolean {
 export function isAllowedLink(href: string): boolean {
   if (!isSafeHref(href)) return false;
   if (isInternalHref(href)) return true;
+  if (approvedForms.has(href)) return true;
 
   let host: string;
   try {

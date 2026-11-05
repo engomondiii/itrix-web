@@ -32,8 +32,8 @@ export function StoreRoutes({ language = "ko" }) {
         </h2>
         <p style={{ color: "#F8FAFC" }}>
           {ko
-            ? "예정된 멤버십 가격: 월 USD 10 또는 연 USD 100. 최종 구매 조건은 해당 Store에서 확인하세요."
-            : "Working membership pricing: USD 10/month or USD 100/year. Final purchase terms will be confirmed in the relevant Store."}
+            ? "ASTOP의 기능과 적용 가능성을 살펴보고 PoC를 신청할 수 있습니다."
+            : "Explore ASTOP and request a PoC to assess it for your workload."}
         </p>
         <p style={{ color: "#F8FAFC" }}>
           {available.length
@@ -41,8 +41,8 @@ export function StoreRoutes({ language = "ko" }) {
               ? "확인된 Store에서 구매 및 설치할 수 있습니다. 다른 플랫폼의 출시는 별도로 안내됩니다."
               : "Purchase and installation are available through the confirmed Store below. Other platforms are confirmed separately."
             : ko
-              ? "ASTOP은 Apple App Store와 Microsoft Store 출시를 준비 중입니다. 웹사이트에서는 직접 판매하거나 설치 파일을 배포하지 않습니다."
-              : "ASTOP is being prepared for Apple App Store and Microsoft Store release. This website does not sell or distribute installers directly."}
+              ? "다운로드 및 설치에 관한 확정된 정보는 별도로 안내됩니다. 현재 제공되는 정보만으로는 설치 파일이나 지원 운영체제의 세부 사항을 확인할 수 없습니다."
+              : "Confirmed download and installation details will be published separately. A verified installer and detailed system requirements are not available in the current information."}
         </p>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {available.map((store) => (

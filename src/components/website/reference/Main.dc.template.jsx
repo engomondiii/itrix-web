@@ -644,19 +644,19 @@ export function Template(values) {
         <section
           id={"ask"}
           style={css(
-            "position:relative;padding:clamp(64px,9vw,128px) clamp(20px,6vw,80px);background:radial-gradient(50% 60% at 50% 30%, rgba(120,160,175,0.12) 0%, rgba(2,4,6,0) 80%), #020406;",
+            "position:relative;padding:clamp(64px,9vw,128px) 0;background:radial-gradient(50% 60% at 50% 30%, rgba(120,160,175,0.12) 0%, rgba(2,4,6,0) 80%), #020406;",
           )}
         >
           {"\n    "}
           <div
             style={css(
-              "max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
+              "width:100%;margin:0 auto;display:flex;flex-direction:column;gap:48px;",
             )}
           >
             {"\n      "}
             <div
               style={css(
-                "display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;",
+                "width:calc(100% - 2 * clamp(20px,6vw,80px));max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center;",
               )}
             >
               {"\n        "}
