@@ -92,8 +92,7 @@ export function AskX({ language }) {
     >
       <div className="axc-ring" />
       <div className="axc-skin" />
-      {!failed && (
-        <iframe
+      <iframe
           data-itrix-chat="true"
           title={
             language === "ko"
@@ -106,11 +105,10 @@ export function AskX({ language }) {
             height: "min(760px, 85dvh)",
             minHeight: 420,
             border: 0,
-            display: "block",
+            display: failed ? "none" : "block",
           }}
           onError={() => setFailed(true)}
         />
-      )}
       <p style={{ padding: "16px clamp(20px,6vw,80px)", margin: 0, color: "#1F2937", fontSize: 14 }}>
         {failed
           ? language === "ko"
