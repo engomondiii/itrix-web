@@ -1,5 +1,4 @@
 "use client";
-import { FORM_LINKS } from "../formLinks";
 import React, { useEffect, useRef, useState } from "react";
 
 export function css(text) {
@@ -122,14 +121,6 @@ export function AskX({ language }) {
           href={prefix + "/contact"}
         >
           {language === "ko" ? "일반 문의 →" : "General inquiry →"}
-        </a>
-        {" · "}
-        <a
-          style={{ color: "#1F2937", textDecoration: "underline" }}
-          href={FORM_LINKS[language === "ko" ? "ko" : "en"].poc}
-          target="_blank" rel="noopener"
-        >
-          {language === "ko" ? "PoC 신청 ↗" : "Request a PoC ↗"}
         </a>
       </p>
     </div>

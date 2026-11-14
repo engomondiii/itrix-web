@@ -7,7 +7,7 @@ import { website } from "./reference/reference-style";
 export class ReferencePage extends React.Component {
   state = {
     ckShow: false,
-    noticeOpen: this.props.page === "Main",
+    noticeOpen: false,
     ckPanel: false,
     ckAna: false,
     mn: false,

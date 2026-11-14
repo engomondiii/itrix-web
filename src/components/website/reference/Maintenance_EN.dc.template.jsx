@@ -80,7 +80,7 @@ export function Template(values) {
               )}
             >
               {
-                "The site, PoC requests and inquiries are unavailable during maintenance. Everything will be back as soon as we’re done."
+                "The site and inquiries are unavailable during maintenance. Everything will be back as soon as we’re done."
               }
             </p>
             {"\n      "}

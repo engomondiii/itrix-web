@@ -4,8 +4,8 @@ for (const language of ["ko", "en"]) {
   const prefix = language === "ko" ? "" : "/en";
   const company =
     language === "ko"
-      ? ["Leadership", "문의하기", "파트너십 문의", "PoC 신청 ↗"]
-      : ["Leadership", "General Inquiry", "Partnership", "Request PoC ↗"];
+      ? ["Leadership", "문의하기", "파트너십 문의"]
+      : ["Leadership", "General Inquiry", "Partnership"];
   const legal =
     language === "ko"
       ? ["개인정보처리방침", "이용약관", "쿠키 설정"]
@@ -36,9 +36,9 @@ for (const language of ["ko", "en"]) {
       await expect(
         page.locator("footer .ft-cols div").nth(0).locator("a"),
       ).toHaveText(company);
-      // The fix must not disable the notice on an ordinary fresh home visit.
+      // The expired campaign must also stay removed on a fresh home visit.
       await page.goto(prefix || "/");
-      await expect(page.getByRole("dialog")).toBeVisible();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
     });
   }
   for (const path of ["contact", "partnership"]) {

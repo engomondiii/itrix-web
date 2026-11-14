@@ -28,7 +28,7 @@ for (const prefix of ["", "/en"]) {
       await expect(
         page.locator("section input, section textarea, section select"),
       ).toHaveCount(0);
-      await expect(page.locator(".rq-card")).toHaveCount(2);
+      await expect(page.locator(".rq-card")).toHaveCount(1);
     });
   }
 }
@@ -48,8 +48,7 @@ for (const width of [360, 820, 1440]) {
       ),
     ).toBe(true);
     await page.goto("/en");
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
     await page.locator("#contact").scrollIntoViewIfNeeded();
     const box = await page.locator("#contact").boundingBox();
     expect(box!.width).toBeLessThanOrEqual(width + 1);
@@ -62,33 +61,21 @@ for (const width of [360, 820, 1440]) {
       await expect(page.locator('.nv-m a[lang="ko"]')).toBeVisible();
   });
 }
-test("notice qualifies savings, applies externally and remembers today", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 360, height: 800 });
-  await page.goto("/en");
-  const modal = page.getByRole("dialog");
-  await expect(modal).toContainText("in our internal tests");
-  const apply = modal.getByRole("link", { name: /Apply now/ });
-  await expect(apply).toHaveAttribute("href", FORM_LINKS.en.poc);
-  const learn = modal.getByRole("link", { name: /Learn about the program/ });
-  expect((await apply.boundingBox())!.y).toBeLessThan(
-    (await learn.boundingBox())!.y,
-  );
-  await modal.getByRole("button", { name: "Don’t show today" }).click();
-  await page.reload();
-  await expect(modal).toHaveCount(0);
+test("expired PoC notice and application links are removed", async ({ page }) => {
+  for (const path of ["/", "/en", "/astop", "/en/astop"]) {
+    await page.goto(path);
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expect(page.locator('a[href*="KrA7gzeC27V2mYRE9"], a[href*="VMm7qx7fbzu1paiG6"]')).toHaveCount(0);
+  }
 });
 test("header language reaches the embedded assistant", async ({ page }) => {
   await page.goto("/en");
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.locator('iframe[title="Ask itriX AI sales assistant"]'),
   ).toHaveAttribute("src", /lang=en/);
   await page.locator('nav .nv-links a[lang="ko"]').click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(
     page.locator('iframe[title="Ask itriX AI 상담"]'),
   ).toHaveAttribute("src", /lang=ko/);

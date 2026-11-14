@@ -32,8 +32,8 @@ export function StoreRoutes({ language = "ko" }) {
         </h2>
         <p style={{ color: "#F8FAFC" }}>
           {ko
-            ? "ASTOP의 기능과 적용 가능성을 살펴보고 PoC를 신청할 수 있습니다."
-            : "Explore ASTOP and request a PoC to assess it for your workload."}
+            ? "ASTOP의 기능과 적용 가능성을 살펴보세요."
+            : "Explore ASTOP and its suitability for your workload."}
         </p>
         <p style={{ color: "#F8FAFC" }}>
           {available.length

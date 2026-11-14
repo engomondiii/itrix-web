@@ -1,4 +1,3 @@
-import { FORM_LINKS } from "./formLinks";
 
 export function FooterLinks({ language, onCookieSettings }) {
   const ko = language === "ko";
@@ -11,13 +10,6 @@ export function FooterLinks({ language, onCookieSettings }) {
         <a href={`${prefix}/contact`}>{ko ? "문의하기" : "General Inquiry"}</a>
         <a href={`${prefix}/partnership`}>
           {ko ? "파트너십 문의" : "Partnership"}
-        </a>
-        <a
-          href={FORM_LINKS[ko ? "ko" : "en"].poc}
-          target="_blank"
-          rel="noopener"
-        >
-          {ko ? "PoC 신청 ↗" : "Request PoC ↗"}
         </a>
       </div>
       <div>

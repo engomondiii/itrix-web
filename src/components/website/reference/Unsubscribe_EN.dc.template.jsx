@@ -1,6 +1,5 @@
 "use client";
 import { FooterLinks } from "../FooterLinks";
-import { FORM_LINKS } from "../formLinks";
 // Converted from the supplied October 16 design; production state is supplied separately.
 import React from "react";
 import { css, AskX, NoticePopup, Captcha } from "./reference-style";
@@ -103,14 +102,6 @@ export function Template(values) {
               </span>
             </a>
             {"\n      "}
-            <a
-              target="_blank"
-              rel="noopener"
-              className={"navpoc"}
-              href={FORM_LINKS.en.poc}
-            >
-              {"Request a PoC ↗"}
-            </a>
             {"\n      "}
             <span className={"navlang"} role={"group"} aria-label={"Language"}>
               <a className={""} href={"/unsubscribe"} lang={"ko"}>
@@ -132,14 +123,6 @@ export function Template(values) {
                 {"EN"}
               </a>
             </span>
-            <a
-              target="_blank"
-              rel="noopener"
-              className={"navpoc"}
-              href={FORM_LINKS.en.poc}
-            >
-              {"Request a PoC ↗"}
-            </a>
             <button
               className={"nv-burger"}
               onClick={mnOpen}
@@ -718,15 +701,6 @@ export function Template(values) {
               </div>
               {"\n      "}
               <div className={"mn-foot"}>
-                <a
-                  target="_blank"
-                  rel="noopener"
-                  className={"mn-poc"}
-                  href={FORM_LINKS.en.poc}
-                  onClick={mnClose}
-                >
-                  {"Request a PoC ↗"}
-                </a>
                 <div>
                   <span
                     className={"navlang"}

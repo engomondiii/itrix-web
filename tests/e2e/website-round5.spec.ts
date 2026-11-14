@@ -17,22 +17,7 @@ for (const lang of ["ko", "en"] as const) {
   });
   test(`${lang}: notice, cookie spacing and skip target`, async ({ page }) => {
     await page.goto(prefix || "/");
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await expect(page.locator(".ck-bar")).toHaveCount(0);
-    await expect(page.locator(".r3nt-btn.pri")).toHaveAttribute(
-      "href",
-      FORM_LINKS[lang].poc,
-    );
-    await expect(page.locator(".r3nt-btn.sub")).toHaveAttribute(
-      "href",
-      `${prefix}/astop`,
-    );
-    await page
-      .getByRole("button", {
-        name: lang === "ko" ? "닫기 ✕" : "Close ✕",
-        exact: true,
-      })
-      .click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.locator(".ck-bar")).toBeVisible();
     await expect
       .poll(() =>
@@ -71,7 +56,8 @@ for (const lang of ["ko", "en"] as const) {
         page.locator('a[href$="/poc"], a[href*="topic=interest"]'),
       ).toHaveCount(0);
       const forms = page.locator('a[href*="forms.gle/"]');
-      expect(await forms.count()).toBeGreaterThan(0);
+      if (["/contact", "/partnership"].includes(path))
+        expect(await forms.count()).toBeGreaterThan(0);
       for (const link of await forms.all()) {
         expect(Object.values(FORM_LINKS[lang])).toContain(
           await link.getAttribute("href"),
@@ -85,8 +71,7 @@ for (const lang of ["ko", "en"] as const) {
     test(`${lang}: layout at ${width}px`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(prefix || "/");
-      await expect(page.getByRole("dialog")).toBeVisible();
-      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toHaveCount(0);
       const sizes = await page.evaluate(() => {
         const rects = (selector: string) =>
           [...document.querySelectorAll(selector)].map((e) => {
