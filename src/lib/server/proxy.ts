@@ -20,6 +20,7 @@ export interface DjangoResult<T> {
   ok: boolean;
   status: number;
   data: T | null;
+  stream?: ReadableStream<Uint8Array>;
   /** Backend-provided rate-limit wait, in seconds, when present and valid. */
   retryAfter: number | null;
   /** Correlation id returned by Django's safe request-logging middleware. */
@@ -93,6 +94,11 @@ async function request<T>(path: string, opts: DjangoFetchOptions, accessToken: s
       cache: 'no-store',
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
+    if (res.ok && res.body && res.headers.get('content-type')?.includes('application/x-ndjson')) {
+      return { ok: true, status: res.status, data: null, stream: res.body,
+        retryAfter: retryAfterSeconds(res), requestId: res.headers.get('X-Request-ID'),
+        setCookie: res.headers.get('set-cookie') };
+    }
     return await readResult<T>(res);
   } catch {
     return {

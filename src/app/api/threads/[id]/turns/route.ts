@@ -6,6 +6,7 @@ import {
   conversationErrorResponse,
   conversationForwardHeaders,
   conversationRequestId,
+  conversationStreamResponse,
 } from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
@@ -55,6 +56,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     headers: conversationForwardHeaders(req, requestId),
   });
   if (!res.ok) return conversationErrorResponse(res, requestId);
+  if (res.stream) return conversationStreamResponse(res, requestId);
   return applyConversationResponseHeaders(
     NextResponse.json(toTurnSubmitResult(res.data, id), { status: res.status || 201 }),
     res,

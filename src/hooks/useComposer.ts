@@ -258,7 +258,7 @@ export function useComposer(): UseComposerResult {
        something was in flight for it — so it is never the first turn. */
     const isFirstTurn = !existing && !activeThreadId;
     const now = new Date().toISOString();
-    const threadId = existing?.threadId ?? activeThreadId ?? localId('thr');
+    let threadId = existing?.threadId ?? activeThreadId ?? localId('thr');
     const nextSeq =
       (useTranscriptStore.getState().turnsByThread[threadId] ?? []).reduce(
         (max, t) => Math.max(max, t.seq),
@@ -319,10 +319,43 @@ export function useComposer(): UseComposerResult {
       });
     }
 
+    let streamId = '';
+    let streamedBody = '';
+    const stream = {
+      accepted: (result: SubmitResult, messageId: string) => {
+        const serverId = result.thread.id;
+        if (serverId !== threadId) {
+          const turns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+          useTranscriptStore.getState().replace(serverId, turns.map(t => ({ ...t, threadId: serverId })));
+          useTranscriptStore.getState().clearThread(threadId);
+          useThreadStore.getState().remove(threadId);
+          endPending(threadId);
+          threadId = serverId;
+          setActive(serverId);
+          beginPending(serverId);
+        }
+        reconcile(threadId, optimistic.id, result);
+        setThreadUrl(threadId);
+        streamId = messageId;
+      },
+      delta: (text: string) => {
+        if (!streamId) return;
+        streamedBody += text;
+        append(threadId, { id: streamId, threadId, role: 'itrix', body: streamedBody,
+          seq: nextSeq + 1, status: 'streaming', createdAt: now });
+        endPending(threadId);
+      },
+    };
+    const clearStream = () => {
+      if (!streamId) return;
+      const store = useTranscriptStore.getState();
+      store.replace(threadId, (store.turnsByThread[threadId] ?? []).filter(t => t.id !== streamId));
+    };
     try {
       const result = isFirstTurn && firstPayload
-        ? await threadsApi.create(firstPayload, firstIdempotencyKey)
-        : await turnsApi.submit(threadId, { body: text, attachmentIds });
+        ? await threadsApi.create(firstPayload, firstIdempotencyKey, stream)
+        : await turnsApi.submit(threadId, { body: text, attachmentIds }, stream);
+      clearStream();
 
       if (result.data) {
         const serverThreadId = result.data.thread.id;
@@ -378,6 +411,7 @@ export function useComposer(): UseComposerResult {
         endPending(threadId);
       }
     } finally {
+      clearStream();
       setSubmitting(false);
     }
   }, [

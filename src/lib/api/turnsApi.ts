@@ -1,3 +1,4 @@
+import { readConversationStream, type ConversationStreamHandlers } from './readConversationStream';
 import { useLocaleStore } from "@/store/localeStore";
 /**
  * Typed client for turn submission (/api/threads/[id]/turns).
@@ -38,20 +39,20 @@ export const turnsApi = {
       return { data: null, error: e instanceof Error ? e.message : failure.detail, failure };
     }
   },
-  async submit(threadId: string, body: CreateTurnRequest): Promise<ApiResult<SubmitResult>> {
+  async submit(threadId: string, body: CreateTurnRequest, stream?: ConversationStreamHandlers): Promise<ApiResult<SubmitResult>> {
     const requestId = newConversationRequestId();
     try {
       const res = await fetch(`/api/threads/${encodeURIComponent(threadId)}/turns`, {
         method: 'POST',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Request-ID': requestId },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Request-ID': requestId, ...(stream ? { 'X-Itrix-Stream': '1' } : {}) },
         body: JSON.stringify({ ...body, locale: useLocaleStore.getState().locale }),
       });
       if (!res.ok) {
         const failure = await conversationFailureFromResponse(res, requestId);
         return { data: null, error: failure.detail, failure };
       }
-      const data = (await res.json()) as SubmitResult;
+      const data = await readConversationStream(res, stream);
       return { data, error: null, failure: null };
     } catch (e) {
       const failure = networkConversationFailure(requestId);

@@ -1,3 +1,4 @@
+import { readConversationStream, type ConversationStreamHandlers } from './readConversationStream';
 import { useLocaleStore } from "@/store/localeStore";
 /**
  * Typed client for the thread proxies (/api/threads*).
@@ -48,7 +49,7 @@ export const threadsApi = {
    * The sentence IS turn 1 (R12). There is no separate "start" step, because a
    * separate step is exactly how a surface ends up asking for it twice.
    */
-  async create(body: CreateThreadRequest, idempotencyKey?: string): Promise<ApiResult<SubmitResult>> {
+  async create(body: CreateThreadRequest, idempotencyKey?: string, stream?: ConversationStreamHandlers): Promise<ApiResult<SubmitResult>> {
     const requestId = newConversationRequestId();
     try {
       const res = await fetch('/api/threads', {
@@ -57,6 +58,7 @@ export const threadsApi = {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
+          ...(stream ? { 'X-Itrix-Stream': '1' } : {}),
           'X-Request-ID': requestId,
           ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}),
         },
@@ -66,7 +68,7 @@ export const threadsApi = {
         const failure = await conversationFailureFromResponse(res, requestId);
         return { data: null, error: failure.detail, failure };
       }
-      const data = await readJson<SubmitResult>(res);
+      const data = await readConversationStream(res, stream);
       return data
         ? { data, error: null, failure: null }
         : { data: null, error: 'threads: empty response', failure: null };

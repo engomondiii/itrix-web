@@ -36,6 +36,7 @@ export function conversationForwardHeaders(
   return {
     ...(cookie ? { cookie } : {}),
     'X-Request-ID': requestId,
+    ...(req.headers.get('X-Itrix-Stream') === '1' ? { 'X-Itrix-Stream': '1' } : {}),
     ...extra,
   };
 }
@@ -112,4 +113,13 @@ export function conversationErrorResponse<T>(
     result,
     fallbackRequestId,
   );
+}
+
+export function conversationStreamResponse(result: DjangoResult<unknown>, requestId: string) {
+  const out = new NextResponse(result.stream, { status: result.status, headers: {
+    'Content-Type': 'application/x-ndjson', 'Cache-Control': 'no-store, no-transform',
+    'X-Accel-Buffering': 'no',
+  } });
+  if (result.setCookie) out.headers.set('set-cookie', result.setCookie);
+  return applyConversationResponseHeaders(out, result, requestId);
 }

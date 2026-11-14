@@ -6,6 +6,7 @@ import {
   conversationErrorResponse,
   conversationForwardHeaders,
   conversationRequestId,
+  conversationStreamResponse,
 } from '@/lib/server/conversationProxy';
 
 export const runtime = 'nodejs';
@@ -81,6 +82,7 @@ export async function POST(req: Request) {
     headers: forwardHeaders(req, requestId),
   });
   if (!res.ok) return conversationErrorResponse(res, requestId);
+  if (res.stream) return conversationStreamResponse(res, requestId);
 
   const out = NextResponse.json(toSubmitResult(res.data), { status: res.status || 201 });
   if (res.setCookie) out.headers.set('set-cookie', res.setCookie);
