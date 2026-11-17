@@ -62,26 +62,55 @@
    contracts, scoped to WorkingShell <1024px, with no ArrivalShell or desktop rules. */
 @import '../styles/working-mobile-header.css';
 
-/* Website embedded assistant: the parent website owns identity and language. */
-.embedded-chat.arrival-page { min-height: 100dvh; height: auto; }
-.embedded-chat .arrival-hero { min-height: 100dvh; padding: clamp(24px,5vw,64px) clamp(20px,6vw,80px); }
-.embedded-chat .arrival-stage, .embedded-chat .arrival-center { width:100%; max-width:none; }
-.embedded-chat .arrival-stage { padding-inline: 0; }
-.embedded-chat.working-shell { height:100dvh; min-height:0; }
-@media(max-width:1023px) {
- .embedded-chat .conversation-main__nav { display:flex; position:relative; top:auto; left:auto; margin:12px; }
- .embedded-chat .arrival-hero { padding:24px clamp(20px,6vw,80px); }
- .embedded-chat .arrival-center { min-width:0; }
+/* The website panel stays edge-to-edge; its contents use one consistent gutter.
+   Flex owns the available height so navigation never pushes the composer below
+   the iframe. These rules intentionally do not affect the standalone workspace. */
+.embedded-chat {
+  --embed-gutter: clamp(16px, 4vw, 64px);
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
-
-/* Keep the embedded conversation's content aligned with the website gutters. */
+.embedded-chat.arrival-page { min-height: 100dvh; height: auto; }
+.embedded-chat .arrival-hero {
+  min-height: 100dvh;
+  padding: clamp(24px, 5vh, 48px) var(--embed-gutter);
+}
+.embedded-chat .arrival-stage,
+.embedded-chat .arrival-center { width: 100%; max-width: none; min-width: 0; }
+.embedded-chat .arrival-stage { padding-inline: 0; }
+.embedded-chat.working-shell { height: 100dvh; min-height: 0; overflow: hidden; }
+.embedded-chat .conversation-main { height: 100%; min-height: 0; overflow: hidden; }
+.embedded-chat .conversation-column--active { flex: 1 1 0; height: auto; min-height: 0; }
+.embedded-chat .conversation-column--arrival {
+  overflow-y: auto;
+  padding: clamp(24px, 5vh, 48px) var(--embed-gutter);
+  align-items: safe center;
+}
 .embedded-chat .conversation-header,
 .embedded-chat .transcript__log,
-.embedded-chat .conversation-column__composer {
-  padding-inline: clamp(20px,6vw,80px);
+.embedded-chat .conversation-column__composer { padding-inline: var(--embed-gutter); }
+.embedded-chat .conversation-header { flex-wrap: wrap; }
+.embedded-chat .transcript__log,
+.embedded-chat .composer { max-width: none; width: 100%; min-width: 0; }
+.embedded-chat .conversation-column__composer { max-height: 55dvh; overflow-y: auto; }
+.embedded-chat .composer-textarea { min-width: 0; max-width: 100%; }
+.embedded-chat .prompt-carousel__head,
+.embedded-chat .prompt-carousel__tools,
+.embedded-chat .composer-footer { flex-wrap: wrap; }
+.embedded-chat .arrival__question { font-size: clamp(28px, 3.6vw, 48px); line-height: 1.15; }
+@media(max-width:1023px) {
+  .embedded-chat .conversation-main > .conversation-main__nav {
+    display: inline-flex; position: static; flex: 0 0 44px;
+    width: 44px; height: 44px; align-self: flex-start;
+    margin: 12px var(--embed-gutter) 0;
+  }
+  .embedded-chat .conversation-main:has(> .conversation-column--active) { height: 100%; }
 }
-.embedded-chat .transcript__log { max-width: none; }
-.embedded-chat .composer { max-width: none; }
+@media(max-width:480px) {
+  .embedded-chat .prompt-carousel__head { align-items: flex-start; gap: 8px; }
+  .embedded-chat .prompt-carousel__tools { justify-content: flex-start; }
+}
 .turn-link--recommended {
   display: inline-flex;
   align-items: center;
