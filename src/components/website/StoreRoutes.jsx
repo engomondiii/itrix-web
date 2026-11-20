@@ -36,15 +36,17 @@ export function StoreRoutes({ language = "ko" }) {
             : "Explore ASTOP and its suitability for your workload."}
         </p>
         <p style={{ color: "#F8FAFC" }}>
-          {available.length
-            ? ko
-              ? "확인된 Store에서 구매 및 설치할 수 있습니다. 다른 플랫폼의 출시는 별도로 안내됩니다."
-              : "Purchase and installation are available through the confirmed Store below. Other platforms are confirmed separately."
-            : ko
-              ? "다운로드 및 설치에 관한 확정된 정보는 별도로 안내됩니다. 현재 제공되는 정보만으로는 설치 파일이나 지원 운영체제의 세부 사항을 확인할 수 없습니다."
-              : "Confirmed download and installation details will be published separately. A verified installer and detailed system requirements are not available in the current information."}
+          {ko
+            ? "아래 링크에서 ASTOP 설치 파일을 다운로드하세요. 설치 후에는 앱 내에서 업데이트할 수 있습니다."
+            : "Download the ASTOP installer using the link below. Once installed, ASTOP can be updated from within the app."}
         </p>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+          <a
+            href={prefix + "/astop/download"}
+            style={{ padding: "14px 24px", borderRadius: 30, background: "#F8FAFC", color: "#1F2937" }}
+          >
+            {ko ? "ASTOP 다운로드 ↗" : "Download ASTOP ↗"}
+          </a>
           {available.map((store) => (
             <a
               key={store.store}
