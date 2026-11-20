@@ -16,7 +16,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: '/astop/download', destination: 'https://itrix1216-my.sharepoint.com/:f:/g/personal/ipark_itrix_co_kr/IgDalt-AtZNmRKkLgb66oua_AeesoP7eDkIyEnygufckOFY', permanent: false },
       { source: '/en/astop/download', destination: '/astop/download', permanent: false },
       { source: '/poc', destination: '/astop', statusCode: 301 },
       { source: '/en/poc', destination: '/en/astop', statusCode: 301 },
