@@ -83,7 +83,7 @@ export function WorkingShell({
 
   return (
     <div
-      className={embedded ? "working-shell embedded-chat" : "working-shell"}
+      className={embedded ? "working-shell embedded-chat" : "working-shell full-page-chat"}
       data-collapsed={collapsed ? "true" : undefined}
       data-pane={paneColumn ? "true" : undefined}
     >

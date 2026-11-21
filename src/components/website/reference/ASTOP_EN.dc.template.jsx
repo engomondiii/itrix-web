@@ -89,7 +89,7 @@ export function Template(values) {
             {"\n      "}
             <a
               className={"askx reference-hover-4"}
-              href={"/en/#ask-chat"}
+              href={"/ask-x?lang=en"}
               style={css(
                 "display:flex;align-items:center;gap:8px;color:#F8FAFC;",
               )}
@@ -243,7 +243,7 @@ export function Template(values) {
               {"\n        "}
               <a
                 className={"hb hb2 reference-hover-6"}
-                href={"/en/#ask-chat"}
+                href={"/ask-x?lang=en"}
                 onClick={askAstop}
                 style={css(
                   "height:56px;display:flex;align-items:center;gap:8px;padding:0 24px;border-radius:14px;background:rgba(2,4,6,0.4);border:1px solid rgba(214,230,255,0.5);color:#F8FAFC;font-family:'Saira Condensed','Noto Sans KR',sans-serif;font-size:17px;font-weight:500;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);",
@@ -989,7 +989,7 @@ export function Template(values) {
                   <span className={"ar"}>{"→"}</span>
                 </a>
                 {"\n        "}
-                <a className={"mi"} href={"/en/#ask-chat"} onClick={mnClose}>
+                <a className={"mi"} href={"/ask-x?lang=en"} onClick={mnClose}>
                   <span
                     style={css(
                       "display:inline-flex;align-items:center;gap:9px;",

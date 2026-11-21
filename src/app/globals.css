@@ -121,3 +121,16 @@
   text-decoration: none;
 }
 .turn-link--recommended:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+/* Full-page conversations: one viewport, with only the message history scrolling. */
+.full-page-chat.working-shell { height: 100dvh; min-height: 0; overflow: hidden; --composer-max-w: 1120px; }
+.full-page-chat .conversation-main { height: 100%; min-height: 0; overflow: hidden; }
+.full-page-chat .conversation-column--active { flex: 1 1 0; height: auto; min-height: 0; }
+.full-page-chat .transcript { overscroll-behavior: contain; overflow-anchor: none; }
+.full-page-chat .turn__body { max-width: none; }
+.full-page-chat .conversation-column__composer { padding-block: 8px max(8px, env(safe-area-inset-bottom)); max-height: 40dvh; overflow-y: auto; }
+.full-page-chat .conversation-column--arrival { overflow-y: auto; }
+@media (max-width: 767px) {
+  .full-page-chat .transcript__log { padding: 16px; gap: 20px; }
+  .full-page-chat .conversation-column__composer { padding-inline: 12px; }
+}

@@ -4,7 +4,6 @@ import { useTranscriptCopy } from '@/lib/i18n/conversationLocale';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { TurnGroup } from './TurnGroup';
-import { ScrollAnchor } from './ScrollAnchor';
 import { NewMessagesPill } from './NewMessagesPill';
 import { ArtifactBlock } from '@/components/artifacts/ArtifactBlock';
 import { ArtifactReferenceCard } from './ArtifactReferenceCard';
@@ -75,9 +74,9 @@ export interface TranscriptProps {
 export function Transcript({ items }: TranscriptProps) {
   const transcriptCopy = useTranscriptCopy();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [atBottom, setAtBottom] = useState(true);
+  const follow = useRef(true);
+  const userScrolling = useRef(false);
   const [unseen, setUnseen] = useState(false);
-  const lastCount = useRef(items.length);
 
   const { activeThreadId } = useThreadContext();
   const { pending, waiting, slow } = usePendingStage(activeThreadId);
@@ -109,7 +108,7 @@ export function Transcript({ items }: TranscriptProps) {
     if (!el) return;
     const distance = el.scrollHeight - el.scrollTop - el.clientHeight;
     const bottom = distance <= AT_BOTTOM_TOLERANCE_PX;
-    setAtBottom(bottom);
+    if (userScrolling.current) follow.current = bottom;
     if (bottom) setUnseen(false);
     /* Throttled inside the hook — a scroll handler that writes to a store on every
        event makes scrolling feel heavy. */
@@ -117,19 +116,52 @@ export function Transcript({ items }: TranscriptProps) {
   }, [saveScroll]);
 
   useEffect(() => {
-    if (flow.length > lastCount.current && !atBottom) setUnseen(true);
-    lastCount.current = flow.length;
-  }, [flow.length, atBottom]);
+    const el = scrollRef.current;
+    const log = el?.querySelector('.transcript__log');
+    if (!el || !log) return;
+    let frame = 0;
+    // Restore saved positions first; never drag a returning reader to the end.
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        if (follow.current) {
+          userScrolling.current = false;
+          el.scrollTop = el.scrollHeight;
+          setUnseen(false);
+        } else setUnseen(el.scrollHeight - el.scrollTop - el.clientHeight > AT_BOTTOM_TOLERANCE_PX);
+      });
+    });
+    const initial = requestAnimationFrame(() => {
+      frame = requestAnimationFrame(() => {
+        follow.current = el.scrollHeight - el.scrollTop - el.clientHeight <= AT_BOTTOM_TOLERANCE_PX;
+        observer.observe(log);
+      });
+    });
+    return () => { observer.disconnect(); cancelAnimationFrame(initial); cancelAnimationFrame(frame); };
+  }, [activeThreadId]);
+
+  const pauseFollow = useCallback(() => {
+    userScrolling.current = true;
+    follow.current = false;
+  }, []);
 
   const jump = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    follow.current = true;
+    userScrolling.current = false;
+    el.scrollTo({ top: el.scrollHeight, behavior: 'auto' });
     setUnseen(false);
   }, []);
 
   return (
-    <div className="transcript" ref={scrollRef} onScroll={checkPosition}>
+    <div className="transcript" ref={scrollRef} onScroll={checkPosition}
+      tabIndex={0}
+      onWheel={(event) => { if (event.deltaY < 0) pauseFollow(); else userScrolling.current = true; }}
+      onTouchStart={pauseFollow}
+      onPointerDown={pauseFollow}
+      onKeyDown={(event) => { if (['ArrowUp', 'PageUp', 'Home'].includes(event.key)) pauseFollow(); }}
+    >
       {pinned && pinned.kind === 'artifact' ? (
         <div className="transcript__pinned">
           <ArtifactBlock artifact={pinned.artifact} pinned />
@@ -159,7 +191,7 @@ export function Transcript({ items }: TranscriptProps) {
           />
         ) : null}
 
-        <ScrollAnchor active={atBottom} dependency={flow.length} threadId={activeThreadId} />
+        <div aria-hidden="true" className="transcript__anchor" />
       </section>
 
       {/* The "keep this work" card USED TO SIT HERE and has moved to the composer

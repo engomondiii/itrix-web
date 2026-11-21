@@ -32,104 +32,14 @@ export async function website(path, data) {
   return value;
 }
 export function AskX({ language }) {
-  const [failed, setFailed] = useState(false);
-  const [topic, setTopic] = useState("");
-  const panel = useRef(null);
-  useEffect(() => {
-    const syncTopic = () =>
-      setTopic(
-        new URLSearchParams(location.search).get("topic") === "astop"
-          ? "&topic=astop"
-          : "",
-      );
-    const topicTimer = setTimeout(syncTopic, 0);
-    const readyTimer = setTimeout(() => setFailed(true), 20000);
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (
-          window.matchMedia("(max-width:820px)").matches &&
-          entries.some((e) => e.isIntersecting && e.intersectionRatio >= 0.35)
-        ) {
-          panel.current?.classList.add("axc-in");
-          observer.disconnect();
-        }
-      },
-      { threshold: [0.35] },
-    );
-    if (panel.current) observer.observe(panel.current);
-    const onMessage = (e) => {
-      if (
-        e.origin === location.origin &&
-        e.source === panel.current?.querySelector("iframe")?.contentWindow &&
-        e.data?.type === "itrix-chat-ready"
-      ) {
-        clearTimeout(readyTimer);
-        setFailed(false);
-      }
-    };
-    window.addEventListener("message", onMessage);
-    // The child may finish hydrating before this effect subscribes. Ask again
-    // instead of hiding a healthy conversation when the one-shot signal is missed.
-    panel.current?.querySelector("iframe")?.contentWindow?.postMessage(
-      { type: "itrix-chat-check" }, location.origin,
-    );
-    return () => {
-      clearTimeout(topicTimer);
-      clearTimeout(readyTimer);
-      observer.disconnect();
-      window.removeEventListener("message", onMessage);
-    };
-  }, []);
-  const prefix = language === "en" ? "/en" : "";
+  const href = "/ask-x?lang=" + language;
   return (
-    <div
-      ref={panel}
-      className="axc"
-      style={{
-        position: "relative",
-        borderTop: "1px solid #D6E6FF",
-        borderBottom: "1px solid #D6E6FF",
-        borderRadius: 0,
-        overflow: "hidden",
-        background: "#F8FAFC",
-      }}
-    >
-      <div className="axc-ring" />
-      <div className="axc-skin" />
-      <iframe
-          data-itrix-chat="true"
-          title={
-            language === "ko"
-              ? "Ask itriX AI 상담"
-              : "Ask itriX AI sales assistant"
-          }
-          src={"/ask-x?embed=1&lang=" + language + topic}
-          style={{
-            width: "100%",
-            height: "min(760px, 85dvh)",
-            minHeight: 420,
-            border: 0,
-            display: failed ? "none" : "block",
-          }}
-          onLoad={(event) => event.currentTarget.contentWindow?.postMessage(
-            { type: "itrix-chat-check" }, location.origin,
-          )}
-          onError={() => setFailed(true)}
-        />
-      <p style={{ padding: "16px clamp(20px,6vw,80px)", margin: 0, color: "#1F2937", fontSize: 14 }}>
-        {failed
-          ? language === "ko"
-            ? "현재 상담을 연결할 수 없습니다. "
-            : "Chat is currently unavailable. "
-          : language === "ko"
-            ? "추가 도움이 필요하세요? "
-            : "Need more help? "}
-        <a
-          style={{ color: "#1F2937", textDecoration: "underline" }}
-          href={prefix + "/contact"}
-        >
-          {language === "ko" ? "일반 문의 →" : "General inquiry →"}
-        </a>
+    <div style={{ padding: "48px 24px", textAlign: "center", borderBlock: "1px solid #334155", background: "#0B1118" }}>
+      <a href={href} style={{ display: "inline-flex", alignItems: "center", gap: 16, padding: "16px 28px", borderRadius: 12, background: "#F8FAFC", color: "#0B1118", fontSize: 20, fontWeight: 600 }}>
+        {language === "ko" ? "Ask itriX 대화 시작" : "Open Ask itriX"} <span aria-hidden="true">→</span>
+      </a>
+      <p style={{ margin: "16px 0 0", color: "#CBD5E1" }}>
+        {language === "ko" ? "전체 화면에서 itriX와 대화하세요." : "A full-page workspace for your conversation with itriX."}
       </p>
     </div>
   );
