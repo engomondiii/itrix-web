@@ -4,6 +4,7 @@ import { djangoFetch } from '@/lib/server/proxy';
 import {
   applyConversationResponseHeaders,
   conversationErrorResponse,
+  conversationStreamResponse,
   conversationForwardHeaders,
   conversationRequestId,
 } from '@/lib/server/conversationProxy';
@@ -22,6 +23,7 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
     headers: conversationForwardHeaders(req, requestId),
   });
   if (!res.ok && res.status !== 202) return conversationErrorResponse(res, requestId);
+  if (res.stream) return conversationStreamResponse(res, requestId);
   const raw = (res.data ?? {}) as Raw;
   const assistant = raw.assistantTurn ? toTurn(raw.assistantTurn, id) : null;
   const pending = raw.pending === true;

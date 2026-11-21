@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import { createTranscriptStream } from '@/lib/api/transcriptStream';
 import { turnsApi } from '@/lib/api/turnsApi';
 import { usePendingStore } from '@/store/pendingStore';
 import { useThreadStore } from '@/store/threadStore';
@@ -49,9 +50,11 @@ export function useContinueGeneration(turn: Turn) {
     });
     beginPending(threadId);
 
+    const stream = createTranscriptStream();
     try {
-      const result = await turnsApi.submit(threadId, { body: CONTINUE_PROMPT, attachmentIds: [] });
-      if (!result.data) {
+      const result = await turnsApi.submit(threadId, { body: CONTINUE_PROMPT, attachmentIds: [] }, stream.handlers);
+      stream.clear();
+      if (!result.data || result.data.generationStatus === 'failed') {
         update(threadId, optimisticId, {
           status: 'unavailable',
           contextNote: 'We could not continue the response just now. Please try again.',
@@ -70,6 +73,7 @@ export function useContinueGeneration(turn: Turn) {
       if (result.data.itrixTurn) append(threadId, result.data.itrixTurn);
       upsertThread(result.data.thread);
     } finally {
+      stream.clear();
       endPending(threadId);
       setContinuing(false);
     }

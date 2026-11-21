@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { threadsApi } from '@/lib/api/threadsApi';
 import { turnsApi } from '@/lib/api/turnsApi';
+import { createTranscriptStream } from '@/lib/api/transcriptStream';
 import { useComposerStore } from '@/store/composerStore';
 import type { QueuedPrompt } from '@/store/composerStore';
 import { useThreadStore } from '@/store/threadStore';
@@ -577,11 +578,23 @@ export function useComposer(): UseComposerResult {
         return;
       }
       setSubmitting(true); setError(null); beginPending(threadId);
+      let recoveredId = threadId;
+      const stream = createTranscriptStream((accepted) => {
+        recoveredId = accepted.thread.id;
+        const localTurns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
+        useTranscriptStore.getState().replace(recoveredId, localTurns.map(t => ({ ...t, threadId: recoveredId })));
+        setActive(recoveredId);
+        reconcile(recoveredId, recovery.optimisticTurnId, accepted);
+        endPending(threadId);
+        beginPending(recoveredId);
+      });
       try {
-        const result = await threadsApi.create(recovery.payload, recovery.idempotencyKey);
+        const result = await threadsApi.create(recovery.payload, recovery.idempotencyKey, stream.handlers);
+        stream.clear();
         if (!result.data) {
           setError(failureMessage(result.failure));
           endPending(threadId);
+          endPending(recoveredId);
           return;
         }
         const serverThreadId = result.data.thread.id;
@@ -610,7 +623,7 @@ export function useComposer(): UseComposerResult {
           endPending(threadId);
           beginPending(serverThreadId);
         }
-      } finally { setSubmitting(false); }
+      } finally { stream.clear(); setSubmitting(false); }
       return;
     }
 
@@ -619,6 +632,7 @@ export function useComposer(): UseComposerResult {
     // a lost network response is ambiguous. Re-fetching the authoritative transcript lets
     // us choose the safe recovery path without guessing or duplicating a visitor turn.
     setSubmitting(true); setError(null); beginPending(threadId);
+    const stream = createTranscriptStream();
     try {
       const localTurns = useTranscriptStore.getState().turnsByThread[threadId] ?? [];
       const latestLocalVisitor = [...localTurns].reverse().find((turn) => turn.role === 'visitor');
@@ -642,7 +656,8 @@ export function useComposer(): UseComposerResult {
         const resubmit = await turnsApi.submit(threadId, {
           body: latestLocalVisitor.body,
           attachmentIds: (latestLocalVisitor.attachments ?? []).map((item) => item.id),
-        });
+        }, stream.handlers);
+        stream.clear();
         if (!resubmit.data) {
           setError(failureMessage(resubmit.failure));
           endPending(threadId);
@@ -662,11 +677,12 @@ export function useComposer(): UseComposerResult {
         return;
       }
 
-      const result = await turnsApi.retry(threadId);
+      const result = await turnsApi.retry(threadId, stream.handlers);
+      stream.clear();
       if (result.data?.assistantTurn) append(threadId, result.data.assistantTurn);
       if (result.failure) setError(failureMessage(result.failure));
       if (!result.data?.pending) endPending(threadId);
-    } finally { setSubmitting(false); }
+    } finally { stream.clear(); setSubmitting(false); }
   }, [
     submitting, setSubmitting, setError, beginPending, append, endPending, setActive, reconcile,
     failureMessage, update, composerCopy,

@@ -68,6 +68,11 @@ export function AskX({ language }) {
       }
     };
     window.addEventListener("message", onMessage);
+    // The child may finish hydrating before this effect subscribes. Ask again
+    // instead of hiding a healthy conversation when the one-shot signal is missed.
+    panel.current?.querySelector("iframe")?.contentWindow?.postMessage(
+      { type: "itrix-chat-check" }, location.origin,
+    );
     return () => {
       clearTimeout(topicTimer);
       clearTimeout(readyTimer);
@@ -106,6 +111,9 @@ export function AskX({ language }) {
             border: 0,
             display: failed ? "none" : "block",
           }}
+          onLoad={(event) => event.currentTarget.contentWindow?.postMessage(
+            { type: "itrix-chat-check" }, location.origin,
+          )}
           onError={() => setFailed(true)}
         />
       <p style={{ padding: "16px clamp(20px,6vw,80px)", margin: 0, color: "#1F2937", fontSize: 14 }}>
