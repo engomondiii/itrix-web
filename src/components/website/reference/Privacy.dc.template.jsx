@@ -80,7 +80,7 @@ export function Template(values) {
             {"\n      "}
             <a
               className={"askx reference-hover-3"}
-              href={"/ask-x?lang=ko"}
+              href={"/#ask-chat"}
               style={css(
                 "display:flex;align-items:center;gap:8px;color:#F8FAFC;",
               )}
@@ -702,7 +702,7 @@ export function Template(values) {
                   <span className={"ar"}>{"→"}</span>
                 </a>
                 {"\n        "}
-                <a className={"mi"} href={"/ask-x?lang=ko"} onClick={mnClose}>
+                <a className={"mi"} href={"/#ask-chat"} onClick={mnClose}>
                   <span
                     style={css(
                       "display:inline-flex;align-items:center;gap:9px;",

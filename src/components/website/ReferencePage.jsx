@@ -48,12 +48,7 @@ export class ReferencePage extends React.Component {
     this.requestId = crypto.randomUUID();
     this.scrollToSection = () => {
       const id = location.hash.slice(1);
-      if (id === "ask-chat" || id === "ask") {
-        const topic = new URLSearchParams(location.search).get("topic") === "astop" ? "&topic=astop" : "";
-        location.replace("/ask-x?lang=" + this.props.language + topic);
-        return;
-      }
-      const target = document.getElementById(id === "ask-chat" ? "ask" : id);
+      const target = document.getElementById(id);
       if (target)
         target.scrollIntoView({ block: "start", behavior: "instant" });
     };
@@ -232,7 +227,8 @@ export class ReferencePage extends React.Component {
       askAstop: (event) => {
         event.preventDefault();
         location.href =
-          "/ask-x?lang=" + this.props.language + "&topic=astop";
+          (this.props.language === "ko" ? "/" : "/en") +
+          "?topic=astop#ask-chat";
       },
       reload: () => location.reload(),
       isIdle: s.status === "idle",

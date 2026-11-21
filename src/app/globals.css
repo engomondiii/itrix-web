@@ -134,3 +134,9 @@
   .full-page-chat .transcript__log { padding: 16px; gap: 20px; }
   .full-page-chat .conversation-column__composer { padding-inline: 12px; }
 }
+
+/* The homepage owns identity/navigation; its embedded chat fills the space below it. */
+.embedded-chat { --composer-max-w: 1120px; }
+.embedded-chat .conversation-column__composer { padding-block: 8px max(8px, env(safe-area-inset-bottom)); max-height: 40dvh; }
+.embedded-chat .transcript { overflow-anchor: none; overscroll-behavior-y: auto; }
+.embedded-chat .turn__body { max-width: none; }
